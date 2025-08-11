@@ -311,7 +311,13 @@ export class AnalyticsConfigManager {
   private saveConfig(): void {
     try {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-        localStorage.setItem(this.storageKey, JSON.stringify(this.config));
+        // Guard against quota exceeded. If it happens, clear only our key (fail-soft)
+        try {
+          localStorage.setItem(this.storageKey, JSON.stringify(this.config));
+        } catch (err) {
+          try { localStorage.removeItem(this.storageKey); } catch {}
+          logger.error('Failed to save analytics configuration:', err);
+        }
       }
     } catch (error) {
       logger.error('Failed to save analytics configuration:', error);

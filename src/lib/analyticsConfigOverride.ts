@@ -8,7 +8,21 @@ import { logger } from './logger';
 export function applyDevelopmentAnalyticsConfig() {
   logger.info('Applying development analytics configuration for better pattern detection');
   
-  analyticsConfig.updateConfig({
+  // Clear analytics cache first to avoid localStorage quota issues before writing config
+  try {
+    const cacheKeys = Object.keys(localStorage).filter(key => 
+      key.includes('analytics-cache') || 
+      key.includes('performance-cache') ||
+      key.includes('sensory-compass-analytics')
+    );
+    cacheKeys.forEach(key => localStorage.removeItem(key));
+    logger.info(`Cleared ${cacheKeys.length} analytics cache entries`);
+  } catch (error) {
+    logger.warn('Failed to clear analytics cache:', error);
+  }
+
+  try {
+    analyticsConfig.updateConfig({
     patternAnalysis: {
       minDataPoints: 2,               // Reduced from 3
       correlationThreshold: 0.1,      // Reduced from 0.25
@@ -51,19 +65,9 @@ export function applyDevelopmentAnalyticsConfig() {
       MIN_TRACKING_FOR_ENHANCED: 2,        // No change
       ANALYSIS_PERIOD_DAYS: 30,
     },
-  });
-  
-  // Clear analytics cache to ensure fresh analysis with new config
-  try {
-    const cacheKeys = Object.keys(localStorage).filter(key => 
-      key.includes('analytics-cache') || 
-      key.includes('performance-cache') ||
-      key.includes('sensory-compass-analytics')
-    );
-    cacheKeys.forEach(key => localStorage.removeItem(key));
-    logger.info(`Cleared ${cacheKeys.length} analytics cache entries`);
+    });
   } catch (error) {
-    logger.warn('Failed to clear analytics cache:', error);
+    logger.error('Failed to apply development analytics config (non-fatal):', error);
   }
 }
 
