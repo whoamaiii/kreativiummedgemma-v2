@@ -9,6 +9,7 @@ import {
   VisualMapComponent,
   DataZoomComponent,
   TitleComponent,
+  ToolboxComponent,
 } from 'echarts/components';
 import { LineChart, BarChart, ScatterChart, HeatmapChart } from 'echarts/charts';
 import { CanvasRenderer } from 'echarts/renderers';
@@ -24,6 +25,7 @@ echarts.use([
   VisualMapComponent,
   DataZoomComponent,
   TitleComponent,
+  ToolboxComponent,
   // Charts
   LineChart,
   BarChart,

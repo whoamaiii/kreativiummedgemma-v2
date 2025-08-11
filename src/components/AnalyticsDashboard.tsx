@@ -10,7 +10,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AlertManager } from "@/components/AlertManager";
-import { InteractiveDataVisualization as DataVisualization } from "@/components/InteractiveDataVisualization";
+import React, { Suspense } from 'react';
+const LazyInteractiveDataVisualization = React.lazy(() => import('@/components/lazy/LazyInteractiveDataVisualization').then(m => ({ default: m.LazyInteractiveDataVisualization })));
 import { AnalyticsSettings } from "@/components/AnalyticsSettings";
 import {
   TrendingUp,
@@ -331,12 +332,14 @@ export const AnalyticsDashboard = memo(({
 
         <TabsContent value="visualizations" className="space-y-6">
           <div ref={visualizationRef}>
-            <DataVisualization
-              emotions={filteredData.emotions}
-              sensoryInputs={filteredData.sensoryInputs}
-              trackingEntries={filteredData.entries}
-              studentName={student.name}
-            />
+            <Suspense fallback={<div className="h-[360px] rounded-xl border bg-card animate-pulse" aria-label="Loading visualization" /> }>
+              <LazyInteractiveDataVisualization
+                emotions={filteredData.emotions}
+                sensoryInputs={filteredData.sensoryInputs}
+                trackingEntries={filteredData.entries}
+                studentName={student.name}
+              />
+            </Suspense>
           </div>
         </TabsContent>
 

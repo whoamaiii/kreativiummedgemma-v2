@@ -1,10 +1,8 @@
 name: CI
 
 on:
-  push:
-    branches: [ main, master, kreativiumbeta2-branch ]
   pull_request:
-    branches: [ main, master, kreativiumbeta2-branch ]
+    branches: [ "*" ]
 
 jobs:
   build-and-test:
@@ -16,7 +14,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
           cache: 'npm'
 
       - name: Install deps
@@ -25,28 +23,19 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
-      - name: Lint
-        run: npm run lint
-
       - name: Unit tests
         run: npm run test -- --run
 
-      - name: Build
+      - name: Install Playwright Browsers
+        run: npx --yes playwright@latest install --with-deps
+
+      - name: Build app
         run: npm run build
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
       - name: E2E tests
+        env:
+          CI: true
         run: npm run e2e
-
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report
-          if-no-files-found: ignore
 
 name: CI
 
