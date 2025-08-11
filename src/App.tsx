@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React, { Suspense, lazy } from "react";
 import "@/lib/analyticsConfigOverride"; // Apply sensitive analytics config in dev mode
+import { ThemeProvider } from "next-themes";
 
 const Dashboard = lazy(() => import("./pages/Dashboard").then(m => ({ default: m.Dashboard })));
 const AddStudent = lazy(() => import("./pages/AddStudent").then(m => ({ default: m.AddStudent })));
@@ -20,27 +21,29 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <ErrorWrapper>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <BrowserRouter>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/add-student" element={<AddStudent />} />
-              <Route path="/student/:studentId" element={<StudentProfile />} />
-              <Route path="/track/:studentId" element={<TrackStudent />} />
-              <Route path="/environmental-correlations-test" element={<EnvironmentalCorrelationsTest />} />
-              {import.meta.env.MODE !== 'production' && InteractiveVizTest && (
-                <Route path="/e2e/interactive-viz" element={<InteractiveVizTest />} />
-              )}
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <BrowserRouter>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/add-student" element={<AddStudent />} />
+                <Route path="/student/:studentId" element={<StudentProfile />} />
+                <Route path="/track/:studentId" element={<TrackStudent />} />
+                <Route path="/environmental-correlations-test" element={<EnvironmentalCorrelationsTest />} />
+                {import.meta.env.MODE !== 'production' && InteractiveVizTest && (
+                  <Route path="/e2e/interactive-viz" element={<InteractiveVizTest />} />
+                )}
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   </ErrorWrapper>
 );
 
