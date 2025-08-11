@@ -32,8 +32,8 @@ export default defineConfig(({ mode }) => ({
     }
   },
   optimizeDeps: {
-    exclude: [],
-    include: ['echarts', 'date-fns']
+    exclude: ['echarts'],
+    include: ['date-fns']
   },
   build: {
     rollupOptions: {
@@ -41,7 +41,9 @@ export default defineConfig(({ mode }) => ({
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select'],
-          'vendor-charts': ['echarts'],
+          // Move echarts-for-react to the UI vendor, and our trimmed echarts core into its own small chunk
+          'vendor-charts': ['echarts-for-react'],
+          'vendor-echarts-core': ['./src/lib/echartsCore.ts'],
           'vendor-utils': ['date-fns', 'clsx', 'tailwind-merge'],
           'interactive-viz': ['./src/components/InteractiveDataVisualization.tsx'],
           'viz-3d': ['./src/components/Visualization3D.tsx'],

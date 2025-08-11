@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeAll } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 let InteractiveDataVisualization: any;
 
 // Mock the dependencies
@@ -139,8 +139,8 @@ describe('InteractiveDataVisualization', () => {
         studentName="Test Student"
       />
     );
-    
-    expect(screen.getByText(/Test Student/)).toBeInTheDocument();
+    // Assert the header title that contains the student name
+    expect(screen.getByRole('heading', { level: 3, name: /Interactive Data Analysis -\s*Test Student/i })).toBeInTheDocument();
   });
 
   it('renders chart container', async () => {
@@ -184,9 +184,11 @@ describe('InteractiveDataVisualization', () => {
     screen.getByRole('tab', { name: /trends/i }).click();
     await new Promise(r => setTimeout(r, 0));
     return waitFor(() => {
-      expect(screen.getByText(/2 emotions/i)).toBeInTheDocument();
-      expect(screen.getByText(/2 sensory inputs/i)).toBeInTheDocument();
-      expect(screen.getByText(/1 sessions/i)).toBeInTheDocument();
+      const counts = screen.getByLabelText(/data counts/i);
+      const scoped = within(counts);
+      expect(scoped.getByText(/2 emotions/i)).toBeInTheDocument();
+      expect(scoped.getByText(/2 sensory inputs/i)).toBeInTheDocument();
+      expect(scoped.getByText(/1 sessions/i)).toBeInTheDocument();
     });
   });
 
@@ -199,10 +201,11 @@ describe('InteractiveDataVisualization', () => {
         studentName="Test Student"
       />
     );
-    
-    expect(screen.getByText(/0 emotions/)).toBeInTheDocument();
-    expect(screen.getByText(/0 sensory inputs/)).toBeInTheDocument();
-    expect(screen.getByText(/0 sessions/)).toBeInTheDocument();
+    const counts = screen.getByLabelText(/data counts/i);
+    const scoped = within(counts);
+    expect(scoped.getByText(/0 emotions/)).toBeInTheDocument();
+    expect(scoped.getByText(/0 sensory inputs/)).toBeInTheDocument();
+    expect(scoped.getByText(/0 sessions/)).toBeInTheDocument();
   });
 
   it('handles invalid data gracefully', () => {
@@ -219,8 +222,10 @@ describe('InteractiveDataVisualization', () => {
     expect(container).toBeTruthy();
     
     // Should show 0 counts for invalid data
-    expect(screen.getByText(/0 emotions/)).toBeInTheDocument();
-    expect(screen.getByText(/0 sensory inputs/)).toBeInTheDocument();
-    expect(screen.getByText(/0 sessions/)).toBeInTheDocument();
+    const counts = screen.getByLabelText(/data counts/i);
+    const scoped = within(counts);
+    expect(scoped.getByText(/0 emotions/)).toBeInTheDocument();
+    expect(scoped.getByText(/0 sensory inputs/)).toBeInTheDocument();
+    expect(scoped.getByText(/0 sessions/)).toBeInTheDocument();
   });
 });

@@ -12,7 +12,9 @@ export function useOptimizedInsights(
   const cache = usePerformanceCache({
     maxSize: 50,
     ttl: 10 * 60 * 1000, // 10 minutes
-    enableStats: true
+    // Important: Disable stats to avoid triggering state updates on cache hits/misses,
+    // which can cause dependent effects to re-run endlessly in consumers.
+    enableStats: false
   });
 
   // Create stable cache keys based on data fingerprints

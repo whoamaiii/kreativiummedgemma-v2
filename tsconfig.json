@@ -30,6 +30,7 @@
     "downlevelIteration": true,
     "esModuleInterop": true,
     "module": "ESNext",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "types": ["vite/client", "vitest/globals"]
   }
 }

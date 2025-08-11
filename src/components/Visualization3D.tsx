@@ -172,24 +172,25 @@ const AxisLabels: React.FC<{ xLabel: string; yLabel: string; zLabel: string }> =
   );
 };
 
-// Camera controls component
+// Camera controls component (rendered as DOM overlay via <Html/>)
 const CameraControls: React.FC<{ onReset: () => void }> = ({ onReset }) => {
   const { camera } = useThree();
-  
   return (
-    <div className="absolute bottom-4 right-4 flex flex-col gap-2">
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={() => {
-          camera.position.set(10, 10, 10);
-          camera.lookAt(0, 0, 0);
-          onReset();
-        }}
-      >
-        <RotateCcw className="h-4 w-4" />
-      </Button>
-    </div>
+    <Html fullscreen>
+      <div className="absolute bottom-4 right-4 flex flex-col gap-2 pointer-events-auto">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            camera.position.set(10, 10, 10);
+            camera.lookAt(0, 0, 0);
+            onReset();
+          }}
+        >
+          <RotateCcw className="h-4 w-4" />
+        </Button>
+      </div>
+    </Html>
   );
 };
 

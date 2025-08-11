@@ -88,6 +88,12 @@ export const VisualizationControls: React.FC<VisualizationControlsProps> = ({
     setFilterCriteria,
   } = visualizationState;
 
+  const motionPrefersReduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (motionPrefersReduced && !visualizationState.motionSafe) {
+    visualizationState.setMotionSafe(true);
+    visualizationState.setProjectionMode('2d');
+  }
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -102,6 +108,40 @@ export const VisualizationControls: React.FC<VisualizationControlsProps> = ({
           )}
         </CardTitle>
         <div className="flex items-center gap-2" aria-label="Visualization controls">
+          {/* Guided question chips */}
+          <div className="hidden md:flex items-center gap-2 mr-2">
+            {[
+              { id: 'peaks', label: 'When do peaks happen?' },
+              { id: 'load_by_activity', label: 'Which activities raise load?' },
+              { id: 'calming', label: 'What calms fastest?' },
+            ].map((p) => (
+              <Button
+                key={p.id}
+                variant={visualizationState.activePreset === p.id ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => {
+                  visualizationState.setActivePreset(p.id);
+                  // Simple preset effects (MVP)
+                  if (p.id === 'peaks') {
+                    setSelectedTimeRange('30d');
+                    setSelectedChartType('scatter');
+                    setFilterCriteria({
+                      ...filterCriteria,
+                      patterns: { ...filterCriteria.patterns, minConfidence: 0.6 },
+                    });
+                    setFocusedVisualization('trends');
+                  } else if (p.id === 'calming') {
+                    setSelectedTimeRange('7d');
+                    setSelectedChartType('line');
+                    setFocusedVisualization('timeline');
+                  }
+                }}
+              >
+                {p.label}
+              </Button>
+            ))}
+          </div>
+
           <Sheet open={showFilterPanel} onOpenChange={setShowFilterPanel}>
             <SheetTrigger asChild>
               <Button variant="outline" size="sm" aria-label="Open filters panel" title="Open filters panel">
@@ -186,6 +226,21 @@ export const VisualizationControls: React.FC<VisualizationControlsProps> = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => visualizationState.setProjectionMode(visualizationState.projectionMode === '3d' ? '2d' : '3d')}>
+                {visualizationState.projectionMode === '3d' ? 'Switch to 2D' : 'Switch to 3D'}
+              </DropdownMenuItem>
+              {visualizationState.projectionMode === '2d' && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => visualizationState.setProjectionPlane('xy')}>2D: Emotional energy vs Sensory load (XY)</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => visualizationState.setProjectionPlane('xz')}>2D: Emotional energy vs Time (XZ)</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => visualizationState.setProjectionPlane('yz')}>2D: Sensory load vs Time (YZ)</DropdownMenuItem>
+                </>
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => visualizationState.setMotionSafe(!visualizationState.motionSafe)}>
+                {visualizationState.motionSafe ? 'Disable motion-safe' : 'Enable motion-safe'}
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={toggleFullscreen}>
                 <Maximize2 className="h-4 w-4 mr-2" />
                 {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
@@ -293,7 +348,7 @@ export const VisualizationControls: React.FC<VisualizationControlsProps> = ({
             </Select>
           </div>
 
-          <div className="flex items-center gap-2 mt-8">
+          <div className="flex items-center gap-2 mt-8" aria-label="Data counts">
             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
               {filteredData.emotions.length} emotions
             </Badge>

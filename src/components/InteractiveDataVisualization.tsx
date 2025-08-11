@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useCallback } from "react";
 // Unused Card components removed after refactoring
 import { EmotionEntry, SensoryEntry, TrackingEntry, Student } from "@/types/student";
 import { ErrorBoundary } from "./ErrorBoundary";
+import { TeacherInsightsPanel } from '@/components/analysis/TeacherInsightsPanel';
 import { Visualization3D } from './Visualization3D';
 import { TimelineVisualization } from './TimelineVisualization';
 import { useRealtimeData } from '@/hooks/useRealtimeData';
@@ -14,6 +15,7 @@ import { GridLayout, FocusLayout, ComparisonLayout } from './layouts/Visualizati
 import { TrendsChart } from './charts/TrendsChart';
 import { CorrelationHeatmap } from './analysis/CorrelationHeatmap';
 import { PatternAnalysisView } from './analysis/PatternAnalysisView';
+import { EChartContainer } from '@/components/charts/EChartContainer';
 import { analyticsExport, ExportFormat } from "@/lib/analyticsExport";
 import { toast } from "sonner";
 import { logger } from "@/lib/logger";
@@ -172,6 +174,23 @@ export const InteractiveDataVisualization = ({
   const renderVisualization = (type: VisualizationType) => {
     switch (type) {
       case 'trends':
+        if (visualizationState.projectionMode === '2d') {
+          // Build a 2D scatter projection based on selected plane
+          const plane = visualizationState.projectionPlane;
+          const mapPoint = (p: typeof chartData[number]) => {
+            const x = p.date;
+            const y = plane === 'xy' ? p.avgEmotionIntensity : plane === 'xz' ? p.avgEmotionIntensity : p.totalSensoryInputs;
+            return { name: p.date, value: [p.timestamp, y], avgEmotionIntensity: p.avgEmotionIntensity, totalSensoryInputs: p.totalSensoryInputs };
+          };
+          const data = chartData.map(mapPoint);
+          const option = {
+            xAxis: { type: 'time' },
+            yAxis: { type: 'value', name: plane === 'yz' ? 'Sensory load' : 'Emotional energy' },
+            series: [{ type: 'scatter', data, symbolSize: 8 }],
+            animation: !visualizationState.motionSafe,
+          } as any;
+          return <EChartContainer option={option} height={360} />;
+        }
         return <TrendsChart chartData={chartData} selectedChartType={selectedChartType} />;
       case 'correlations':
         return <CorrelationHeatmap correlationMatrix={analysisData.correlationMatrix} onRetry={() => {}} onShowAllTime={() => visualizationState.setSelectedTimeRange('all')} />;
@@ -202,15 +221,27 @@ export const InteractiveDataVisualization = ({
         />
 
         {layoutMode === 'dashboard' && (
-          <DashboardLayout
-            renderTrendsChart={() => renderVisualization('trends')}
-            renderCorrelationHeatmap={() => renderVisualization('correlations')}
-            renderPatternAnalysis={() => renderVisualization('patterns')}
-            render3dVisualization={() => renderVisualization('3d')}
-            renderTimeline={() => renderVisualization('timeline')}
-            filteredData={filteredData}
-            correlationMatrix={analysisData.correlationMatrix}
-          />
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-4 items-start">
+            <DashboardLayout
+              renderTrendsChart={() => renderVisualization('trends')}
+              renderCorrelationHeatmap={() => renderVisualization('correlations')}
+              renderPatternAnalysis={() => renderVisualization('patterns')}
+              render3dVisualization={() => renderVisualization('3d')}
+              renderTimeline={() => renderVisualization('timeline')}
+              filteredData={filteredData}
+              correlationMatrix={analysisData.correlationMatrix}
+            />
+            <TeacherInsightsPanel
+              student={{ id: 'current-student', name: studentName, createdAt: new Date() } as any}
+              filteredData={filteredData as any}
+              analysis={analysisData as any}
+              activePreset={visualizationState.activePreset}
+              onCreateGoal={() => { /* wire later: route to goals with draft */ }}
+              onAddIntervention={() => { /* wire later */ }}
+              onScheduleBreak={() => { /* wire later */ }}
+              onJumpToTracking={() => { /* wire later */ }}
+            />
+          </div>
         )}
         {layoutMode === 'grid' && <GridLayout renderVisualization={renderVisualization} selectedVisualizations={visualizationState.selectedVisualizations} />}
         {layoutMode === 'focus' && <FocusLayout renderVisualization={renderVisualization} focusedVisualization={visualizationState.focusedVisualization} />}

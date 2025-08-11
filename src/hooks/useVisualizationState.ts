@@ -5,6 +5,8 @@ export type ChartType = 'line' | 'area' | 'scatter' | 'composed';
 export type TimeRange = '7d' | '30d' | '90d' | 'all';
 export type LayoutMode = 'grid' | 'focus' | 'comparison' | 'dashboard';
 export type VisualizationType = 'trends' | 'correlations' | 'patterns' | '3d' | 'timeline';
+export type ProjectionMode = '3d' | '2d';
+export type ProjectionPlane = 'xy' | 'xz' | 'yz';
 
 export interface HighlightState {
   type: 'emotion' | 'sensory' | 'tracking' | 'anomaly' | null;
@@ -38,6 +40,14 @@ export const useVisualizationState = (availableEmotions: string[]) => {
     realtime: false
   });
 
+  // Projection and accessibility
+  const [projectionMode, setProjectionMode] = useState<ProjectionMode>('3d');
+  const [projectionPlane, setProjectionPlane] = useState<ProjectionPlane>('xy');
+  const [motionSafe, setMotionSafe] = useState<boolean>(false);
+
+  // Guided preset context for narration
+  const [activePreset, setActivePreset] = useState<string | null>(null);
+
   return {
     selectedChartType,
     setSelectedChartType,
@@ -61,5 +71,13 @@ export const useVisualizationState = (availableEmotions: string[]) => {
     setHighlightState,
     filterCriteria,
     setFilterCriteria,
+    projectionMode,
+    setProjectionMode,
+    projectionPlane,
+    setProjectionPlane,
+    motionSafe,
+    setMotionSafe,
+    activePreset,
+    setActivePreset,
   };
 };

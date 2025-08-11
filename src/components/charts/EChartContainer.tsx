@@ -1,5 +1,7 @@
 import React, { useMemo, memo } from "react";
 import ReactECharts from "echarts-for-react";
+// Use our trimmed ECharts core to keep the chart chunk small
+import { echarts } from '@/lib/echartsCore';
 import type {
   EChartsOption,
   GridComponentOption,
@@ -451,6 +453,7 @@ function EChartContainerBase({
           // Keep chart itself explicitly sized
           style={{ height, width: width ?? "100%", ...style }}
           onEvents={onEvents}
+          echarts={echarts as unknown as any}
         />
       ) : (
         <div className="p-4">

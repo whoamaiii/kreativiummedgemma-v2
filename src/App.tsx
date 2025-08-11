@@ -10,6 +10,7 @@ const AddStudent = lazy(() => import("./pages/AddStudent").then(m => ({ default:
 const StudentProfile = lazy(() => import("./pages/StudentProfile").then(m => ({ default: m.StudentProfile })));
 const TrackStudent = lazy(() => import("./pages/TrackStudent").then(m => ({ default: m.TrackStudent })));
 const NotFound = lazy(() => import("./pages/NotFound").then(m => ({ default: m.NotFound })));
+const InteractiveVizTest = lazy(() => import('./pages/InteractiveVizTest').then(m => ({ default: m.default })));
 const EnvironmentalCorrelationsTest = lazy(() => import("./pages/EnvironmentalCorrelationsTest"));
 import { ErrorWrapper } from "./components/ErrorWrapper";
 
@@ -28,6 +29,7 @@ const App = () => (
               <Route path="/student/:studentId" element={<StudentProfile />} />
               <Route path="/track/:studentId" element={<TrackStudent />} />
               <Route path="/environmental-correlations-test" element={<EnvironmentalCorrelationsTest />} />
+              <Route path="/e2e/interactive-viz" element={<InteractiveVizTest />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
