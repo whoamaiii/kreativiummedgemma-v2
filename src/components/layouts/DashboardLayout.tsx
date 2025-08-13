@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { POC_MODE } from '@/lib/env';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -50,10 +51,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <Zap className="h-4 w-4" />
           Patterns
         </TabsTrigger>
-        <TabsTrigger value="3d" className="flex items-center gap-2">
-          <Eye className="h-4 w-4" />
-          3D View
-        </TabsTrigger>
+        {!POC_MODE && (
+          <TabsTrigger value="3d" className="flex items-center gap-2">
+            <Eye className="h-4 w-4" />
+            3D View
+          </TabsTrigger>
+        )}
         <TabsTrigger value="timeline" className="flex items-center gap-2">
           <Clock className="h-4 w-4" />
           Timeline
@@ -153,9 +156,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {renderPatternAnalysis()}
       </TabsContent>
 
-      <TabsContent value="3d">
-        {render3dVisualization()}
-      </TabsContent>
+      {!POC_MODE && (
+        <TabsContent value="3d">
+          {render3dVisualization()}
+        </TabsContent>
+      )}
 
       <TabsContent value="timeline">
         {renderTimeline()}

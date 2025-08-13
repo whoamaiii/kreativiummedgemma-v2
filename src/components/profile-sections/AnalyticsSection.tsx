@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AnalyticsDashboard } from '@/components/AnalyticsDashboard';
+import { LazyAnalyticsDashboard } from '@/components/lazy/LazyAnalyticsDashboard';
 import { LazyInteractiveDataVisualization } from '@/components/lazy/LazyInteractiveDataVisualization';
 import { DetailedConfidenceExplanation } from '@/components/DetailedConfidenceExplanation';
 import { ConfidenceIndicator } from '@/components/ConfidenceIndicator';
@@ -127,7 +127,7 @@ export function AnalyticsSection({
 
       {/* Main Analytics Dashboard */}
       <ErrorBoundary showToast={false}>
-        <AnalyticsDashboard
+        <LazyAnalyticsDashboard
           student={student}
           filteredData={safeFilteredData}
         />

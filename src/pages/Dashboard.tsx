@@ -8,6 +8,8 @@ import { isToday } from "date-fns";
 import { useTranslation } from "@/hooks/useTranslation";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { LanguageSettings } from "@/components/LanguageSettings";
+import { POCBadge } from "@/components/POCBadge";
+import { POC_MODE } from "@/lib/env";
 import { PremiumStudentCard } from "@/components/ui/PremiumStudentCard";
 import { MockDataLoader } from "@/components/MockDataLoader";
 import { StorageManager } from "@/components/StorageManager";
@@ -197,6 +199,7 @@ const csvBlob = new Blob([csvContent], { type: 'text/csv' });
               </p>
             </div>
             <div className="flex items-center space-x-4">
+              {POC_MODE && <POCBadge />}
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="icon" title="Mock Data" aria-label="Open mock data loader">

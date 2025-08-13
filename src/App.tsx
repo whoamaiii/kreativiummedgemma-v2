@@ -3,7 +3,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React, { Suspense, lazy } from "react";
-import "@/lib/analyticsConfigOverride"; // Apply sensitive analytics config in dev mode
+import { POC_MODE } from "@/lib/env";
+if (!POC_MODE) {
+  await import("@/lib/analyticsConfigOverride");
+}
 import { ThemeProvider } from "next-themes";
 
 const Dashboard = lazy(() => import("./pages/Dashboard").then(m => ({ default: m.Dashboard })));
@@ -14,7 +17,9 @@ const NotFound = lazy(() => import("./pages/NotFound").then(m => ({ default: m.N
 const InteractiveVizTest = import.meta.env.MODE !== 'production'
   ? lazy(() => import('./pages/InteractiveVizTest').then(m => ({ default: m.default })))
   : null as unknown as React.LazyExoticComponent<() => JSX.Element>;
-const EnvironmentalCorrelationsTest = lazy(() => import("./pages/EnvironmentalCorrelationsTest"));
+const EnvironmentalCorrelationsTest = !POC_MODE
+  ? lazy(() => import("./pages/EnvironmentalCorrelationsTest"))
+  : null as unknown as React.LazyExoticComponent<() => JSX.Element>;
 import { ErrorWrapper } from "./components/ErrorWrapper";
 
 const queryClient = new QueryClient();
@@ -32,7 +37,9 @@ const App = () => (
                 <Route path="/add-student" element={<AddStudent />} />
                 <Route path="/student/:studentId" element={<StudentProfile />} />
                 <Route path="/track/:studentId" element={<TrackStudent />} />
-                <Route path="/environmental-correlations-test" element={<EnvironmentalCorrelationsTest />} />
+                {!POC_MODE && EnvironmentalCorrelationsTest && (
+                  <Route path="/environmental-correlations-test" element={<EnvironmentalCorrelationsTest />} />
+                )}
                 {import.meta.env.MODE !== 'production' && InteractiveVizTest && (
                   <Route path="/e2e/interactive-viz" element={<InteractiveVizTest />} />
                 )}

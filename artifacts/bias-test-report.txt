@@ -1,0 +1,14 @@
+
+> vite_react_shadcn_ts@0.1.0 test:bias
+> vitest run src/lib/testing/biasTester.test.ts
+
+
+ RUN  v3.2.4 /Users/quentinthiessen/Documents/kreativiumbeta2
+
+ ✓ src/lib/testing/biasTester.test.ts (1 test) 1ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  14:56:56
+   Duration  391ms (transform 21ms, setup 76ms, collect 5ms, tests 1ms, environment 138ms, prepare 49ms)
+

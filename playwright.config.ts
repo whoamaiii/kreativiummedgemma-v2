@@ -13,7 +13,7 @@ export default defineConfig({
     screenshot: 'only-on-failure'
   },
   webServer: {
-    command: 'npm run preview',
+    command: process.env.E2E_PREVIEW_CMD || 'npm run preview',
     port: 4173,
     reuseExistingServer: !process.env.CI,
   },

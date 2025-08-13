@@ -127,6 +127,23 @@ export default tseslint.config(
       "no-prototype-builtins": "warn",
       "no-unreachable": "error",
       "no-dead-code": "off", // TypeScript handles this
+      // Memory leak prevention rules
+      "react/no-array-index-key": "error",
+      "no-restricted-syntax": [
+        "error",
+        {
+          "selector": "CallExpression[callee.property.name='addEventListener'][arguments.length > 1]:not(:has(Identifier[name='useEffect'], Identifier[name='useLayoutEffect']))",
+          "message": "addEventListener should be used inside useEffect with proper cleanup to prevent memory leaks"
+        },
+        {
+          "selector": "CallExpression[callee.name=/^(setInterval|setTimeout)$/][arguments.length > 0]:not(:has(Identifier[name='useEffect'], Identifier[name='useLayoutEffect']))",
+          "message": "setInterval/setTimeout should be used inside useEffect with proper cleanup (clearInterval/clearTimeout) to prevent memory leaks"
+        },
+        {
+          "selector": "NewExpression[callee.name='Worker']:not(:has(Identifier[name='useEffect'], Identifier[name='useLayoutEffect']))",
+          "message": "Worker instantiation should be managed through custom hooks with proper cleanup (worker.terminate()) to prevent memory leaks"
+        }
+      ]
     },
   },
   {

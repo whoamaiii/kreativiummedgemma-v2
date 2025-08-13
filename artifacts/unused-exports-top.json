@@ -1,0 +1,189 @@
+{
+  "top": [
+    {
+      "file": "src/components/ui/sidebar.tsx",
+      "count": 13,
+      "exports": [
+        "SidebarFooter",
+        "SidebarGroupAction",
+        "SidebarHeader",
+        "SidebarInput",
+        "SidebarInset",
+        "SidebarMenuAction",
+        "SidebarMenuBadge",
+        "SidebarMenuSkeleton",
+        "SidebarMenuSub",
+        "SidebarMenuSubButton",
+        "SidebarMenuSubItem",
+        "SidebarRail",
+        "SidebarSeparator"
+      ]
+    },
+    {
+      "file": "src/components/ui/dropdown-menu.tsx",
+      "count": 10,
+      "exports": [
+        "DropdownMenuCheckboxItem",
+        "DropdownMenuRadioItem",
+        "DropdownMenuLabel",
+        "DropdownMenuShortcut",
+        "DropdownMenuGroup",
+        "DropdownMenuPortal",
+        "DropdownMenuSub",
+        "DropdownMenuSubContent",
+        "DropdownMenuSubTrigger",
+        "DropdownMenuRadioGroup"
+      ]
+    },
+    {
+      "file": "src/lib/formValidation.ts",
+      "count": 7,
+      "exports": [
+        "studentSchema",
+        "emotionEntrySchema",
+        "sensoryEntrySchema",
+        "environmentalEntrySchema",
+        "validateEnvironmentalEntry",
+        "sanitizeInput",
+        "sanitizeObject"
+      ]
+    },
+    {
+      "file": "src/components/ui/select.tsx",
+      "count": 5,
+      "exports": [
+        "SelectGroup",
+        "SelectLabel",
+        "SelectSeparator",
+        "SelectScrollUpButton",
+        "SelectScrollDownButton"
+      ]
+    },
+    {
+      "file": "src/lib/errorHandler.ts",
+      "count": 5,
+      "exports": [
+        "errorHandler",
+        "handleError",
+        "handleValidationError",
+        "handleStorageError",
+        "handleAnalyticsError"
+      ]
+    },
+    {
+      "file": "src/components/ui/dialog.tsx",
+      "count": 4,
+      "exports": [
+        "DialogPortal",
+        "DialogOverlay",
+        "DialogClose",
+        "DialogFooter"
+      ]
+    },
+    {
+      "file": "src/components/ui/sheet.tsx",
+      "count": 4,
+      "exports": [
+        "SheetClose",
+        "SheetFooter",
+        "SheetOverlay",
+        "SheetPortal"
+      ]
+    },
+    {
+      "file": "src/types/errors.ts",
+      "count": 3,
+      "exports": [
+        "createValidationError",
+        "createStorageError",
+        "createAnalyticsError"
+      ]
+    },
+    {
+      "file": "src/lib/mlModels.ts",
+      "count": 2,
+      "exports": [
+        "DataPreprocessor",
+        "MLModels"
+      ]
+    },
+    {
+      "file": "src/components/ui/alert-dialog.tsx",
+      "count": 2,
+      "exports": [
+        "AlertDialogPortal",
+        "AlertDialogOverlay"
+      ]
+    },
+    {
+      "file": "src/lib/mockData.ts",
+      "count": 1,
+      "exports": [
+        "default"
+      ]
+    },
+    {
+      "file": "src/lib/analyticsWorkerFallback.ts",
+      "count": 1,
+      "exports": [
+        "AnalyticsWorkerFallback"
+      ]
+    },
+    {
+      "file": "src/lib/analyticsConfig.ts",
+      "count": 1,
+      "exports": [
+        "DEFAULT_ANALYTICS_CONFIG"
+      ]
+    },
+    {
+      "file": "src/lib/dataValidation.ts",
+      "count": 1,
+      "exports": [
+        "validateTrackingData"
+      ]
+    },
+    {
+      "file": "src/components/ui/sonner.tsx",
+      "count": 1,
+      "exports": [
+        "toast"
+      ]
+    },
+    {
+      "file": "src/lib/analyticsConfigOverride.ts",
+      "count": 1,
+      "exports": [
+        "applyDevelopmentAnalyticsConfig"
+      ]
+    },
+    {
+      "file": "src/pages/AddStudent.tsx",
+      "count": 1,
+      "exports": [
+        "default"
+      ]
+    },
+    {
+      "file": "src/pages/TrackStudent.tsx",
+      "count": 1,
+      "exports": [
+        "default"
+      ]
+    },
+    {
+      "file": "src/pages/NotFound.tsx",
+      "count": 1,
+      "exports": [
+        "default"
+      ]
+    },
+    {
+      "file": "src/components/ui/card.tsx",
+      "count": 1,
+      "exports": [
+        "CardFooter"
+      ]
+    }
+  ]
+}

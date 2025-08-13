@@ -1,0 +1,14 @@
+
+> vite_react_shadcn_ts@0.1.0 test:performance
+> vitest run src/lib/testing/performanceTester.test.ts
+
+
+ RUN  v3.2.4 /Users/quentinthiessen/Documents/kreativiumbeta2
+
+ ✓ src/lib/testing/performanceTester.test.ts (1 test) 1ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  14:56:49
+   Duration  399ms (transform 20ms, setup 76ms, collect 3ms, tests 1ms, environment 143ms, prepare 24ms)
+

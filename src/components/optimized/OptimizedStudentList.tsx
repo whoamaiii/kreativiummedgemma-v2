@@ -52,6 +52,7 @@ export const OptimizedStudentList: React.FC<OptimizedStudentListProps> = memo(({
         containerHeight={containerHeight}
         renderItem={renderStudent}
         className="w-full"
+        overscan={8} // Increased overscan for smoother scrolling with larger student cards
       />
     );
   }

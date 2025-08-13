@@ -15,7 +15,7 @@ import { analyticsConfig } from '@/lib/analyticsConfig';
 import { logger } from '@/lib/logger';
 import { diagnostics } from '@/lib/diagnostics';
 import { analyticsWorkerFallback } from '@/lib/analyticsWorkerFallback';
-import AnalyticsWorker from '@/workers/analytics.worker?worker';
+import { POC_MODE } from '@/lib/env';
 
 // Define CacheStats type if not imported from usePerformanceCache
 interface CacheStats {
@@ -104,127 +104,169 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
   }, []);
 
   useEffect(() => {
+    let isMounted = true; // Race condition guard
+    
     // Initialize the analytics web worker
-    try {
-      const worker = new AnalyticsWorker();
-      workerRef.current = worker;
-
-      // Set up message handler for receiving results from the worker
-      worker.onmessage = (event: MessageEvent<AnalyticsWorkerMessage>) => {
-        const { data: msg } = event;
-
-        // Any message resets watchdog (heartbeat)
-        if (watchdogRef.current) {
-          clearTimeout(watchdogRef.current);
-          watchdogRef.current = null;
-        }
-
-        if (msg.type === 'progress') {
-          // Re-arm watchdog on heartbeat, keep analyzing true
-          setIsAnalyzing(true);
-          const timeoutMs = Math.max(15000, 3000);
-          watchdogRef.current = setTimeout(() => {
-            diagnostics.logWorkerTimeout('analytics', timeoutMs);
-            setError('Worker timeout during progress.');
-          }, timeoutMs);
+    const initializeWorker = async () => {
+      try {
+        if (POC_MODE) {
+          // In POC mode, skip worker to reduce overhead and use fallback path
+          if (isMounted) {
+            workerRef.current = null;
+          }
           return;
         }
-
-        if (msg.type === 'error') {
-          logger.error('[useAnalyticsWorker] Worker error', msg.error);
-          setError(msg.error || 'Unknown worker error');
-          setIsAnalyzing(false);
+        
+        // Dynamically import the worker only when not in POC mode
+        const mod = await import('@/workers/analytics.worker?worker');
+        if (!isMounted) return; // Check if component is still mounted
+        
+        const WorkerCtor = (mod as any).default as { new(): Worker };
+        const worker = new WorkerCtor();
+        
+        if (!isMounted) {
+          // If component unmounted during initialization, clean up
+          worker.terminate();
           return;
         }
+        
+        // Set up message handler for receiving results from the worker
+        worker.onmessage = (event: MessageEvent<AnalyticsWorkerMessage>) => {
+          if (!isMounted) return; // Ignore messages if component unmounted
+          
+          const { data: msg } = event;
 
-        if (msg.type === 'partial' && msg.payload) {
-          // Merge partials into current results to enable incremental UI updates
-          setResults(prev => {
-            const base: AnalyticsResults = prev || {
-              patterns: [],
-              correlations: [],
-              environmentalCorrelations: [],
-              predictiveInsights: [],
-              anomalies: [],
-              insights: [],
-              cacheKey: msg.cacheKey,
-            };
-            const merged: AnalyticsResults = {
-              ...base,
-              ...msg.payload,
-              environmentalCorrelations: msg.payload.environmentalCorrelations || base.environmentalCorrelations || [],
-              cacheKey: msg.cacheKey || base.cacheKey,
-            };
-            return merged;
-          });
-          setError(null);
-          // Re-arm watchdog for next step
-          const timeoutMs = Math.max(15000, 3000);
-          watchdogRef.current = setTimeout(() => {
-            diagnostics.logWorkerTimeout('analytics', timeoutMs);
-            setError('Worker timeout after partial update.');
-            setIsAnalyzing(false);
-          }, timeoutMs);
-          return;
-        }
-
-        if (msg.type === 'complete' && msg.payload) {
-          const resultsWithDefaults: AnalyticsResults = {
-            ...msg.payload,
-            environmentalCorrelations: msg.payload.environmentalCorrelations || [],
-          } as AnalyticsResults;
-
-          const tags = extractTagsFromData(resultsWithDefaults);
-          if (resultsWithDefaults.cacheKey) {
-            cache.set(resultsWithDefaults.cacheKey, resultsWithDefaults, tags);
+          // Any message resets watchdog (heartbeat)
+          if (watchdogRef.current) {
+            clearTimeout(watchdogRef.current);
+            watchdogRef.current = null;
           }
 
-          setResults(resultsWithDefaults);
-          setError(null);
-          setIsAnalyzing(false);
-          logger.debug('[useAnalyticsWorker] Received complete results from worker', { 
-            cacheKey: resultsWithDefaults.cacheKey,
-            patternsCount: resultsWithDefaults.patterns?.length || 0,
-            insightsCount: resultsWithDefaults.insights?.length || 0,
-            chartsUpdated: msg.chartsUpdated,
-          });
-          return;
-        }
-      };
+          if (msg.type === 'progress') {
+            // Re-arm watchdog on heartbeat, keep analyzing true
+            setIsAnalyzing(true);
+            const timeoutMs = Math.max(15000, 3000);
+            watchdogRef.current = setTimeout(() => {
+              if (!isMounted) return;
+              diagnostics.logWorkerTimeout('analytics', timeoutMs);
+              setError('Worker timeout during progress.');
+              setIsAnalyzing(false);
+            }, timeoutMs);
+            return;
+          }
 
-      // Set up error handler for worker failures
-      worker.onerror = async (error: ErrorEvent) => {
-        logger.error('[useAnalyticsWorker] Worker runtime error, switching to fallback', error);
+          if (msg.type === 'error') {
+            logger.error('[useAnalyticsWorker] Worker error', msg.error);
+            setError(msg.error || 'Unknown worker error');
+            setIsAnalyzing(false);
+            return;
+          }
+
+          if (msg.type === 'partial' && msg.payload) {
+            // Merge partials into current results to enable incremental UI updates
+            setResults(prev => {
+              const base: AnalyticsResults = prev || {
+                patterns: [],
+                correlations: [],
+                environmentalCorrelations: [],
+                predictiveInsights: [],
+                anomalies: [],
+                insights: [],
+                cacheKey: msg.cacheKey,
+              };
+              const merged: AnalyticsResults = {
+                ...base,
+                ...msg.payload,
+                environmentalCorrelations: msg.payload.environmentalCorrelations || base.environmentalCorrelations || [],
+                cacheKey: msg.cacheKey || base.cacheKey,
+              };
+              return merged;
+            });
+            setError(null);
+            // Re-arm watchdog for next step
+            const timeoutMs = Math.max(15000, 3000);
+            watchdogRef.current = setTimeout(() => {
+              if (!isMounted) return;
+              diagnostics.logWorkerTimeout('analytics', timeoutMs);
+              setError('Worker timeout after partial update.');
+              setIsAnalyzing(false);
+            }, timeoutMs);
+            return;
+          }
+
+          if (msg.type === 'complete' && msg.payload) {
+            const resultsWithDefaults: AnalyticsResults = {
+              ...msg.payload,
+              environmentalCorrelations: msg.payload.environmentalCorrelations || [],
+            } as AnalyticsResults;
+
+            const tags = extractTagsFromData(resultsWithDefaults);
+            if (resultsWithDefaults.cacheKey) {
+              cache.set(resultsWithDefaults.cacheKey, resultsWithDefaults, tags);
+            }
+
+            setResults(resultsWithDefaults);
+            setError(null);
+            setIsAnalyzing(false);
+            logger.debug('[useAnalyticsWorker] Received complete results from worker', { 
+              cacheKey: resultsWithDefaults.cacheKey,
+              patternsCount: resultsWithDefaults.patterns?.length || 0,
+              insightsCount: resultsWithDefaults.insights?.length || 0,
+              chartsUpdated: msg.chartsUpdated,
+            });
+            return;
+          }
+        };
+
+        // Set up error handler for worker failures
+        worker.onerror = async (error: ErrorEvent) => {
+          if (!isMounted) return;
+          
+          logger.error('[useAnalyticsWorker] Worker runtime error, switching to fallback', error);
+          
+          // Clear watchdog timer
+          if (watchdogRef.current) {
+            clearTimeout(watchdogRef.current);
+            watchdogRef.current = null;
+          }
+          
+          // Terminate the failed worker and set to null to trigger fallback
+          if (workerRef.current) {
+            workerRef.current.terminate();
+            workerRef.current = null;
+          }
+          
+          // If we have pending analysis, process with fallback
+          // This ensures we don't lose the current analysis request
+          setError('Analytics worker encountered an error. Switching to fallback mode.');
+          
+          // Note: The next call to runAnalysis will automatically use the fallback
+          // since workerRef.current is now null
+        };
         
-        // Clear watchdog timer
-        if (watchdogRef.current) {
-          clearTimeout(watchdogRef.current);
-          watchdogRef.current = null;
+        // Only assign if still mounted
+        if (isMounted) {
+          workerRef.current = worker;
+          logger.info('[useAnalyticsWorker] Analytics worker initialized successfully');
+        } else {
+          // Clean up if component unmounted during initialization
+          worker.terminate();
         }
-        
-        // Terminate the failed worker and set to null to trigger fallback
-        if (workerRef.current) {
-          workerRef.current.terminate();
+      } catch (error) {
+        // If worker initialization fails, log and use fallback mode
+        if (isMounted) {
+          logger.error('[useAnalyticsWorker] Failed to initialize worker', error);
           workerRef.current = null;
         }
-        
-        // If we have pending analysis, process with fallback
-        // This ensures we don't lose the current analysis request
-        setError('Analytics worker encountered an error. Switching to fallback mode.');
-        
-        // Note: The next call to runAnalysis will automatically use the fallback
-        // since workerRef.current is now null
-      };
-
-      logger.info('[useAnalyticsWorker] Analytics worker initialized successfully');
-    } catch (error) {
-      // If worker initialization fails, log and use fallback mode
-      logger.error('[useAnalyticsWorker] Failed to initialize worker', error);
-      workerRef.current = null;
-    }
+      }
+    };
+    
+    initializeWorker();
 
     // Cleanup function to properly terminate worker on unmount
     return () => {
+      isMounted = false;
+      
       if (workerRef.current) {
         logger.debug('[useAnalyticsWorker] Terminating analytics worker');
         workerRef.current.terminate();
@@ -232,6 +274,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
       }
       if (idleCallbackRef.current) {
         cancelIdleCallback(idleCallbackRef.current);
+        idleCallbackRef.current = null;
       }
       if (watchdogRef.current) {
         clearTimeout(watchdogRef.current);

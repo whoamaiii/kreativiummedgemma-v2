@@ -1,6 +1,7 @@
 // Enhanced mock data seeding utilities with realistic variation
 import { Student, TrackingEntry, EmotionEntry, SensoryEntry, EnvironmentalEntry } from "@/types/student";
 import { dataStorage } from "./dataStorage";
+import { POC_MODE } from "./env";
 import { logger } from "./logger";
 
 type TimeOfDay = 'morning' | 'afternoon' | 'evening';
@@ -48,16 +49,29 @@ const ENVIRONMENTS = ['classroom', 'playground', 'lunchroom', 'hallway', 'home',
 type ClassroomActivity = 'instruction' | 'transition' | 'free-time' | 'testing' | 'group-work';
 const CLASSROOM_ACTIVITIES: ClassroomActivity[] = ['instruction', 'transition', 'free-time', 'testing', 'group-work'];
 
+const seededRand = (() => {
+  let seed = 1337;
+  const rand = () => {
+    // xorshift32
+    seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5;
+    return (seed >>> 0) / 0xFFFFFFFF;
+  };
+  return { setSeed: (s: number) => { seed = s; }, rand };
+})();
+
 function randomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  const r = POC_MODE ? seededRand.rand() : Math.random();
+  return Math.floor(r * (max - min + 1)) + min;
 }
 
 function randomFloat(min: number, max: number): number {
-  return Math.random() * (max - min) + min;
+  const r = POC_MODE ? seededRand.rand() : Math.random();
+  return r * (max - min) + min;
 }
 
 function pickOne<T>(arr: readonly T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
+  const r = POC_MODE ? seededRand.rand() : Math.random();
+  return arr[Math.floor(r * arr.length)];
 }
 
 function pickSome<T>(arr: readonly T[], countRange: [number, number]): T[] {
@@ -183,6 +197,11 @@ export const seedMinimalDemoData = async (studentId: string, opts?: Partial<Seed
   try {
     const options: SeedOptions = { ...DEFAULT_SEED_OPTIONS, ...(opts || {}) };
     const now = new Date();
+    if (POC_MODE) {
+      // Stabilize randomness per session for consistent demo outputs
+      const hash = Array.from(studentId).reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) | 0, 0) ^ now.getFullYear();
+      seededRand.setSeed(0xDEADBEEF ^ hash);
+    }
 
     const student: Student = {
       id: studentId,

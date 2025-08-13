@@ -89,18 +89,34 @@ export const TimelineVisualization: React.FC<TimelineVisualizationProps> = ({
     anomalies: true
   });
 
-  // Calculate dimensions on mount and resize
+  // Calculate dimensions on mount and resize with throttling
   useEffect(() => {
+    let resizeTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    
     const updateDimensions = () => {
       if (containerRef.current) {
         const { width, height } = containerRef.current.getBoundingClientRect();
         setDimensions({ width: width - 40, height: height - 200 });
       }
     };
+    
+    // Throttled resize handler to prevent excessive re-renders
+    const throttledUpdateDimensions = () => {
+      if (resizeTimeoutId) {
+        clearTimeout(resizeTimeoutId);
+      }
+      resizeTimeoutId = setTimeout(updateDimensions, 100);
+    };
 
     updateDimensions();
-    window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
+    window.addEventListener('resize', throttledUpdateDimensions, { passive: true });
+    
+    return () => {
+      window.removeEventListener('resize', throttledUpdateDimensions);
+      if (resizeTimeoutId) {
+        clearTimeout(resizeTimeoutId);
+      }
+    };
   }, []);
 
   // Process data into timeline events

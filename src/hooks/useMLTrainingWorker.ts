@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback, useState, useEffect } from 'react';
 import { TrackingEntry } from '@/types/student';
 import { ModelType, mlModels } from '@/lib/mlModels';
 import MLTrainingWorker from '@/workers/mlTraining.worker?worker';
@@ -28,6 +28,7 @@ interface UseMLTrainingWorkerReturn {
 
 export const useMLTrainingWorker = (): UseMLTrainingWorkerReturn => {
   const workerRef = useRef<Worker | null>(null);
+  const isMountedRef = useRef(true);
   const [trainingStatus, setTrainingStatus] = useState<TrainingStatus>({
     isTraining: false
   });
@@ -46,6 +47,8 @@ export const useMLTrainingWorker = (): UseMLTrainingWorkerReturn => {
     const worker = new MLTrainingWorker();
 
     worker.onmessage = async (e: MessageEvent<TrainingProgress | TrainingResult>) => {
+      if (!isMountedRef.current) return; // Guard against race conditions
+      
       const message = e.data;
 
       if (message.type === 'progress') {
@@ -151,6 +154,18 @@ export const useMLTrainingWorker = (): UseMLTrainingWorkerReturn => {
         error: 'Training cancelled'
       });
     }
+  }, []);
+
+  // Cleanup effect to ensure worker is terminated on unmount
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      if (workerRef.current) {
+        logger.debug('[useMLTrainingWorker] Terminating ML training worker on unmount');
+        workerRef.current.terminate();
+        workerRef.current = null;
+      }
+    };
   }, []);
 
   return {

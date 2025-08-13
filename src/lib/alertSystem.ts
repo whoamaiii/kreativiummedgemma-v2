@@ -156,7 +156,10 @@ class AlertSystemManager {
       // Use safe storage to handle quota issues
       storageUtils.safeSetItem(this.STORAGE_KEY, JSON.stringify(historyToSave));
     } catch (error) {
-      logger.error('Error saving alerts:', error);
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error saving alerts:', err);
+      // Actionable hint for POC/demo users
+      // Suggest reducing frequency or clearing older alerts
       // If we still can't save, try aggressive cleanup
       this.cleanupOldAlerts(7); // Keep only last 7 days
       
@@ -169,8 +172,10 @@ class AlertSystemManager {
           resolved: false
         }));
         storageUtils.safeSetItem(this.STORAGE_KEY, JSON.stringify([...minimalHistory, ...newHistoryEntries]));
-      } catch (retryError) {
-        logger.error('Failed to save alerts even after cleanup:', retryError);
+       } catch (retryError) {
+        const err2 = retryError instanceof Error ? retryError : new Error(String(retryError));
+        logger.error('Failed to save alerts even after cleanup:', err2);
+        // In demo mode, we avoid spamming errors and fail silently after attempt
       }
     }
   }
@@ -196,7 +201,8 @@ class AlertSystemManager {
         resolvedAt: entry.resolvedAt ? new Date(entry.resolvedAt) : undefined
       }));
     } catch (error) {
-      logger.error('Error loading alerts:', error);
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error loading alerts:', err);
       return [];
     }
   }
@@ -244,7 +250,8 @@ class AlertSystemManager {
       );
       storageUtils.safeSetItem(this.STORAGE_KEY, JSON.stringify(updatedAlerts));
     } catch (error) {
-      logger.error('Error marking alert as viewed:', error);
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error marking alert as viewed:', err);
     }
   }
 
@@ -271,7 +278,8 @@ class AlertSystemManager {
       );
       storageUtils.safeSetItem(this.STORAGE_KEY, JSON.stringify(updatedAlerts));
     } catch (error) {
-      logger.error('Error resolving alert:', error);
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error resolving alert:', err);
     }
   }
 
@@ -286,7 +294,8 @@ class AlertSystemManager {
       const filteredAlerts = alerts.filter(entry => entry.alert.id !== alertId);
       storageUtils.safeSetItem(this.STORAGE_KEY, JSON.stringify(filteredAlerts));
     } catch (error) {
-      logger.error('Error deleting alert:', error);
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error deleting alert:', err);
     }
   }
 
@@ -302,7 +311,8 @@ class AlertSystemManager {
       
       return { ...this.defaultSettings, ...JSON.parse(stored) };
     } catch (error) {
-      logger.error('Error loading alert settings:', error);
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error loading alert settings:', err);
       return this.defaultSettings;
     }
   }
@@ -318,7 +328,8 @@ class AlertSystemManager {
       const updatedSettings = { ...currentSettings, ...newSettings };
       storageUtils.safeSetItem(this.SETTINGS_KEY, JSON.stringify(updatedSettings));
     } catch (error) {
-      logger.error('Error updating alert settings:', error);
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error updating alert settings:', err);
     }
   }
 
@@ -378,7 +389,8 @@ class AlertSystemManager {
       storageUtils.safeSetItem(this.STORAGE_KEY, JSON.stringify(filteredAlerts));
       logger.info(`Cleaned up ${alerts.length - filteredAlerts.length} old alerts`);
     } catch (error) {
-      logger.error('Error cleaning up old alerts:', error);
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error cleaning up old alerts:', err);
     }
   }
 

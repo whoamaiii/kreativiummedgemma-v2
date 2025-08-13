@@ -1,5 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import { App } from './App.tsx'
+import { logger, LogLevel } from '@/lib/logger'
+import { POC_MODE } from '@/lib/env'
 import './index.css'
 import i18n from './i18n'
 import { I18nextProvider } from 'react-i18next'
@@ -9,3 +11,8 @@ createRoot(document.getElementById("root")!).render(
     <App />
   </I18nextProvider>
 );
+
+// Configure logger for POC mode to minimize console noise
+if (POC_MODE) {
+  logger.configure({ level: LogLevel.ERROR, enableConsole: true });
+}

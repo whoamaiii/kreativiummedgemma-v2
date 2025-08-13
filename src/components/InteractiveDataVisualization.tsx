@@ -1,9 +1,10 @@
-import React, { useMemo, useRef, useCallback } from "react";
+import React, { useMemo, useRef, useCallback, memo } from "react";
 // Unused Card components removed after refactoring
 import { EmotionEntry, SensoryEntry, TrackingEntry, Student } from "@/types/student";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { TeacherInsightsPanel } from '@/components/analysis/TeacherInsightsPanel';
-import { Visualization3D } from './Visualization3D';
+import { LazyVisualization3D } from '@/components/lazy/LazyVisualization3D';
+import { POC_MODE } from '@/lib/env';
 import { TimelineVisualization } from './TimelineVisualization';
 import { useRealtimeData } from '@/hooks/useRealtimeData';
 import { useVisualizationState, VisualizationType } from '@/hooks/useVisualizationState';
@@ -27,12 +28,16 @@ interface InteractiveDataVisualizationProps {
   studentName: string;
 }
 
-export const InteractiveDataVisualization = ({ 
+// Move static data outside component to prevent recreation
+const POSITIVE_EMOTIONS = ['happy', 'calm', 'focused', 'excited', 'proud'] as const;
+const NEGATIVE_EMOTIONS = ['sad', 'angry', 'anxious', 'frustrated', 'overwhelmed'] as const;
+
+export const InteractiveDataVisualization = memo<InteractiveDataVisualizationProps>(({ 
   emotions: initialEmotions, 
   sensoryInputs: initialSensoryInputs, 
   trackingEntries: initialTrackingEntries, 
   studentName 
-}: InteractiveDataVisualizationProps) => {
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = React.useState(false);
 
@@ -104,9 +109,9 @@ export const InteractiveDataVisualization = ({
         const data = dataMap.get(date)!;
         data.emotionCount++;
         data.avgEmotionIntensity = ((data.avgEmotionIntensity * (data.emotionCount - 1)) + emotion.intensity) / data.emotionCount;
-        if (['happy', 'calm', 'focused', 'excited', 'proud'].includes(emotion.emotion.toLowerCase())) {
+        if (POSITIVE_EMOTIONS.includes(emotion.emotion.toLowerCase() as any)) {
           data.positiveEmotions++;
-        } else if (['sad', 'angry', 'anxious', 'frustrated', 'overwhelmed'].includes(emotion.emotion.toLowerCase())) {
+        } else if (NEGATIVE_EMOTIONS.includes(emotion.emotion.toLowerCase() as any)) {
           data.negativeEmotions++;
         }
       });
@@ -197,7 +202,8 @@ export const InteractiveDataVisualization = ({
       case 'patterns':
         return <PatternAnalysisView {...analysisData} highlightState={highlightState} handleHighlight={() => {}} filteredData={filteredData} />;
       case '3d':
-        return <Visualization3D emotions={filteredData.emotions} sensoryInputs={filteredData.sensoryInputs} trackingEntries={filteredData.trackingEntries} />;
+        if (POC_MODE) return null;
+        return <LazyVisualization3D emotions={filteredData.emotions} sensoryInputs={filteredData.sensoryInputs} trackingEntries={filteredData.trackingEntries} />;
       case 'timeline':
         return <TimelineVisualization emotions={filteredData.emotions} sensoryInputs={filteredData.sensoryInputs} trackingEntries={filteredData.trackingEntries} anomalies={analysisData.anomalies.map(a => ({ timestamp: a.timestamp, type: a.type, severity: a.severity }))} onTimeRangeChange={(start, end) => visualizationState.setFilterCriteria(prev => ({ ...prev, dateRange: { start, end } }))} realtime={filterCriteria.realtime} />;
       default:
@@ -249,4 +255,21 @@ export const InteractiveDataVisualization = ({
       </div>
     </ErrorBoundary>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison for better memoization - avoid unnecessary rerenders
+  return (
+    prevProps.studentName === nextProps.studentName &&
+    prevProps.emotions.length === nextProps.emotions.length &&
+    prevProps.sensoryInputs.length === nextProps.sensoryInputs.length &&
+    prevProps.trackingEntries.length === nextProps.trackingEntries.length &&
+    // Check timestamp of first entries to detect data changes
+    (prevProps.emotions.length === 0 || nextProps.emotions.length === 0 ||
+     prevProps.emotions[0]?.timestamp?.getTime() === nextProps.emotions[0]?.timestamp?.getTime()) &&
+    (prevProps.sensoryInputs.length === 0 || nextProps.sensoryInputs.length === 0 ||
+     prevProps.sensoryInputs[0]?.timestamp?.getTime() === nextProps.sensoryInputs[0]?.timestamp?.getTime()) &&
+    (prevProps.trackingEntries.length === 0 || nextProps.trackingEntries.length === 0 ||
+     prevProps.trackingEntries[0]?.timestamp?.getTime() === nextProps.trackingEntries[0]?.timestamp?.getTime())
+  );
+});
+
+InteractiveDataVisualization.displayName = 'InteractiveDataVisualization';
