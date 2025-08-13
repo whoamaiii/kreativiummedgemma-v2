@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Lint only staged files for speed; fail on warnings for UI literals/i18n
+npm run precommit:lint
+

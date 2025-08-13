@@ -79,7 +79,7 @@ export const AnalyticsDashboard = memo(({
   const visualizationRef = useRef<HTMLDivElement>(null);
   
   // Always call hook at top level - hooks cannot be inside try-catch
-  const { results, isAnalyzing, error, runAnalysis, invalidateCacheForStudent } = useAnalyticsWorker();
+  const { results, isAnalyzing, error, runAnalysis, invalidateCacheForStudent } = useAnalyticsWorker({ precomputeOnIdle: false });
 
   // Effect to trigger the analysis in the worker whenever the filtered data changes.
   useEffect(() => {
@@ -219,6 +219,15 @@ export const AnalyticsDashboard = memo(({
     return 'text-orange-600';
   };
 
+  // Track active tab for diagnostics and to ensure controlled behavior
+  const [activeTab, setActiveTab] = useState<string>('visualizations');
+
+  useEffect(() => {
+    try {
+      logger.debug('[AnalyticsDashboard] Active tab changed', { activeTab });
+    } catch {}
+  }, [activeTab]);
+
   return (
     <ErrorBoundary>
       <div className="space-y-6">
@@ -322,9 +331,9 @@ export const AnalyticsDashboard = memo(({
       </div>
 
       {/* Main tabbed interface for displaying detailed analysis results. */}
-      <Tabs defaultValue="visualizations" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="visualizations">Charts</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-4 relative z-10">
+          <TabsTrigger value="visualizations" aria-label="Charts tab">Charts</TabsTrigger>
           <TabsTrigger value="patterns">Patterns</TabsTrigger>
           <TabsTrigger value="correlations" data-testid="dashboard-correlations-tab">Correlations</TabsTrigger>
           <TabsTrigger value="alerts">Alerts</TabsTrigger>

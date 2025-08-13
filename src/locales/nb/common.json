@@ -67,5 +67,22 @@
   "error": {
     "title": "Noe gikk galt",
     "description": "En uventet feil oppstod. Du kan prøve igjen eller laste siden på nytt."
-  }
+  },
+  "loading_student_data": "Laster elevdata...",
+  "student_not_found": "Elev ikke funnet.",
+  "load_mock_data": "Last inn demodata",
+  "mock_data_title": "Demodata for testing og analyse",
+  "goals_title": "Mål og målstyring",
+  "goals_description": "Administrer og følg opp {{name}}s IEP-mål",
+  "progress_title": "Fremgang og utvikling",
+  "progress_description": "Analyser {{name}}s utvikling over tid",
+  "reports_title": "Rapporter og eksport",
+  "reports_description": "Generer rapporter og eksporter data for {{name}}",
+  "export_pdf": "Eksporter PDF",
+  "export_csv": "Eksporter CSV",
+  "export_json": "Eksporter JSON",
+  "create_backup": "Opprett sikkerhetskopi",
+  "enhanced_tracking_title": "Forbedrede sporingsverktøy",
+  "enhanced_tracking_description": "Avansert datainnsamling og smarte inntastingsverktøy for {{name}}",
+  "enhanced_tracking_coming_soon": "Forbedrede sporingsverktøy kommer snart"
 }

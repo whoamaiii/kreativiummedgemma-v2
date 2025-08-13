@@ -23,11 +23,22 @@ class DiagnosticLogger {
   private static instance: DiagnosticLogger;
   private activeTimers = new Set<number>();
   private activeListeners = new Map<string, number>();
-  private diagnosticMode = true;
+  private diagnosticMode = false;
 
   private constructor() {
-    // Track performance metrics
-    if (typeof window !== 'undefined' && 'performance' in window) {
+    // Determine initial diagnostic mode from URL or localStorage (opt-in only)
+    if (typeof window !== 'undefined') {
+      try {
+        const urlFlag = new URLSearchParams(window.location.search).get('diag') === '1';
+        const lsFlag = (window.localStorage.getItem('diagnostics') || '').toLowerCase() === 'on';
+        this.diagnosticMode = Boolean(urlFlag || lsFlag);
+      } catch {
+        this.diagnosticMode = false;
+      }
+    }
+
+    // Track performance metrics only when diagnostics are enabled
+    if (this.diagnosticMode && typeof window !== 'undefined' && 'performance' in window) {
       this.startPerformanceMonitoring();
     }
   }
@@ -58,6 +69,10 @@ class DiagnosticLogger {
         }
       }
     }, 5000);
+  }
+
+  public isEnabled() {
+    return this.diagnosticMode;
   }
 
   logComponentMount(componentName: string) {
@@ -124,6 +139,7 @@ class DiagnosticLogger {
   }
 
   trackTimer(timerId: number) {
+    if (!this.diagnosticMode) return;
     this.activeTimers.add(timerId);
     logger.debug('[DIAGNOSTIC] Timer Created', { 
       timerId, 
@@ -132,6 +148,7 @@ class DiagnosticLogger {
   }
 
   untrackTimer(timerId: number) {
+    if (!this.diagnosticMode) return;
     this.activeTimers.delete(timerId);
     logger.debug('[DIAGNOSTIC] Timer Cleared', { 
       timerId, 
@@ -140,6 +157,7 @@ class DiagnosticLogger {
   }
 
   trackEventListener(element: string, event: string) {
+    if (!this.diagnosticMode) return;
     const key = `${element}-${event}`;
     const current = this.activeListeners.get(key) || 0;
     this.activeListeners.set(key, current + 1);
@@ -152,6 +170,7 @@ class DiagnosticLogger {
   }
 
   untrackEventListener(element: string, event: string) {
+    if (!this.diagnosticMode) return;
     const key = `${element}-${event}`;
     const current = this.activeListeners.get(key) || 0;
     if (current > 0) {
@@ -205,13 +224,14 @@ class DiagnosticLogger {
   setDiagnosticMode(enabled: boolean) {
     this.diagnosticMode = enabled;
     logger.info(`[DIAGNOSTIC] Diagnostic mode ${enabled ? 'enabled' : 'disabled'}`);
+    // Note: we intentionally do not re-wrap timers dynamically here to avoid breaking existing references
   }
 }
 
 export const diagnostics = DiagnosticLogger.getInstance();
 
-// Wrap setTimeout and clearTimeout to track timers
-if (typeof window !== 'undefined') {
+// Wrap setTimeout and clearTimeout to track timers ONLY when diagnostics are enabled
+if (typeof window !== 'undefined' && diagnostics.isEnabled()) {
   const originalSetTimeout = window.setTimeout;
   const originalClearTimeout = window.clearTimeout;
 
@@ -219,10 +239,10 @@ if (typeof window !== 'undefined') {
     const timerId = originalSetTimeout.apply(window, args as any);
     diagnostics.trackTimer(timerId as any);
     return timerId;
-  };
+  } as typeof window.setTimeout;
 
   window.clearTimeout = function(timerId: number) {
     diagnostics.untrackTimer(timerId);
     return originalClearTimeout.call(window, timerId);
-  };
+  } as typeof window.clearTimeout;
 }

@@ -67,5 +67,22 @@
   "error": {
     "title": "Something went wrong",
     "description": "An unexpected error occurred. You can try again or reload the page."
-  }
+  },
+  "loading_student_data": "Loading student data...",
+  "student_not_found": "Student not found.",
+  "load_mock_data": "Load Mock Data",
+  "mock_data_title": "Mock Data for Testing & Analysis",
+  "goals_title": "Goals and Goal Management",
+  "goals_description": "Manage and track {{name}}'s IEP goals",
+  "progress_title": "Progress and Development",
+  "progress_description": "Analyze {{name}}'s development over time",
+  "reports_title": "Reports and Export",
+  "reports_description": "Generate reports and export data for {{name}}",
+  "export_pdf": "Export PDF",
+  "export_csv": "Export CSV",
+  "export_json": "Export JSON",
+  "create_backup": "Create Backup",
+  "enhanced_tracking_title": "Enhanced Tracking Tools",
+  "enhanced_tracking_description": "Advanced data collection and smart entry tools for {{name}}",
+  "enhanced_tracking_coming_soon": "Enhanced tracking tools coming soon"
 }

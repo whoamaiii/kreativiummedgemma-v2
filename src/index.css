@@ -180,6 +180,9 @@ All colors MUST be HSL.
     animation: pulse-glow 5s infinite alternate;
   }
 
+  /* Ensure no decorative overlay blocks interactions over tab bars or controls */
+  .overlay-safe { pointer-events: none; }
+
   @keyframes pulse-glow {
     from { opacity: 0.8; transform: translateX(-50%) scale(1); }
     to { opacity: 1; transform: translateX(-50%) scale(1.05); }
