@@ -12,5 +12,6 @@ export default defineConfig({
     setupFiles: ['tests/setup.polyfills.ts', 'src/setupTests.ts', 'tests/setup.ts'],
     // Use jsdom for React component testing
     environment: 'jsdom',
+    exclude: ['node_modules/**', 'tests/e2e/**'],
   },
 });
