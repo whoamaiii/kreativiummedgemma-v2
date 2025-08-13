@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/sidebar';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Student } from '@/types/student';
+import { logger } from '@/lib/logger';
 
 interface StudentProfileSidebarProps {
   student: Student;
@@ -84,7 +85,7 @@ export function StudentProfileSidebar({
   const isActive = (section: string) => activeSection === section;
 
   return (
-    <Sidebar className={`${state === "collapsed" ? "w-14" : "w-64"} bg-card/95 border-border backdrop-blur-sm`}>
+    <Sidebar className={`${state === "collapsed" ? "w-14" : "w-64"} bg-card/95 border-border backdrop-blur-sm z-50`}>
       <SidebarContent className="bg-transparent">
         {/* Student Header */}
         <div className={`p-4 border-b border-border/20 bg-card/50 backdrop-blur-sm ${state === "collapsed" ? 'px-2' : ''}`}>
@@ -113,7 +114,10 @@ export function StudentProfileSidebar({
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.section}>
                   <SidebarMenuButton
-                    onClick={() => onSectionChange(item.section)}
+                    onClick={() => {
+                      try { logger.debug('[UI] Sidebar nav click', { section: item.section }); } catch {}
+                      onSectionChange(item.section);
+                    }}
                     className={`cursor-pointer mx-2 rounded-lg transition-all duration-200 ${
                       isActive(item.section) 
                         ? 'bg-primary text-primary-foreground shadow-lg' 
@@ -141,7 +145,10 @@ export function StudentProfileSidebar({
               {toolItems.map((item) => (
                 <SidebarMenuItem key={item.section}>
                   <SidebarMenuButton
-                    onClick={() => onSectionChange(item.section)}
+                    onClick={() => {
+                      try { logger.debug('[UI] Sidebar tools click', { section: item.section }); } catch {}
+                      onSectionChange(item.section);
+                    }}
                     className={`cursor-pointer mx-2 rounded-lg transition-all duration-200 ${
                       isActive(item.section) 
                         ? 'bg-primary text-primary-foreground shadow-lg' 
@@ -168,7 +175,10 @@ export function StudentProfileSidebar({
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  onClick={() => onSectionChange('testing')}
+                  onClick={() => {
+                    try { logger.debug('[UI] Sidebar testing click', { section: 'testing' }); } catch {}
+                    onSectionChange('testing');
+                  }}
                   className={`cursor-pointer mx-2 rounded-lg transition-all duration-200 ${
                     isActive('testing') 
                       ? 'bg-primary text-primary-foreground shadow-lg' 

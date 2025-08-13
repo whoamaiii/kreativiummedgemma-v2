@@ -4,41 +4,50 @@ import { useCallback, useMemo } from 'react';
 // Type-safe translation hook with Norwegian context
 export const useTranslation = (namespace?: string) => {
   const { t, i18n } = useI18nTranslation(namespace);
-  
+
   const changeLanguage = useCallback((lng: 'nb' | 'en') => {
     i18n.changeLanguage(lng);
     localStorage.setItem('sensoryTracker_language', lng);
   }, [i18n]);
-  
-  const currentLanguage = i18n.language as 'nb' | 'en';
-  
+
+  const currentLanguage = (i18n.language as 'nb' | 'en') || 'nb';
+  const locale = currentLanguage === 'nb' ? 'nb-NO' : 'en-US';
+
   // Helper functions for common translations
-  const tCommon = useCallback((key: string, options?: any) => t(key, { ns: 'common', ...options }), [t]);
-  const tDashboard = useCallback((key: string, options?: any) => t(key, { ns: 'dashboard', ...options }), [t]);
-  const tStudent = useCallback((key: string, options?: any) => t(key, { ns: 'student', ...options }), [t]);
-  const tTracking = useCallback((key: string, options?: any) => t(key, { ns: 'tracking', ...options }), [t]);
-  const tAnalytics = useCallback((key: string, options?: any) => t(key, { ns: 'analytics', ...options }), [t]);
-  const tSettings = useCallback((key: string, options?: any) => t(key, { ns: 'settings', ...options }), [t]);
-  
-  // Norwegian-specific date formatting
-  const formatDate = useCallback((date: Date) => {
-    return new Intl.DateTimeFormat(currentLanguage === 'nb' ? 'nb-NO' : 'en-US', {
+  const tCommon = useCallback((key: string, options?: Record<string, unknown>) => t(key, { ns: 'common', ...options }), [t]);
+  const tDashboard = useCallback((key: string, options?: Record<string, unknown>) => t(key, { ns: 'dashboard', ...options }), [t]);
+  const tStudent = useCallback((key: string, options?: Record<string, unknown>) => t(key, { ns: 'student', ...options }), [t]);
+  const tTracking = useCallback((key: string, options?: Record<string, unknown>) => t(key, { ns: 'tracking', ...options }), [t]);
+  const tAnalytics = useCallback((key: string, options?: Record<string, unknown>) => t(key, { ns: 'analytics', ...options }), [t]);
+  const tSettings = useCallback((key: string, options?: Record<string, unknown>) => t(key, { ns: 'settings', ...options }), [t]);
+
+  // Locale-aware date/time formatting
+  const formatDate = useCallback((date: Date): string => {
+    return new Intl.DateTimeFormat(locale, {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
     }).format(date);
-  }, [currentLanguage]);
-  
-  const formatDateTime = useCallback((date: Date) => {
-    return new Intl.DateTimeFormat(currentLanguage === 'nb' ? 'nb-NO' : 'en-US', {
+  }, [locale]);
+
+  const formatDateTime = useCallback((date: Date): string => {
+    return new Intl.DateTimeFormat(locale, {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
     }).format(date);
-  }, [currentLanguage]);
-  
+  }, [locale]);
+
+  const formatNumber = useCallback((value: number, options?: Intl.NumberFormatOptions): string => {
+    return new Intl.NumberFormat(locale, options).format(value);
+  }, [locale]);
+
+  const formatCurrency = useCallback((value: number, currency: 'NOK' | 'USD' = currentLanguage === 'nb' ? 'NOK' : 'USD'): string => {
+    return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(value);
+  }, [locale, currentLanguage]);
+
   // Don't include i18n in deps as it can cause infinite loops
   return useMemo(() => ({
     t,
@@ -52,6 +61,8 @@ export const useTranslation = (namespace?: string) => {
     currentLanguage,
     formatDate,
     formatDateTime,
+    formatNumber,
+    formatCurrency,
     i18n,
-  }), [t, tCommon, tDashboard, tStudent, tTracking, tAnalytics, tSettings, changeLanguage, currentLanguage, formatDate, formatDateTime]);
+  }), [t, tCommon, tDashboard, tStudent, tTracking, tAnalytics, tSettings, changeLanguage, currentLanguage, formatDate, formatDateTime, formatNumber, formatCurrency]);
 };

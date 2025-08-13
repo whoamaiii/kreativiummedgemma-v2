@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useCallback, memo } from "react";
+import React, { useState, useEffect, useCallback, memo, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -16,7 +15,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useDataFiltering } from "@/hooks/useDataFiltering";
 import { useOptimizedInsights } from "@/hooks/useOptimizedInsights";
 import { useStudentData } from "@/hooks/useStudentData";
-import { Student, Goal, Insights } from "@/types/student";
+import { Insights } from "@/types/student";
 import { exportSystem } from "@/lib/exportSystem";
 import { downloadBlob } from "@/lib/utils";
 import { ArrowLeft, Download, Save, FileText, Calendar, Loader } from "lucide-react";
@@ -26,6 +25,8 @@ import { LanguageSettings } from "@/components/LanguageSettings";
 import { MockDataLoader } from "@/components/MockDataLoader";
 import { analyticsManager } from "@/lib/analyticsManager";
 import { logger } from "@/lib/logger";
+import { dataStorage } from "@/lib/dataStorage";
+import { seedMinimalDemoData } from "@/lib/mockData";
 
 /**
  * Memoized versions of section components to prevent unnecessary re-renders.
@@ -57,7 +58,7 @@ const MemoizedTestingToolsSection = memo(TestingToolsSection);
 const StudentProfile = () => {
   const { studentId } = useParams<{ studentId: string }>();
   const navigate = useNavigate();
-  const { tCommon } = useTranslation();
+  const { tCommon, t } = useTranslation();
 
   // DIAGNOSTIC: Mount parameters
   if (import.meta.env.DEV) {
@@ -97,6 +98,16 @@ const StudentProfile = () => {
 
   // State to control which profile section is currently visible.
   const [activeSection, setActiveSection] = useState('dashboard');
+  const handleSectionChange = useCallback((section: string) => {
+    try { logger.debug('[UI] Active section change', { from: activeSection, to: section }); } catch (e) {
+      // ignore
+    }
+    setActiveSection(section);
+  }, [activeSection]);
+  
+  // Ref to guard against duplicate seeding
+  const seedingRef = useRef(false);
+  const [, setIsSeedingData] = useState(false);
 
   // Hook for filtering tracking data by a selected date range.
   const { selectedRange, filteredData, handleRangeChange } = useDataFiltering(
@@ -114,6 +125,69 @@ const StudentProfile = () => {
   // State for storing and managing the loading of AI-generated insights.
   const [insights, setInsights] = useState<Insights | null>(null);
   const [isLoadingInsights, setIsLoadingInsights] = useState(false);
+
+  /**
+   * Auto-seed effect for mock student routes.
+   * When navigating to /student/mock_* and storage is empty, auto-create minimal demo data.
+   */
+  useEffect(() => {
+    const seedMockDataIfNeeded = async () => {
+      // Check if the route is a mock route
+      if (!studentId?.startsWith('mock_')) {
+        return;
+      }
+
+      // Prevent duplicate seeding using ref guard
+      if (seedingRef.current) {
+        return;
+      }
+
+      // Only auto-seed when:
+      // 1) storage is empty, OR
+      // 2) this specific mock student already exists but lacks sufficient data
+      const existingStudents = dataStorage.getStudents();
+      const hasAnyStudents = existingStudents.length > 0;
+      const mockStudentExists = !!dataStorage.getStudentById(studentId);
+      const existingEntriesForMock = dataStorage.getEntriesForStudent(studentId) || [];
+      const needsSeeding = !hasAnyStudents || (mockStudentExists && existingEntriesForMock.length < 8);
+      if (!needsSeeding) {
+        return;
+      }
+
+      // Set the guard to prevent re-runs
+      seedingRef.current = true;
+      setIsSeedingData(true);
+
+      try {
+        logger.info('Auto-seeding minimal demo data for mock route', { studentId });
+        
+        // Seed minimal demo data with the provided student ID
+        await seedMinimalDemoData(studentId);
+        
+        // Dispatch custom event to notify other components
+        window.dispatchEvent(new CustomEvent('mockDataLoaded'));
+        
+        // Show non-intrusive success message
+        toast.success('Demo data created successfully', {
+          description: 'Sample data has been generated for demonstration purposes',
+        });
+        
+        // Reload the data to show the newly created student
+        if (reloadData) {
+          reloadData();
+        }
+      } catch (error) {
+        logger.error('Failed to auto-seed mock data', { error, studentId });
+        toast.error('Failed to create demo data', {
+          description: 'Please try loading mock data manually',
+        });
+      } finally {
+        setIsSeedingData(false);
+      }
+    };
+
+    seedMockDataIfNeeded();
+  }, [studentId, reloadData]);
 
   // Effect to handle errors from the data fetching hook.
   useEffect(() => {
@@ -300,19 +374,13 @@ const StudentProfile = () => {
    * This function calls `reloadData` from the `useStudentData` hook to refresh the UI
    * without requiring a full page reload, providing a smoother user experience.
    */
-  const handleDataLoaded = useCallback(() => {
-    toast.success("Mock data loaded successfully!");
-    if (reloadData) {
-      reloadData();
-    }
-  }, [reloadData]);
 
   if (isLoadingStudent) {
     return (
       <div className="h-screen w-full flex items-center justify-center">
         <div className="flex items-center gap-2">
           <Loader className="h-5 w-5 animate-spin" />
-          <p className="text-muted-foreground">Loading student data...</p>
+          <p className="text-muted-foreground">{t('loading_student_data')}</p>
         </div>
       </div>
     );
@@ -322,7 +390,7 @@ const StudentProfile = () => {
     return (
       <div className="h-screen w-full flex items-center justify-center">
         <div className="flex items-center gap-2">
-          <p className="text-destructive">Student not found.</p>
+          <p className="text-destructive">{t('student_not_found')}</p>
         </div>
       </div>
     );
@@ -333,7 +401,7 @@ const StudentProfile = () => {
       <div className="h-screen w-full flex items-center justify-center">
         <div className="flex items-center gap-2">
           <Loader className="h-5 w-5 animate-spin" />
-          <p className="text-muted-foreground">Loading student data...</p>
+          <p className="text-muted-foreground">{t('loading_student_data')}</p>
         </div>
       </div>
     );
@@ -343,7 +411,7 @@ const StudentProfile = () => {
     return (
       <div className="h-screen w-full flex items-center justify-center">
         <div className="flex items-center gap-2">
-          <p className="text-destructive">Student not found.</p>
+          <p className="text-destructive">{t('student_not_found')}</p>
         </div>
       </div>
     );
@@ -355,10 +423,10 @@ const StudentProfile = () => {
         <StudentProfileSidebar
           student={student}
           activeSection={activeSection}
-          onSectionChange={setActiveSection}
+          onSectionChange={handleSectionChange}
         />
-        <main className="flex-1 overflow-auto">
-          <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
+        <main className="flex-1 overflow-auto relative z-0">
+          <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30">
             <div className="flex h-14 items-center justify-between px-6">
               <div className="flex items-center gap-3">
                 <SidebarTrigger />
@@ -372,12 +440,12 @@ const StudentProfile = () => {
                   <DialogTrigger asChild>
                     <Button variant="outline" size="sm" className="flex items-center justify-center group" aria-label="Open mock data loader">
                       <FileText className="h-4 w-4 mr-2 transition-transform group-hover:rotate-12" />
-                      Load Mock Data
+                      {t('load_mock_data')}
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
-                      <DialogTitle>Mock Data for Testing & Analysis</DialogTitle>
+                      <DialogTitle>{t('mock_data_title')}</DialogTitle>
                     </DialogHeader>
                     {/* The MockDataLoader component now uses events to trigger a data refresh, 
                         so it no longer needs a callback prop. */}
@@ -420,9 +488,9 @@ const StudentProfile = () => {
               {activeSection === 'goals' && (
                 <div className="space-y-6">
                   <div>
-                    <h2 className="text-2xl font-bold">Mål og målstyring</h2>
+                    <h2 className="text-2xl font-bold">{t('goals_title')}</h2>
                     <p className="text-muted-foreground">
-                      Administrer og følg opp {student.name}s IEP-mål
+                      {t('goals_description', { name: student.name })}
                     </p>
                   </div>
                   <MemoizedGoalManager student={student} onGoalUpdate={reloadGoals} />
@@ -431,9 +499,9 @@ const StudentProfile = () => {
               {activeSection === 'progress' && (
                  <div className="space-y-6">
                    <div>
-                     <h2 className="text-2xl font-bold">Fremgang og utvikling</h2>
+                     <h2 className="text-2xl font-bold">{t('progress_title')}</h2>
                      <p className="text-muted-foreground">
-                       Analyser {student.name}s utvikling over tid
+                       {t('progress_description', { name: student.name })}
                      </p>
                    </div>
                    <MemoizedProgressDashboard student={student} goals={goals} />
@@ -442,23 +510,23 @@ const StudentProfile = () => {
               {activeSection === 'reports' && (
                 <div className="space-y-6">
                   <div>
-                    <h2 className="text-2xl font-bold">Rapporter og eksport</h2>
+                    <h2 className="text-2xl font-bold">{t('reports_title')}</h2>
                     <p className="text-muted-foreground">
-                      Generer rapporter og eksporter data for {student.name}
+                      {t('reports_description', { name: student.name })}
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-3 p-4 bg-gradient-card rounded-lg border-0 shadow-soft">
                     <Button variant="outline" onClick={() => handleExportData('pdf')}>
-                      <FileText className="h-4 w-4 mr-2" />Eksporter PDF
+                      <FileText className="h-4 w-4 mr-2" />{t('export_pdf')}
                     </Button>
                     <Button variant="outline" onClick={() => handleExportData('csv')}>
-                      <Calendar className="h-4 w-4 mr-2" />Eksporter CSV
+                      <Calendar className="h-4 w-4 mr-2" />{t('export_csv')}
                     </Button>
                     <Button variant="outline" onClick={() => handleExportData('json')}>
-                      <Download className="h-4 w-4 mr-2" />Eksporter JSON
+                      <Download className="h-4 w-4 mr-2" />{t('export_json')}
                     </Button>
                     <Button variant="outline" onClick={handleBackupData}>
-                      <Save className="h-4 w-4 mr-2" />Opprett backup
+                      <Save className="h-4 w-4 mr-2" />{t('create_backup')}
                     </Button>
                   </div>
                   <ErrorBoundary>
@@ -487,13 +555,13 @@ const StudentProfile = () => {
               {activeSection === 'enhanced-tracking' && (
                   <div className="space-y-6">
                     <div>
-                      <h2 className="text-2xl font-bold">Enhanced Tracking Tools</h2>
+                      <h2 className="text-2xl font-bold">{t('enhanced_tracking_title')}</h2>
                       <p className="text-muted-foreground">
-                        Advanced data collection and smart entry tools for {student.name}
+                        {t('enhanced_tracking_description', { name: student.name })}
                       </p>
                     </div>
                     <div className="text-center py-8 text-muted-foreground">
-                      <p>Enhanced tracking tools coming soon</p>
+                      <p>{t('enhanced_tracking_coming_soon')}</p>
                     </div>
                   </div>
               )}

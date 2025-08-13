@@ -1,58 +1,34 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import resourcesToBackend from 'i18next-resources-to-backend';
 
-// Import Norwegian translations
-import commonNB from '../locales/nb/common.json';
-import dashboardNB from '../locales/nb/dashboard.json';
-import studentNB from '../locales/nb/student.json';
-import trackingNB from '../locales/nb/tracking.json';
-import analyticsNB from '../locales/nb/analytics.json';
-import settingsNB from '../locales/nb/settings.json';
-
-// Import English translations
-import commonEN from '../locales/en/common.json';
-import dashboardEN from '../locales/en/dashboard.json';
-import studentEN from '../locales/en/student.json';
-import trackingEN from '../locales/en/tracking.json';
-import analyticsEN from '../locales/en/analytics.json';
-import settingsEN from '../locales/en/settings.json';
-
-const resources = {
-  nb: {
-    common: commonNB,
-    dashboard: dashboardNB,
-    student: studentNB,
-    tracking: trackingNB,
-    analytics: analyticsNB,
-    settings: settingsNB,
-  },
-  en: {
-    common: commonEN,
-    dashboard: dashboardEN,
-    student: studentEN,
-    tracking: trackingEN,
-    analytics: analyticsEN,
-    settings: settingsEN,
-  },
-};
+// Enable lazy, per-namespace loading using dynamic imports so Vite can
+// split namespaces into manualChunks.
+const namespaces = ['common', 'dashboard', 'student', 'tracking', 'analytics', 'settings'] as const;
 
 i18n
   .use(LanguageDetector)
+  .use(resourcesToBackend((lng: string, ns: string) => import(`../locales/${lng}/${ns}.json`)))
   .use(initReactI18next)
   .init({
-    resources,
-    lng: 'nb', // Default to Norwegian Bokmål
+    lng: 'nb',
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'dashboard', 'student', 'tracking', 'analytics', 'settings'],
-    
+    ns: namespaces as unknown as string[],
+    supportedLngs: ['nb', 'en'],
+    load: 'currentOnly',
     interpolation: {
+      // Not needed for React, it escapes by default
       escapeValue: false,
     },
-    
+    react: {
+      useSuspense: true,
+    },
     detection: {
-      order: ['localStorage', 'navigator'],
+      // Persist and read the language using the agreed key
+      // Only check localStorage; if missing, keep default 'nb'
+      order: ['localStorage'],
       caches: ['localStorage'],
       lookupLocalStorage: 'sensoryTracker_language',
     },
