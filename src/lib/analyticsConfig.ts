@@ -9,10 +9,24 @@ export const STORAGE_KEYS = {
 } as const;
 
 export interface AnalyticsConfiguration {
+  // Schema version to invalidate caches when structure changes
+  schemaVersion: string;
+  
   // Feature flags (non-breaking)
   features?: {
     enableStructuredInsights?: boolean;
     enableSummaryFacade?: boolean;
+  };
+
+  // Feature Engineering Settings
+  featureEngineering: {
+    timeEncoding: {
+      variant: 'sixFeatureV1' | 'none';
+    };
+    normalization: {
+      clampToUnit: boolean;
+      minVariance: number;
+    };
   };
 
   // Pattern Analysis Thresholds
@@ -27,11 +41,28 @@ export interface AnalyticsConfiguration {
 
   // Enhanced Pattern Analysis
   enhancedAnalysis: {
-    trendThreshold: number;
-    anomalyThreshold: number; // Standard deviations
     minSampleSize: number;
+    trendThreshold: number;
     predictionConfidenceThreshold: number;
-    riskAssessmentThreshold: number;
+    anomalyThreshold: number; // Switch to z-score threshold
+    huber: {
+      delta: number;
+      maxIter: number;
+      tol: number;
+    };
+    qualityTargets: {
+      pointsTarget: number;
+      timeSpanDaysTarget: number;
+    };
+    correlationSignificance: {
+      high: number;
+      moderate: number;
+      low: number;
+    };
+    riskAssessment: {
+      stressIntensityThreshold: number;
+      stressEmotions: string[];
+    };
   };
 
   // Time Windows
@@ -108,10 +139,23 @@ export interface AnalyticsConfiguration {
 
 // Default configuration
 export const DEFAULT_ANALYTICS_CONFIG: AnalyticsConfiguration = {
+  schemaVersion: '2.3.0',
+  
   features: {
     enableStructuredInsights: false,
     enableSummaryFacade: true,
   },
+  
+  featureEngineering: {
+    timeEncoding: {
+      variant: 'sixFeatureV1',
+    },
+    normalization: {
+      clampToUnit: true,
+      minVariance: 1e-9,
+    },
+  },
+  
   patternAnalysis: {
     minDataPoints: 3,
     correlationThreshold: 0.25,
@@ -120,12 +164,30 @@ export const DEFAULT_ANALYTICS_CONFIG: AnalyticsConfiguration = {
     emotionConsistencyThreshold: 0.4,
     moderateNegativeThreshold: 0.4,
   },
+  
   enhancedAnalysis: {
-    trendThreshold: 0.05,
-    anomalyThreshold: 1.5,
     minSampleSize: 5,
+    trendThreshold: 0.02, // Moved from hardcoded 0
     predictionConfidenceThreshold: 0.6,
-    riskAssessmentThreshold: 3,
+    anomalyThreshold: 2.5, // Switch to z-score threshold
+    huber: {
+      delta: 1.345,
+      maxIter: 50,
+      tol: 1e-6,
+    },
+    qualityTargets: {
+      pointsTarget: 30,
+      timeSpanDaysTarget: 21,
+    },
+    correlationSignificance: {
+      high: 0.7,
+      moderate: 0.5,
+      low: 0.3,
+    },
+    riskAssessment: {
+      stressIntensityThreshold: 4,
+      stressEmotions: ['anxious', 'frustrated', 'overwhelmed', 'angry'],
+    },
   },
   timeWindows: {
     defaultAnalysisDays: 30,
@@ -194,6 +256,7 @@ export const PRESET_CONFIGS = {
     description: 'Higher thresholds, fewer alerts, more data required',
     config: {
       ...DEFAULT_ANALYTICS_CONFIG,
+      schemaVersion: '2.3.0',
       patternAnalysis: {
         ...DEFAULT_ANALYTICS_CONFIG.patternAnalysis,
         minDataPoints: 5,
@@ -202,7 +265,7 @@ export const PRESET_CONFIGS = {
       },
       enhancedAnalysis: {
         ...DEFAULT_ANALYTICS_CONFIG.enhancedAnalysis,
-        anomalyThreshold: 2.0,
+        anomalyThreshold: 3.0,
         minSampleSize: 8,
       },
       alertSensitivity: {
@@ -216,13 +279,17 @@ export const PRESET_CONFIGS = {
   balanced: {
     name: 'Balanced',
     description: 'Default settings, balanced sensitivity',
-    config: DEFAULT_ANALYTICS_CONFIG,
+    config: {
+      ...DEFAULT_ANALYTICS_CONFIG,
+      schemaVersion: '2.3.0',
+    },
   },
   sensitive: {
     name: 'Sensitive',
     description: 'Lower thresholds, more alerts, less data required',
     config: {
       ...DEFAULT_ANALYTICS_CONFIG,
+      schemaVersion: '2.3.0',
       patternAnalysis: {
         ...DEFAULT_ANALYTICS_CONFIG.patternAnalysis,
         minDataPoints: 2,
@@ -231,7 +298,7 @@ export const PRESET_CONFIGS = {
       },
       enhancedAnalysis: {
         ...DEFAULT_ANALYTICS_CONFIG.enhancedAnalysis,
-        anomalyThreshold: 1.0,
+        anomalyThreshold: 2.0,
         minSampleSize: 3,
       },
       alertSensitivity: {
@@ -341,7 +408,11 @@ export class AnalyticsConfigManager {
         try {
           localStorage.setItem(this.storageKey, JSON.stringify(this.config));
         } catch (err) {
-          try { localStorage.removeItem(this.storageKey); } catch {}
+          try { 
+            localStorage.removeItem(this.storageKey); 
+          } catch {
+            // Silent fail if unable to remove key
+          }
           logger.error('Failed to save analytics configuration:', err);
         }
       }
@@ -396,6 +467,8 @@ export class AnalyticsConfigManager {
     
     const cfg = config as Record<string, unknown>;
     return (
+      typeof cfg.schemaVersion === 'string' &&
+      !!cfg.featureEngineering &&
       !!cfg.patternAnalysis &&
       !!cfg.enhancedAnalysis &&
       !!cfg.timeWindows &&
@@ -424,33 +497,10 @@ export type AnalyticsConfig = typeof ANALYTICS_CONFIG;
 // -----------------------------------------------------------------------------
 // Internal helpers (type-only, not exported)
 // -----------------------------------------------------------------------------
-// Define local type aliases to avoid circular type imports
-type ConfidenceConfig = AnalyticsConfiguration['confidence'];
-type InsightConfig = AnalyticsConfiguration['insights'];
+// These type aliases are available for future use if needed
+type _ConfidenceConfig = AnalyticsConfiguration['confidence'];
+type _InsightConfig = AnalyticsConfiguration['insights'];
 
-function getEffectiveFullConfig(): AnalyticsConfiguration {
-  try {
-    // Prefer live config; fall back to static defaults
-    return analyticsConfig.getConfig() || (ANALYTICS_CONFIG as AnalyticsConfiguration);
-  } catch {
-    return ANALYTICS_CONFIG as AnalyticsConfiguration;
-  }
-}
-
-function getEffectiveConfidenceConfig(cfgParam?: ConfidenceConfig): ConfidenceConfig {
-  if (cfgParam) return cfgParam;
-  try {
-    return analyticsConfig.getConfig()?.confidence || ANALYTICS_CONFIG.confidence;
-  } catch {
-    return ANALYTICS_CONFIG.confidence;
-  }
-}
-
-function getEffectiveInsightsConfig(cfgParam?: InsightConfig): InsightConfig {
-  if (cfgParam) return cfgParam;
-  try {
-    return analyticsConfig.getConfig()?.insights || ANALYTICS_CONFIG.insights;
-  } catch {
-    return ANALYTICS_CONFIG.insights;
-  }
-}
+// Note: Helper functions removed to avoid ESLint unused variable errors.
+// If needed in the future, they can be re-added with proper usage or
+// prefixed with underscore to indicate they are intentionally unused.

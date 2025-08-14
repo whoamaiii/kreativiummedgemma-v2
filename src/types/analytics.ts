@@ -89,6 +89,9 @@ export type AnalyticsConfiguration = SourceAnalyticsConfiguration;
 /** Pattern analysis thresholds and limits. */
 export type PatternAnalysisConfig = AnalyticsConfiguration['patternAnalysis'];
 
+/** Feature engineering settings for data preprocessing and transformation. */
+export type FeatureEngineeringConfig = AnalyticsConfiguration['featureEngineering'];
+
 /** Enhanced pattern analysis (trends, anomalies, predictions) settings. */
 export type EnhancedAnalysisConfig = AnalyticsConfiguration['enhancedAnalysis'];
 
@@ -124,6 +127,15 @@ export type AnalyticsPresetKey = keyof typeof SOURCE_PRESETS;
 // -----------------------------------------------------------------------------
 
 /**
+ * Field-level documentation for FeatureEngineeringConfig
+ *
+ * - timeEncoding.variant: Time encoding strategy ('sixFeatureV1' uses 6 temporal features, 'none' disables time encoding).
+ * - normalization.clampToUnit: Whether to clamp normalized values to [0,1] range for stability.
+ * - normalization.minVariance: Minimum variance threshold to prevent division by zero in normalization.
+ */
+export type _Doc_FeatureEngineeringConfig = FeatureEngineeringConfig;
+
+/**
  * Field-level documentation for PatternAnalysisConfig
  *
  * - minDataPoints: Minimum number of observations required before running correlation/pattern rules.
@@ -138,11 +150,20 @@ export type _Doc_PatternAnalysisConfig = PatternAnalysisConfig;
 /**
  * Field-level documentation for EnhancedAnalysisConfig
  *
- * - trendThreshold: Minimum slope magnitude considered a meaningful trend.
- * - anomalyThreshold: Number of standard deviations from mean to be treated as an anomaly.
  * - minSampleSize: Minimum sample size for enhanced analyses to engage.
+ * - trendThreshold: Minimum slope magnitude considered a meaningful trend (moved from hardcoded 0).
  * - predictionConfidenceThreshold: Probability threshold (0..1) to include predictions.
- * - riskAssessmentThreshold: Composite score threshold for highlighting risks.
+ * - anomalyThreshold: Z-score threshold for anomaly detection (switch from standard deviations).
+ * - huber.delta: Huber loss function parameter for robust regression.
+ * - huber.maxIter: Maximum iterations for Huber regression convergence.
+ * - huber.tol: Convergence tolerance for Huber regression.
+ * - qualityTargets.pointsTarget: Target number of data points for quality assessment.
+ * - qualityTargets.timeSpanDaysTarget: Target time span in days for quality assessment.
+ * - correlationSignificance.high: Correlation threshold considered highly significant.
+ * - correlationSignificance.moderate: Correlation threshold considered moderately significant.
+ * - correlationSignificance.low: Correlation threshold considered low significance.
+ * - riskAssessment.stressIntensityThreshold: Intensity threshold for stress-related risk assessment.
+ * - riskAssessment.stressEmotions: List of emotions considered stress indicators.
  */
 export type _Doc_EnhancedAnalysisConfig = EnhancedAnalysisConfig;
 
