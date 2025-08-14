@@ -31,11 +31,17 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Docs check (format + lint)
+        run: npm run docs:check
+
       - name: Typecheck
         run: npm run typecheck
 
       - name: Unit tests
         run: npm test -- --run
+
+      - name: Config validation tests
+        run: npm run test:config
 
       - name: Performance tests
         run: CI_PERF_THRESHOLD_MS=1500 npm run test:performance

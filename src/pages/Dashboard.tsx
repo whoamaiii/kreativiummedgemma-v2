@@ -9,17 +9,14 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { LanguageSettings } from "@/components/LanguageSettings";
 import { POCBadge } from "@/components/POCBadge";
-import { POC_MODE } from "@/lib/env";
+import { POC_MODE, IS_PROD } from "@/lib/env";
 import { PremiumStudentCard } from "@/components/ui/PremiumStudentCard";
 import { MockDataLoader } from "@/components/MockDataLoader";
-import { StorageManager } from "@/components/StorageManager";
 import { dataStorage } from "@/lib/dataStorage";
-import { exportSystem } from "@/lib/exportSystem";
-import { toast } from "sonner";
-import { FlaskConical, HelpCircle, Download, Plus, Users, CalendarDays, BarChart3, TrendingUp, TrendingDown, Database } from "lucide-react";
+import { FlaskConical, HelpCircle, Download, Plus, Users, CalendarDays, BarChart3, TrendingUp, TrendingDown } from "lucide-react";
 import { HelpAndSupport } from "@/components/HelpAndSupport";
+import { GlobalMenu } from "@/components/GlobalMenu";
 import { subWeeks, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { logger } from "@/lib/logger";
 import { cn } from "@/lib/utils";
 
@@ -31,7 +28,7 @@ const Dashboard = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const { tDashboard, tCommon } = useTranslation();
+  const { tDashboard, tCommon, tSettings } = useTranslation();
 
   useEffect(() => {
     const loadData = () => {
@@ -133,44 +130,7 @@ window.addEventListener('storage', handleStorageChange);
     }
   };
 
-  const handleExportReport = async () => {
-    try {
-      const allData = {
-        students,
-        trackingEntries: dataStorage.getTrackingEntries(),
-        goals: dataStorage.getGoals()
-      };
-      
-      const csvContent = exportSystem.generateCSVExport(students, {
-        trackingEntries: allData.trackingEntries,
-        emotions: allData.trackingEntries.flatMap(entry => entry.emotions),
-        sensoryInputs: allData.trackingEntries.flatMap(entry => entry.sensoryInputs),
-        goals: allData.goals
-      }, {
-        format: 'csv',
-        includeFields: ['all']
-      });
-      
-const csvBlob = new Blob([csvContent], { type: 'text/csv' });
-      const blobUrl = URL.createObjectURL(csvBlob);
-      logger.debug('[BLOB_URL] Created URL for CSV export', { url: blobUrl, blobSize: csvBlob.size });
-      
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = 'sensory_tracker_report_' + new Date().toISOString().split('T')[0] + '.csv';
-      link.rel = 'noopener';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      URL.revokeObjectURL(blobUrl);
-      logger.debug('[BLOB_URL] Revoked URL after CSV export', { url: blobUrl });
-      
-      toast.success('Report exported successfully');
-    } catch (error) {
-      toast.error('Export failed. Please try again.');
-    }
-  };
+  // Removed system-wide export from Dashboard. A dedicated Reports page now handles exports.
 
   const handleViewStudent = (student: Student) => {
     navigate(`/student/${student.id}`);
@@ -200,32 +160,8 @@ const csvBlob = new Blob([csvContent], { type: 'text/csv' });
             </div>
             <div className="flex items-center space-x-4">
               {POC_MODE && <POCBadge />}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="icon" title="Mock Data" aria-label="Open mock data loader">
-                    <FlaskConical className="h-4 w-4" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle>Mock Data Loader</DialogTitle>
-                  </DialogHeader>
-                  <MockDataLoader />
-                </DialogContent>
-              </Dialog>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="icon" title="Storage Management" aria-label="Open storage management">
-                    <Database className="h-4 w-4" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle>Storage Management</DialogTitle>
-                  </DialogHeader>
-                  <StorageManager />
-                </DialogContent>
-              </Dialog>
+              
+              <GlobalMenu />
               <HelpAndSupport />
               <LanguageSettings />
             </div>
@@ -239,33 +175,16 @@ const csvBlob = new Blob([csvContent], { type: 'text/csv' });
             >
               <h2 className="text-3xl font-bold tracking-tight text-foreground">Oversikt</h2>
               <div className="flex items-center space-x-4">
-                {/* 
-                  The AlertDialog component provides a confirmation step before exporting the report.
-                  This improves user experience by preventing accidental exports.
-                */}
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      className="flex items-center justify-center group"
-                    >
-                      <Download className="mr-2 h-4 w-4" />
-                      Eksporter Rapport
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This will export the report as a CSV file.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleExportReport}>Continue</AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/reports')}
+                  className="flex items-center justify-center group"
+                  aria-label={tSettings('data.export')}
+                  data-testid="dashboard-export-link"
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  {String(tSettings('data.export'))}
+                </Button>
                 <Button 
                   variant="default" 
                   onClick={handleNewEntry}
@@ -446,30 +365,32 @@ const csvBlob = new Blob([csvContent], { type: 'text/csv' });
                     The MockDataLoader component is displayed in the empty state to help users
                     get started with some sample data for testing and exploration.
                   */}
-                  <Card className="mt-8 bg-gradient-card border-0 shadow-soft">
-                    <CardContent className="p-6">
-                      <div className="text-center mb-4">
-                        <h4 className="text-lg font-semibold text-foreground">Want to explore with sample data?</h4>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Load mock data to test features and see how the app works
-                        </p>
-                      </div>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" className="w-full">
-                            <FlaskConical className="h-4 w-4 mr-2" />
-                            Load Sample Data
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                          <DialogHeader>
-                            <DialogTitle>Mock Data Loader</DialogTitle>
-                          </DialogHeader>
-                          <MockDataLoader />
-                        </DialogContent>
-                      </Dialog>
-                    </CardContent>
-                  </Card>
+                  {(!IS_PROD || POC_MODE) && (
+                    <Card className="mt-8 bg-gradient-card border-0 shadow-soft">
+                      <CardContent className="p-6">
+                        <div className="text-center mb-4">
+                          <h4 className="text-lg font-semibold text-foreground">Want to explore with sample data?</h4>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Load mock data to test features and see how the app works
+                          </p>
+                        </div>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" className="w-full">
+                              <FlaskConical className="h-4 w-4 mr-2" />
+                              Load Sample Data
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                              <DialogTitle>Mock Data Loader</DialogTitle>
+                            </DialogHeader>
+                            <MockDataLoader />
+                          </DialogContent>
+                        </Dialog>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               )}
             </div>

@@ -16,15 +16,13 @@ const mockIndexedDB = {
   onerror: null,
 };
 
-global.indexedDB = mockIndexedDB as any;
+(globalThis as any).indexedDB = mockIndexedDB as any;
 
-// Mock react-i18next
+// Mock react-i18next minimal t function
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (str: string) => str,
-    i18n: {
-      changeLanguage: () => new Promise(() => {}),
-    },
+    i18n: { changeLanguage: () => Promise.resolve() },
   }),
 }));
 

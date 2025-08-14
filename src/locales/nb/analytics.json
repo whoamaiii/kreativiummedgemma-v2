@@ -1,18 +1,51 @@
 {
   "dashboard": {
-    "title": "Analysedashboard",
+    "title": "Analysedashboard - {{name}}",
     "emotionTrends": "Følelsestrender",
     "sensoryPatterns": "Sensoriske mønstre",
     "environmentalFactors": "Miljøfaktorer",
     "weeklyOverview": "Ukeoversikt",
     "monthlyTrends": "Månedlige trender"
   },
+  "tabs": {
+    "charts": "Diagrammer",
+    "patterns": "Mønstre",
+    "correlations": "Korrelasjoner",
+    "alerts": "Varsler"
+  },
+  "aria": {
+    "tabs": {
+      "charts": "Vis diagrammer",
+      "patterns": "Vis mønstre",
+      "correlations": "Vis korrelasjoner",
+      "alerts": "Vis varsler"
+    }
+  },
+  "metrics": {
+    "totalSessions": "Totalt økter",
+    "patternsFound": "Mønstre funnet"
+  },
+  "states": {
+    "analyzing": "Analyserer..."
+  },
+  "actions": {
+    "refreshAnalysis": "Oppdater analyse"
+  },
+  "empty": {
+    "noPatterns": "Ingen mønstre funnet",
+    "moreDataNeeded": "Mer data trengs for analyse"
+  },
+  "section": {
+    "title": "Analyse",
+    "subtitle": "Fordyp deg i innsikt for {{name}}"
+  },
   "charts": {
     "emotionFrequency": "Følelsesfrekvens",
     "sensoryDistribution": "Sensorisk fordeling",
     "intensityLevels": "Intensitetsnivåer",
     "dailyActivity": "Daglig aktivitet",
-    "noData": "Ingen data tilgjengelig for valgt periode"
+    "noData": "Ingen data tilgjengelig for valgt periode",
+    "loadingLabel": "Laster diagrammer"
   },
   "filters": {
     "dateRange": "Datoområde",
@@ -20,6 +53,48 @@
     "sensoryType": "Sensorisk type",
     "intensity": "Intensitet",
     "all": "Alle"
+  },
+  "correlations": {
+    "title": "Korrelasjonsvarmekart",
+    "subtitle": "Styrke på sammenhenger mellom sporede faktorer (−1 til 1)",
+    "helpTrigger": "Hvordan lese varmekartet",
+    "helpBody": {
+      "p1": "Farger viser korrelasjon: grønn = positiv sammenheng, rød = negativ. Verdier nær 1 eller −1 betyr sterkere samband.",
+      "p2": "Akser viser faktorer. Hold musepekeren over en celle for detaljer og signifikans."
+    },
+    "empty": {
+      "title": "Ingen betydelige korrelasjoner funnet.",
+      "moreData": "Mer variert miljødata kan være nødvendig."
+    },
+    "legend": {
+      "negative": "Negativ",
+      "zero": "0",
+      "positive": "Positiv"
+    },
+    "labels": {
+      "significance": "signifikans",
+      "rPrefix": "r = "
+    },
+    "fallback": {
+      "title": "Kan ikke vise varmekart; viser liste i stedet."
+    }
+  },
+  "export": {
+    "success": {
+      "pdf": "PDF-rapport eksportert",
+      "csv": "CSV-data eksportert",
+      "json": "JSON-data eksportert"
+    },
+    "failure": "Kunne ikke eksportere analysedata"
+  },
+  "dev": {
+    "seed": {
+      "button": "Generer demodata",
+      "seeding": "Genererer...",
+      "aria": "Generer demodata for testing",
+      "success": "Genererte {{students}} elever med {{entries}} oppføringer",
+      "failure": "Kunne ikke generere demodata"
+    }
   },
   "reports": {
     "title": "Rapporter",
@@ -34,10 +109,18 @@
     }
   },
   "insights": {
+    "title": "Innsikt",
     "patterns": "Mønstre oppdaget",
     "recommendations": "Anbefalinger",
     "alerts": "Varsler",
-    "noPatterns": "Ingen mønstre funnet ennå. Fortsett å samle data for bedre innsikt."
+    "noPatterns": "Ingen mønstre funnet ennå. Fortsett å samle data for bedre innsikt.",
+    "explainPattern": "Forklar mønster",
+    "patternExplain": {
+      "title": "Hva betyr dette mønsteret?",
+      "default": "Systemet har funnet et gjentakende mønster i dataene for denne perioden.",
+      "disclaimer": "Tolk alltid sammen med kontekst og pedagogisk vurdering."
+    },
+    "confidencePercent": "{{percentage}}% sikkerhet"
   },
   "confidence": {
     "low": "Lav sikkerhet",

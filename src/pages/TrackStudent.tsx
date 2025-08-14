@@ -41,7 +41,7 @@ const TrackStudent = () => {
         navigate('/');
       }
     }
-  }, [studentId, navigate]);
+  }, [studentId, navigate, tTracking]);
 
   const handleEmotionAdd = (emotion: Omit<EmotionEntry, 'id' | 'timestamp'>) => {
     setEmotions([...emotions, emotion]);

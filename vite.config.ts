@@ -17,7 +17,8 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' &&
+    // Always enable browser-echo in non-production modes to surface console errors consistently
+    mode !== 'production' &&
     browserEcho({
       stackMode: 'condensed',
       colors: true,
@@ -39,6 +40,8 @@ export default defineConfig(({ mode }) => ({
       ...(mode === 'poc' ? {
         // Redirect heavy analytics worker to a tiny stub in POC mode
         '@/workers/analytics.worker': path.resolve(__dirname, './src/workers/analytics.worker.stub.ts'),
+        // Redirect 3D component to a no-op stub in POC mode
+        '@/components/Visualization3D': path.resolve(__dirname, './src/components/Visualization3D.poc.stub.tsx'),
       } : {})
     },
   },

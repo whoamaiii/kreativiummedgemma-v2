@@ -1,17 +1,18 @@
 # VirtualScrollArea Component
 
-The `VirtualScrollArea` component provides efficient rendering of large lists by only rendering visible items.
+The `VirtualScrollArea` component provides efficient rendering of large lists by only rendering
+visible items.
 
 ## TypeScript Interface
 
 ```typescript
 interface VirtualScrollAreaProps<T> {
-  items: T[];                                      // Array of items to display
-  itemHeight: number;                              // Fixed height of each item in pixels
-  containerHeight: number;                         // Height of the scroll container in pixels
-  renderItem: (item: T, index: number) => React.ReactNode;  // Function to render each item
-  className?: string;                              // Optional CSS class names
-  overscan?: number;                               // Number of items to render outside visible area (default: 5)
+  items: T[]; // Array of items to display
+  itemHeight: number; // Fixed height of each item in pixels
+  containerHeight: number; // Height of the scroll container in pixels
+  renderItem: (item: T, index: number) => React.ReactNode; // Function to render each item
+  className?: string; // Optional CSS class names
+  overscan?: number; // Number of items to render outside visible area (default: 5)
 }
 ```
 
@@ -30,11 +31,7 @@ const MyComponent = () => {
       items={data}
       itemHeight={50}
       containerHeight={400}
-      renderItem={(item) => (
-        <div className="p-2 border-b">
-          {item.name}
-        </div>
-      )}
+      renderItem={(item) => <div className="p-2 border-b">{item.name}</div>}
     />
   );
 };
@@ -49,13 +46,7 @@ const MyComponent = () => {
   containerHeight={600}
   overscan={10}
   className="border rounded-lg"
-  renderItem={(entry, index) => (
-    <TrackingEntryCard 
-      key={entry.id} 
-      entry={entry} 
-      index={index}
-    />
-  )}
+  renderItem={(entry, index) => <TrackingEntryCard key={entry.id} entry={entry} index={index} />}
 />
 ```
 
@@ -93,20 +84,23 @@ const StudentList = ({ students }: { students: Student[] }) => {
 
 ### Key Performance Metrics
 
-1. **Render Time**: Only visible items (+ overscan) are rendered, reducing from O(n) to O(k) where k is the number of visible items
-2. **Memory Usage**: DOM nodes are only created for visible items, significantly reducing memory footprint
+1. **Render Time**: Only visible items (+ overscan) are rendered, reducing from O(n) to O(k) where k
+   is the number of visible items
+2. **Memory Usage**: DOM nodes are only created for visible items, significantly reducing memory
+   footprint
 3. **Scroll Performance**: Smooth 60fps scrolling even with 10,000+ items
 
 ### Optimization Strategies
 
-1. **Fixed Item Height**: 
+1. **Fixed Item Height**:
    - The component requires fixed item heights for optimal performance
    - This enables O(1) position calculations without measuring DOM elements
 
 2. **Overscan Buffer**:
    - Default `overscan={5}` renders 5 extra items above and below the viewport
    - Reduces white flashes during fast scrolling
-   - Adjust based on scroll behavior: increase for smoother appearance, decrease for better performance
+   - Adjust based on scroll behavior: increase for smoother appearance, decrease for better
+     performance
 
 3. **Memoization**:
    - `visibleRange` is memoized with `useMemo` to prevent unnecessary recalculations
@@ -118,20 +112,22 @@ const StudentList = ({ students }: { students: Student[] }) => {
 
 ## Performance Benchmarks
 
-| List Size | Initial Render | Scroll Performance | Memory Usage |
-|-----------|---------------|-------------------|--------------|
-| 100 items | ~5ms | 60fps | ~2MB |
-| 1,000 items | ~6ms | 60fps | ~2MB |
-| 10,000 items | ~7ms | 60fps | ~3MB |
-| 100,000 items | ~10ms | 60fps | ~5MB |
+| List Size     | Initial Render | Scroll Performance | Memory Usage |
+| ------------- | -------------- | ------------------ | ------------ |
+| 100 items     | ~5ms           | 60fps              | ~2MB         |
+| 1,000 items   | ~6ms           | 60fps              | ~2MB         |
+| 10,000 items  | ~7ms           | 60fps              | ~3MB         |
+| 100,000 items | ~10ms          | 60fps              | ~5MB         |
 
-*Benchmarks measured on Chrome 120, M1 MacBook Pro*
+_Benchmarks measured on Chrome 120, M1 MacBook Pro_
 
 ## Best Practices
 
-1. **Consistent Item Heights**: Ensure all items have the exact same height as specified in `itemHeight`
+1. **Consistent Item Heights**: Ensure all items have the exact same height as specified in
+   `itemHeight`
 
 2. **Key Management**: Use stable keys in your `renderItem` function
+
    ```tsx
    renderItem={(item, index) => (
      <div key={item.id || `item-${index}`}>
@@ -141,17 +137,17 @@ const StudentList = ({ students }: { students: Student[] }) => {
    ```
 
 3. **Avoid Inline Functions**: Define `renderItem` outside the render cycle when possible
+
    ```tsx
-   const renderStudent = useCallback((student: Student) => (
-     <StudentCard student={student} />
-   ), []);
+   const renderStudent = useCallback((student: Student) => <StudentCard student={student} />, []);
    ```
 
 4. **Container Sizing**: Use fixed heights for the container, not percentages
+
    ```tsx
    // Good
    containerHeight={600}
-   
+
    // Avoid
    containerHeight={window.innerHeight * 0.8} // This can cause re-renders
    ```

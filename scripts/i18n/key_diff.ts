@@ -11,14 +11,15 @@ function listNamespaces(dir: string): string[] {
   return fs.readdirSync(dir).filter(f => f.endsWith('.json')).map(f => f.replace(/\.json$/, ''));
 }
 
-function readJson(p: string): any {
-  return JSON.parse(fs.readFileSync(p, 'utf8'));
+function readJson(p: string): unknown {
+  return JSON.parse(fs.readFileSync(p, 'utf8')) as unknown;
 }
 
-function flatten(obj: any, prefix = ''): Record<string, true> {
+function flatten(obj: unknown, prefix = ''): Record<string, true> {
   const out: Record<string, true> = {};
   if (obj && typeof obj === 'object') {
-    for (const [k, v] of Object.entries(obj)) {
+    const o = obj as Record<string, unknown>;
+    for (const [k, v] of Object.entries(o)) {
       const key = prefix ? `${prefix}.${k}` : k;
       if (v && typeof v === 'object' && !Array.isArray(v)) {
         Object.assign(out, flatten(v, key));
@@ -62,11 +63,11 @@ function main() {
     report += `  Extra in nb (${extra.length}):${extra.length ? '\n    - ' + extra.join('\n    - ') : ' none'}\n\n`;
   }
 
-  // eslint-disable-next-line no-console
+   
   console.log(report.trim());
 
   if (totalMissing > 0) {
-    // eslint-disable-next-line no-console
+     
     console.error(`nb is missing ${totalMissing} keys present in en.`);
     process.exitCode = 1;
   }

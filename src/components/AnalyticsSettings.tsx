@@ -29,6 +29,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { logger } from '@/lib/logger';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface AnalyticsSettingsProps {
   onConfigChange?: (config: AnalyticsConfiguration) => void;
@@ -39,6 +40,7 @@ export const AnalyticsSettings: React.FC<AnalyticsSettingsProps> = ({
   onConfigChange,
   onClose
 }) => {
+  const { tAnalytics } = useTranslation();
   const [config, setConfig] = useState<AnalyticsConfiguration>(analyticsConfig.getConfig());
   const [selectedPreset, setSelectedPreset] = useState<string>('balanced');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -93,25 +95,7 @@ export const AnalyticsSettings: React.FC<AnalyticsSettingsProps> = ({
   const handleSensitivityChange = (value: string) => {
     const newConfig = { ...config };
     newConfig.alertSensitivity.level = value as 'low' | 'medium' | 'high';
-    
-    // Adjust multipliers based on sensitivity
-    switch (value) {
-      case 'low':
-        newConfig.alertSensitivity.emotionIntensityMultiplier = 0.8;
-        newConfig.alertSensitivity.frequencyMultiplier = 0.8;
-        newConfig.alertSensitivity.anomalyMultiplier = 0.8;
-        break;
-      case 'high':
-        newConfig.alertSensitivity.emotionIntensityMultiplier = 1.2;
-        newConfig.alertSensitivity.frequencyMultiplier = 1.2;
-        newConfig.alertSensitivity.anomalyMultiplier = 1.2;
-        break;
-      default: // medium
-        newConfig.alertSensitivity.emotionIntensityMultiplier = 1.0;
-        newConfig.alertSensitivity.frequencyMultiplier = 1.0;
-        newConfig.alertSensitivity.anomalyMultiplier = 1.0;
-    }
-    
+    // Do not mutate multipliers here; users can choose presets that carry multipliers
     setConfig(newConfig);
     setHasUnsavedChanges(true);
   };
@@ -172,18 +156,30 @@ export const AnalyticsSettings: React.FC<AnalyticsSettingsProps> = ({
     reader.readAsText(file);
   };
 
-  const handleModelRetrain = async (modelType: ModelType) => {
-    setIsTraining(modelType);
-    
-    toast(`Training ${modelType} model in background...`);
+  // Track a pending training timeout id for cleanup
+  const [trainingRequested, setTrainingRequested] = useState<ModelType | null>(null);
 
-    // Simulate training (in real implementation, this would trigger actual training)
-    setTimeout(async () => {
+  useEffect(() => {
+    if (!trainingRequested) return;
+    let cancelled = false;
+    const id = window.setTimeout(async () => {
+      if (cancelled) return;
       setIsTraining(null);
       await loadModelStatus();
-      
-      toast.success(`${modelType} model has been updated`);
+      toast.success(`${trainingRequested} model has been updated`);
+      setTrainingRequested(null);
     }, 3000);
+    return () => {
+      cancelled = true;
+      clearTimeout(id);
+    };
+  }, [trainingRequested]);
+
+  const handleModelRetrain = async (modelType: ModelType) => {
+    setIsTraining(modelType);
+    toast(`Training ${modelType} model in background...`);
+    // Defer the actual completion via effect-managed timeout
+    setTrainingRequested(modelType);
   };
 
   const handleDeleteModel = async (modelType: ModelType) => {
@@ -238,10 +234,10 @@ export const AnalyticsSettings: React.FC<AnalyticsSettingsProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
-            Analytics Configuration
+            {String(tAnalytics('settings.title'))}
           </DialogTitle>
           <DialogDescription>
-            Customize analytics parameters to adjust sensitivity and thresholds
+            {String(tAnalytics('settings.subtitle'))}
           </DialogDescription>
         </DialogHeader>
 
@@ -249,9 +245,9 @@ export const AnalyticsSettings: React.FC<AnalyticsSettingsProps> = ({
           {/* Preset Configurations */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Preset Configurations</CardTitle>
+              <CardTitle className="text-lg">{String(tAnalytics('settings.presets.title'))}</CardTitle>
               <CardDescription>
-                Choose a preset configuration or customize your own
+                {String(tAnalytics('settings.presets.description'))}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -264,10 +260,10 @@ export const AnalyticsSettings: React.FC<AnalyticsSettingsProps> = ({
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="conservative" id="conservative" />
                       <Shield className="h-4 w-4 text-blue-500" />
-                      <span className="font-medium">Conservative</span>
+                      <span className="font-medium">{String(tAnalytics('settings.presets.conservative'))}</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Higher thresholds, fewer alerts
+                      {String(tAnalytics('settings.presets.conservativeDesc'))}
                     </p>
                   </Label>
 
@@ -278,10 +274,10 @@ export const AnalyticsSettings: React.FC<AnalyticsSettingsProps> = ({
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="balanced" id="balanced" />
                       <Settings className="h-4 w-4 text-green-500" />
-                      <span className="font-medium">Balanced</span>
+                      <span className="font-medium">{String(tAnalytics('settings.presets.balanced'))}</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Default settings, balanced sensitivity
+                      {String(tAnalytics('settings.presets.balancedDesc'))}
                     </p>
                   </Label>
 
@@ -292,10 +288,10 @@ export const AnalyticsSettings: React.FC<AnalyticsSettingsProps> = ({
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="sensitive" id="sensitive" />
                       <Zap className="h-4 w-4 text-yellow-500" />
-                      <span className="font-medium">Sensitive</span>
+                      <span className="font-medium">{String(tAnalytics('settings.presets.sensitive'))}</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Lower thresholds, more alerts
+                      {String(tAnalytics('settings.presets.sensitiveDesc'))}
                     </p>
                   </Label>
                 </div>
@@ -305,12 +301,12 @@ export const AnalyticsSettings: React.FC<AnalyticsSettingsProps> = ({
 
           {/* Detailed Settings Tabs */}
           <Tabs defaultValue="thresholds" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="thresholds">Thresholds</TabsTrigger>
-              <TabsTrigger value="sensitivity">Sensitivity</TabsTrigger>
-              <TabsTrigger value="timewindows">Time Windows</TabsTrigger>
-              <TabsTrigger value="mlmodels">ML Models</TabsTrigger>
-              <TabsTrigger value="advanced">Advanced</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="thresholds">{String(tAnalytics('settings.tabs.thresholds'))}</TabsTrigger>
+              <TabsTrigger value="sensitivity">{String(tAnalytics('settings.tabs.sensitivity'))}</TabsTrigger>
+              <TabsTrigger value="timewindows">{String(tAnalytics('settings.tabs.timeWindows'))}</TabsTrigger>
+              <TabsTrigger value="mlmodels">{String(tAnalytics('settings.tabs.mlModels'))}</TabsTrigger>
+              <TabsTrigger value="advanced">{String(tAnalytics('settings.tabs.advanced'))}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="thresholds" className="space-y-4">
@@ -801,6 +797,7 @@ export const AnalyticsSettings: React.FC<AnalyticsSettingsProps> = ({
                       type="file"
                       accept=".json"
                       onChange={handleImport}
+                      aria-label="Import configuration file"
                       className="hidden"
                     />
                   </Label>

@@ -1,6 +1,56 @@
 import { Student, TrackingEntry, EmotionEntry, SensoryEntry, Goal } from "@/types/student";
 import { format } from "date-fns";
 
+// Report content structure for PDF generation
+interface ReportContent {
+  header: {
+    title: string;
+    dateRange: string;
+    generatedDate: string;
+    studentInfo: {
+      name: string;
+      grade?: string;
+      id: string;
+    };
+  };
+  summary: {
+    totalSessions: number;
+    totalEmotions: number;
+    totalSensoryInputs: number;
+    activeGoals: number;
+    completedGoals: number;
+  };
+  emotionAnalysis: {
+    mostCommon: string;
+    avgIntensity: string;
+    positiveRate: string;
+  };
+  sensoryAnalysis: {
+    seekingRatio: string;
+    mostCommonType: string;
+  };
+  goalProgress: Array<{
+    title: string;
+    progress: number;
+    status: string;
+  }>;
+  recommendations: string[];
+}
+
+// CSV parsing result
+interface CSVParseResult {
+  id: string;
+  [key: string]: unknown;
+}
+
+// Data collections for export
+interface ExportDataCollection {
+  trackingEntries: TrackingEntry[];
+  emotions: EmotionEntry[];
+  sensoryInputs: SensoryEntry[];
+  goals: Goal[];
+}
+
 export interface ExportOptions {
   format: 'pdf' | 'csv' | 'json';
   includeFields: string[];
@@ -107,7 +157,20 @@ class ExportSystem {
   ): string {
     const { includeFields, dateRange, anonymize } = options;
     
-    const exportData: any = {
+    interface JSONExportData {
+      version: string;
+      exportDate: string;
+      options: ExportOptions;
+      data: {
+        students?: Student[];
+        emotions?: EmotionEntry[];
+        sensoryInputs?: SensoryEntry[];
+        goals?: Goal[];
+        trackingEntries?: TrackingEntry[];
+      };
+    }
+
+    const exportData: JSONExportData = {
       version: this.CURRENT_VERSION,
       exportDate: new Date().toISOString(),
       options,
@@ -242,10 +305,10 @@ class ExportSystem {
   async importFromCSV(csvContent: string, dataType: 'emotions' | 'sensoryInputs' | 'students'): Promise<{
     success: boolean;
     errors: string[];
-    imported: any[];
+    imported: (EmotionEntry | SensoryEntry | Student)[];
   }> {
     const errors: string[] = [];
-    const imported: any[] = [];
+    const imported: (EmotionEntry | SensoryEntry | Student)[] = [];
 
     try {
       const lines = csvContent.split('\n').filter(line => line.trim() !== '');
@@ -332,7 +395,7 @@ class ExportSystem {
     };
   }
 
-  private generateHTMLReport(content: any, options: ExportOptions): string {
+  private generateHTMLReport(content: ReportContent, options: ExportOptions): string {
     return `
 <!DOCTYPE html>
 <html lang="en">
@@ -430,7 +493,7 @@ class ExportSystem {
 
     <div class="section">
         <h2>Goal Progress</h2>
-        ${content.goalProgress.map((goal: any) => `
+        ${content.goalProgress.map((goal) => `
             <div style="margin-bottom: 15px;">
                 <h3>${goal.title}</h3>
                 <p><strong>Progress:</strong> ${goal.progress}% complete</p>
@@ -633,7 +696,12 @@ class ExportSystem {
     }));
   }
 
-  private generateRecommendations(data: any): string[] {
+  private generateRecommendations(data: {
+    trackingEntries: TrackingEntry[];
+    emotions: EmotionEntry[];
+    sensoryInputs: SensoryEntry[];
+    goals: Goal[];
+  }): string[] {
     const recommendations: string[] = [];
 
     // Basic recommendations based on data patterns
@@ -709,8 +777,8 @@ class ExportSystem {
     return result;
   }
 
-  private parseCSVRowData(headers: string[], values: string[], dataType: string): any | null {
-    const data: any = {};
+  private parseCSVRowData(headers: string[], values: string[], dataType: string): EmotionEntry | SensoryEntry | Student | null {
+    const data: Record<string, string> = {};
     headers.forEach((header, index) => {
       data[header] = values[index];
     });

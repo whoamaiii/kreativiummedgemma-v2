@@ -76,7 +76,7 @@ function toMarkdown(offenders: Offender[]): string {
   md += `Found ${offenders.length} potential offenders across ${byFile.size} files.\n\n`;
   md += 'Key convention: feature.section.purpose — prefer nouns and verbs in present tense.\n\n';
 
-  const nsBuckets: Record<string, { off: Offender; triage: ReturnType<typeof classify> }[]> = {} as any;
+  const nsBuckets: Record<string, { off: Offender; triage: ReturnType<typeof classify> }[]> = Object.create(null);
   const falsePos: { off: Offender; triage: ReturnType<typeof classify> }[] = [];
   const outOfScope: { off: Offender; triage: ReturnType<typeof classify> }[] = [];
 
@@ -85,7 +85,7 @@ function toMarkdown(offenders: Offender[]): string {
     if (triage.classification === 'false-positive') falsePos.push({ off: o, triage });
     else if (triage.classification === 'out-of-scope') outOfScope.push({ off: o, triage });
     else {
-      if (!nsBuckets[triage.ns]) nsBuckets[triage.ns] = [] as any;
+      if (!nsBuckets[triage.ns]) nsBuckets[triage.ns] = [] as { off: Offender; triage: ReturnType<typeof classify> }[];
       nsBuckets[triage.ns].push({ off: o, triage });
     }
   }
@@ -97,7 +97,7 @@ function toMarkdown(offenders: Offender[]): string {
     // Group by file for readability
     const byFileNs = new Map<string, typeof items>();
     for (const it of items) {
-      if (!byFileNs.has(it.off.file)) byFileNs.set(it.off.file, [] as any);
+      if (!byFileNs.has(it.off.file)) byFileNs.set(it.off.file, [] as typeof items);
       byFileNs.get(it.off.file)!.push(it);
     }
     for (const file of Array.from(byFileNs.keys()).sort()) {
@@ -156,7 +156,7 @@ function main() {
   const raw = JSON.parse(fs.readFileSync(INPUT_JSON, 'utf8')) as { offenders: Offender[] };
   const md = toMarkdown(raw.offenders || []);
   fs.writeFileSync(OUTPUT_MD, md, 'utf8');
-  // eslint-disable-next-line no-console
+   
   console.log(`Wrote Markdown report to ${path.relative(ROOT, OUTPUT_MD)}`);
 }
 

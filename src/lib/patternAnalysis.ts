@@ -68,8 +68,10 @@ class PatternAnalysisEngine {
     );
 
     // Also analyze moderate intensity patterns for better detection
+    // Derive a moderate intensity threshold from configured highIntensityThreshold
+    const moderateIntensityThreshold = Math.max(1, this.config.patternAnalysis.highIntensityThreshold - 1);
     const moderateIntensityNegative = recentEmotions.filter(e =>
-      e.intensity >= 3 &&
+      e.intensity >= moderateIntensityThreshold &&
       ['anxious', 'frustrated', 'angry', 'overwhelmed', 'sad'].includes(e.emotion.toLowerCase())
     );
 
@@ -150,17 +152,22 @@ class PatternAnalysisEngine {
     const recentSensory = sensoryInputs.filter(s => s.timestamp >= cutoffDate);
 
     // Analyze sensory seeking vs avoiding patterns
-    const seekingBehaviors = recentSensory.filter(s => 
-      s.response.toLowerCase().includes('seeking') || 
+    const seekingBehaviors = recentSensory.filter(s =>
+      s.response.toLowerCase().includes('seeking') ||
       s.response.toLowerCase().includes('craving')
     );
 
-    const avoidingBehaviors = recentSensory.filter(s => 
-      s.response.toLowerCase().includes('avoiding') || 
+    const avoidingBehaviors = recentSensory.filter(s =>
+      s.response.toLowerCase().includes('avoiding') ||
       s.response.toLowerCase().includes('covering')
     );
 
-    if (seekingBehaviors.length > avoidingBehaviors.length * 2) {
+    // Determine dominance threshold based on configured concern frequency
+    const dominanceThreshold = 1 + this.config.patternAnalysis.concernFrequencyThreshold;
+    const hasAvoiding = avoidingBehaviors.length > 0;
+    const hasSeeking = seekingBehaviors.length > 0;
+
+    if (hasAvoiding && (seekingBehaviors.length / avoidingBehaviors.length) > dominanceThreshold) {
       patterns.push({
         type: 'sensory',
         pattern: 'sensory-seeking',
@@ -175,7 +182,7 @@ class PatternAnalysisEngine {
         dataPoints: recentSensory.length,
         timeframe: `${actualTimeframe} days`
       });
-    } else if (avoidingBehaviors.length > seekingBehaviors.length * 2) {
+    } else if (hasSeeking && (avoidingBehaviors.length / seekingBehaviors.length) > dominanceThreshold) {
       patterns.push({
         type: 'sensory',
         pattern: 'sensory-avoiding',
@@ -236,7 +243,7 @@ class PatternAnalysisEngine {
       .map(entry => ({
         lighting: entry.environmentalData!.roomConditions!.lighting,
         positiveEmotions: entry.emotions.filter(e => 
-          ['happy', 'calm', 'focused', 'excited', 'content'].includes(e.emotion.toLowerCase())
+          (this.config.taxonomy?.positiveEmotions || []).includes(e.emotion.toLowerCase())
         ).length / entry.emotions.length
       }));
 
@@ -254,14 +261,14 @@ class PatternAnalysisEngine {
         average: values.reduce((sum, v) => sum + v, 0) / values.length,
         count: values.length
       }))
-      .filter(l => l.count >= 3)
+      .filter(l => l.count >= this.config.patternAnalysis.minDataPoints)
       .sort((a, b) => b.average - a.average);
 
     if (lightingAverages.length > 1) {
       const best = lightingAverages[0];
       const worst = lightingAverages[lightingAverages.length - 1];
       
-      if (best.average - worst.average > 0.2) {
+      if (best.average - worst.average > this.config.patternAnalysis.concernFrequencyThreshold) {
         correlations.push({
           factor1: 'Lighting Conditions',
           factor2: 'Positive Emotions',
@@ -302,14 +309,14 @@ class PatternAnalysisEngine {
       ['anxious', 'frustrated', 'overwhelmed', 'angry'].includes(e.emotion.toLowerCase())
     );
 
-    if (highStressEmotions.length >= 2) {
+    if (highStressEmotions.length >= this.config.patternAnalysis.minDataPoints) {
       alerts.push({
         id: ((globalThis as unknown as { crypto?: { randomUUID?: () => string } })?.crypto?.randomUUID?.()) ||
             `alert-${Math.random().toString(36).slice(2)}-${Date.now()}`,
         type: 'concern',
         severity: 'high',
         title: 'High Stress Pattern Detected',
-        description: `${highStressEmotions.length} high-intensity stress responses recorded in the past week`,
+        description: `${highStressEmotions.length} high-intensity stress responses recorded in the past ${this.config.timeWindows.recentDataDays} days`,
         recommendations: [
           'Schedule a check-in with the student',
           'Review current stressors and triggers',
@@ -324,11 +331,11 @@ class PatternAnalysisEngine {
 
     // Positive progress alert - fixed for 1-5 scale
     const positiveEmotions = recentEmotions.filter(e => 
-      ['happy', 'calm', 'focused', 'proud', 'content'].includes(e.emotion.toLowerCase()) &&
-      e.intensity >= 4
+      (this.config.taxonomy?.positiveEmotions || []).includes(e.emotion.toLowerCase()) &&
+      e.intensity >= this.config.patternAnalysis.highIntensityThreshold
     );
 
-    if (positiveEmotions.length >= 3 && recentEmotions.length >= 5) {
+    if (positiveEmotions.length >= this.config.patternAnalysis.minDataPoints && recentEmotions.length >= this.config.patternAnalysis.minDataPoints) {
       alerts.push({
         id: ((globalThis as unknown as { crypto?: { randomUUID?: () => string } })?.crypto?.randomUUID?.()) ||
             `alert-${Math.random().toString(36).slice(2)}-${Date.now()}`,
@@ -350,7 +357,7 @@ class PatternAnalysisEngine {
     // Environmental pattern alert
     const environmentalPatterns = this.analyzeEnvironmentalCorrelations(recentEntries);
     environmentalPatterns.forEach(pattern => {
-      if (pattern.significance === 'high' && Math.abs(pattern.correlation) > 0.6) {
+      if (pattern.significance === 'high' && Math.abs(pattern.correlation) > this.config.patternAnalysis.correlationThreshold * 2) {
         alerts.push({
           id: ((globalThis as unknown as { crypto?: { randomUUID?: () => string } })?.crypto?.randomUUID?.()) ||
               `alert-${Math.random().toString(36).slice(2)}-${Date.now()}`,

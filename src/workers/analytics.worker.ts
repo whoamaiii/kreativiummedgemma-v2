@@ -12,11 +12,16 @@ import { TrackingEntry, EmotionEntry, SensoryEntry } from '@/types/student';
 import { AnalyticsData, AnalyticsResults, AnalyticsConfiguration, WorkerCacheEntry, AnalyticsWorkerMessage } from '@/types/analytics';
 import { createCachedPatternAnalysis } from '@/lib/cachedPatternAnalysis';
 import { logger } from '@/lib/logger';
+import { generateInsightsFromWorkerInputs } from '@/lib/insights';
+import { ANALYTICS_CONFIG, analyticsConfig } from '@/lib/analyticsConfig';
+import { generateAnalyticsSummary } from '@/lib/analyticsSummary';
 
 // Type is now imported from @/types/analytics
 
-let workerCacheTTL = 5 * 60 * 1000; // default 5 minutes, overridden by config
-let workerCacheMaxSize = 200; // soft cap, overridden by config if provided
+// Worker cache TTL source: cache.ttl from central analytics config (ms). Safe fallback applied.
+let workerCacheTTL = (ANALYTICS_CONFIG.cache.ttl ?? 300_000); // default from config, safe fallback 300s
+// Worker cache max size source: cache.maxSize from central analytics config. Safe fallback applied.
+let workerCacheMaxSize = (ANALYTICS_CONFIG.cache.maxSize ?? 200); // soft cap, overridden by config if provided
 const insertionOrder: string[] = []; // FIFO order for eviction
 
 // Create a simple cache implementation for the worker
@@ -73,33 +78,6 @@ const workerCache = {
     return count;
   },
   
-  getDataFingerprint(data: unknown): string {
-    const stringify = (obj: unknown): string => {
-      if (obj === null || obj === undefined) return 'null';
-      if (typeof obj !== 'object') return String(obj);
-      if (Array.isArray(obj)) return `[${obj.map(stringify).join(',')}]`;
-      
-      const keys = Object.keys(obj as Record<string, unknown>).sort();
-      return `{${keys.map(k => `${k}:${stringify((obj as Record<string, unknown>)[k])}`).join(',')}}`;
-    };
-
-    const str = stringify(data);
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash;
-    }
-    return Math.abs(hash).toString(36);
-  },
-  
-  createKey(prefix: string, params: Record<string, unknown>): string {
-    const sortedParams = Object.keys(params)
-      .sort()
-      .map(key => `${key}:${JSON.stringify(params[key])}`)
-      .join(':');
-    return `${prefix}:${sortedParams}`;
-  }
 };
 
 // Create cached pattern analysis instance
@@ -160,66 +138,34 @@ let currentConfig: AnalyticsConfiguration | null = null;
 // Types are now imported from @/types/analytics
 export type { AnalyticsData, AnalyticsResults } from '@/types/analytics';
 
-/**
- * Generates high-level, human-readable insights from the raw analysis results.
- * This function consolidates the most significant findings into a simple string array.
- * @param {PatternResult[]} emotionPatterns - The results from emotion pattern analysis.
- * @param {PatternResult[]} sensoryPatterns - The results from sensory pattern analysis.
- * @param {CorrelationResult[]} correlations - The results from correlation analysis.
- * @param {AnalyticsData} data - The raw data used for the analysis.
- * @returns {string[]} An array of insight strings.
- */
-const generateInsights = (
-  emotionPatterns: PatternResult[],
-  sensoryPatterns: PatternResult[],
-  correlations: CorrelationResult[],
-  data: AnalyticsData
-): string[] => {
-    const allInsights: string[] = [];
-  
-      if (data.entries.length < 5) {
-        allInsights.push(
-          `Limited data available (${data.entries.length} sessions). Consider collecting more tracking sessions for better pattern analysis.`
-        );
-      }
-  
-      const highConfidenceEmotionPatterns = emotionPatterns.filter(p => p.confidence > 0.7);
-      if (highConfidenceEmotionPatterns.length > 0) {
-        const pattern = highConfidenceEmotionPatterns[0];
-        allInsights.push(
-          `Strong ${pattern.pattern.replace('-', ' ')} pattern detected with ${Math.round(pattern.confidence * 100)}% confidence.`
-        );
-      }
-  
-      const highConfidenceSensoryPatterns = sensoryPatterns.filter(p => p.confidence > 0.6);
-      if (highConfidenceSensoryPatterns.length > 0) {
-        const pattern = highConfidenceSensoryPatterns[0];
-        allInsights.push(
-          `${pattern.description} - consider implementing the recommended strategies.`
-        );
-      }
-  
-      const strongCorrelations = correlations.filter(c => c.significance === 'high');
-      if (strongCorrelations.length > 0) {
-        strongCorrelations.forEach(correlation => {
-          allInsights.push(
-            `Strong correlation found: ${correlation.description}`
-          );
-        });
-      }
-  
-      return allInsights.length > 0 ? allInsights : [
-        'Continue collecting data to identify meaningful patterns and insights.'
-      ];
-};
 
 /**
  * Main message handler for the worker.
  * This function is triggered when the main thread calls `worker.postMessage()`.
  * It orchestrates the analysis process and posts the results back.
  */
-export async function handleMessage(e: MessageEvent<AnalyticsData>) {
-  const filteredData = e.data;
+export async function handleMessage(e: MessageEvent<any>) {
+  // Support two message shapes:
+  // A) Typed task envelope built via buildInsightsTask
+  // B) Legacy AnalyticsData directly
+  const msg = e.data as any;
+  let filteredData: AnalyticsData;
+  if (msg && msg.type === 'Insights/Compute' && msg.payload) {
+    const { inputs, config } = msg.payload;
+    filteredData = {
+      entries: inputs.entries,
+      emotions: inputs.emotions,
+      sensoryInputs: inputs.sensoryInputs,
+      cacheKey: msg.cacheKey,
+      config: (config as any) ?? null
+    } as unknown as AnalyticsData;
+    // Optionally honor ttlSeconds from task by updating per-message TTL
+    if (typeof msg.ttlSeconds === 'number' && msg.ttlSeconds > 0) {
+      workerCacheTTL = Math.max(1000, Math.floor(msg.ttlSeconds * 1000));
+    }
+  } else {
+    filteredData = msg as AnalyticsData;
+  }
 
   // Diagnostic log: message received - use cache to limit verbosity
   try {
@@ -276,8 +222,10 @@ export async function handleMessage(e: MessageEvent<AnalyticsData>) {
   }
 
 try {
-    // Use configured time window or default to 30 days
-    const timeWindow = currentConfig?.timeWindows?.defaultAnalysisDays || 30;
+// Use configured time window or default from central config
+    // Analysis window source: timeWindows.defaultAnalysisDays from runtime config; fallback to defaults.
+    // This avoids hardcoding and keeps behavior environment-tunable (Task 8, rule j9uS...).
+    const timeWindow = currentConfig?.timeWindows?.defaultAnalysisDays ?? ANALYTICS_CONFIG.timeWindows.defaultAnalysisDays;
 
     // Progress heartbeat: start
     enqueueMessage({ type: 'progress', cacheKey: filteredData.cacheKey, progress: { stage: 'start', percent: 5 } });
@@ -305,7 +253,9 @@ try {
     });
 
     let correlations: CorrelationResult[] = [];
-    if (filteredData.entries.length > 2) {
+    // Correlation threshold source: analytics.MIN_TRACKING_FOR_CORRELATION from runtime config.
+    const minForCorrelation = currentConfig?.analytics?.MIN_TRACKING_FOR_CORRELATION ?? ANALYTICS_CONFIG.analytics.MIN_TRACKING_FOR_CORRELATION;
+    if (filteredData.entries.length >= minForCorrelation) {
       correlations = cachedAnalysis.analyzeEnvironmentalCorrelations(filteredData.entries);
     }
 
@@ -325,7 +275,9 @@ try {
 
     let predictiveInsights: PredictiveInsight[] = [];
     let anomalies: AnomalyDetection[] = [];
-    if (filteredData.entries.length > 1) {
+    // Enhanced analysis threshold source: analytics.MIN_TRACKING_FOR_ENHANCED from runtime config.
+    const minForEnhanced = currentConfig?.analytics?.MIN_TRACKING_FOR_ENHANCED ?? ANALYTICS_CONFIG.analytics.MIN_TRACKING_FOR_ENHANCED;
+    if (filteredData.entries.length >= minForEnhanced) {
       predictiveInsights = await cachedAnalysis.generatePredictiveInsights(
         filteredData.emotions,
         filteredData.sensoryInputs,
@@ -366,7 +318,48 @@ try {
       });
     }
 
-    const insights = generateInsights(emotionPatterns, sensoryPatterns, correlations, filteredData);
+// Compute insights via canonical path
+let insights: string[];
+// Summary facade toggle source: features.enableSummaryFacade from runtime config; default aligns with project defaults.
+const useSummaryFacade = (currentConfig?.features?.enableSummaryFacade ?? ANALYTICS_CONFIG.features?.enableSummaryFacade) === true;
+if (useSummaryFacade) {
+  const summary = await generateAnalyticsSummary({
+    entries: filteredData.entries,
+    emotions: filteredData.emotions,
+    sensoryInputs: filteredData.sensoryInputs,
+    results: {
+      patterns: [...emotionPatterns, ...sensoryPatterns],
+      correlations,
+      predictiveInsights,
+    },
+  });
+  insights = summary.insights;
+  // Low-noise telemetry: log at most once per minute when facade used
+  try {
+    const minuteKey = `_logged_facade_used_${new Date().getMinutes()}`;
+    if (!workerCache.has(minuteKey)) {
+      logger.debug('[analytics.worker] Using summary facade for insights', {
+        entries: filteredData.entries?.length ?? 0,
+        emotions: filteredData.emotions?.length ?? 0,
+        sensory: filteredData.sensoryInputs?.length ?? 0,
+      });
+      workerCache.set(minuteKey, true, ['logging']);
+    }
+  } catch {
+    /* noop */
+  }
+} else {
+  insights = generateInsightsFromWorkerInputs(
+    {
+      patterns: [...emotionPatterns, ...sensoryPatterns],
+      correlations,
+      emotions: filteredData.emotions,
+      sensoryInputs: filteredData.sensoryInputs,
+      trackingEntries: filteredData.entries,
+    },
+    { insightConfig: (currentConfig?.insights ?? ANALYTICS_CONFIG.insights) }
+  );
+}
 
     const results: AnalyticsResults = {
       patterns,

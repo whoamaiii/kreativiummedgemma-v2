@@ -1,12 +1,17 @@
-import { Student, TrackingEntry, EmotionEntry, SensoryEntry, Goal } from "@/types/student";
-import { patternAnalysis, PatternResult, CorrelationResult } from "@/lib/patternAnalysis";
-import { enhancedPatternAnalysis, PredictiveInsight, AnomalyDetection } from "@/lib/enhancedPatternAnalysis";
+import { Student, EmotionEntry, SensoryEntry } from "@/types/student";
+import { computeInsights, type ComputeInsightsInputs } from "@/lib/insights/unified";
+import { generateAnalyticsSummary } from "@/lib/analyticsSummary";
 import { alertSystem } from "@/lib/alertSystem";
 import { dataStorage, IDataStorage } from "@/lib/dataStorage";
-import { generateUniversalMockDataForStudent as generateMockData } from './universalDataGenerator';
-import { ANALYTICS_CONFIG, AnalyticsConfig } from "./analyticsConfig";
-import { analyticsConfig } from "./analyticsConfig";
-import { logger } from "./logger";
+// Mock seeding has been moved to optional utilities under lib/mock; not used here
+import { ANALYTICS_CONFIG, DEFAULT_ANALYTICS_CONFIG, analyticsConfig, STORAGE_KEYS } from "@/lib/analyticsConfig";
+import { logger } from "@/lib/logger";
+import type { AnalyticsResults } from "@/types/analytics";
+import { getProfileMap, initializeStudentProfile, saveProfiles } from "@/lib/analyticsProfiles";
+import type { StudentAnalyticsProfile } from "@/lib/analyticsProfiles";
+// New orchestrator-style helpers and types
+import { buildInsightsCacheKey as _buildInsightsCacheKey, buildInsightsTask as _buildInsightsTask } from "@/lib/insights/task";
+import type { InsightsOptions, AnalyticsResult } from "@/types/insights";
 
 // #region Type Definitions
 
@@ -35,33 +40,23 @@ import { logger } from "./logger";
  */
 export const ensureUniversalAnalyticsInitialization = async (): Promise<void> => {
   try {
-    // Retrieve students via synchronous API; if none, generate a small seed using generator
-    const students = dataStorage.getStudents();
-    if (!students || students.length === 0) {
-      const seedCount = 3;
-      for (let i = 0; i < seedCount; i++) {
-        // The generator in this codebase returns TrackingEntry[] for a student; persist via existing APIs
-        const generatedEntries = generateMockData('seed'); // supply an argument to satisfy signature
-        // Persist by using available save APIs
-        try {
-          // Save each generated tracking entry
-          for (const entry of generatedEntries) {
-            dataStorage.saveTrackingEntry(entry);
-          }
-        } catch (err) {
-          logger.error('[analyticsManager] mock data seed failed', { error: err });
-        }
-      }
-    }
-
+    // Ensure profiles for existing students; no auto generation of mock data here
     const cfg = (() => { try { return analyticsConfig.getConfig(); } catch { return null; } })();
+    // Minimum data thresholds source:
+    // - confidence.THRESHOLDS.EMOTION_ENTRIES
+    // - confidence.THRESHOLDS.SENSORY_ENTRIES
+    // - confidence.THRESHOLDS.TRACKING_ENTRIES
+    // Read from live analyticsConfig with safe fallback to defaults (Task 8, rule j9uS...).
     const minEmotions = cfg?.confidence?.THRESHOLDS?.EMOTION_ENTRIES ?? ANALYTICS_CONFIG.confidence.THRESHOLDS.EMOTION_ENTRIES;
     const minSensory = cfg?.confidence?.THRESHOLDS?.SENSORY_ENTRIES ?? ANALYTICS_CONFIG.confidence.THRESHOLDS.SENSORY_ENTRIES;
     const minTracking = cfg?.confidence?.THRESHOLDS?.TRACKING_ENTRIES ?? ANALYTICS_CONFIG.confidence.THRESHOLDS.TRACKING_ENTRIES;
 
     const allStudents = dataStorage.getStudents();
     for (const student of allStudents) {
-      // Load data via available synchronous APIs
+      // Ensure profile exists (delegated to profiles module)
+      initializeStudentProfile(student.id);
+
+      // Optional: evaluate minimum data for future warming decisions
       const tracking = dataStorage.getTrackingEntriesForStudent(student.id);
       const emotions = tracking.flatMap(t => t.emotions ?? []);
       const sensoryInputs = tracking.flatMap(t => t.sensoryInputs ?? []);
@@ -71,29 +66,13 @@ export const ensureUniversalAnalyticsInitialization = async (): Promise<void> =>
         (sensoryInputs.length) >= minSensory ||
         (tracking.length) >= minTracking;
 
-      // Ensure profile exists
-      analyticsManager.initializeStudentAnalytics(student.id);
-
-      // Best-effort warmups
       if (hasMinimumData) {
-        try {
-          const analysisDays =
-            cfg?.analytics?.ANALYSIS_PERIOD_DAYS ?? ANALYTICS_CONFIG.analytics.ANALYSIS_PERIOD_DAYS;
-
-          if (emotions.length) {
-            patternAnalysis.analyzeEmotionPatterns(emotions, analysisDays);
-          }
-          if (sensoryInputs.length) {
-            patternAnalysis.analyzeSensoryPatterns(sensoryInputs, analysisDays);
-          }
-          if (tracking.length && tracking.length >= (cfg?.analytics?.MIN_TRACKING_FOR_CORRELATION ?? ANALYTICS_CONFIG.analytics.MIN_TRACKING_FOR_CORRELATION)) {
-            patternAnalysis.analyzeEnvironmentalCorrelations(tracking);
-          }
-        } catch {
-          /* noop */
-        }
+        // Warming handled elsewhere; no direct action here
       }
     }
+
+    // Persist any new profiles created during initialization
+    saveProfiles();
   } catch (e) {
     logger.error('[analyticsManager] ensureUniversalAnalyticsInitialization failed', e);
   }
@@ -102,38 +81,10 @@ export const ensureUniversalAnalyticsInitialization = async (): Promise<void> =>
 /**
  * Defines the analytics profile for a student, tracking configuration and health.
  */
-interface StudentAnalyticsProfile {
-  studentId: string;
-  isInitialized: boolean;
-  lastAnalyzedAt: Date | null;
-  analyticsConfig: {
-    patternAnalysisEnabled: boolean;
-    correlationAnalysisEnabled: boolean;
-    predictiveInsightsEnabled: boolean;
-    anomalyDetectionEnabled: boolean;
-    alertSystemEnabled: boolean;
-  };
-  minimumDataRequirements: {
-    emotionEntries: number;
-    sensoryEntries: number;
-    trackingEntries: number;
-  };
-  analyticsHealthScore: number;
-}
 
 /**
  * Represents the complete set of results from an analytics run.
  */
-interface AnalyticsResults {
-  patterns: PatternResult[];
-  correlations: CorrelationResult[];
-  predictiveInsights: PredictiveInsight[];
-  anomalies: AnomalyDetection[];
-  insights: string[];
-  hasMinimumData: boolean;
-  confidence: number;
-}
-
 type AnalyticsCache = Map<string, { results: AnalyticsResults; timestamp: Date }>;
 type AnalyticsProfileMap = Map<string, StudentAnalyticsProfile>;
 // #endregion
@@ -164,171 +115,9 @@ type AnalyticsProfileMap = Map<string, StudentAnalyticsProfile>;
  * This defensive approach ensures the analytics system remains functional even
  * if localStorage data becomes corrupted or outdated.
  */
-function loadProfilesFromStorage(storedProfiles: string | null): AnalyticsProfileMap {
-  const profiles: AnalyticsProfileMap = new Map();
-  if (!storedProfiles) return profiles;
-
-  try {
-    const data = JSON.parse(storedProfiles);
-    
-    // Runtime validation
-    const isAnalyticsProfile = (obj: unknown): obj is StudentAnalyticsProfile => {
-      const profile = obj as Partial<StudentAnalyticsProfile>;
-      return !!(profile && typeof profile.studentId === 'string' && typeof profile.isInitialized === 'boolean');
-    };
-
-    Object.entries(data).forEach(([studentId, profile]) => {
-      if (isAnalyticsProfile(profile)) {
-        profiles.set(studentId, {
-          ...profile,
-          lastAnalyzedAt: profile.lastAnalyzedAt ? new Date(profile.lastAnalyzedAt) : null,
-        });
-      }
-    });
-  } catch (error) {
-    logger.error("Error loading analytics profiles:", error);
-  }
-  return profiles;
-}
-
-/**
- * Calculates confidence score based on data availability and recency.
- * 
- * @function calculateConfidence
- * @param {EmotionEntry[]} emotions - Array of emotion entries
- * @param {SensoryEntry[]} sensoryInputs - Array of sensory input entries
- * @param {TrackingEntry[]} trackingEntries - Array of tracking entries
- * @param {AnalyticsConfig['CONFIDENCE']} config - Configuration object with thresholds and weights
- * @returns {number} Confidence score between 0 and 1 (0% to 100%)
- * 
- * @description Uses weighted calculations based on data quantity relative to thresholds,
- * with a recency boost if data is fresh (within configured days).
- * 
- * **Weight Calculation Algorithm**:
- * 1. **Data Quantity Weights**: Each data type contributes based on quantity vs threshold
- *    - Emotion weight = min(emotion_count / EMOTION_THRESHOLD, 1) * EMOTION_WEIGHT
- *    - Sensory weight = min(sensory_count / SENSORY_THRESHOLD, 1) * SENSORY_WEIGHT
- *    - Tracking weight = min(tracking_count / TRACKING_THRESHOLD, 1) * TRACKING_WEIGHT
- * 
- * 2. **Recency Boost**: Additional confidence if last entry is recent
- *    - Checks days since last tracking entry
- *    - If within DAYS_SINCE_LAST_ENTRY threshold, adds RECENCY_BOOST
- *    - Final confidence capped at 1.0 (100%)
- * 
- * The algorithm ensures confidence scales smoothly from 0% (no data) to 100% (abundant recent data).
- */
-function calculateConfidence(
-  emotions: EmotionEntry[],
-  sensoryInputs: SensoryEntry[],
-  trackingEntries: TrackingEntry[],
-  config: AnalyticsConfig['confidence']
-): number {
-  const { THRESHOLDS, WEIGHTS } = config;
-
-  const emotionWeight = Math.min(emotions.length / THRESHOLDS.EMOTION_ENTRIES, 1) * WEIGHTS.EMOTION;
-  const sensoryWeight = Math.min(sensoryInputs.length / THRESHOLDS.SENSORY_ENTRIES, 1) * WEIGHTS.SENSORY;
-  const trackingWeight = Math.min(trackingEntries.length / THRESHOLDS.TRACKING_ENTRIES, 1) * WEIGHTS.TRACKING;
-
-  let confidence = emotionWeight + sensoryWeight + trackingWeight;
-
-  if (trackingEntries.length > 0) {
-    const lastEntry = trackingEntries[trackingEntries.length - 1];
-    const daysSinceLastEntry = (Date.now() - new Date(lastEntry.timestamp).getTime()) / (1000 * 60 * 60 * 24);
-    if (daysSinceLastEntry < THRESHOLDS.DAYS_SINCE_LAST_ENTRY) {
-      confidence = Math.min(confidence + WEIGHTS.RECENCY_BOOST, 1);
-    }
-  }
-
-  return Math.round(confidence * 100) / 100;
-}
-
-/**
- * Generates human-readable insights from analytics results.
- * 
- * @function generateInsights
- * @param {Omit<AnalyticsResults, 'insights' | 'confidence'>} results - Analytics results without insights
- * @param {readonly EmotionEntry[]} emotions - Array of emotion entries
- * @param {readonly TrackingEntry[]} trackingEntries - Array of tracking entries
- * @param {AnalyticsConfig['INSIGHTS']} config - Configuration for insight generation
- * @returns {string[]} Array of human-readable insight strings
- * 
- * @description Creates contextual, actionable insights based on analytics data:
- * 
- * **Insight Generation Logic**:
- * 1. **Data Availability Check**: Returns guidance message if no tracking data exists
- * 
- * 2. **Limited Data Warning**: Alerts when sessions < MIN_SESSIONS_FOR_FULL_ANALYTICS
- * 
- * 3. **Pattern Insights**: 
- *    - Filters patterns by HIGH_CONFIDENCE_PATTERN_THRESHOLD
- *    - Limits to MAX_PATTERNS_TO_SHOW
- *    - Formats with pattern description and confidence percentage
- * 
- * 4. **Correlation Insights**:
- *    - Only includes 'high' significance correlations
- *    - Limits to MAX_CORRELATIONS_TO_SHOW
- * 
- * 5. **Predictive Insights**:
- *    - Shows top predictions up to MAX_PREDICTIONS_TO_SHOW
- *    - Includes confidence percentage
- * 
- * 6. **Emotion Trend Analysis**:
- *    - Analyzes recent emotions (RECENT_EMOTION_COUNT)
- *    - Calculates positive emotion rate
- *    - Provides encouragement or suggestions based on thresholds
- * 
- * 7. **Fallback Message**: Ensures array is never empty
- * 
- * All thresholds and limits are configurable for flexibility.
- */
-function generateInsights(
-  results: Omit<AnalyticsResults, 'insights' | 'confidence'>,
-  emotions: readonly EmotionEntry[],
-  trackingEntries: readonly TrackingEntry[],
-  config: AnalyticsConfig['insights']
-): string[] {
-    const insights: string[] = [];
-    const { patterns, correlations, predictiveInsights } = results;
-
-    if (trackingEntries.length === 0) {
-      return ["No tracking data available yet. Start by creating your first tracking session to begin pattern analysis."];
-    }
-
-    if (trackingEntries.length < config.MIN_SESSIONS_FOR_FULL_ANALYTICS) {
-      insights.push(`Limited data available (${trackingEntries.length} sessions). Analytics will improve as more data is collected.`);
-    }
-
-    patterns
-      .filter(p => p.confidence > config.HIGH_CONFIDENCE_PATTERN_THRESHOLD)
-      .slice(0, config.MAX_PATTERNS_TO_SHOW)
-      .forEach(pattern => insights.push(`Pattern detected: ${pattern.description} (${Math.round(pattern.confidence * 100)}% confidence)`));
-
-    correlations
-      .filter(c => c.significance === 'high')
-      .slice(0, config.MAX_CORRELATIONS_TO_SHOW)
-      .forEach(correlation => insights.push(`Strong correlation found: ${correlation.description}`));
-
-    predictiveInsights
-      .slice(0, config.MAX_PREDICTIONS_TO_SHOW)
-      .forEach(insight => insights.push(`Prediction: ${insight.description} (${Math.round(insight.confidence * 100)}% confidence)`));
-
-    // Add progress insights (positive/negative trends)
-    if (emotions.length >= config.RECENT_EMOTION_COUNT) {
-        const recentEmotions = emotions.slice(-config.RECENT_EMOTION_COUNT);
-        const positiveRate = recentEmotions.filter(e => ANALYTICS_CONFIG.POSITIVE_EMOTIONS.has(e.emotion.toLowerCase())).length / recentEmotions.length;
-
-        if (positiveRate > config.POSITIVE_EMOTION_TREND_THRESHOLD) {
-            insights.push(`Positive trend: ${Math.round(positiveRate * 100)}% of recent emotions have been positive.`);
-        } else if (positiveRate < config.NEGATIVE_EMOTION_TREND_THRESHOLD) {
-            insights.push(`Consider reviewing strategies - only ${Math.round(positiveRate * 100)}% of recent emotions have been positive.`);
-        }
-    }
-
-    if (insights.length === 0) {
-      insights.push("Analytics are active and monitoring patterns. Continue collecting data for more detailed insights.");
-    }
-
-    return insights;
+// Profiles are now managed by analyticsProfiles module; local loader retained for backward-compat only if needed
+function loadProfilesFromStorage(_storedProfiles: string | null): AnalyticsProfileMap {
+  return getProfileMap();
 }
 
 // #endregion
@@ -368,9 +157,11 @@ function generateInsights(
  * const manager = AnalyticsManagerService.getInstance();
  * const analytics = await manager.getStudentAnalytics(student);
  */
+let __lastFacadeLogMinute: number | null = null;
 class AnalyticsManagerService {
   private static instance: AnalyticsManagerService;
-  private analyticsProfiles: AnalyticsProfileMap;
+private analyticsProfiles: AnalyticsProfileMap;
+  // Deprecated TTL cache: callers should use cache keys with their own caches
   private analyticsCache: AnalyticsCache = new Map();
   private storage: IDataStorage;
 
@@ -392,7 +183,7 @@ class AnalyticsManagerService {
     if (!AnalyticsManagerService.instance) {
       let stored: string | null = null;
       try {
-        stored = typeof localStorage !== 'undefined' ? localStorage.getItem('sensoryTracker_analyticsProfiles') : null;
+        stored = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.analyticsProfiles) : null;
       } catch (e) {
         // environment without localStorage (SSR/tests)
       }
@@ -460,7 +251,7 @@ class AnalyticsManagerService {
       };
 
       this.analyticsProfiles.set(studentId, profile);
-      this.saveAnalyticsProfiles();
+      saveProfiles();
     } catch (error) {
       logger.error('[analyticsManager] initializeStudentAnalytics failed', { error, studentId });
       // fail-soft
@@ -504,27 +295,26 @@ class AnalyticsManagerService {
   public async getStudentAnalytics(student: Student): Promise<AnalyticsResults> {
     this.initializeStudentAnalytics(student.id);
 
-    const cached = this.analyticsCache.get(student.id);
-    if (cached && (Date.now() - cached.timestamp.getTime()) < (ANALYTICS_CONFIG.analytics as any).CACHE_TTL) {
-      return cached.results;
-    }
-
+// Deprecated internal TTL caching removed; always compute fresh and let callers cache by key
     const results = await this.generateAnalytics(student);
     this.analyticsCache.set(student.id, { results, timestamp: new Date() });
 
     const profile = this.analyticsProfiles.get(student.id);
     if (profile) {
-      profile.lastAnalyzedAt = new Date();
-      profile.analyticsHealthScore = this.calculateHealthScore(results);
-      this.analyticsProfiles.set(student.id, profile);
-      this.saveAnalyticsProfiles();
+      const updatedProfile: StudentAnalyticsProfile = {
+        ...profile,
+        lastAnalyzedAt: new Date(),
+        analyticsHealthScore: this.calculateHealthScore(results),
+      };
+      this.analyticsProfiles.set(student.id, updatedProfile);
+      saveProfiles();
     }
 
     return results;
   }
 
   /**
-   * Generates fresh analytics for a student by orchestrating all analysis modules.
+   * Generates fresh analytics for a student using unified insights computation.
    * 
    * @private
    * @async
@@ -532,103 +322,106 @@ class AnalyticsManagerService {
    * @param {Student} student - The student to analyze
    * @returns {Promise<AnalyticsResults>} Complete analytics results
    * 
-   * @description Core analytics generation logic that coordinates multiple analysis types.
-   * 
-   * **Analysis Pipeline**:
-   * 1. **Data Collection**: 
-   *    - Retrieves all tracking entries for student
-   *    - Extracts emotions and sensory inputs from entries
-   *    - Loads student goals for predictive analysis
-   * 
-   * 2. **Minimum Data Check**:
-   *    - Verifies at least one data type has entries
-   *    - Skips analysis if no data available
-   * 
-   * 3. **Pattern Analysis** (if data exists):
-   *    - Emotion patterns (if emotions > 0)
-   *    - Sensory patterns (if sensory inputs > 0)
-   *    - Environmental correlations (if tracking >= MIN_TRACKING_FOR_CORRELATION)
-   * 
-   * 4. **Enhanced Analysis** (if tracking >= MIN_TRACKING_FOR_ENHANCED):
-   *    - Predictive insights using ML models
-   *    - Anomaly detection for unusual patterns
-   * 
-   * 5. **Alert Generation**:
-   *    - Triggers alert system for any tracking data
-   * 
-   * 6. **Insight Generation**:
-   *    - Creates human-readable insights
-   *    - Calculates overall confidence score
-   * 
-   * **Configuration**:
-   * - Prefers live user-adjustable configuration
-   * - Falls back to default constants if config unavailable
-   * 
-   * **Error Handling**:
-   * - Logs detailed errors with student context
-   * - Re-throws wrapped error for caller handling
+   * @description Delegates analytics generation to the unified insights module,
+   * keeping analyticsManager pure and framework-agnostic.
    * 
    * @throws {Error} Analytics generation failed for student
    */
   private async generateAnalytics(student: Student): Promise<AnalyticsResults> {
-    const trackingEntries = this.storage.getTrackingEntriesForStudent(student.id);
-    const goals = this.storage.getGoalsForStudent(student.id);
-
-    const emotions: EmotionEntry[] = trackingEntries.flatMap(entry => entry.emotions || []);
-    const sensoryInputs: SensoryEntry[] = trackingEntries.flatMap(entry => entry.sensoryInputs || []);
-
-    const hasMinimumData = emotions.length > 0 || sensoryInputs.length > 0 || trackingEntries.length > 0;
-
-    const patterns: PatternResult[] = [];
-    let correlations: CorrelationResult[] = [];
-    let predictiveInsights: PredictiveInsight[] = [];
-    let anomalies: AnomalyDetection[] = [];
-
-    if (hasMinimumData) {
-        try {
-            // Prefer live, user-adjustable configuration; fall back to legacy constants to avoid undefined access.
-            const liveConfig = (() => {
-              try { return analyticsConfig.getConfig(); } catch { return null; }
-            })();
-            const ANALYTICS = liveConfig?.analytics ?? ANALYTICS_CONFIG.analytics;
-
-            const analysisDays = ANALYTICS?.ANALYSIS_PERIOD_DAYS ?? ANALYTICS_CONFIG.analytics.ANALYSIS_PERIOD_DAYS;
-
-            if (emotions.length > 0) {
-                patterns.push(...patternAnalysis.analyzeEmotionPatterns(emotions, analysisDays));
-            }
-            if (sensoryInputs.length > 0) {
-                patterns.push(...patternAnalysis.analyzeSensoryPatterns(sensoryInputs, analysisDays));
-            }
-            if (trackingEntries.length >= (ANALYTICS?.MIN_TRACKING_FOR_CORRELATION ?? ANALYTICS_CONFIG.analytics.MIN_TRACKING_FOR_CORRELATION)) {
-                correlations = patternAnalysis.analyzeEnvironmentalCorrelations(trackingEntries);
-            }
-            if (trackingEntries.length >= (ANALYTICS?.MIN_TRACKING_FOR_ENHANCED ?? ANALYTICS_CONFIG.analytics.MIN_TRACKING_FOR_ENHANCED)) {
-                predictiveInsights = await enhancedPatternAnalysis.generatePredictiveInsights(emotions, sensoryInputs, trackingEntries, goals);
-                anomalies = enhancedPatternAnalysis.detectAnomalies(emotions, sensoryInputs, trackingEntries);
-            }
-            if (trackingEntries.length > 0) {
-                await alertSystem.generateAlertsForStudent(student, emotions, sensoryInputs, trackingEntries);
-            }
-        } catch (error) {
-            logger.error(`Error generating analytics for student ${student.id}:`, error);
-            // Re-throw a specific error to let the caller handle it
-            throw new Error(`Analytics generation failed for student ${student.id}`);
-        }
+    // Early guard for invalid input
+    if (!student || !student.id) {
+      logger.error('[analyticsManager] generateAnalytics: invalid student', { student });
+      return {
+        patterns: [],
+        correlations: [],
+        environmentalCorrelations: [],
+        predictiveInsights: [],
+        anomalies: [],
+        insights: [],
+        error: 'INVALID_STUDENT',
+      } as AnalyticsResults;
     }
-    
-    const resultsWithoutInsights = { patterns, correlations, predictiveInsights, anomalies, hasMinimumData };
 
-    // Resolve INSIGHTS/CONFIDENCE from live config when available; fall back to legacy constants.
-    const liveCfg = (() => { try { return analyticsConfig.getConfig(); } catch { return null; } })();
-    const INSIGHTS_CFG = liveCfg?.insights ?? ANALYTICS_CONFIG.insights;
-    const CONFIDENCE_CFG = liveCfg?.confidence ?? ANALYTICS_CONFIG.confidence;
+    try {
+      const trackingEntries = this.storage.getTrackingEntriesForStudent(student.id) || [];
+      const goals = this.storage.getGoalsForStudent(student.id) || [];
+      
+      const emotions: EmotionEntry[] = trackingEntries.flatMap(entry => entry.emotions || []);
+      const sensoryInputs: SensoryEntry[] = trackingEntries.flatMap(entry => entry.sensoryInputs || []);
+      
+      // Prepare configuration for unified computation
+      const liveConfig = (() => {
+        try { return analyticsConfig.getConfig(); } catch { return null; }
+      })();
+      
+      // Delegate computation to unified module
+      const results = await computeInsights(
+        {
+          entries: trackingEntries,
+          emotions,
+          sensoryInputs,
+          goals
+        },
+        liveConfig ? { config: liveConfig } : undefined
+      );
 
-    return {
-      ...resultsWithoutInsights,
-      insights: generateInsights(resultsWithoutInsights, emotions, trackingEntries, INSIGHTS_CFG),
-      confidence: calculateConfidence(emotions, sensoryInputs, trackingEntries, CONFIDENCE_CFG),
-    };
+      // Optionally replace insights via summary facade when enabled
+      try {
+        const useSummaryFacade = (liveConfig?.features?.enableSummaryFacade ?? ANALYTICS_CONFIG.features?.enableSummaryFacade) === true;
+        if (useSummaryFacade) {
+          const summary = await generateAnalyticsSummary({
+            entries: trackingEntries,
+            emotions,
+            sensoryInputs,
+            results: {
+              patterns: (results as AnalyticsResults).patterns ?? [],
+              correlations: (results as AnalyticsResults).correlations ?? [],
+              predictiveInsights: (results as AnalyticsResults).predictiveInsights ?? [],
+            },
+          });
+          // Replace insights; attach optional metadata for downstream health score
+          (results as AnalyticsResults).insights = summary.insights;
+          (results as unknown as AnalyticsResults & { hasMinimumData?: boolean; confidence?: number }).hasMinimumData = summary.hasMinimumData;
+          (results as unknown as AnalyticsResults & { hasMinimumData?: boolean; confidence?: number }).confidence = summary.confidence;
+          // Low-noise telemetry: log at most once per minute when facade used
+          try {
+            const nowMinute = new Date().getMinutes();
+            if (__lastFacadeLogMinute !== nowMinute) {
+              logger.debug('[analyticsManager] Using summary facade for insights', {
+                studentId: student.id,
+                entries: trackingEntries.length,
+                emotions: emotions.length,
+                sensory: sensoryInputs.length,
+              });
+              __lastFacadeLogMinute = nowMinute;
+            }
+          } catch {
+            /* noop */
+          }
+        }
+      } catch {
+        // fail-soft: keep original insights
+      }
+      
+      // Trigger alerts if we have tracking data - this is the only side effect
+      if (trackingEntries.length > 0) {
+        await alertSystem.generateAlertsForStudent(student, emotions, sensoryInputs, trackingEntries);
+      }
+      
+      return results as AnalyticsResults;
+    } catch (error) {
+      logger.error(`[analyticsManager] generateAnalytics failed for student ${student.id}`, { error: error instanceof Error ? { message: error.message, stack: error.stack, name: error.name } : error });
+      // Return minimal safe result to prevent UI crashes
+      return {
+        patterns: [],
+        correlations: [],
+        environmentalCorrelations: [],
+        predictiveInsights: [],
+        anomalies: [],
+        insights: [],
+        error: 'ANALYTICS_GENERATION_FAILED',
+      } as AnalyticsResults;
+    }
   }
 
   /**
@@ -646,9 +439,14 @@ class AnalyticsManagerService {
     if (results.correlations.length > 0) score += WEIGHTS.CORRELATIONS;
     if (results.predictiveInsights.length > 0) score += WEIGHTS.PREDICTIONS;
     if (results.anomalies.length > 0) score += WEIGHTS.ANOMALIES;
-    if (results.hasMinimumData) score += WEIGHTS.MINIMUM_DATA;
 
-    return Math.round(score * results.confidence);
+    // Use optional metadata if provided; otherwise infer minimum data presence and default confidence
+    const extended = results as AnalyticsResults & { hasMinimumData?: boolean; confidence?: number };
+    const hasMinimumData = extended.hasMinimumData ?? (results.patterns.length > 0 || results.correlations.length > 0);
+    if (hasMinimumData) score += WEIGHTS.MINIMUM_DATA;
+    const confidence = typeof extended.confidence === 'number' ? extended.confidence : 1;
+
+    return Math.round(score * confidence);
   }
 
   /**
@@ -731,16 +529,97 @@ class AnalyticsManagerService {
    * @private
    */
   private saveAnalyticsProfiles(): void {
-    try {
-      const data = Object.fromEntries(this.analyticsProfiles);
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('sensoryTracker_analyticsProfiles', JSON.stringify(data));
-      }
-    } catch (error) {
-      logger.error('Error saving analytics profiles:', error);
-      // fail-soft
-    }
+    // Deprecated in favor of analyticsProfiles.saveProfiles()
+    try { saveProfiles(); } catch (error) { logger.error('Error saving analytics profiles:', error); }
   }
 }
 
+/**
+ * Singleton instance of AnalyticsManagerService.
+ * Use this for orchestrating analytics without creating new instances.
+ */
 export const analyticsManager = AnalyticsManagerService.getInstance();
+
+/**
+ * Thin orchestrator-style API (gradual migration target)
+ *
+ * These named exports provide a lightweight interface for building cache keys,
+ * constructing worker tasks, and retrieving summarized insights in a stable
+ * shape for consumers like hooks or UI. They coexist with the legacy singleton
+ * for backward compatibility and will become the primary API.
+ */
+
+/**
+ * Build a deterministic insights cache key from inputs and options.
+ * Delegates to the centralized cache-key utilities.
+ */
+export const buildInsightsCacheKey = _buildInsightsCacheKey;
+
+/**
+ * Build a typed worker task envelope for Insights computation.
+ * Suitable for posting to the analytics web worker.
+ */
+export const buildInsightsTask = _buildInsightsTask;
+
+/**
+ * Compute insights and return a minimal, stable AnalyticsResult summary.
+ * This does not perform internal caching; callers should use the cache key
+ * and their caching layer of choice.
+ *
+ * @example
+ * const inputs = { entries, emotions, sensoryInputs, goals };
+ * const result = await getInsights(inputs, { ttlSeconds: 600, tags: ["student-123"] });
+ */
+export async function getInsights(
+  inputs: ComputeInsightsInputs,
+  options?: InsightsOptions
+): Promise<AnalyticsResult> {
+  try {
+    const cacheKey = _buildInsightsCacheKey(inputs, options);
+    const cfg = (() => { try { return analyticsConfig.getConfig(); } catch { return DEFAULT_ANALYTICS_CONFIG; } })() || DEFAULT_ANALYTICS_CONFIG;
+    const ttlMs = cfg?.cache?.ttl ?? DEFAULT_ANALYTICS_CONFIG.cache.ttl;
+    const ttlSeconds = typeof options?.ttlSeconds === 'number' ? options.ttlSeconds : Math.max(1, Math.floor(ttlMs / 1000));
+    const tags = Array.from(new Set(["insights", "v2", ...(options?.tags ?? [])]));
+
+    const fullCfg = options?.config ? { config: (options.config as any) } : { config: cfg as any };
+    const detailed = await computeInsights(inputs, fullCfg as any);
+
+    // Summarize for stable payloads (avoid large arrays in summary field)
+    const summary = {
+      patternsCount: detailed.patterns?.length ?? 0,
+      correlationsCount: detailed.correlations?.length ?? 0,
+      environmentalCorrelationsCount: detailed.environmentalCorrelations?.length ?? 0,
+      predictiveInsightsCount: detailed.predictiveInsights?.length ?? 0,
+      anomaliesCount: detailed.anomalies?.length ?? 0,
+      insightsCount: detailed.insights?.length ?? 0,
+      confidence: (detailed as any).confidence,
+      hasMinimumData: (detailed as any).hasMinimumData,
+    } as Record<string, unknown>;
+
+    return {
+      cacheKey,
+      computedAt: new Date().toISOString(),
+      ttlSeconds,
+      tags,
+      summary,
+      diagnostics: {
+        entries: inputs.entries?.length ?? 0,
+        emotions: inputs.emotions?.length ?? 0,
+        sensoryInputs: inputs.sensoryInputs?.length ?? 0,
+        goals: inputs.goals?.length ?? 0,
+      },
+    };
+  } catch (error) {
+    logger.error('[analyticsManager.orchestrator] getInsights failed', { error });
+    const cacheKey = _buildInsightsCacheKey(inputs, options);
+    const ttlSeconds = typeof options?.ttlSeconds === 'number' ? options.ttlSeconds : 300;
+    const tags = Array.from(new Set(["insights", "v2", ...(options?.tags ?? [])]));
+    return {
+      cacheKey,
+      computedAt: new Date().toISOString(),
+      ttlSeconds,
+      tags,
+      summary: { error: 'INSIGHTS_COMPUTE_FAILED' },
+    };
+  }
+}

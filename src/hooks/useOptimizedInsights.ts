@@ -3,6 +3,7 @@ import { EmotionEntry, SensoryEntry, TrackingEntry } from '@/types/student';
 import { enhancedPatternAnalysis } from '@/lib/enhancedPatternAnalysis';
 import { patternAnalysis } from '@/lib/patternAnalysis';
 import { usePerformanceCache } from './usePerformanceCache';
+import { createCacheKey } from '@/lib/analytics/cache-key';
 
 export function useOptimizedInsights(
   emotions: EmotionEntry[],
@@ -17,16 +18,27 @@ export function useOptimizedInsights(
     enableStats: false
   });
 
-  // Create stable cache keys based on data fingerprints
-  const dataFingerprint = useMemo(() => {
-    const emotionsHash = emotions.length + '_' + (emotions[0]?.timestamp.getTime() || 0);
-    const sensoryHash = sensoryInputs.length + '_' + (sensoryInputs[0]?.timestamp.getTime() || 0);
-    const entriesHash = trackingEntries.length + '_' + (trackingEntries[0]?.timestamp.getTime() || 0);
-    return `${emotionsHash}_${sensoryHash}_${entriesHash}`;
+  // Build a deterministic cache key using centralized utility to avoid shadowed logic
+  const dataCacheKey = useMemo(() => {
+    const counts = {
+      emotions: emotions?.length ?? 0,
+      sensory: sensoryInputs?.length ?? 0,
+      entries: trackingEntries?.length ?? 0,
+    };
+    const latest = {
+      emotions: emotions && emotions.length ? new Date(Math.max(...emotions.map(e => new Date(e.timestamp).getTime()))).toISOString() : null,
+      sensory: sensoryInputs && sensoryInputs.length ? new Date(Math.max(...sensoryInputs.map(s => new Date(s.timestamp).getTime()))).toISOString() : null,
+      entries: trackingEntries && trackingEntries.length ? new Date(Math.max(...trackingEntries.map(t => new Date(t.timestamp).getTime()))).toISOString() : null,
+    };
+    return createCacheKey({
+      namespace: 'insights-local',
+      input: { counts, latest },
+      normalizeArrayOrder: true,
+    });
   }, [emotions, sensoryInputs, trackingEntries]);
 
   const getInsights = useCallback(async () => {
-    const cacheKey = `insights_${dataFingerprint}`;
+    const cacheKey = `insights_${dataCacheKey}`;
     
     // Try to get from cache first
     const cached = cache.get(cacheKey);
@@ -55,10 +67,10 @@ export function useOptimizedInsights(
     cache.set(cacheKey, combinedInsights);
     
     return combinedInsights;
-  }, [dataFingerprint, cache, emotions, sensoryInputs, trackingEntries]);
+  }, [dataCacheKey, cache, emotions, sensoryInputs, trackingEntries]);
 
   const getCorrelationMatrix = useCallback(() => {
-    const cacheKey = `correlations_${dataFingerprint}`;
+    const cacheKey = `correlations_${dataCacheKey}`;
     
     const cached = cache.get(cacheKey);
     if (cached) {
@@ -73,10 +85,10 @@ export function useOptimizedInsights(
     cache.set(cacheKey, correlations);
     
     return correlations;
-  }, [dataFingerprint, cache, trackingEntries]);
+  }, [dataCacheKey, cache, trackingEntries]);
 
   const getAnomalies = useCallback(() => {
-    const cacheKey = `anomalies_${dataFingerprint}`;
+    const cacheKey = `anomalies_${dataCacheKey}`;
     
     const cached = cache.get(cacheKey);
     if (cached) {
@@ -91,7 +103,7 @@ export function useOptimizedInsights(
     
     cache.set(cacheKey, anomalies);
     return anomalies;
-  }, [dataFingerprint, cache, emotions, sensoryInputs, trackingEntries]);
+  }, [dataCacheKey, cache, emotions, sensoryInputs, trackingEntries]);
 
   const clearCache = useCallback(() => {
     cache.clear();

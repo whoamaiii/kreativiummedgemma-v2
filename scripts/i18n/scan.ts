@@ -112,7 +112,7 @@ function isLikelyTranslatable(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return false;
   // ignore pure punctuation and numbers
-  if (/^[0-9\s.,:;!?()\[\]{}+\-/*\\'"`~#@%^&|<>]+$/.test(trimmed)) return false;
+  if (/^[0-9\s.,:;!?()[\]{}+\-/*\\'"`~#@%^&|<>]+$/.test(trimmed)) return false;
   // ignore interpolation braces (likely already dynamic)
   if (/[{][^}]*[}]/.test(trimmed)) return false;
   // ignore i18n keys pattern like ns:key
@@ -126,7 +126,7 @@ function scanFile(filePath: string): Offender[] {
   const sf = ts.createSourceFile(filePath, text, ts.ScriptTarget.Latest, true, scriptKind);
   const offenders: Offender[] = [];
 
-  let importedMessageFns = new Set<string>();
+  const importedMessageFns = new Set<string>();
   let hasSonnerToast = false;
 
   function record(node: ts.Node, kind: Offender['kind'], detail: string, value: string) {
@@ -238,7 +238,7 @@ function main() {
     }
   }
   fs.writeFileSync(OUTPUT_JSON, JSON.stringify({ generatedAt: new Date().toISOString(), offenders: all }, null, 2));
-  // eslint-disable-next-line no-console
+   
   console.log(`Wrote ${all.length} offenders to ${path.relative(ROOT, OUTPUT_JSON)}`);
 }
 

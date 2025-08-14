@@ -262,8 +262,8 @@ export const DataQualityFeedback = memo(({
               
               {metric.recommendations.length > 0 && (
                 <div className="space-y-1">
-                  {metric.recommendations.map((rec, index) => (
-                    <p key={index} className="text-xs opacity-90">
+                  {metric.recommendations.map((rec) => (
+                    <p key={`${metric.id}-${rec}`} className="text-xs opacity-90">
                       • {rec}
                     </p>
                   ))}

@@ -1,8 +1,9 @@
 import { EmotionEntry, SensoryEntry, TrackingEntry, Goal } from "@/types/student";
 import { isWithinInterval, subDays, format, differenceInDays } from "date-fns";
-import { analyticsConfig, AnalyticsConfiguration } from "@/lib/analyticsConfig";
+import { analyticsConfig } from "@/lib/analyticsConfig";
 import { mlModels, EmotionPrediction, SensoryPrediction, BaselineCluster } from "@/lib/mlModels";
 import { logger } from '@/lib/logger';
+import { pearsonCorrelation, pValueForCorrelation, zScoresMedian, huberRegression } from '@/lib/statistics';
 
 export interface PredictiveInsight {
   type: 'prediction' | 'trend' | 'recommendation' | 'risk';
@@ -56,17 +57,9 @@ export interface CorrelationMatrix {
 }
 
 class EnhancedPatternAnalysisEngine {
-  private config: AnalyticsConfiguration;
   private mlModelsInitialized: boolean = false;
 
   constructor() {
-    this.config = analyticsConfig.getConfig();
-    
-    // Subscribe to configuration changes
-    analyticsConfig.subscribe((newConfig) => {
-      this.config = newConfig;
-    });
-
     // Initialize ML models
     this.initializeMLModels();
   }
@@ -88,11 +81,16 @@ class EnhancedPatternAnalysisEngine {
     trackingEntries: TrackingEntry[],
     goals: Goal[] = []
   ): Promise<PredictiveInsight[]> {
-    const insights: PredictiveInsight[] = [];
+    // Capture config snapshot once per operation
+    const cfgAny: any = analyticsConfig as any;
+    const cfg = typeof cfgAny.get === 'function' ? cfgAny.get() : analyticsConfig.getConfig();
+    const { enhancedAnalysis, timeWindows, alertSensitivity, analytics, insights: insightsCfg, taxonomy, patternAnalysis } = cfg;
+
+    const collectedInsights: PredictiveInsight[] = [];
 
     // Statistical emotional well-being prediction
     const emotionTrend = this.analyzeEmotionTrend(emotions);
-    if (emotionTrend && emotionTrend.significance >= this.config.enhancedAnalysis.predictionConfidenceThreshold) {
+    if (emotionTrend && emotionTrend.significance >= enhancedAnalysis.predictionConfidenceThreshold) {
       const statisticalInsight: PredictiveInsight = {
         type: 'prediction',
         title: 'Emotional Well-being Forecast (Statistical)',
@@ -108,7 +106,7 @@ class EnhancedPatternAnalysisEngine {
         severity: this.getTrendSeverity(emotionTrend),
         source: 'statistical'
       };
-      insights.push(statisticalInsight);
+      collectedInsights.push(statisticalInsight);
     }
 
     // ML emotional prediction if available
@@ -131,10 +129,18 @@ class EnhancedPatternAnalysisEngine {
             const currentAvgIntensity = emotions.slice(-7).reduce((sum, e) => sum + e.intensity, 0) /
               Math.max(emotions.slice(-7).length, 1);
 
-            const mlTrend = avgPredictedIntensity > currentAvgIntensity * 1.1 ? 'increasing' :
-                           avgPredictedIntensity < currentAvgIntensity * 0.9 ? 'decreasing' : 'stable';
+            const upMultiplier = 1 + enhancedAnalysis.trendThreshold;
+            const downMultiplier = 1 - enhancedAnalysis.trendThreshold;
+            const mlTrend = avgPredictedIntensity >= currentAvgIntensity * upMultiplier ? 'increasing' :
+                           avgPredictedIntensity <= currentAvgIntensity * downMultiplier ? 'decreasing' : 'stable';
 
-            insights.push({
+            const highT = patternAnalysis.highIntensityThreshold;
+            const mediumCut = Math.max(highT - 2, 1);
+            const severity: 'low' | 'medium' | 'high' =
+              avgPredictedIntensity >= highT ? 'high' :
+              avgPredictedIntensity <= mediumCut ? 'medium' : 'low';
+
+            collectedInsights.push({
               type: 'prediction',
               title: 'Emotional Well-being Forecast (ML)',
               description: `Machine learning predicts emotional patterns will be ${mlTrend}`,
@@ -146,8 +152,7 @@ class EnhancedPatternAnalysisEngine {
                 accuracy: mlEmotionPredictions[0].confidence
               },
               recommendations: this.getMLEmotionRecommendations(mlEmotionPredictions, mlTrend),
-              severity: mlTrend === 'increasing' && avgPredictedIntensity > 3.5 ? 'high' :
-                       mlTrend === 'decreasing' && avgPredictedIntensity < 2 ? 'medium' : 'low',
+              severity,
               source: 'ml',
               mlPrediction: mlEmotionPredictions
             });
@@ -160,8 +165,8 @@ class EnhancedPatternAnalysisEngine {
 
     // Statistical sensory regulation prediction
     const sensoryTrend = this.analyzeSensoryTrend(sensoryInputs);
-    if (sensoryTrend && sensoryTrend.significance >= this.config.enhancedAnalysis.predictionConfidenceThreshold) {
-      insights.push({
+    if (sensoryTrend && sensoryTrend.significance >= enhancedAnalysis.predictionConfidenceThreshold) {
+      collectedInsights.push({
         type: 'prediction',
         title: 'Sensory Regulation Forecast (Statistical)',
         description: `Sensory seeking/avoiding patterns show ${sensoryTrend.direction} trend`,
@@ -204,7 +209,7 @@ class EnhancedPatternAnalysisEngine {
           );
 
           if (mlSensoryPrediction) {
-            insights.push({
+            collectedInsights.push({
               type: 'prediction',
               title: 'Sensory Response Prediction (ML)',
               description: `Machine learning predicts sensory responses based on current environment`,
@@ -227,39 +232,38 @@ class EnhancedPatternAnalysisEngine {
     goals.forEach(goal => {
       const goalPrediction = this.predictGoalAchievement(goal);
       if (goalPrediction) {
-        insights.push(goalPrediction);
+        collectedInsights.push(goalPrediction);
       }
     });
 
     // Risk assessment
     const riskInsights = this.assessRisks(emotions, sensoryInputs, trackingEntries);
-    insights.push(...riskInsights);
+    collectedInsights.push(...riskInsights);
 
-    return insights;
+    return collectedInsights;
   }
 
   // Enhanced Trend Analysis with Statistical Significance
   analyzeTrendsWithStatistics(data: { value: number; timestamp: Date }[]): TrendAnalysis | null {
-    if (data.length < this.config.enhancedAnalysis.minSampleSize) return null;
+    // Capture config snapshot once per operation
+    const cfgAny: any = analyticsConfig as any;
+    const cfg = typeof cfgAny.get === 'function' ? cfgAny.get() : analyticsConfig.getConfig();
+    const { enhancedAnalysis, analytics, timeWindows } = cfg;
 
-    // Sort by timestamp
-    const sortedData = data.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+    if (data.length < enhancedAnalysis.minSampleSize) return null;
+
+    // Sort by timestamp without mutating the input
+    const sortedData = [...data].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
     
-    // Calculate linear regression
+    // Robust linear regression (Huber) for slope/intercept
     const n = sortedData.length;
     const x = sortedData.map((_, i) => i);
     const y = sortedData.map(d => d.value);
-    
-    const sumX = x.reduce((a, b) => a + b, 0);
-    const sumY = y.reduce((a, b) => a + b, 0);
-    const sumXY = x.map((xi, i) => xi * y[i]).reduce((a, b) => a + b, 0);
-    const sumXX = x.map(xi => xi * xi).reduce((a, b) => a + b, 0);
-    
-    const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
-    const intercept = (sumY - slope * sumX) / n;
+
+    const { slope, intercept } = huberRegression(x, y, { maxIter: 200, tol: 1e-8 });
     
     // Calculate R-squared for significance
-    const yMean = sumY / n;
+    const yMean = y.reduce((a, b) => a + b, 0) / n;
     const yPred = x.map(xi => (Number.isFinite(slope) ? slope * xi + intercept : intercept));
     const ssRes = y.map((yi, i) => Math.pow(yi - yPred[i], 2)).reduce((a, b) => a + b, 0);
     const ssTot = y.map(yi => Math.pow(yi - yMean, 2)).reduce((a, b) => a + b, 0);
@@ -276,12 +280,14 @@ class EnhancedPatternAnalysisEngine {
     const dailyRate = Number.isFinite(slope) ? slope * (n / safeTimeSpanDays) : 0;
     
     // Multi-factor confidence calculation
-    const dataQuality = Math.min(1, n / 30); // Better with more data points
-    const timeSpanQuality = Math.min(1, timeSpanDays / 21); // Better with longer timespan
+    const analysisPeriodDays = Number(analytics?.ANALYSIS_PERIOD_DAYS);
+    const defaultAnalysisDays = Number(timeWindows?.defaultAnalysisDays);
+    const dataQuality = analysisPeriodDays > 0 ? Math.min(1, n / analysisPeriodDays) : 0; // Better with more data points
+    const timeSpanQuality = defaultAnalysisDays > 0 ? Math.min(1, timeSpanDays / defaultAnalysisDays) : 0; // Better with longer timespan
     const patternStrength = Math.max(0, rSquared); // R-squared strength
     const enhancedConfidence = (dataQuality * 0.3 + timeSpanQuality * 0.3 + patternStrength * 0.4);
 
-    const direction = Math.abs(dailyRate) < this.config.enhancedAnalysis.trendThreshold ? 'stable' :
+    const direction = Math.abs(dailyRate) < enhancedAnalysis.trendThreshold ? 'stable' :
                      dailyRate > 0 ? 'increasing' : 'decreasing';
 
     return {
@@ -305,34 +311,82 @@ class EnhancedPatternAnalysisEngine {
     rSquared: number,
     confidence: number
   ): { level: 'low' | 'medium' | 'high'; explanation: string; factors: string[] } {
+    // Capture config snapshot once per operation
+    const cfgAny: any = analyticsConfig as any;
+    const cfg = typeof cfgAny.get === 'function' ? cfgAny.get() : analyticsConfig.getConfig();
+    const { enhancedAnalysis, timeWindows, insights, patternAnalysis } = cfg || {} as any;
+
     const factors: string[] = [];
     let explanation = '';
     let level: 'low' | 'medium' | 'high' = 'low';
 
-    if (dataPoints < 10) {
-      factors.push(`insufficientData:${dataPoints}:${this.config.enhancedAnalysis.minSampleSize}`);
+    // Minimum sample size factor (guard missing config)
+    if (typeof enhancedAnalysis?.minSampleSize === 'number') {
+      if (dataPoints < enhancedAnalysis.minSampleSize) {
+        factors.push(`insufficientData:${dataPoints}:${enhancedAnalysis.minSampleSize}`);
+      } else {
+        // Include a positive factor documenting threshold used
+        factors.push(`sufficientData:${dataPoints}:${enhancedAnalysis.minSampleSize}`);
+      }
     }
-    
-    if (timeSpanDays < 14) {
-      factors.push(`shortTimespan:${timeSpanDays}:21`);
+
+    // Time window factor: compare against shortTermDays, label with defaultAnalysisDays if available
+    if (typeof timeWindows?.shortTermDays === 'number') {
+      const defaultDays = typeof timeWindows?.defaultAnalysisDays === 'number' ? timeWindows.defaultAnalysisDays : undefined;
+      if (timeSpanDays < timeWindows.shortTermDays) {
+        factors.push(
+          defaultDays != null
+            ? `shortTimespan:${timeSpanDays}:${defaultDays}`
+            : `shortTimespan:${timeSpanDays}`
+        );
+      } else {
+        factors.push(
+          defaultDays != null
+            ? `adequateTimespan:${timeSpanDays}:${defaultDays}`
+            : `adequateTimespan:${timeSpanDays}`
+        );
+      }
     }
-    
-    if (rSquared < 0.3) {
-      factors.push(`weakPattern:${rSquared.toFixed(3)}`);
-    } else if (rSquared > 0.7) {
-      factors.push(`strongPattern:${rSquared.toFixed(3)}`);
+
+    // rSquared strength bands using patternAnalysis.correlationThreshold (guard missing)
+    if (typeof patternAnalysis?.correlationThreshold === 'number') {
+      const corrT = patternAnalysis.correlationThreshold;
+      const strongCut = Math.max(0.7, corrT + 0.4);
+      if (rSquared < corrT) {
+        factors.push(`weakPattern:${rSquared.toFixed(3)}:ct=${corrT}`);
+      } else if (rSquared > strongCut) {
+        factors.push(`strongPattern:${rSquared.toFixed(3)}:ct=${corrT}`);
+      } else {
+        factors.push(`moderatePattern:ct=${corrT}`);
+      }
     } else {
+      // No threshold available; avoid bold claims
       factors.push('moderatePattern');
     }
 
-    // Determine overall level and explanation
-    if (confidence >= 0.7) {
-      level = 'high';
-      explanation = rSquared > 0.8 ? 'excellentData' : 'reliableInsight';
-    } else if (confidence >= 0.4) {
-      level = 'medium';
-      explanation = 'emergingTrend';
+    // Determine overall level and explanation using insights.HIGH_CONFIDENCE_PATTERN_THRESHOLD
+    if (typeof insights?.HIGH_CONFIDENCE_PATTERN_THRESHOLD === 'number') {
+      const highT = insights.HIGH_CONFIDENCE_PATTERN_THRESHOLD;
+      const medT = highT - 0.2;
+      if (confidence >= highT) {
+        level = 'high';
+        // Prefer "excellentData" when rSquared exceeds strong band; else "reliableInsight"
+        if (typeof patternAnalysis?.correlationThreshold === 'number') {
+          const corrT = patternAnalysis.correlationThreshold;
+          const strongCut = Math.max(0.7, corrT + 0.4);
+          explanation = rSquared > strongCut ? 'excellentData' : 'reliableInsight';
+        } else {
+          explanation = 'reliableInsight';
+        }
+      } else if (confidence >= medT) {
+        level = 'medium';
+        explanation = 'emergingTrend';
+      } else {
+        level = 'low';
+        explanation = 'needMoreData';
+      }
     } else {
+      // Missing threshold -> minimal/confidently safe output
       level = 'low';
       explanation = 'needMoreData';
     }
@@ -346,26 +400,28 @@ class EnhancedPatternAnalysisEngine {
     sensoryInputs: SensoryEntry[],
     trackingEntries: TrackingEntry[]
   ): AnomalyDetection[] {
+    // Capture config snapshot once per operation
+    const cfgAny: any = analyticsConfig as any;
+    const cfg = typeof cfgAny.get === 'function' ? cfgAny.get() : analyticsConfig.getConfig();
+    const { enhancedAnalysis, alertSensitivity } = cfg;
+
     const anomalies: AnomalyDetection[] = [];
 
     // Emotion intensity anomalies
     const emotionIntensities = emotions.map(e => e.intensity);
-    const emotionMean = emotionIntensities.reduce((a, b) => a + b, 0) / emotionIntensities.length;
-    const emotionStd = Math.sqrt(
-      emotionIntensities.map(x => Math.pow(x - emotionMean, 2)).reduce((a, b) => a + b, 0) / emotionIntensities.length
-    );
 
-    // Apply anomaly sensitivity multiplier
-    const anomalyThreshold = this.config.enhancedAnalysis.anomalyThreshold *
-      (1 / this.config.alertSensitivity.anomalyMultiplier);
+    // Apply anomaly sensitivity multiplier (base threshold)
+    const anomalyThreshold = enhancedAnalysis.anomalyThreshold * alertSensitivity.anomalyMultiplier;
 
-    emotions.forEach(emotion => {
-      const zScore = Math.abs((emotion.intensity - emotionMean) / emotionStd);
+    const zEmotion = zScoresMedian(emotionIntensities);
+
+    emotions.forEach((emotion, idx) => {
+      const zScore = Math.abs(zEmotion[idx] ?? 0);
       if (zScore > anomalyThreshold) {
         anomalies.push({
           timestamp: emotion.timestamp,
           type: 'emotion',
-          severity: zScore > 3 ? 'high' : zScore > 2.5 ? 'medium' : 'low',
+          severity: zScore > (anomalyThreshold + 1.5) ? 'high' : zScore > (anomalyThreshold + 0.5) ? 'medium' : 'low',
           description: `Unusual ${emotion.emotion} intensity detected (${emotion.intensity}/5)`,
           deviationScore: zScore,
           recommendations: this.getAnomalyRecommendations('emotion', emotion.emotion, zScore)
@@ -377,18 +433,17 @@ class EnhancedPatternAnalysisEngine {
     const dailySensoryCounts = this.groupSensoryByDay(sensoryInputs);
     const counts = Object.values(dailySensoryCounts);
     if (counts.length > 0) {
-      const countMean = counts.reduce((a, b) => a + b, 0) / counts.length;
-      const countStd = Math.sqrt(
-        counts.map(x => Math.pow(x - countMean, 2)).reduce((a, b) => a + b, 0) / counts.length
-      );
+      const zCounts = zScoresMedian(counts);
+      const dates = Object.keys(dailySensoryCounts);
 
-      Object.entries(dailySensoryCounts).forEach(([date, count]) => {
-        const zScore = Math.abs((count - countMean) / countStd);
+      dates.forEach((date, idx) => {
+        const count = dailySensoryCounts[date];
+        const zScore = Math.abs(zCounts[idx] ?? 0);
         if (zScore > anomalyThreshold) {
           anomalies.push({
             timestamp: new Date(date),
             type: 'sensory',
-            severity: zScore > 3 ? 'high' : zScore > 2.5 ? 'medium' : 'low',
+            severity: zScore > (anomalyThreshold + 1.5) ? 'high' : zScore > (anomalyThreshold + 0.5) ? 'medium' : 'low',
             description: `Unusual sensory activity level detected (${count} inputs)`,
             deviationScore: zScore,
             recommendations: this.getAnomalyRecommendations('sensory', 'frequency', zScore)
@@ -402,6 +457,11 @@ class EnhancedPatternAnalysisEngine {
 
   // Comprehensive Correlation Matrix
   generateCorrelationMatrix(trackingEntries: TrackingEntry[]): CorrelationMatrix {
+    // Capture config snapshot once per operation
+    const cfgAny: any = analyticsConfig as any;
+    const cfg = typeof cfgAny.get === 'function' ? cfgAny.get() : analyticsConfig.getConfig();
+    const { enhancedAnalysis, patternAnalysis, taxonomy } = cfg;
+
     const factors = [
       'avgEmotionIntensity',
       'positiveEmotionRatio',
@@ -411,12 +471,15 @@ class EnhancedPatternAnalysisEngine {
       'lightingQuality'
     ];
 
+    // Build positive emotion lookup from taxonomy (case-insensitive)
+    const positiveSet = new Set((taxonomy?.positiveEmotions || []).map(e => e.toLowerCase()));
+
     const dataPoints = trackingEntries.map(entry => ({
       avgEmotionIntensity: entry.emotions.length > 0 
         ? entry.emotions.reduce((sum, e) => sum + e.intensity, 0) / entry.emotions.length 
         : 0,
       positiveEmotionRatio: entry.emotions.length > 0
-        ? entry.emotions.filter(e => ['happy', 'calm', 'focused', 'excited'].includes(e.emotion.toLowerCase())).length / entry.emotions.length
+        ? entry.emotions.filter(e => positiveSet.has(e.emotion.toLowerCase())).length / entry.emotions.length
         : 0,
       sensorySeekingRatio: entry.sensoryInputs.length > 0
         ? entry.sensoryInputs.filter(s => s.response.toLowerCase().includes('seeking')).length / entry.sensoryInputs.length
@@ -429,24 +492,33 @@ class EnhancedPatternAnalysisEngine {
     const matrix: number[][] = [];
     const significantPairs: CorrelationMatrix['significantPairs'] = [];
 
+    // Base threshold and derived tiers for significance labeling
+    const baseThreshold = Math.max(0, Math.min(1, patternAnalysis.correlationThreshold));
+    const moderateCut = Math.min(baseThreshold + 0.2, 0.95);
+    const highCut = Math.min(baseThreshold + 0.4, 0.95);
+
     factors.forEach((factor1, i) => {
       matrix[i] = [];
       factors.forEach((factor2, j) => {
         const values1 = dataPoints.map(d => d[factor1 as keyof typeof d]).filter(v => v !== undefined);
         const values2 = dataPoints.map(d => d[factor2 as keyof typeof d]).filter(v => v !== undefined);
         
-        const correlation = this.calculatePearsonCorrelation(values1, values2);
+        const correlation = pearsonCorrelation(values1 as number[], values2 as number[]);
         matrix[i][j] = correlation;
 
-        if (i < j && Math.abs(correlation) > 0.3 && values1.length >= this.config.enhancedAnalysis.minSampleSize) {
-          const pValue = this.calculatePValue(correlation, values1.length);
+        // Significance gate uses |r| >= baseThreshold and minimum sample size from enhancedAnalysis
+        if (i < j && Math.abs(correlation) >= baseThreshold && values1.length >= enhancedAnalysis.minSampleSize) {
+          const pValue = pValueForCorrelation(correlation, values1.length);
+          const absR = Math.abs(correlation);
+          const significance: 'low' | 'moderate' | 'high' =
+            absR >= highCut ? 'high' : absR >= moderateCut ? 'moderate' : 'low';
+
           significantPairs.push({
             factor1,
             factor2,
             correlation,
             pValue,
-            significance: Math.abs(correlation) > 0.7 ? 'high' : 
-                         Math.abs(correlation) > 0.5 ? 'moderate' : 'low'
+            significance
           });
         }
       });
@@ -519,16 +591,21 @@ class EnhancedPatternAnalysisEngine {
     sensoryInputs: SensoryEntry[],
     trackingEntries: TrackingEntry[]
   ): PredictiveInsight[] {
+    // Capture config snapshot once per operation (private helper still snapshots to avoid nested reads)
+    const cfgAny: any = analyticsConfig as any;
+    const cfg = typeof cfgAny.get === 'function' ? cfgAny.get() : analyticsConfig.getConfig();
+    const { timeWindows, enhancedAnalysis, alertSensitivity } = cfg;
+
     const risks: PredictiveInsight[] = [];
     const recentData = {
-      emotions: emotions.filter(e => e.timestamp >= subDays(new Date(), this.config.timeWindows.shortTermDays)),
-      sensoryInputs: sensoryInputs.filter(s => s.timestamp >= subDays(new Date(), this.config.timeWindows.shortTermDays)),
-      trackingEntries: trackingEntries.filter(t => t.timestamp >= subDays(new Date(), this.config.timeWindows.shortTermDays))
+      emotions: emotions.filter(e => e.timestamp >= subDays(new Date(), timeWindows.shortTermDays)),
+      sensoryInputs: sensoryInputs.filter(s => s.timestamp >= subDays(new Date(), timeWindows.shortTermDays)),
+      trackingEntries: trackingEntries.filter(t => t.timestamp >= subDays(new Date(), timeWindows.shortTermDays))
     };
 
     // Apply sensitivity multiplier for risk assessment
-    const riskThreshold = this.config.enhancedAnalysis.riskAssessmentThreshold *
-      (1 / this.config.alertSensitivity.emotionIntensityMultiplier);
+    const riskThreshold = enhancedAnalysis.riskAssessmentThreshold *
+      (1 / alertSensitivity.emotionIntensityMultiplier);
 
     // High stress accumulation risk - fixed for 1-5 scale
     const highStressCount = recentData.emotions.filter(e =>
@@ -572,73 +649,6 @@ class EnhancedPatternAnalysisEngine {
       'natural': 3.5
     };
     return lightingMap[lighting?.toLowerCase() || ''] || 2;
-  }
-
-  private calculatePearsonCorrelation(x: number[], y: number[]): number {
-    if (x.length !== y.length || x.length === 0) return 0;
-
-    const n = x.length;
-    const sumX = x.reduce((a, b) => a + b, 0);
-    const sumY = y.reduce((a, b) => a + b, 0);
-    const sumXY = x.map((xi, i) => xi * y[i]).reduce((a, b) => a + b, 0);
-    const sumXX = x.map(xi => xi * xi).reduce((a, b) => a + b, 0);
-    const sumYY = y.map(yi => yi * yi).reduce((a, b) => a + b, 0);
-
-    const numerator = n * sumXY - sumX * sumY;
-    const denominator = Math.sqrt((n * sumXX - sumX * sumX) * (n * sumYY - sumY * sumY));
-
-    return denominator === 0 ? 0 : numerator / denominator;
-  }
-
-  private calculatePValue(correlation: number, sampleSize: number): number {
-    // Simplified p-value calculation for correlation
-    if (!Number.isFinite(correlation) || sampleSize <= 2 || !Number.isFinite(sampleSize)) {
-      return 1; // non-significant
-    }
-    const denom = (1 - correlation * correlation);
-    if (denom <= 0) return 0; // maximal correlation
-    const t = correlation * Math.sqrt((sampleSize - 2) / denom);
-    if (!Number.isFinite(t)) return 1;
-    const val = 2 * (1 - this.studentTCDF(Math.abs(t), sampleSize - 2));
-    return Number.isFinite(val) ? Math.max(0, Math.min(1, val)) : 1;
-  }
-
-  private studentTCDF(t: number, df: number): number {
-    // Simplified student's t-distribution CDF approximation
-    if (!Number.isFinite(t) || df <= 0) return 0.5;
-    const x = df / (df + t * t);
-    const ib = this.incompleteBeta(Math.max(1e-8, df / 2), 0.5, Math.max(1e-8, Math.min(1 - 1e-8, x)));
-    const res = 0.5 + 0.5 * Math.sign(t) * ib;
-    return Number.isFinite(res) ? Math.max(0, Math.min(1, res)) : 0.5;
-  }
-
-  private incompleteBeta(a: number, b: number, x: number): number {
-    // Simplified incomplete beta function approximation with guards
-    if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(x)) return 0;
-    if (x <= 0) return 0;
-    if (x >= 1) return 1;
-    const num = Math.pow(x, a) * Math.pow(1 - x, b);
-    const den = a * this.beta(a, b);
-    if (!Number.isFinite(num) || !Number.isFinite(den) || den === 0) return 0;
-    return num / den;
-  }
-
-  private beta(a: number, b: number): number {
-    // Simplified beta function approximation
-    const ga = this.gamma(a);
-    const gb = this.gamma(b);
-    const gab = this.gamma(a + b);
-    if (!Number.isFinite(ga) || !Number.isFinite(gb) || !Number.isFinite(gab) || gab === 0) return 1;
-    return (ga * gb) / gab;
-  }
-
-  private gamma(z: number): number {
-    // Simplified gamma function approximation using Stirling's approximation with guards
-    if (!Number.isFinite(z)) return 1;
-    if (z <= 0) return 1;
-    if (z < 1) return this.gamma(z + 1) / z;
-    const v = Math.sqrt(2 * Math.PI / z) * Math.pow(z / Math.E, z);
-    return Number.isFinite(v) ? v : 1;
   }
 
   private getEmotionTrendRecommendations(trend: TrendAnalysis): string[] {
@@ -792,6 +802,11 @@ class EnhancedPatternAnalysisEngine {
 
   // Baseline analysis using ML clustering
   async analyzeBaseline(trackingEntries: TrackingEntry[]): Promise<BaselineCluster[]> {
+    // Capture config snapshot once per operation (kept for parity/future use)
+    const cfgAny: any = analyticsConfig as any;
+    const cfg = typeof cfgAny.get === 'function' ? cfgAny.get() : analyticsConfig.getConfig();
+    const { enhancedAnalysis, patternAnalysis, timeWindows, alertSensitivity, analytics, insights, taxonomy } = cfg;
+
     if (!this.mlModelsInitialized || trackingEntries.length < 10) {
       return [];
     }

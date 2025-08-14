@@ -3,7 +3,7 @@
  */
 
 // Set up global environment for Node.js execution
-(global as any).import = {
+(globalThis as { import?: { meta: { env: { PROD: boolean; DEV: boolean } } } }).import = {
   meta: {
     env: {
       PROD: false,

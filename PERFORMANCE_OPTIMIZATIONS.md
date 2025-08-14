@@ -7,13 +7,16 @@
 **Location:** `src/components/AdvancedSearch.tsx`
 
 **Before:**
+
 ```typescript
-const studentIds = new Set(filteredStudents.map(s => s.id));
+const studentIds = new Set(filteredStudents.map((s) => s.id));
 ```
+
 - Created intermediate arrays with `.map()` before creating Sets
 - Two-pass operation: first filter, then map to extract IDs
 
 **After:**
+
 ```typescript
 const studentIds = new Set<string>();
 filteredStudents = filteredStudents.filter(student => {
@@ -24,11 +27,13 @@ filteredStudents = filteredStudents.filter(student => {
   return matches;
 });
 ```
+
 - Single-pass operation that builds the Set during filtering
 - Eliminates intermediate array creation
 - Reduces memory allocation and garbage collection pressure
 
 **Performance Impact:**
+
 - **Memory:** Reduced by ~50% for ID collection operations
 - **CPU:** Single iteration instead of double iteration
 - **Scalability:** Better performance with large datasets (1000+ items)
@@ -38,38 +43,52 @@ filteredStudents = filteredStudents.filter(student => {
 **Location:** `src/lib/dataStorage.ts`
 
 **Before:**
+
 ```typescript
-Object.keys(parsed.students || {}).forEach(key => {
+Object.keys(parsed.students || {}).forEach((key) => {
   parsed.students[key] = new Date(parsed.students[key]);
 });
-Object.keys(parsed.trackingEntries || {}).forEach(key => {
+Object.keys(parsed.trackingEntries || {}).forEach((key) => {
   parsed.trackingEntries[key] = new Date(parsed.trackingEntries[key]);
 });
 // ... repeated for each category
 ```
+
 - Five separate `forEach` loops
 - Repetitive code pattern
 - Multiple iterations over different objects
 
 **After:**
+
 ```typescript
-const indexCategories = ['students', 'trackingEntries', 'goals', 'interventions', 'alerts'] as const;
+const indexCategories = [
+  'students',
+  'trackingEntries',
+  'goals',
+  'interventions',
+  'alerts',
+] as const;
 
 for (const category of indexCategories) {
   if (parsed[category]) {
     const entries = Object.entries(parsed[category]);
-    parsed[category] = entries.reduce((acc, [key, value]) => {
-      acc[key] = new Date(value as string);
-      return acc;
-    }, {} as Record<string, Date>);
+    parsed[category] = entries.reduce(
+      (acc, [key, value]) => {
+        acc[key] = new Date(value as string);
+        return acc;
+      },
+      {} as Record<string, Date>,
+    );
   }
 }
 ```
+
 - Single loop with dynamic category processing
 - More maintainable and DRY code
 - Easier to add new categories in the future
 
 **Performance Impact:**
+
 - **Code Size:** Reduced by ~60% (less repetition)
 - **Maintainability:** Single point of change for date conversion logic
 - **Execution:** Similar performance but cleaner code path
@@ -77,6 +96,7 @@ for (const category of indexCategories) {
 ## Testing Results
 
 All existing tests continue to pass after optimizations:
+
 - ✅ 89 out of 91 tests passing
 - ❌ 2 tests failing (unrelated to optimizations - missing test dependencies)
 
@@ -111,17 +131,20 @@ For a typical dataset of 1000 students with 10,000 tracking entries:
 **Location:** `src/components/PeriodComparison.tsx`
 
 **Before:**
+
 ```typescript
 const duration = currentRange.end.getTime() - currentRange.start.getTime();
 // Later calls getTime() again on same objects
 ```
 
 **After:**
+
 ```typescript
 const startTime = currentRange.start.getTime();
 const endTime = currentRange.end.getTime();
 const duration = endTime - startTime;
 ```
+
 - Cache `.getTime()` results to avoid repeated method calls
 - Reduces redundant Date object operations
 
@@ -130,12 +153,13 @@ const duration = endTime - startTime;
 **Location:** `src/lib/patternAnalysis.ts`
 
 **Before:**
+
 ```typescript
-const dominantEmotion = Object.entries(emotionCounts)
-  .sort(([,a], [,b]) => b - a)[0];
+const dominantEmotion = Object.entries(emotionCounts).sort(([, a], [, b]) => b - a)[0];
 ```
 
 **After:**
+
 ```typescript
 let dominantEmotion: [string, number] | undefined;
 let maxCount = 0;
@@ -146,6 +170,7 @@ for (const [emotion, count] of Object.entries(emotionCounts)) {
   }
 }
 ```
+
 - Changed from O(n log n) sorting to O(n) single-pass maximum finding
 - More efficient for finding single maximum value
 
@@ -154,14 +179,16 @@ for (const [emotion, count] of Object.entries(emotionCounts)) {
 **Location:** `src/components/InteractiveDataVisualization.tsx`
 
 **Before:**
+
 ```typescript
 const dateRange = {
-  start: new Date(Math.min(...allTimestamps.map(t => t.getTime()))),
-  end: new Date(Math.max(...allTimestamps.map(t => t.getTime())))
+  start: new Date(Math.min(...allTimestamps.map((t) => t.getTime()))),
+  end: new Date(Math.max(...allTimestamps.map((t) => t.getTime()))),
 };
 ```
 
 **After:**
+
 ```typescript
 let minTime = Number.MAX_SAFE_INTEGER;
 let maxTime = Number.MIN_SAFE_INTEGER;
@@ -174,9 +201,10 @@ for (const timestamp of allTimestamps) {
 
 const dateRange = {
   start: new Date(minTime),
-  end: new Date(maxTime)
+  end: new Date(maxTime),
 };
 ```
+
 - Single-pass O(n) instead of two passes with O(2n)
 - Avoids creating intermediate arrays with `.map()`
 - More memory efficient for large timestamp arrays
@@ -184,13 +212,16 @@ const dateRange = {
 ## Total Performance Improvements
 
 ### Quantitative Metrics (Estimated)
+
 - **Algorithm Complexity Improvements:**
   - Sorting operations: O(n log n) → O(n)
   - Array operations: Multiple passes → Single pass
   - Memory allocations: Reduced by ~40-50%
 
 ### Real-world Impact
+
 For a typical session with 1000 data points:
+
 - **Before:** ~12ms processing time
 - **After:** ~7ms processing time
 - **Improvement:** ~42% faster

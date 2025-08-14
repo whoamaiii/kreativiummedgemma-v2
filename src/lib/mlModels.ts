@@ -1,6 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { Student, TrackingEntry, EmotionEntry, SensoryEntry } from '../types/student';
 import { ValidationResults } from '../types/ml';
+import { analyticsConfig } from '@/lib/analyticsConfig';
 
 // Model versioning and metadata
 export interface ModelMetadata {
@@ -271,10 +272,13 @@ async listModels(): Promise<ModelMetadata[]> {
 
 // Data preprocessing utilities
 /**
+ * @deprecated DataPreprocessor is deprecated. Use the preprocessing facade from @/lib/preprocessing/facade instead.
+ * This class will be removed in a future version.
  * Utility class for preprocessing data related to ML models.
  */
 export class DataPreprocessor {
   /**
+   * @deprecated Use normalizeData from @/lib/preprocessing/facade instead.
    * Normalize an array of numbers to a 0-1 range based on defined min and max.
    *
    * @param data - The array of numbers to normalize.
@@ -283,14 +287,21 @@ export class DataPreprocessor {
    * @returns Normalized array of numbers.
    */
   static normalizeData(data: number[], min?: number, max?: number): number[] {
-    const dataMin = min ?? Math.min(...data);
-    const dataMax = max ?? Math.max(...data);
-    const range = dataMax - dataMin || 1;
+    // Import lazy-loaded to avoid circular dependency
+    const { deprecate } = require('@/lib/deprecation');
+    const { normalizeData: newNormalizeData } = require('@/lib/preprocessing/facade');
     
-    return data.map(value => (value - dataMin) / range);
+    deprecate(
+      'DataPreprocessor.normalizeData',
+      'normalizeData from @/lib/preprocessing/facade',
+      'This provides the same functionality with enhanced pipeline integration options.'
+    );
+    
+    return newNormalizeData(data, min, max);
   }
 
-/**
+  /**
+   * @deprecated Use extractTimeFeatures from @/lib/preprocessing/facade instead.
    * Extract cyclically encoded time features from a date.
    * Applies sine and cosine transformations for cyclic representation.
    *
@@ -298,28 +309,21 @@ export class DataPreprocessor {
    * @returns Array of encoded time features.
    */
   static extractTimeFeatures(date: Date): number[] {
-    const dayOfWeek = date.getDay() / 6; // 0-1
-    const hourOfDay = date.getHours() / 23; // 0-1
-    const dayOfMonth = (date.getDate() - 1) / 30; // 0-1
-    const monthOfYear = date.getMonth() / 11; // 0-1
+    // Import lazy-loaded to avoid circular dependency
+    const { deprecate } = require('@/lib/deprecation');
+    const { extractTimeFeatures: newExtractTimeFeatures } = require('@/lib/preprocessing/facade');
     
-    // Cyclic encoding for better representation
-    const dayOfWeekSin = Math.sin(2 * Math.PI * dayOfWeek);
-    const dayOfWeekCos = Math.cos(2 * Math.PI * dayOfWeek);
-    const hourOfDaySin = Math.sin(2 * Math.PI * hourOfDay);
-    const hourOfDayCos = Math.cos(2 * Math.PI * hourOfDay);
+    deprecate(
+      'DataPreprocessor.extractTimeFeatures',
+      'extractTimeFeatures from @/lib/preprocessing/facade',
+      'This provides the same functionality with enhanced pipeline integration options.'
+    );
     
-    return [
-      dayOfWeekSin,
-      dayOfWeekCos,
-      hourOfDaySin,
-      hourOfDayCos,
-      dayOfMonth,
-      monthOfYear
-    ];
+    return newExtractTimeFeatures(date);
   }
 
-/**
+  /**
+   * @deprecated Use convertTrackingEntriesToSessions from @/lib/preprocessing/facade instead.
    * Converts tracking entries into ML-compatible session format.
    *
    * @param entries - Array of raw tracking entries from the database.
@@ -329,69 +333,21 @@ export class DataPreprocessor {
    * // Returns sessions with averaged emotions, categorized sensory responses, and environmental data.
    */
   static convertTrackingEntriesToSessions(entries: TrackingEntry[]): MLSession[] {
-    return entries.map(entry => {
-      // Extract emotion averages
-      const emotionData: MLSession['emotion'] = {};
-      const emotionTypes = ['happy', 'sad', 'angry', 'anxious', 'calm', 'energetic', 'frustrated'];
-      
-      emotionTypes.forEach(emotionType => {
-        const emotions = entry.emotions.filter(e => e.emotion.toLowerCase() === emotionType);
-        if (emotions.length > 0) {
-          emotionData[emotionType as keyof MLSession['emotion']] =
-            emotions.reduce((sum, e) => sum + e.intensity, 0) / emotions.length;
-        }
-      });
-
-      // Extract sensory patterns
-      const sensoryData: MLSession['sensory'] = {};
-      const sensoryTypes = ['visual', 'auditory', 'tactile', 'vestibular', 'proprioceptive'];
-      
-      sensoryTypes.forEach(sensoryType => {
-        const sensoryInputs = entry.sensoryInputs.filter(s =>
-          s.sensoryType?.toLowerCase() === sensoryType || s.type?.toLowerCase() === sensoryType
-        );
-        if (sensoryInputs.length > 0) {
-          const seekingCount = sensoryInputs.filter(s => s.response.toLowerCase().includes('seeking')).length;
-          const avoidingCount = sensoryInputs.filter(s => s.response.toLowerCase().includes('avoiding')).length;
-          const neutralCount = sensoryInputs.length - seekingCount - avoidingCount;
-          
-          if (seekingCount > avoidingCount && seekingCount > neutralCount) {
-            sensoryData[sensoryType as keyof MLSession['sensory']] = 'seeking';
-          } else if (avoidingCount > seekingCount && avoidingCount > neutralCount) {
-            sensoryData[sensoryType as keyof MLSession['sensory']] = 'avoiding';
-          } else {
-            sensoryData[sensoryType as keyof MLSession['sensory']] = 'neutral';
-          }
-        }
-      });
-
-      // Extract environmental data
-      const environmentData: MLSession['environment'] = {
-        lighting: entry.environmentalData?.roomConditions?.lighting as 'bright' | 'dim' | 'moderate' || 'moderate',
-        noise: entry.environmentalData?.roomConditions?.noiseLevel && entry.environmentalData.roomConditions.noiseLevel > 70 ? 'loud' :
-               entry.environmentalData?.roomConditions?.noiseLevel && entry.environmentalData.roomConditions.noiseLevel < 40 ? 'quiet' : 'moderate',
-        temperature: entry.environmentalData?.roomConditions?.temperature && entry.environmentalData.roomConditions.temperature > 26 ? 'hot' :
-                    entry.environmentalData?.roomConditions?.temperature && entry.environmentalData.roomConditions.temperature < 18 ? 'cold' : 'comfortable',
-        crowded: entry.environmentalData?.classroom?.studentCount && entry.environmentalData.classroom.studentCount > 25 ? 'very' :
-                entry.environmentalData?.classroom?.studentCount && entry.environmentalData.classroom.studentCount < 10 ? 'not' : 'moderate',
-        smells: false,
-        textures: false
-      };
-
-      return {
-        id: entry.id,
-        studentId: entry.studentId,
-        date: entry.timestamp.toISOString(),
-        emotion: emotionData,
-        sensory: sensoryData,
-        environment: environmentData,
-        activities: [],
-        notes: entry.notes || ''
-      };
-    });
+    // Import lazy-loaded to avoid circular dependency
+    const { deprecate } = require('@/lib/deprecation');
+    const { convertTrackingEntriesToSessions: newConvertTrackingEntriesToSessions } = require('@/lib/preprocessing/facade');
+    
+    deprecate(
+      'DataPreprocessor.convertTrackingEntriesToSessions',
+      'convertTrackingEntriesToSessions from @/lib/preprocessing/facade',
+      'This provides the same functionality with enhanced pipeline integration options.'
+    );
+    
+    return newConvertTrackingEntriesToSessions(entries);
   }
 
-/**
+  /**
+   * @deprecated Use prepareEmotionData from @/lib/preprocessing/facade instead.
    * Prepare emotion data for LSTM training.
    * Sequences are created with recent sessions, preparing for predictions.
    *
@@ -404,115 +360,38 @@ export class DataPreprocessor {
     outputs: tf.Tensor2D;
     normalizers: { min: number; max: number };
   } {
-    const sequences: number[][][] = [];
-    const targets: number[][] = [];
+    // Import lazy-loaded to avoid circular dependency
+    const { deprecate } = require('@/lib/deprecation');
+    const { prepareEmotionData: newPrepareEmotionData } = require('@/lib/preprocessing/facade');
     
-    // Sort sessions by date
-    const sortedSessions = [...sessions].sort((a, b) => 
-      new Date(a.date).getTime() - new Date(b.date).getTime()
+    deprecate(
+      'DataPreprocessor.prepareEmotionData',
+      'prepareEmotionData from @/lib/preprocessing/facade',
+      'The new version supports pipeline configuration options for enhanced preprocessing.'
     );
     
-    // Create sequences
-    for (let i = 0; i < sortedSessions.length - sequenceLength; i++) {
-      const sequence: number[][] = [];
-      const target: number[] = [];
-      
-      // Build sequence
-      for (let j = 0; j < sequenceLength; j++) {
-        const session = sortedSessions[i + j];
-        const timeFeatures = this.extractTimeFeatures(new Date(session.date));
-        const emotionValues = [
-          session.emotion.happy ?? 0,
-          session.emotion.sad ?? 0,
-          session.emotion.angry ?? 0,
-          session.emotion.anxious ?? 0,
-          session.emotion.calm ?? 0,
-          session.emotion.energetic ?? 0,
-          session.emotion.frustrated ?? 0
-        ];
-        
-        sequence.push([...emotionValues, ...timeFeatures]);
-      }
-      
-      // Get target (next day's emotions)
-      const targetSession = sortedSessions[i + sequenceLength];
-      target.push(
-        targetSession.emotion.happy ?? 0,
-        targetSession.emotion.sad ?? 0,
-        targetSession.emotion.angry ?? 0,
-        targetSession.emotion.anxious ?? 0,
-        targetSession.emotion.calm ?? 0,
-        targetSession.emotion.energetic ?? 0,
-        targetSession.emotion.frustrated ?? 0
-      );
-      
-      sequences.push(sequence);
-      targets.push(target);
-    }
-    
-    // Normalize data
-    const allValues = sequences.flat(2);
-    const min = Math.min(...allValues);
-    const max = Math.max(...allValues);
-    
-    const normalizedSequences = sequences.map(seq =>
-      seq.map(step => this.normalizeData(step, min, max))
-    );
-    
-    const normalizedTargets = targets.map(target =>
-      this.normalizeData(target, 0, 10) // Emotions are 0-10 scale
-    );
-    
-    return {
-      inputs: tf.tensor3d(normalizedSequences),
-      outputs: tf.tensor2d(normalizedTargets),
-      normalizers: { min, max }
-    };
+    return newPrepareEmotionData(sessions, { sequenceLength });
   }
 
-  // Prepare sensory data for training
+  /**
+   * @deprecated Use prepareSensoryData from @/lib/preprocessing/facade instead.
+   * Prepare sensory data for training.
+   */
   static prepareSensoryData(sessions: MLSession[]): {
     inputs: tf.Tensor2D;
     outputs: tf.Tensor2D;
   } {
-    const inputs: number[][] = [];
-    const outputs: number[][] = [];
+    // Import lazy-loaded to avoid circular dependency
+    const { deprecate } = require('@/lib/deprecation');
+    const { prepareSensoryData: newPrepareSensoryData } = require('@/lib/preprocessing/facade');
     
-    sessions.forEach(session => {
-      if (!session.sensory || !session.environment) return;
-      
-      // Input features
-      const environmentFeatures = [
-        session.environment.lighting === 'bright' ? 1 : session.environment.lighting === 'dim' ? 0.5 : 0,
-        session.environment.noise === 'loud' ? 1 : session.environment.noise === 'moderate' ? 0.5 : 0,
-        session.environment.temperature === 'hot' ? 1 : session.environment.temperature === 'cold' ? 0 : 0.5,
-        session.environment.crowded === 'very' ? 1 : session.environment.crowded === 'moderate' ? 0.5 : 0,
-        session.environment.smells ? 1 : 0,
-        session.environment.textures ? 1 : 0
-      ];
-      
-      const timeFeatures = this.extractTimeFeatures(new Date(session.date));
-      
-      inputs.push([...environmentFeatures, ...timeFeatures]);
-      
-      // Output features (sensory responses)
-      const sensoryOutputs: number[] = [];
-      ['visual', 'auditory', 'tactile', 'vestibular', 'proprioceptive'].forEach(sense => {
-        const response = session.sensory[sense as keyof typeof session.sensory];
-        sensoryOutputs.push(
-          response === 'seeking' ? 1 : 0,    // seeking probability
-          response === 'avoiding' ? 1 : 0,   // avoiding probability
-          response === 'neutral' ? 1 : 0     // neutral probability
-        );
-      });
-      
-      outputs.push(sensoryOutputs);
-    });
+    deprecate(
+      'DataPreprocessor.prepareSensoryData',
+      'prepareSensoryData from @/lib/preprocessing/facade',
+      'The new version supports pipeline configuration options for enhanced preprocessing.'
+    );
     
-    return {
-      inputs: tf.tensor2d(inputs),
-      outputs: tf.tensor2d(outputs)
-    };
+    return newPrepareSensoryData(sessions);
   }
 }
 
@@ -831,13 +710,15 @@ export class MLModels {
     
     // Identify environmental triggers
     const triggers = [];
-    if (environment.noise === 'loud' && sensoryResponse.auditory.avoiding > 0.5) {
+    const cfg = analyticsConfig.getConfig();
+    const triggerCutoff = cfg.patternAnalysis.concernFrequencyThreshold; // reuse configured frequency threshold as cutoff
+    if (environment.noise === 'loud' && sensoryResponse.auditory.avoiding > triggerCutoff) {
       triggers.push({ trigger: 'Loud noise', probability: sensoryResponse.auditory.avoiding });
     }
-    if (environment.lighting === 'bright' && sensoryResponse.visual.avoiding > 0.5) {
+    if (environment.lighting === 'bright' && sensoryResponse.visual.avoiding > triggerCutoff) {
       triggers.push({ trigger: 'Bright lights', probability: sensoryResponse.visual.avoiding });
     }
-    if (environment.crowded === 'very' && sensoryResponse.tactile.avoiding > 0.5) {
+    if (environment.crowded === 'very' && sensoryResponse.tactile.avoiding > triggerCutoff) {
       triggers.push({ trigger: 'Crowded spaces', probability: sensoryResponse.tactile.avoiding });
     }
     
@@ -903,8 +784,10 @@ export class MLModels {
         ? entry.emotions.reduce((sum, e) => sum + e.intensity, 0) / entry.emotions.length
         : 0;
       
+      const cfg = analyticsConfig.getConfig();
+      const positiveSet = new Set((cfg.taxonomy?.positiveEmotions || []).map(e => e.toLowerCase()));
       const positiveEmotionRatio = entry.emotions.length > 0
-        ? entry.emotions.filter(e => ['happy', 'calm', 'focused', 'excited'].includes(e.emotion.toLowerCase())).length / entry.emotions.length
+        ? entry.emotions.filter(e => positiveSet.has(e.emotion.toLowerCase())).length / entry.emotions.length
         : 0;
       
       const sensorySeekingRatio = entry.sensoryInputs.length > 0
@@ -1072,36 +955,48 @@ export class MLModels {
   // Describe cluster characteristics
   private describeCluster(centroid: number[]): string {
     const [emotionIntensity, positiveRatio, seekingRatio, avoidingRatio] = centroid;
-    
+    const cfg = analyticsConfig.getConfig();
+
+    // Derive normalized intensity bounds from configured thresholds (assumes 0-5 app scale in features)
+    const highIntensityNorm = Math.min(1, cfg.patternAnalysis.highIntensityThreshold / 5);
+    const lowIntensityNorm = Math.max(0, (cfg.patternAnalysis.highIntensityThreshold - 2) / 5);
+
+    // Valence thresholds from insights config
+    const positiveValence = cfg.insights.POSITIVE_EMOTION_TREND_THRESHOLD;
+    const negativeValence = cfg.insights.NEGATIVE_EMOTION_TREND_THRESHOLD;
+
+    // Sensory dominance threshold reuse concern frequency
+    const sensoryDominance = cfg.patternAnalysis.concernFrequencyThreshold;
+
     let description = '';
-    
+
     // Emotion characteristics
-    if (emotionIntensity > 0.7) {
+    if (emotionIntensity > highIntensityNorm) {
       description += 'High emotional intensity';
-    } else if (emotionIntensity < 0.3) {
+    } else if (emotionIntensity < lowIntensityNorm) {
       description += 'Low emotional intensity';
     } else {
       description += 'Moderate emotional intensity';
     }
-    
+
     // Emotional valence
-    if (positiveRatio > 0.6) {
+    if (positiveRatio > positiveValence) {
       description += ', predominantly positive emotions';
-    } else if (positiveRatio < 0.4) {
+    } else if (positiveRatio < negativeValence) {
       description += ', predominantly challenging emotions';
     } else {
       description += ', mixed emotional states';
     }
-    
+
     // Sensory patterns
-    if (seekingRatio > 0.6) {
+    if (seekingRatio > sensoryDominance) {
       description += ', high sensory seeking';
-    } else if (avoidingRatio > 0.6) {
+    } else if (avoidingRatio > sensoryDominance) {
       description += ', high sensory avoiding';
     } else {
       description += ', balanced sensory responses';
     }
-    
+
     return description;
   }
 }

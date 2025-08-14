@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
+
+// Force non-POC mode so the worker is initialized in tests
+vi.mock('@/lib/env', () => ({ POC_MODE: false }));
+
 import { useAnalyticsWorker } from './useAnalyticsWorker';
 
 // Mock the worker used by the hook (note the ?worker suffix)
@@ -33,16 +37,31 @@ describe('useAnalyticsWorker', () => {
     expect(result.current.error).toBeNull();
   });
 
-  it('should call postMessage with the correct data when runAnalysis is called', () => {
+  it('should call postMessage with the correct data when runAnalysis is called', async () => {
     const { result } = renderHook(() => useAnalyticsWorker());
     const testData = { entries: [], emotions: [], sensoryInputs: [] };
 
-    result.current.runAnalysis(testData);
+    // Wait until the mocked worker has been constructed
+    const mod: any = await import('@/workers/analytics.worker?worker');
+    let tries = 0;
+    while (!mod.__getLastWorker() && tries < 10) {
+      await new Promise(r => setTimeout(r, 0));
+      tries++;
+    }
+    await act(async () => {
+      await result.current.runAnalysis(testData);
+    });
 
+    await waitFor(() => {
+      expect(mockPostMessage).toHaveBeenCalled();
+    });
+    // We now send a typed Insights/Compute task envelope to the worker
     expect(mockPostMessage).toHaveBeenCalledWith(expect.objectContaining({
-      entries: [], emotions: [], sensoryInputs: []
+      type: 'Insights/Compute',
+      payload: expect.any(Object),
+      cacheKey: expect.any(String),
+      ttlSeconds: expect.any(Number),
     }));
-    // isAnalyzing may be set after async microtask; just assert no error
     expect(result.current.error).toBeNull();
   });
 
@@ -50,16 +69,27 @@ describe('useAnalyticsWorker', () => {
     const { result } = renderHook(() => useAnalyticsWorker());
     const testResults = { patterns: [], correlations: [], environmentalCorrelations: [], insights: [] };
 
-    // Simulate a message from the mocked worker
+    // Wait for worker
     const mod: any = await import('@/workers/analytics.worker?worker');
-    const worker = mod.__getLastWorker();
-    (result.current as any).isAnalyzing = true;
-    worker.onmessage({ data: { type: 'complete', payload: testResults } });
+    let worker = mod.__getLastWorker();
+    let tries = 0;
+    while (!worker && tries < 10) {
+      await new Promise(r => setTimeout(r, 0));
+      worker = mod.__getLastWorker();
+      tries++;
+    }
 
-    await new Promise((r) => setTimeout(r, 0));
-    expect(result.current.results).toEqual(testResults);
-    expect(result.current.isAnalyzing).toBe(false);
-    expect(result.current.error).toBeNull();
+    // Simulate complete message
+    (result.current as any).isAnalyzing = true;
+    await act(async () => {
+      worker.onmessage({ data: { type: 'complete', payload: testResults } });
+    });
+
+    await waitFor(() => {
+      expect(result.current.results).toEqual(testResults);
+      expect(result.current.isAnalyzing).toBe(false);
+      expect(result.current.error).toBeNull();
+    });
   });
 
   it('should update state on analysis error', async () => {
@@ -70,20 +100,35 @@ describe('useAnalyticsWorker', () => {
     const mod: any = await import('@/workers/analytics.worker?worker');
     const worker = mod.__getLastWorker();
     (result.current as any).isAnalyzing = true;
-    worker.onmessage({ data: { type: 'error', error: testError } });
+    await act(async () => {
+      worker.onmessage({ data: { type: 'error', error: testError } });
+    });
 
-    await new Promise((r) => setTimeout(r, 0));
-    expect(result.current.results).toBeNull();
-    expect(result.current.isAnalyzing).toBe(false);
-    expect(result.current.error).toEqual(testError);
+    await waitFor(() => {
+      expect(result.current.results).toBeNull();
+      expect(result.current.isAnalyzing).toBe(false);
+      expect(result.current.error).toEqual(testError);
+    });
   });
 
-  it('should terminate the worker on unmount', () => {
+  it('should terminate the worker on unmount', async () => {
     const { unmount } = renderHook(() => useAnalyticsWorker());
 
-    unmount();
+    // Wait for worker
+    const mod: any = await import('@/workers/analytics.worker?worker');
+    let tries = 0;
+    while (!mod.__getLastWorker() && tries < 10) {
+      await new Promise(r => setTimeout(r, 0));
+      tries++;
+    }
 
-    expect(mockTerminate).toHaveBeenCalled();
+    await act(async () => {
+      unmount();
+    });
+
+    await waitFor(() => {
+      expect(mockTerminate).toHaveBeenCalled();
+    });
   });
 });
 

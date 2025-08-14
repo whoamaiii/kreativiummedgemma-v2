@@ -1,5 +1,4 @@
 import * as tf from '@tensorflow/tfjs';
-import { logger } from '@/lib/logger';
 
 /**
  * Configuration options for model drift detection
@@ -156,7 +155,8 @@ export class ModelDriftDetector {
       let processedNewData: tf.Tensor1D = flatNewData;
       let processedReferenceData: tf.Tensor1D = flatReferenceData;
 
-      if (this.config.normalize) {
+    // Normalization toggle source: DriftConfig.normalize (caller-derived)
+    if (this.config.normalize) {
         processedNewData = await this.normalizeData(flatNewData) as tf.Tensor1D;
         processedReferenceData = await this.normalizeData(flatReferenceData) as tf.Tensor1D;
       }
@@ -171,6 +171,10 @@ export class ModelDriftDetector {
       const divergenceScore = await this.calculateKLDivergence(newDataDist, refDataDist);
 
       // Determine if drift is detected
+      // Threshold source: DriftConfig.threshold provided by caller.
+      // Per Task 8 and project rule j9uS..., callers should derive this from runtime config
+      // (e.g., getRuntimeAnalyticsConfig().thresholds['drift.kl'] or advancedThresholds)
+      // to avoid hardcoded constants and to allow environment tuning.
       const isDriftDetected = divergenceScore > this.config.threshold;
 
       // Clean up tensors
@@ -230,6 +234,8 @@ export class ModelDriftDetector {
     newData: tf.Tensor,
     referenceData: tf.Tensor
   ): Promise<[tf.Tensor, tf.Tensor]> {
+    // Bin count source: DriftConfig.bins (caller-derived); falls back to 50.
+    // Callers should prefer a runtime-config value to align with Task 8 guidance.
     const bins = this.config.bins || 50;
 
     // Combine data to get consistent bin edges

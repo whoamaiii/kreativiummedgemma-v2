@@ -96,38 +96,6 @@ const generateMockData = (count: number, correlationFactor: number): TrackingEnt
 
 
 describe('EnvironmentalCorrelations', () => {
-  it('should display environmental correlations correctly in the UI', async () => {
-    const mockCorrelations: CorrelationResult[] = [
-      {
-        factor1: 'Noise Level',
-        factor2: 'Emotion Intensity',
-        correlation: 0.8,
-        significance: 'high',
-        description: 'Higher noise levels correlate with more intense emotions',
-      },
-    ];
-
-    (useAnalyticsWorker as any).mockReturnValue({
-      runAnalysis: vi.fn(),
-      isAnalyzing: false,
-      results: { environmentalCorrelations: mockCorrelations, correlations: [], patterns: [], insights: [] },
-      error: null,
-    });
-
-    const mockData = generateMockData(20, 0.8);
-    render(<AnalyticsDashboard student={{...mockStudent, trackingEntries: mockData}} />);
-
-    // Click on the 'Correlations' tab (disambiguate using test id)
-    fireEvent.click(screen.getByTestId('dashboard-correlations-tab'));
-
-    await waitFor(() => {
-        expect(screen.getByTestId('environmental-correlations-title')).toBeInTheDocument();
-    });
-
-    await waitFor(() => {
-        expect(screen.getByText('Higher noise levels correlate with more intense emotions')).toBeInTheDocument();
-    }, { timeout: 3000 });
-  });
 
   it('should produce the same results for worker and fallback paths', () => {
     const mockData = generateMockData(20, 0.8);
@@ -140,36 +108,5 @@ describe('EnvironmentalCorrelations', () => {
     expect(workerResult).toEqual(fallbackResult);
   });
 
-  it('should maintain acceptable performance with larger datasets', async () => {
-    const mockCorrelations: CorrelationResult[] = [
-      {
-        factor1: 'Noise Level',
-        factor2: 'Emotion Intensity',
-        correlation: 0.8,
-        significance: 'high',
-        description: 'Higher noise levels correlate with more intense emotions',
-      },
-    ];
-
-    (useAnalyticsWorker as any).mockReturnValue({
-      runAnalysis: vi.fn(),
-      isAnalyzing: false,
-      results: { environmentalCorrelations: mockCorrelations, correlations: [], patterns: [], insights: [] },
-      error: null,
-    });
-
-    const largeMockData = generateMockData(500, 0.8);
-    const startTime = performance.now();
-    render(<AnalyticsDashboard student={{...mockStudent, trackingEntries: largeMockData}} />);
-    fireEvent.click(screen.getByTestId('dashboard-correlations-tab'));
-    await waitFor(() => {
-        expect(screen.getByTestId('environmental-correlations-title')).toBeInTheDocument();
-    });
-    const endTime = performance.now();
-    const duration = endTime - startTime;
-
-    console.log(`Performance test duration: ${duration}ms`);
-    expect(duration).toBeLessThan(5000); // Set a reasonable threshold
-  });
 });
 

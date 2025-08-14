@@ -26,7 +26,7 @@ export function StudentProfileSidebar({
   onSectionChange 
 }: StudentProfileSidebarProps) {
   const { state } = useSidebar();
-  const { tStudent, tCommon, tAnalytics } = useTranslation();
+  const { tStudent, tCommon } = useTranslation();
 
   const menuItems = [
     {
@@ -166,34 +166,6 @@ export function StudentProfileSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Testing Tools Section */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-muted-foreground text-xs font-medium uppercase tracking-wider px-3 py-2">
-            Testing
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => {
-                    try { logger.debug('[UI] Sidebar testing click', { section: 'testing' }); } catch {}
-                    onSectionChange('testing');
-                  }}
-                  className={`cursor-pointer mx-2 rounded-lg transition-all duration-200 ${
-                    isActive('testing') 
-                      ? 'bg-primary text-primary-foreground shadow-lg' 
-                      : 'text-foreground hover:bg-accent hover:text-accent-foreground'
-                  }`}
-                >
-                  <span className="material-icons text-base">science</span>
-                  {state !== "collapsed" && (
-                    <span className="text-sm ml-3">Mock Data</span>
-                  )}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   );

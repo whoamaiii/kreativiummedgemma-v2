@@ -6,7 +6,8 @@
  */
 import * as tf from '@tensorflow/tfjs';
 import { TrackingEntry, EmotionEntry, SensoryEntry } from '@/types/student';
-import { DataPreprocessor, ModelType, ModelMetadata } from '@/lib/mlModels';
+import { ModelType, ModelMetadata } from '@/lib/mlModels';
+import { convertTrackingEntriesToSessions, prepareEmotionData, prepareSensoryData } from '@/lib/preprocessing/facade';
 import { CrossValidator, CrossValidationConfig, ValidationResults } from '../lib/validation/crossValidation';
 import { TrainingData } from '../types/ml';
 
@@ -139,9 +140,9 @@ const trainEmotionModel = async (
   epochs: number = 50,
   batchSize: number = 32
 ): Promise<{ model: tf.Sequential; history: tf.History; metadata: ModelMetadata }> => {
-  const sessions = DataPreprocessor.convertTrackingEntriesToSessions(trackingEntries);
+  const sessions = convertTrackingEntriesToSessions(trackingEntries);
   const model = createEmotionModel();
-  const { inputs, outputs, normalizers } = DataPreprocessor.prepareEmotionData(sessions);
+  const { inputs, outputs, normalizers } = prepareEmotionData(sessions);
   
   const trainingData: TrainingData = { features: inputs, labels: outputs };
   
@@ -193,9 +194,9 @@ const trainSensoryModel = async (
   epochs: number = 50,
   batchSize: number = 32
 ): Promise<{ model: tf.Sequential; history: tf.History; metadata: ModelMetadata }> => {
-  const sessions = DataPreprocessor.convertTrackingEntriesToSessions(trackingEntries);
+  const sessions = convertTrackingEntriesToSessions(trackingEntries);
   const model = createSensoryModel();
-  const { inputs, outputs } = DataPreprocessor.prepareSensoryData(sessions);
+  const { inputs, outputs } = prepareSensoryData(sessions);
 
   const trainingData: TrainingData = { features: inputs, labels: outputs };
 
@@ -242,6 +243,7 @@ const trainSensoryModel = async (
 };
 
 // Serialize model to ArrayBuffer for transfer
+import { utf8Encode } from '@/lib/utf8';
 const serializeModel = async (model: tf.LayersModel): Promise<ArrayBuffer> => {
   const saveResult = await model.save(tf.io.withSaveHandler(async (artifacts) => {
     // Convert artifacts to ArrayBuffer
@@ -253,9 +255,8 @@ const serializeModel = async (model: tf.LayersModel): Promise<ArrayBuffer> => {
     const weightDataView = new Uint8Array(weightData);
     
     // Create a simple format to store the model
-    const encoder = new TextEncoder();
-    const topologyBytes = encoder.encode(modelTopology);
-    const weightSpecsBytes = encoder.encode(weightSpecs);
+    const topologyBytes = utf8Encode(modelTopology);
+    const weightSpecsBytes = utf8Encode(weightSpecs);
     
     // Format: [topologyLength][topology][weightSpecsLength][weightSpecs][weightData]
     const totalLength = 8 + topologyBytes.length + weightSpecsBytes.length + weightData.byteLength;

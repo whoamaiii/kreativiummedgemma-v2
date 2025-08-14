@@ -1,4 +1,10 @@
 {
+  "settings": "Innstillinger",
+  "export": "Eksporter",
+  "exporting": "Eksporterer...",
+  "exportAsPdf": "Eksporter som PDF",
+  "exportAsCsv": "Eksporter som CSV",
+  "exportAsJson": "Eksporter som JSON",
   "buttons": {
     "save": "Lagre",
     "cancel": "Avbryt",
@@ -20,7 +26,14 @@
     "tracking": "Sporing",
     "analytics": "Analyse",
     "settings": "Innstillinger",
-    "reports": "Rapporter"
+    "reports": "Rapporter",
+    "devTools": "Utviklerverktøy"
+  },
+  "help": {
+    "button": "Hjelp & støtte",
+    "title": "Hjelp & støtte",
+    "description": "Hvis du trenger hjelp eller støtte, kontakt oss på:",
+    "email": "support@example.com"
   },
   "time": {
     "today": "I dag",
@@ -85,4 +98,11 @@
   "enhanced_tracking_title": "Forbedrede sporingsverktøy",
   "enhanced_tracking_description": "Avansert datainnsamling og smarte inntastingsverktøy for {{name}}",
   "enhanced_tracking_coming_soon": "Forbedrede sporingsverktøy kommer snart"
+
+,
+  "export": "Eksporter",
+  "exporting": "Eksporterer",
+  "exportAsPdf": "Eksporter som PDF",
+  "exportAsCsv": "Eksporter som CSV",
+  "exportAsJson": "Eksporter som JSON"
 }

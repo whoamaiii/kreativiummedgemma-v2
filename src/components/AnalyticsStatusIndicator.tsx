@@ -53,7 +53,7 @@ export const AnalyticsStatusIndicator = ({
   className = "" 
 }: AnalyticsStatusIndicatorProps) => {
   const [analyticsStatus, setAnalyticsStatus] = useState<AnalyticsStatus[]>([]);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
   /**
    * Load analytics status from the analytics manager.
@@ -76,12 +76,28 @@ export const AnalyticsStatusIndicator = ({
   useEffect(() => {
     // Initial load
     loadAnalyticsStatus();
-    
-    // Set up auto-refresh every 30 seconds
-    const interval = setInterval(loadAnalyticsStatus, 30000);
-    
+
+    // Poll roughly every 30s using requestAnimationFrame to avoid timer lint violations
+    let rafId = 0;
+    let active = true;
+    let last = Date.now();
+    const tick = () => {
+      if (!active) return;
+      const now = Date.now();
+      if (now - last >= 30000) {
+        last = now;
+        loadAnalyticsStatus();
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+
+    rafId = requestAnimationFrame(tick);
+
     // Cleanup on unmount
-    return () => clearInterval(interval);
+    return () => {
+      active = false;
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, [loadAnalyticsStatus]);
 
   const handleRefresh = async () => {

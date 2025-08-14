@@ -1,22 +1,27 @@
 # SensoryTracker: Special Education Tracking Tool
 
-A comprehensive FERPA-compliant application designed to help special education teachers track and analyze student sensory processing and emotional responses. Built with accessibility and neurodiversity in mind.
+A comprehensive FERPA-compliant application designed to help special education teachers track and
+analyze student sensory processing and emotional responses. Built with accessibility and
+neurodiversity in mind.
 
 ## 🎯 Core Features
 
 ### Student Management
+
 - **Student Profiles**: Comprehensive student information with IEP goals integration
 - **Real-time Tracking**: Emotion and sensory input tracking with intensity scales
 - **Pattern Analysis**: Advanced algorithms to identify trends and correlations
 - **Goal Monitoring**: Track progress towards IEP objectives with visual indicators
 
 ### Data Visualization & Analytics
+
 - **Interactive Charts**: Accessible visualizations using Recharts with colorblind-friendly palettes
 - **Correlation Analysis**: Identify relationships between sensory inputs and emotional responses
 - **Predictive Insights**: AI-powered pattern recognition for proactive interventions
 - **Export Capabilities**: PDF reports, CSV data, and JSON backups
 
 ### Performance & Accessibility
+
 - **Offline-First**: Works without internet connectivity using localStorage
 - **Dyslexia-Friendly**: OpenDyslexic font and optimized typography (line-height: 1.6+)
 - **WCAG 2.1 AA**: Full accessibility compliance with keyboard navigation
@@ -35,7 +40,7 @@ A comprehensive FERPA-compliant application designed to help special education t
 
 ## 📁 Project Structure
 
-```
+```text
 src/
 ├── components/          # Reusable UI components
 │   ├── ui/             # Shadcn/UI components
@@ -54,16 +59,19 @@ src/
 ## 🎨 Design System
 
 ### Color Palette
+
 - **Primary**: `hsl(180 65% 35%)` - Calming teal for neurodiversity support
 - **Emotion Colors**: Happy `hsl(90 70% 65%)`, Anxious `hsl(40 65% 70%)`
 - **Sensory Colors**: Visual `hsl(240 60% 70%)`, Auditory `hsl(300 50% 70%)`
 
 ### Typography
+
 - **Font Stack**: OpenDyslexic, Inter, sans-serif
 - **Line Height**: 1.6-1.7 for enhanced readability
 - **Letter Spacing**: 0.02em for dyslexia support
 
 ### Component Patterns
+
 - **Gradient Cards**: `bg-gradient-card` with `shadow-soft`
 - **Intensity Scales**: 1-5 visual indicators
 - **Status Badges**: Color-coded with text labels
@@ -71,12 +79,14 @@ src/
 ## 🔒 Data Privacy & Security
 
 ### FERPA Compliance
+
 - **Local Storage Only**: No external data transmission
 - **Data Encryption**: Client-side encryption for sensitive information
 - **Access Controls**: Role-based permissions (planned)
 - **Audit Trail**: Comprehensive logging of data access
 
 ### Data Management
+
 - **Versioned Storage**: Migration-safe data structures
 - **Backup/Restore**: Full data export/import functionality
 - **Data Validation**: Zod schema validation for all inputs
@@ -85,16 +95,19 @@ src/
 ## 📊 Performance Optimizations
 
 ### Lazy Loading
+
 - Route-based code splitting
 - Component-level lazy loading for heavy analytics
 - Progressive image loading
 
 ### Caching Strategy
+
 - **Performance Cache**: LRU cache with TTL for expensive calculations
 - **Pattern Analysis Cache**: Memoized correlation computations
 - **Component Memoization**: React.memo for expensive renders
 
 ### Virtual Scrolling
+
 - Efficient rendering of large student lists
 - Paginated session data with virtual scrolling
 - Optimized re-renders for real-time updates
@@ -102,18 +115,21 @@ src/
 ## 🧪 Development Guidelines
 
 ### Code Quality
+
 - **TypeScript**: Strict mode with comprehensive type coverage
 - **ESLint**: Custom rules for accessibility and performance
 - **Testing**: Unit tests for critical algorithms
 - **Documentation**: JSDoc for all public APIs
 
 ### Accessibility Standards
+
 - **Keyboard Navigation**: Full app navigable without mouse
 - **Screen Reader**: ARIA labels and semantic HTML
 - **Color Contrast**: WCAG AA compliance verified
 - **Focus Management**: Logical tab order and focus indicators
 
 ### Performance Monitoring
+
 - **Bundle Analysis**: Webpack bundle analyzer for optimization
 - **Core Metrics**: Performance monitoring for loading times
 - **Memory Usage**: Leak detection for long-running sessions
@@ -121,10 +137,12 @@ src/
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js 18+ (LTS recommended)
 - Modern browser with ES2020+ support
 
 ### Installation
+
 ```bash
 # Clone the repository
 git clone <repository-url>
@@ -141,6 +159,7 @@ npm run build
 ```
 
 ### Development Commands
+
 ```bash
 npm run dev          # Start development server
 npm run build        # Production build
@@ -152,25 +171,37 @@ npm run type-check   # TypeScript checking
 ## 📈 Analytics & Insights
 
 ### Pattern Recognition
+
 - **Emotion Patterns**: Time-based emotional trend analysis
 - **Sensory Correlations**: Cross-modal sensory processing insights
 - **Environmental Factors**: Impact of classroom conditions
 - **Intervention Effectiveness**: Goal progress tracking
 
 ### Predictive Analytics
+
 - **Risk Assessment**: Early warning system for challenging behaviors
 - **Optimization Recommendations**: Personalized intervention suggestions
 - **Progress Forecasting**: IEP goal achievement predictions
 
+## 📚 Documentation
+
+- Configuration schema: docs/CONFIGURATION_SCHEMA.md
+- Environment variables: docs/ENVIRONMENT_VARIABLES.md
+- Configuration examples: docs/CONFIG_EXAMPLES.md
+- Troubleshooting config validation: docs/CONFIG_TROUBLESHOOTING.md
+- Migration from hardcoded values: docs/MIGRATION_FROM_HARDCODED_VALUES.md
+
 ## 🤝 Contributing
 
 ### Code Standards
+
 - Follow TypeScript strict mode
 - Use semantic commits (feat:, fix:, docs:)
 - Maintain 100% type coverage
 - Write accessibility-compliant components
 
 ### Testing Strategy
+
 - Unit tests for business logic
 - Integration tests for data flow
 - Accessibility testing with screen readers
@@ -182,55 +213,60 @@ npm run type-check   # TypeScript checking
 
 ## How to Edit
 
-**Use Lovable**: Visit the [Lovable Project](https://lovable.dev/projects/24448151-9720-4835-9cbf-e375e7bdc408) and start prompting.
+**Use Lovable**: Visit the
+[Lovable Project](https://lovable.dev/projects/24448151-9720-4835-9cbf-e375e7bdc408) and start
+prompting.
 
-**Use your preferred IDE**: Clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+**Use your preferred IDE**: Clone this repo and push changes. Pushed changes will also be reflected
+in Lovable.
 
-Requirements: Node.js & npm - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Requirements: Node.js & npm -
+[install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
 ## Deployment
 
-Simply open [Lovable](https://lovable.dev/projects/24448151-9720-4835-9cbf-e375e7bdc408) and click on Share → Publish.
+Simply open [Lovable](https://lovable.dev/projects/24448151-9720-4835-9cbf-e375e7bdc408) and click
+on Share → Publish.
 
 ## Custom Domain
 
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-Read more: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Read more:
+[Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
 
 ---
 
 **Built with ❤️ for special education professionals and the students they serve.**
-# Testing, CI Thresholds, and Metrics
 
-This project includes performance and bias gating in CI, along with cross-validation metrics and confidence heuristics.
+## Testing, CI Thresholds, and Metrics
+
+This project includes performance and bias gating in CI, along with cross-validation metrics and
+confidence heuristics.
 
 ## How to Run Tests
 
-- Unit and integration tests:
-  npm test
+- Unit and integration tests: npm test
 
-- Performance tests:
-  npm run test:performance
+- Performance tests: npm run test:performance
 
-- Bias/fairness tests:
-  npm run test:bias
+- Bias/fairness tests: npm run test:bias
 
 ## Overriding CI Thresholds Locally
 
 You can adjust thresholds via environment variables when running tests locally.
 
-- Performance threshold (milliseconds, default 1500):
-  CI_PERF_THRESHOLD_MS=1200 npm run test:performance
+- Performance threshold (milliseconds, default 1500): CI_PERF_THRESHOLD_MS=1200 npm run
+  test:performance
 
-- Bias disparity tolerance (absolute delta, default 0.08):
-  CI_BIAS_TOL=0.05 npm run test:bias
+- Bias disparity tolerance (absolute delta, default 0.08): CI_BIAS_TOL=0.05 npm run test:bias
 
 In GitHub Actions CI, these are set in .github/workflows/ci.yml to fail builds on regressions.
 
 ## Validation Metrics Interpretation
 
 Cross-validation returns per-fold metrics as well as overall aggregates:
+
 - overallConfusionMatrix (binary classification): The sum of fold-level confusion matrices:
   - tp: true positives
   - tn: true negatives
@@ -240,10 +276,12 @@ Cross-validation returns per-fold metrics as well as overall aggregates:
 - overallPRF1: Derived from the summed overallConfusionMatrix:
   - precision = tp / (tp + fp) when denominator &gt; 0, else 0
   - recall = tp / (tp + fn) when denominator &gt; 0, else 0
-  - f1Score = 2 * precision * recall / (precision + recall) when denominator &gt; 0, else 0
+  - f1Score = `2 * precision * recall / (precision + recall)` when denominator \u0026gt; 0, else 0
   - accuracy = (tp + tn) / (tp + tn + fp + fn) when denominator &gt; 0, else 0
 
-Note: Individual fold confusion matrices are not averaged; only numeric metrics are averaged across folds. The overallConfusionMatrix is computed by summing tp/tn/fp/fn across folds, then overallPRF1 is recomputed from those totals.
+Note: Individual fold confusion matrices are not averaged; only numeric metrics are averaged across
+folds. The overallConfusionMatrix is computed by summing tp/tn/fp/fn across folds, then overallPRF1
+is recomputed from those totals.
 
 ## Confidence Heuristics
 
@@ -254,6 +292,8 @@ Confidence is provided as lightweight heuristics, not calibrated probabilities.
   - Normalized entropy as a secondary signal (lower entropy indicates higher confidence).
 
 - Regression-like/emotion outputs:
-  - Inverse variance over outputs, using a small ±0.1 interval heuristic to estimate dispersion. Lower variance implies higher confidence.
+  - Inverse variance over outputs, using a small ±0.1 interval heuristic to estimate dispersion.
+    Lower variance implies higher confidence.
 
-These heuristics are implemented in src/lib/mlModels.ts and intended to provide relative, quick-to-compute confidence indicators suitable for UI hints or downstream thresholds.
+These heuristics are implemented in src/lib/mlModels.ts and intended to provide relative,
+quick-to-compute confidence indicators suitable for UI hints or downstream thresholds.

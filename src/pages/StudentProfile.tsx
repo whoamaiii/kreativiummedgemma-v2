@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useCallback, memo, useRef } from "react";
+import { useState, useEffect, useCallback, memo, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { StudentProfileSidebar } from "@/components/StudentProfileSidebar";
 import { DashboardSection } from "@/components/profile-sections/DashboardSection";
 import { AnalyticsSection } from "@/components/profile-sections/AnalyticsSection";
 import { ToolsSection } from "@/components/profile-sections/ToolsSection";
-import { TestingToolsSection } from "@/components/TestingToolsSection";
 import { GoalManager } from "@/components/GoalManager";
 import { ProgressDashboard } from "@/components/ProgressDashboard";
 import { LazyReportBuilder } from "@/components/lazy/LazyReportBuilder";
@@ -22,11 +20,32 @@ import { ArrowLeft, Download, Save, FileText, Calendar, Loader } from "lucide-re
 import { toast } from "sonner";
 import { useTranslation } from "@/hooks/useTranslation";
 import { LanguageSettings } from "@/components/LanguageSettings";
-import { MockDataLoader } from "@/components/MockDataLoader";
+import { GlobalMenu } from "@/components/GlobalMenu";
 import { analyticsManager } from "@/lib/analyticsManager";
 import { logger } from "@/lib/logger";
 import { dataStorage } from "@/lib/dataStorage";
 import { seedMinimalDemoData } from "@/lib/mockData";
+
+// Centralized className constants to satisfy react/jsx-no-literals for attribute strings
+const fullScreenCenterCls = "h-screen w-full flex items-center justify-center";
+const rowGap2Cls = "flex items-center gap-2";
+const textMutedCls = "text-muted-foreground";
+const textDestructiveCls = "text-destructive";
+const pageRootCls = "min-h-screen w-full bg-background font-dyslexia flex";
+const mainCls = "flex-1 overflow-auto relative z-0";
+const headerCls = "border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30";
+const headerInnerCls = "flex h-14 items-center justify-between px-6";
+const flexGap3Cls = "flex items-center gap-3";
+const BTN_VARIANT_GHOST = "ghost";
+const BTN_VARIANT_OUTLINE = "outline";
+const BTN_SIZE_SM = "sm";
+const iconSmCls = "h-4 w-4 mr-2";
+const containerPaddingCls = "p-6";
+const spaceY6Cls = "space-y-6";
+const titleCls = "text-2xl font-bold";
+const centerMutedCls = "text-center py-8 text-muted-foreground";
+const loaderIconCls = "h-5 w-5 animate-spin";
+const reportsActionsCls = "flex flex-wrap gap-3 p-4 bg-gradient-card rounded-lg border-0 shadow-soft";
 
 /**
  * Memoized versions of section components to prevent unnecessary re-renders.
@@ -38,7 +57,6 @@ const MemoizedToolsSection = memo(ToolsSection);
 const MemoizedGoalManager = memo(GoalManager);
 const MemoizedProgressDashboard = memo(ProgressDashboard);
 const MemoizedLazyReportBuilder = memo(LazyReportBuilder);
-const MemoizedTestingToolsSection = memo(TestingToolsSection);
 
 /**
  * @component StudentProfile
@@ -91,17 +109,15 @@ const StudentProfile = () => {
         isLoadingStudent,
         studentError
       });
-    } catch (e) {
-      logger.debug('[DIAGNOSTIC] useStudentData snapshot logging failed', { error: e instanceof Error ? e.message : String(e) });
+    } catch (_err) {
+      logger.debug('[DIAGNOSTIC] useStudentData snapshot logging failed');
     }
   }
 
   // State to control which profile section is currently visible.
   const [activeSection, setActiveSection] = useState('dashboard');
   const handleSectionChange = useCallback((section: string) => {
-    try { logger.debug('[UI] Active section change', { from: activeSection, to: section }); } catch (e) {
-      // ignore
-    }
+    try { logger.debug('[UI] Active section change', { from: activeSection, to: section }); } catch (_err) { void 0; }
     setActiveSection(section);
   }, [activeSection]);
   
@@ -375,12 +391,13 @@ const StudentProfile = () => {
    * without requiring a full page reload, providing a smoother user experience.
    */
 
+  // Consolidated early returns to avoid duplication
   if (isLoadingStudent) {
     return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <div className="flex items-center gap-2">
-          <Loader className="h-5 w-5 animate-spin" />
-          <p className="text-muted-foreground">{t('loading_student_data')}</p>
+      <div className={fullScreenCenterCls}>
+        <div className={rowGap2Cls}>
+          <Loader className={loaderIconCls} />
+          <p className={textMutedCls}>{t('loading_student_data')}</p>
         </div>
       </div>
     );
@@ -388,30 +405,9 @@ const StudentProfile = () => {
 
   if (!student) {
     return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <div className="flex items-center gap-2">
-          <p className="text-destructive">{t('student_not_found')}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isLoadingStudent) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <div className="flex items-center gap-2">
-          <Loader className="h-5 w-5 animate-spin" />
-          <p className="text-muted-foreground">{t('loading_student_data')}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!student) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <div className="flex items-center gap-2">
-          <p className="text-destructive">{t('student_not_found')}</p>
+      <div className={fullScreenCenterCls}>
+        <div className={rowGap2Cls}>
+          <p className={textDestructiveCls}>{t('student_not_found')}</p>
         </div>
       </div>
     );
@@ -419,44 +415,29 @@ const StudentProfile = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen w-full bg-background font-dyslexia flex">
+      <div className={pageRootCls}>
         <StudentProfileSidebar
           student={student}
           activeSection={activeSection}
           onSectionChange={handleSectionChange}
         />
-        <main className="flex-1 overflow-auto relative z-0">
-          <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30">
-            <div className="flex h-14 items-center justify-between px-6">
-              <div className="flex items-center gap-3">
+        <main className={mainCls}>
+          <header className={headerCls}>
+            <div className={headerInnerCls}>
+              <div className={flexGap3Cls}>
                 <SidebarTrigger />
-                <Button variant="ghost" size="sm" onClick={() => navigate('/')} aria-label="Go back to dashboard">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
+                <Button variant={BTN_VARIANT_GHOST} size={BTN_SIZE_SM} onClick={() => navigate('/')} aria-label={tCommon('aria.go_back_to_dashboard')}>
+                  <ArrowLeft className={iconSmCls} />
                   {String(tCommon('buttons.back'))}
                 </Button>
               </div>
-              <div className="flex items-center gap-3">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="flex items-center justify-center group" aria-label="Open mock data loader">
-                      <FileText className="h-4 w-4 mr-2 transition-transform group-hover:rotate-12" />
-                      {t('load_mock_data')}
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle>{t('mock_data_title')}</DialogTitle>
-                    </DialogHeader>
-                    {/* The MockDataLoader component now uses events to trigger a data refresh, 
-                        so it no longer needs a callback prop. */}
-                    <MockDataLoader />
-                  </DialogContent>
-                </Dialog>
+              <div className={flexGap3Cls}>
+                <GlobalMenu />
                 <LanguageSettings />
               </div>
             </div>
           </header>
-          <div className="p-6">
+          <div className={containerPaddingCls}>
             <ErrorBoundary>
               {/* 
                 The main content is rendered conditionally based on the `activeSection` state.
@@ -486,10 +467,10 @@ const StudentProfile = () => {
                 </ErrorBoundary>
               )}
               {activeSection === 'goals' && (
-                <div className="space-y-6">
+                <div className={spaceY6Cls}>
                   <div>
-                    <h2 className="text-2xl font-bold">{t('goals_title')}</h2>
-                    <p className="text-muted-foreground">
+                    <h2 className={titleCls}>{t('goals_title')}</h2>
+                    <p className={textMutedCls}>
                       {t('goals_description', { name: student.name })}
                     </p>
                   </div>
@@ -497,10 +478,10 @@ const StudentProfile = () => {
                 </div>
               )}
               {activeSection === 'progress' && (
-                 <div className="space-y-6">
+                 <div className={spaceY6Cls}>
                    <div>
-                     <h2 className="text-2xl font-bold">{t('progress_title')}</h2>
-                     <p className="text-muted-foreground">
+                     <h2 className={titleCls}>{t('progress_title')}</h2>
+                     <p className={textMutedCls}>
                        {t('progress_description', { name: student.name })}
                      </p>
                    </div>
@@ -508,25 +489,25 @@ const StudentProfile = () => {
                  </div>
               )}
               {activeSection === 'reports' && (
-                <div className="space-y-6">
+                <div className={spaceY6Cls}>
                   <div>
-                    <h2 className="text-2xl font-bold">{t('reports_title')}</h2>
-                    <p className="text-muted-foreground">
+                    <h2 className={titleCls}>{t('reports_title')}</h2>
+                    <p className={textMutedCls}>
                       {t('reports_description', { name: student.name })}
                     </p>
                   </div>
-                  <div className="flex flex-wrap gap-3 p-4 bg-gradient-card rounded-lg border-0 shadow-soft">
-                    <Button variant="outline" onClick={() => handleExportData('pdf')}>
-                      <FileText className="h-4 w-4 mr-2" />{t('export_pdf')}
+                  <div className={reportsActionsCls}>
+                    <Button variant={BTN_VARIANT_OUTLINE} onClick={() => handleExportData('pdf')}>
+                      <FileText className={iconSmCls} />{t('export_pdf')}
                     </Button>
-                    <Button variant="outline" onClick={() => handleExportData('csv')}>
-                      <Calendar className="h-4 w-4 mr-2" />{t('export_csv')}
+                    <Button variant={BTN_VARIANT_OUTLINE} onClick={() => handleExportData('csv')}>
+                      <Calendar className={iconSmCls} />{t('export_csv')}
                     </Button>
-                    <Button variant="outline" onClick={() => handleExportData('json')}>
-                      <Download className="h-4 w-4 mr-2" />{t('export_json')}
+                    <Button variant={BTN_VARIANT_OUTLINE} onClick={() => handleExportData('json')}>
+                      <Download className={iconSmCls} />{t('export_json')}
                     </Button>
-                    <Button variant="outline" onClick={handleBackupData}>
-                      <Save className="h-4 w-4 mr-2" />{t('create_backup')}
+                    <Button variant={BTN_VARIANT_OUTLINE} onClick={handleBackupData}>
+                      <Save className={iconSmCls} />{t('create_backup')}
                     </Button>
                   </div>
                   <ErrorBoundary>
@@ -553,19 +534,18 @@ const StudentProfile = () => {
                   />
               )}
               {activeSection === 'enhanced-tracking' && (
-                  <div className="space-y-6">
+                  <div className={spaceY6Cls}>
                     <div>
-                      <h2 className="text-2xl font-bold">{t('enhanced_tracking_title')}</h2>
-                      <p className="text-muted-foreground">
+                      <h2 className={titleCls}>{t('enhanced_tracking_title')}</h2>
+                      <p className={textMutedCls}>
                         {t('enhanced_tracking_description', { name: student.name })}
                       </p>
                     </div>
-                    <div className="text-center py-8 text-muted-foreground">
+                    <div className={centerMutedCls}>
                       <p>{t('enhanced_tracking_coming_soon')}</p>
                     </div>
                   </div>
               )}
-              {activeSection === 'testing' && <MemoizedTestingToolsSection />}
             </ErrorBoundary>
           </div>
         </main>

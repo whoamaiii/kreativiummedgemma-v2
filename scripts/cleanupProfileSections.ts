@@ -16,13 +16,13 @@ const log = {
 
 function main() {
   const base = join('src', 'components', 'profile-sections');
-  let removed: string[] = [];
-  let kept: string[] = [];
+  const removed: string[] = [];
+  const kept: string[] = [];
 
   let entries: string[];
   try {
     entries = readdirSync(base, { encoding: 'utf8' });
-  } catch (e) {
+  } catch (_e) {
     log.error(`Base path not found: ${base}`);
     process.exit(1);
   }
@@ -37,7 +37,7 @@ function main() {
       } else {
         kept.push(name);
       }
-    } catch (e) {
+    } catch (_e) {
       // ignore individual failures, continue
       kept.push(name + ' (unreadable)');
     }

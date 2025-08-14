@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -46,6 +47,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
   onSaveFilter,
   onDeleteFilter
 }) => {
+  const { tAnalytics, tCommon } = useTranslation();
   const [criteria, setCriteria] = useState<FilterCriteria>({
     dateRange: {
       start: null,
@@ -191,9 +193,9 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
-            Advanced Filters
+            {String(tAnalytics('filters.title'))}
             {activeFilters > 0 && (
-              <Badge variant="default">{activeFilters} active</Badge>
+              <Badge variant="default">{activeFilters} {String(tCommon('active'))}</Badge>
             )}
           </CardTitle>
           <div className="flex items-center gap-2">
@@ -204,11 +206,11 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
               disabled={activeFilters === 0}
             >
               <RotateCcw className="h-4 w-4 mr-1" />
-              Reset
+              {String(tCommon('reset'))}
             </Button>
             {criteria.realtime && (
               <Badge variant="default" className="animate-pulse">
-                Real-time
+                {String(tCommon('realtime'))}
               </Badge>
             )}
           </div>
@@ -217,9 +219,9 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
       <CardContent>
         <Tabs defaultValue="filters" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="filters">Filters</TabsTrigger>
-            <TabsTrigger value="presets">Presets</TabsTrigger>
-            <TabsTrigger value="saved">Saved ({savedFilters.length})</TabsTrigger>
+            <TabsTrigger value="filters">{String(tCommon('filters'))}</TabsTrigger>
+            <TabsTrigger value="presets">{String(tCommon('presets'))}</TabsTrigger>
+            <TabsTrigger value="saved">{String(tCommon('saved'))} ({savedFilters.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="filters" className="space-y-4">
@@ -229,16 +231,16 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                 <AccordionTrigger>
                   <div className="flex items-center gap-2">
                     <CalendarIcon className="h-4 w-4" />
-                    Date Range
+                    {String(tAnalytics('filters.dateRange'))}
                     {(criteria.dateRange.start || criteria.dateRange.end) && (
-                      <Badge variant="secondary">Active</Badge>
+                      <Badge variant="secondary">{String(tCommon('active'))}</Badge>
                     )}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label>Start Date</Label>
+                      <Label>{String(tCommon('startDate'))}</Label>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
@@ -252,7 +254,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                             {criteria.dateRange.start ? (
                               format(criteria.dateRange.start, "PPP")
                             ) : (
-                              <span>Pick a date</span>
+                              <span>{String(tCommon('pickADate'))}</span>
                             )}
                           </Button>
                         </PopoverTrigger>
@@ -269,7 +271,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                       </Popover>
                     </div>
                     <div>
-                      <Label>End Date</Label>
+                      <Label>{String(tCommon('endDate'))}</Label>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
@@ -283,7 +285,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                             {criteria.dateRange.end ? (
                               format(criteria.dateRange.end, "PPP")
                             ) : (
-                              <span>Pick a date</span>
+                              <span>{String(tCommon('pickADate'))}</span>
                             )}
                           </Button>
                         </PopoverTrigger>
@@ -308,7 +310,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                         dateRange: { start: subDays(new Date(), 7), end: new Date() }
                       })}
                     >
-                      Last 7 days
+                      {String(tCommon('last7Days'))}
                     </Button>
                     <Button
                       size="sm"
@@ -317,7 +319,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                         dateRange: { start: subDays(new Date(), 30), end: new Date() }
                       })}
                     >
-                      Last 30 days
+                      {String(tCommon('last30Days'))}
                     </Button>
                   </div>
                 </AccordionContent>
@@ -328,17 +330,17 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                 <AccordionTrigger>
                   <div className="flex items-center gap-2">
                     <Brain className="h-4 w-4" />
-                    Emotions
+                    {String(tAnalytics('filters.emotions'))}
                     {(criteria.emotions.types.length > 0 || 
                       criteria.emotions.intensityRange[0] > 0 || 
                       criteria.emotions.intensityRange[1] < 10) && (
-                      <Badge variant="secondary">Active</Badge>
+                      <Badge variant="secondary">{String(tCommon('active'))}</Badge>
                     )}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4">
                   <div>
-                    <Label>Emotion Types</Label>
+                    <Label>{String(tAnalytics('filters.emotionTypes'))}</Label>
                     <div className="grid grid-cols-2 gap-2 mt-2">
                       {uniqueEmotions.map(emotion => (
                         <div key={emotion} className="flex items-center space-x-2">
@@ -366,7 +368,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                   </div>
 
                   <div>
-                    <Label>Intensity Range: {criteria.emotions.intensityRange[0]} - {criteria.emotions.intensityRange[1]}</Label>
+                    <Label>{String(tAnalytics('filters.intensityRange'))}: {criteria.emotions.intensityRange[0]} - {criteria.emotions.intensityRange[1]}</Label>
                     <Slider
                       value={criteria.emotions.intensityRange}
                       onValueChange={(value) => updateFilter({
@@ -380,7 +382,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                   </div>
 
                   <div>
-                    <Label>Include Triggers</Label>
+                    <Label>{String(tAnalytics('filters.includeTriggers'))}</Label>
                     <Select
                       value={criteria.emotions.includeTriggers.join(',')}
                       onValueChange={(value) => {
@@ -390,9 +392,9 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                         });
                       }}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select triggers to include" />
-                      </SelectTrigger>
+                    <SelectTrigger aria-label="Select triggers to include">
+                      <SelectValue placeholder="Select triggers to include" />
+                    </SelectTrigger>
                       <SelectContent>
                         {uniqueTriggers.map(trigger => (
                           <SelectItem key={trigger} value={trigger}>
@@ -410,16 +412,16 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                 <AccordionTrigger>
                   <div className="flex items-center gap-2">
                     <Eye className="h-4 w-4" />
-                    Sensory
+                    {String(tAnalytics('filters.sensory'))}
                     {(criteria.sensory.types.length > 0 || 
                       criteria.sensory.responses.length > 0) && (
-                      <Badge variant="secondary">Active</Badge>
+                      <Badge variant="secondary">{String(tCommon('active'))}</Badge>
                     )}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4">
                   <div>
-                    <Label>Sensory Types</Label>
+                    <Label>{String(tAnalytics('filters.sensoryTypes'))}</Label>
                     <div className="grid grid-cols-2 gap-2 mt-2">
                       {uniqueSensoryTypes.map(type => (
                         <div key={type} className="flex items-center space-x-2">
@@ -447,7 +449,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                   </div>
 
                   <div>
-                    <Label>Responses</Label>
+                    <Label>{String(tAnalytics('filters.responses'))}</Label>
                     <div className="grid grid-cols-2 gap-2 mt-2">
                       {uniqueSensoryResponses.map(response => (
                         <div key={response} className="flex items-center space-x-2">
@@ -475,7 +477,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                   </div>
 
                   <div>
-                    <Label>Intensity Range: {criteria.sensory.intensityRange[0]} - {criteria.sensory.intensityRange[1]}</Label>
+                    <Label>{String(tAnalytics('filters.intensityRange'))}: {criteria.sensory.intensityRange[0]} - {criteria.sensory.intensityRange[1]}</Label>
                     <Slider
                       value={criteria.sensory.intensityRange}
                       onValueChange={(value) => updateFilter({
@@ -495,16 +497,16 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                 <AccordionTrigger>
                   <div className="flex items-center gap-2">
                     <Thermometer className="h-4 w-4" />
-                    Environmental
+                    {String(tAnalytics('filters.environmental'))}
                     {(criteria.environmental.locations.length > 0 || 
                       criteria.environmental.activities.length > 0) && (
-                      <Badge variant="secondary">Active</Badge>
+                      <Badge variant="secondary">{String(tCommon('active'))}</Badge>
                     )}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4">
                   <div>
-                    <Label>Locations</Label>
+                    <Label>{String(tAnalytics('filters.locations'))}</Label>
                     <div className="grid grid-cols-2 gap-2 mt-2">
                       {uniqueLocations.map(location => (
                         <div key={location} className="flex items-center space-x-2">
@@ -532,7 +534,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                   </div>
 
                   <div>
-                    <Label>Weather Conditions</Label>
+                    <Label>{String(tAnalytics('filters.weatherConditions'))}</Label>
                     <div className="grid grid-cols-2 gap-2 mt-2">
                       {['sunny', 'cloudy', 'rainy', 'stormy', 'snowy'].map(weather => (
                         <div key={weather} className="flex items-center space-x-2">
@@ -560,7 +562,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                   </div>
 
                   <div>
-                    <Label>Noise Level: {criteria.environmental.conditions.noiseLevel[0]} - {criteria.environmental.conditions.noiseLevel[1]}</Label>
+                    <Label>{String(tAnalytics('filters.noiseLevel'))}: {criteria.environmental.conditions.noiseLevel[0]} - {criteria.environmental.conditions.noiseLevel[1]}</Label>
                     <Slider
                       value={criteria.environmental.conditions.noiseLevel}
                       onValueChange={(value) => updateFilter({
@@ -586,10 +588,10 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                 <AccordionTrigger>
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4" />
-                    Patterns & Analysis
+                    {String(tAnalytics('filters.patternsAndAnalysis'))}
                     {(criteria.patterns.anomaliesOnly || 
                       criteria.patterns.minConfidence > 0) && (
-                      <Badge variant="secondary">Active</Badge>
+                      <Badge variant="secondary">{String(tCommon('active'))}</Badge>
                     )}
                   </div>
                 </AccordionTrigger>
@@ -602,11 +604,11 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                         patterns: { ...criteria.patterns, anomaliesOnly: checked }
                       })}
                     />
-                    <Label htmlFor="anomalies">Show anomalies only</Label>
+                    <Label htmlFor="anomalies">{String(tAnalytics('filters.showAnomaliesOnly'))}</Label>
                   </div>
 
                   <div>
-                    <Label>Minimum Confidence: {criteria.patterns.minConfidence}%</Label>
+                    <Label>{String(tAnalytics('filters.minimumConfidence'))}: {criteria.patterns.minConfidence}%</Label>
                     <Slider
                       value={[criteria.patterns.minConfidence]}
                       onValueChange={([value]) => updateFilter({
@@ -620,7 +622,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                   </div>
 
                   <div>
-                    <Label>Pattern Types</Label>
+                    <Label>{String(tAnalytics('filters.patternTypes'))}</Label>
                     <div className="grid grid-cols-2 gap-2 mt-2">
                       {['emotion', 'sensory', 'environmental', 'correlation'].map(type => (
                         <div key={type} className="flex items-center space-x-2">
@@ -654,7 +656,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
             <div className="flex items-center justify-between p-4 border rounded-lg">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                <Label htmlFor="realtime">Real-time Updates</Label>
+                <Label htmlFor="realtime">{String(tAnalytics('filters.realtimeUpdates'))}</Label>
               </div>
               <Switch
                 id="realtime"
@@ -666,8 +668,8 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
 
           <TabsContent value="presets" className="space-y-4">
             <div className="grid gap-4">
-              {FILTER_PRESETS.map((preset, index) => (
-                <Card key={index} className="cursor-pointer hover:bg-accent" onClick={() => applyPreset(preset.criteria)}>
+              {FILTER_PRESETS.map((preset) => (
+                <Card key={preset.name} className="cursor-pointer hover:bg-accent" onClick={() => applyPreset(preset.criteria)}>
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
@@ -687,16 +689,19 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
           <TabsContent value="saved" className="space-y-4">
             {onSaveFilter && (
               <div className="flex gap-2">
+                <label htmlFor="saved-filter-name" className="sr-only">{String(tCommon('filterName'))}</label>
                 <input
+                  id="saved-filter-name"
                   type="text"
-                  placeholder="Filter name..."
+                  placeholder={String(tCommon('filterNamePlaceholder'))}
+                  aria-label="Filter name"
                   value={filterName}
                   onChange={(e) => setFilterName(e.target.value)}
                   className="flex-1 px-3 py-2 border rounded-md"
                 />
-                <Button onClick={handleSaveFilter} disabled={!filterName}>
+                <Button aria-label={String(tAnalytics('filters.saveCurrentAria'))} onClick={handleSaveFilter} disabled={!filterName}>
                   <Save className="h-4 w-4 mr-1" />
-                  Save Current
+                  {String(tAnalytics('filters.saveCurrent'))}
                 </Button>
               </div>
             )}
@@ -704,8 +709,8 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
             {savedFilters.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <Filter className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>No saved filters yet</p>
-                <p className="text-sm">Save your current filter configuration for quick access</p>
+                <p>{String(tAnalytics('filters.noSaved'))}</p>
+                <p className="text-sm">{String(tAnalytics('filters.saveHint'))}</p>
               </div>
             ) : (
               <div className="grid gap-4">
@@ -719,7 +724,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                             {Object.keys(filter.criteria).filter(k => 
                               JSON.stringify(filter.criteria[k as keyof FilterCriteria]) !== 
                               JSON.stringify(criteria[k as keyof FilterCriteria])
-                            ).length} filters configured
+                            ).length} {String(tAnalytics('filters.configuredSuffix'))}
                           </p>
                         </div>
                         <div className="flex gap-2">
@@ -731,7 +736,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                               onFilterChange(filter.criteria);
                             }}
                           >
-                            Apply
+                            {String(tCommon('apply'))}
                           </Button>
                           {onDeleteFilter && (
                             <Button

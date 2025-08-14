@@ -1,4 +1,4 @@
-import { h64 } from 'xxhashjs';
+// Cache key computation is centralized via buildInsightsCacheKey
 
 /**
  * @file src/hooks/useAnalyticsWorker.ts
@@ -12,6 +12,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { AnalyticsData, AnalyticsResults, AnalyticsWorkerMessage } from '@/types/analytics';
 import { usePerformanceCache } from './usePerformanceCache';
 import { analyticsConfig } from '@/lib/analyticsConfig';
+import { getValidatedConfig, validateAnalyticsRuntimeConfig } from '@/lib/analyticsConfigValidation';
+import { buildInsightsCacheKey, buildInsightsTask } from '@/lib/analyticsManager';
 import { logger } from '@/lib/logger';
 import { diagnostics } from '@/lib/diagnostics';
 import { analyticsWorkerFallback } from '@/lib/analyticsWorkerFallback';
@@ -33,6 +35,8 @@ interface CachedAnalyticsWorkerOptions {
   cacheTTL?: number;
   enableCacheStats?: boolean;
   precomputeOnIdle?: boolean;
+  // Optional injection for tests or advanced cache control
+  extractTagsFromData?: (data: AnalyticsData | AnalyticsResults) => string[];
 }
 
 interface UseAnalyticsWorkerReturn {
@@ -63,8 +67,14 @@ interface UseAnalyticsWorkerReturn {
  *  - `invalidateCache`: Function to invalidate cache entries by tag or pattern.
  */
 export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): UseAnalyticsWorkerReturn => {
+  // Resolve defaults from runtime analyticsConfig with safe fallbacks
+  const liveCfgRaw = (() => { try { return analyticsConfig.getConfig(); } catch { return null; } })();
+  const { config: liveCfg } = validateAnalyticsRuntimeConfig(liveCfgRaw ?? undefined);
+  const resolvedTtl = typeof options.cacheTTL === 'number'
+    ? options.cacheTTL
+    : (liveCfg?.cache?.ttl ?? 300_000); // default 300s in ms
   const {
-    cacheTTL = 5 * 60 * 1000, // 5 minutes default
+    cacheTTL = resolvedTtl,
     enableCacheStats = false,
     precomputeOnIdle = false
   } = options;
@@ -78,7 +88,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
 
   // Initialize performance cache with appropriate settings
   const cache = usePerformanceCache<AnalyticsResults>({
-    maxSize: 50, // Store up to 50 analytics results
+    maxSize: (liveCfg?.cache?.maxSize ?? 50), // Use runtime config; fallback to 50
     ttl: cacheTTL,
     enableStats: enableCacheStats,
     versioning: true // Enable versioning to invalidate on data structure changes
@@ -86,13 +96,14 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
 
   /**
    * Extracts tags from analytics data for cache invalidation
+   * Allow override via options for testing
    */
-  const extractTagsFromData = useCallback((data: AnalyticsData | AnalyticsResults): string[] => {
+  const defaultExtractTagsFromData = useCallback((data: AnalyticsData | AnalyticsResults): string[] => {
     const tags: string[] = ['analytics'];
     
     // Add student-specific tags if available
-    if ('entries' in data && data.entries.length > 0) {
-      const studentIds = Array.from(new Set(data.entries.map(e => e.studentId)));
+    if ('entries' in data && (data as any).entries?.length > 0) {
+      const studentIds = Array.from(new Set((data as any).entries.map((e: any) => e.studentId)));
       tags.push(...studentIds.map(id => `student-${id}`));
     }
 
@@ -102,6 +113,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
     
     return tags;
   }, []);
+  const extractTagsFn = options.extractTagsFromData ?? defaultExtractTagsFromData;
 
   useEffect(() => {
     let isMounted = true; // Race condition guard
@@ -200,7 +212,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
               environmentalCorrelations: msg.payload.environmentalCorrelations || [],
             } as AnalyticsResults;
 
-            const tags = extractTagsFromData(resultsWithDefaults);
+            const tags = extractTagsFn(resultsWithDefaults);
             if (resultsWithDefaults.cacheKey) {
               cache.set(resultsWithDefaults.cacheKey, resultsWithDefaults, tags);
             }
@@ -281,31 +293,25 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
         watchdogRef.current = null;
       }
     };
-  }, [cache, extractTagsFromData]);
+  }, [cache, extractTagsFn]);
 
   /**
-   * Creates a cache key based on the analytics data
+   * Creates a cache key based on the analytics data using centralized helper
    */
   const createCacheKey = useCallback((data: AnalyticsData): string => {
-    // Defensive copy and sort by timestamp to stabilize latest calculations
-    const emotionsSorted = [...data.emotions].sort((a, b) => (b.timestamp?.getTime?.() ?? 0) - (a.timestamp?.getTime?.() ?? 0));
-    const sensorySorted = [...data.sensoryInputs].sort((a, b) => (b.timestamp?.getTime?.() ?? 0) - (a.timestamp?.getTime?.() ?? 0));
-
-    const latestEmotionDate = emotionsSorted[0]?.timestamp ?? null;
-    const latestSensoryDate = sensorySorted[0]?.timestamp ?? null;
-
-    // Create a fingerprint of the data for cache key
-    const dataFingerprint = h64(JSON.stringify({
-      emotions: emotionsSorted,
-      sensoryInputs: sensorySorted,
+    // Map AnalyticsData to ComputeInsightsInputs structure expected by cache key builder
+    const inputs = {
       entries: data.entries,
-    }), 0xABCD).toString(16);
+      emotions: data.emotions,
+      sensoryInputs: data.sensoryInputs,
+      // goals are not available at this layer; omit for key purposes
+    } as unknown as { entries: unknown[]; emotions: unknown[]; sensoryInputs: unknown[] };
 
-    return cache.createKey('analytics', {
-      fingerprint: dataFingerprint,
-      dataPoints: data.emotions.length + data.sensoryInputs.length + data.entries.length
-    });
-  }, [cache]);
+    // Use live runtime config to ensure keys align across app and worker
+    const cfg = getValidatedConfig();
+
+    return buildInsightsCacheKey(inputs as any, { config: cfg });
+  }, []);
 
   /**
    * Sends data to the worker to start a new analysis, checking cache first.
@@ -345,7 +351,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
         const results = await analyticsWorkerFallback.processAnalytics(data);
         setResults(results);
         // Cache the results
-        const tags = extractTagsFromData(data);
+        const tags = extractTagsFn(data);
         cache.set(cacheKey, results, tags);
       } catch (error) {
         logger.error('[useAnalyticsWorker] Fallback failed', error);
@@ -376,7 +382,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
       watchdogRef.current = null;
     }
     // Determine timeout from config if available; fallback to 15s minimum 3s
-    const cfg = analyticsConfig.getConfig();
+    const cfg = getValidatedConfig();
     // Clamp watchdog timeout to a sane upper bound to avoid indefinite spinners.
     // Use config ttl as a hint but never exceed 20s; keep a 5s lower bound.
     const hint = cfg?.cache?.ttl ?? 15000;
@@ -399,7 +405,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
       try {
         const fallbackResults = await analyticsWorkerFallback.processAnalytics(data);
         setResults(fallbackResults);
-        const tags = extractTagsFromData(data);
+        const tags = extractTagsFn(data);
         cache.set(cacheKey, fallbackResults, tags);
         setError('Worker timeout - results computed using fallback mode.');
       } catch (fallbackError) {
@@ -419,8 +425,8 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
       }
     }, timeoutMs);
     
-    // Get current configuration
-    const config = analyticsConfig.getConfig();
+    // Get current configuration (validated)
+    const config = getValidatedConfig();
 
     // Rate limit worker posting logs
     const logKey = `_logged_worker_post_${new Date().getMinutes()}`;
@@ -435,20 +441,32 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
     
     // Send data to worker with cache key and configuration
     try {
-      const messagePayload = { ...data, cacheKey, config };
+      // Build typed Insights task with centralized key, ttl, and tags
+      const inputs = {
+        entries: data.entries,
+        emotions: data.emotions,
+        sensoryInputs: data.sensoryInputs,
+      } as const;
+      const task = buildInsightsTask(inputs, {
+        config,
+        // Propagate tags derived from inputs so worker-side caches can invalidate by tag
+        tags: extractTagsFn(data),
+      });
+
       // Rate limit WORKER_MESSAGE logs
       const workerLogKey = `_logged_worker_message_${cacheKey}_${new Date().getMinutes()}`;
       if (!cache.get(workerLogKey)) {
-        logger.debug('[WORKER_MESSAGE] Sending message to analytics worker', {
-          cacheKey,
-          dataSize: JSON.stringify(messagePayload).length,
+        logger.debug('[WORKER_MESSAGE] Sending Insights/Compute task to analytics worker', {
+          cacheKey: task.cacheKey,
+          ttlSeconds: task.ttlSeconds,
+          tagCount: task.tags?.length ?? 0,
           emotionsCount: data.emotions?.length || 0,
           sensoryInputsCount: data.sensoryInputs?.length || 0,
           entriesCount: data.entries?.length || 0
         });
         cache.set(workerLogKey, true, ['logging'], 60000); // Log once per minute per cache key
       }
-      workerRef.current.postMessage(messagePayload);
+      workerRef.current.postMessage(task);
     } catch (postErr) {
       logger.error('[WORKER_MESSAGE] Failed to post message to worker, falling back to sync', { error: postErr });
       if (watchdogRef.current) {
@@ -460,7 +478,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
       try {
         const fallbackResults = await analyticsWorkerFallback.processAnalytics(data);
         setResults(fallbackResults);
-        const tags = extractTagsFromData(data);
+        const tags = extractTagsFn(data);
         cache.set(cacheKey, fallbackResults, tags);
         setError(null);
       } catch (fallbackError) {
@@ -470,7 +488,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
         setIsAnalyzing(false);
       }
     }
-  }, [cache, createCacheKey, extractTagsFromData]);
+  }, [cache, createCacheKey, extractTagsFn]);
 
   /**
    * Pre-compute analytics for common queries during idle time
@@ -480,7 +498,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
 
     const precompute = () => {
       const commonDataSets = dataProvider();
-      const config = analyticsConfig.getConfig();
+      const config = getValidatedConfig();
       
       commonDataSets.forEach((data, index) => {
         // Stagger the precomputation to avoid blocking
@@ -490,11 +508,16 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
           // Only compute if not already cached
           if (!cache.has(cacheKey)) {
             try {
-        logger.debug('[useAnalyticsWorker] posting to worker (precompute)', { hasConfig: !!config, cacheKey, idx: index });
+        logger.debug('[useAnalyticsWorker] posting Insights/Compute task (precompute)', { hasConfig: !!config, cacheKey, idx: index });
             } catch {
               /* noop */
             }
-            workerRef.current?.postMessage({ ...data, cacheKey, config });
+            const task = buildInsightsTask({
+              entries: data.entries,
+              emotions: data.emotions,
+              sensoryInputs: data.sensoryInputs,
+            }, { config, tags: extractTagsFn(data) });
+            workerRef.current?.postMessage(task);
           }
         }, index * 100); // 100ms between each precomputation
       });

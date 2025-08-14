@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "docs:lint": "markdownlint README.md docs/**/*.md --ignore docs/preprocessing/*.md",
+    "docs:format": "prettier --write \"**/*.{md,mdx}\"",
+    "docs:check": "prettier --check \"**/*.{md,mdx}\" && npm run docs:lint",
     "build:poc": "vite build --mode poc",
     "dev:poc": "vite --mode poc",
     "build:dev": "vite build --mode development",
@@ -13,6 +16,7 @@
     "preview": "vite preview",
     "preview:poc": "vite preview --mode poc",
     "test": "vitest",
+    "test:config": "vitest run src/config/__tests__/analytics.config.test.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "e2e:install": "npx --yes playwright@latest install --with-deps",
     "e2e": "playwright test",
@@ -31,7 +35,9 @@
     "prepare": "husky install",
     "test:performance": "vitest run src/lib/testing/performanceTester.test.ts",
     "test:bias": "vitest run src/lib/testing/biasTester.test.ts",
-    "analyze": "npm run build && npx http-server artifacts -p 3001 -o /bundle-stats.html"
+    "analyze": "npm run build && npx http-server artifacts -p 3001 -o /bundle-stats.html",
+    "prepare-local-pr": "node scripts/verify-local-pr.js",
+    "seed:demo": "tsx scripts/seed-demo.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -100,7 +106,7 @@
     "uuid": "^11.1.0",
     "vaul": "^0.9.3",
     "xxhashjs": "^0.2.2",
-    "zod": "^3.23.8"
+    "zod": "3.25.76"
   },
   "overrides": {
     "esbuild": ">=0.24.3",
@@ -108,6 +114,9 @@
     "node-fetch": ">=2.6.7"
   },
   "devDependencies": {
+    "markdownlint": "^0.33.0",
+    "markdownlint-cli": "^0.41.0",
+    "prettier": "^3.3.3",
     "@axe-core/playwright": "^4.10.2",
     "@browser-echo/vite": "^0.0.6",
     "@eslint/js": "^9.9.0",

@@ -1,4 +1,10 @@
 {
+  "settings": "Settings",
+  "export": "Export",
+  "exporting": "Exporting...",
+  "exportAsPdf": "Export as PDF",
+  "exportAsCsv": "Export as CSV",
+  "exportAsJson": "Export as JSON",
   "buttons": {
     "save": "Save",
     "cancel": "Cancel",
@@ -20,7 +26,14 @@
     "tracking": "Tracking",
     "analytics": "Analytics",
     "settings": "Settings",
-    "reports": "Reports"
+    "reports": "Reports",
+    "devTools": "Developer Tools"
+  },
+  "help": {
+    "button": "Help & Support",
+    "title": "Help & Support",
+    "description": "If you need help or support, please contact us at:",
+    "email": "support@example.com"
   },
   "time": {
     "today": "Today",
@@ -85,4 +98,11 @@
   "enhanced_tracking_title": "Enhanced Tracking Tools",
   "enhanced_tracking_description": "Advanced data collection and smart entry tools for {{name}}",
   "enhanced_tracking_coming_soon": "Enhanced tracking tools coming soon"
+
+,
+  "export": "Export",
+  "exporting": "Exporting",
+  "exportAsPdf": "Export as PDF",
+  "exportAsCsv": "Export as CSV",
+  "exportAsJson": "Export as JSON"
 }

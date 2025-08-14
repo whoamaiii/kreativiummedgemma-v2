@@ -1,6 +1,7 @@
 import { analyticsManager } from './analyticsManager';
 import { dataStorage } from './dataStorage';
 import { logger } from './logger';
+import { getValidatedConfig, validateAnalyticsRuntimeConfig } from '@/lib/analyticsConfigValidation';
 
 /**
  * Universal Analytics Initializer
@@ -24,9 +25,12 @@ export class UniversalAnalyticsInitializer {
   async initializeUniversalAnalytics(): Promise<void> {
     if (this.initialized) return;
 
-    try {
-      
-      
+try {
+      // Validate configuration once at initialization to fail-soft fast
+      const { meta } = validateAnalyticsRuntimeConfig(getValidatedConfig());
+      if (!meta.isValid) {
+        logger.warn('[UniversalAnalyticsInitializer] Using default analytics configuration due to validation errors');
+      }
       // Get all existing students
       const students = dataStorage.getStudents();
       

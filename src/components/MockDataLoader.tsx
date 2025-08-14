@@ -6,7 +6,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { Database, Users, Trash2, CheckCircle } from 'lucide-react';
-import { loadMockDataToStorage, clearMockDataFromStorage, generateMockStudents, generateAllMockData } from '@/lib/mockDataGenerator';
+import { loadMockDataToStorage, clearMockDataFromStorage, generateMockStudents, generateAllMockData, loadScenarioDataToStorage } from '@/lib/mockDataGenerator';
 import { dataStorage } from '@/lib/dataStorage';
 
 /**
@@ -16,6 +16,7 @@ import { dataStorage } from '@/lib/dataStorage';
 export const MockDataLoader = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [selectedScenario, setSelectedScenario] = useState<'all' | 'emma' | 'lars' | 'astrid'>('all');
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -54,7 +55,11 @@ export const MockDataLoader = () => {
         });
       }, 500);
 
-      await loadMockDataToStorage();
+      if (selectedScenario === 'all') {
+        await loadMockDataToStorage();
+      } else {
+        await loadScenarioDataToStorage(selectedScenario);
+      }
       
       // Clear interval before setting final progress
       if (progressIntervalRef.current) {
@@ -72,8 +77,12 @@ export const MockDataLoader = () => {
       // Get stats for success message
       const stats = dataStorage.getStorageStats();
       
+      const description = selectedScenario === 'all'
+        ? `Loaded ${stats.studentsCount} students with ${stats.entriesCount} tracking entries`
+        : `Loaded scenario "${selectedScenario}" with ${stats.entriesCount} tracking entries`;
+      
       toast.success('Mock data loaded successfully!', {
-        description: `Loaded ${stats.studentsCount} students with ${stats.entriesCount} tracking entries`,
+        description,
       });
       
       // Dispatch a custom event to notify other components that mock data has been loaded.
@@ -160,6 +169,27 @@ export const MockDataLoader = () => {
             </div>
           </div>
         )}
+
+        {/* Scenario Selector */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <div className="text-sm font-medium">Scenario</div>
+            <Select 
+              value={selectedScenario}
+              onValueChange={(val) => setSelectedScenario((val as 'all' | 'emma' | 'lars' | 'astrid'))}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select scenario" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All (Emma, Lars, Astrid)</SelectItem>
+                <SelectItem value="emma">Emma (mild anxiety, improving)</SelectItem>
+                <SelectItem value="lars">Lars (sensory challenges)</SelectItem>
+                <SelectItem value="astrid">Astrid (steady improvement)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
 
         {/* Loading Progress */}
         {isLoading && (

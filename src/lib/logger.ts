@@ -27,9 +27,17 @@ class Logger {
   private static instance: Logger;
 
   private constructor() {
+    const env = (() => {
+      try {
+        return (import.meta as any)?.env;
+      } catch {
+        return undefined;
+      }
+    })();
+    const isProd = !!(env && env.PROD);
     this.config = {
-      level: import.meta.env.PROD ? LogLevel.ERROR : LogLevel.DEBUG,
-      enableConsole: !import.meta.env.PROD,
+      level: isProd ? LogLevel.ERROR : LogLevel.DEBUG,
+      enableConsole: !isProd,
       enableRemote: false
     };
   }

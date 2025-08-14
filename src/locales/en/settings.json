@@ -19,6 +19,20 @@
     "backup": "Backup",
     "restore": "Restore"
   },
+  "dataExport": {
+    "title": "Data Export",
+    "description": "Export all data for backup or external analysis. Exports run locally in your browser.",
+    "actions": {
+      "exportAllCsv": "Export all as CSV",
+      "exportAllJson": "Export all as JSON",
+      "createBackup": "Create full backup"
+    },
+    "success_csv": "CSV exported successfully",
+    "success_json": "JSON exported successfully",
+    "success_backup": "Backup created successfully",
+    "error_generic": "Export failed. Please try again.",
+    "note": "Large exports may take a few seconds. Do not close the tab."
+  },
   "privacy": {
     "title": "Privacy",
     "description": "All data is stored locally on your device in compliance with FERPA requirements.",

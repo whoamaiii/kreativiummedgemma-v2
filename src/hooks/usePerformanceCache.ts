@@ -97,28 +97,8 @@ export function usePerformanceCache<T>(options: CacheOptions = {}) {
     return Date.now() - entry.timestamp > ttl;
   }, [ttl]);
 
-  const evictLRU = useCallback(() => {
-    let lruKey = '';
-    let lruTimestamp = Date.now();
-
-    cache.current.forEach((entry, key) => {
-      if (entry.timestamp < lruTimestamp) {
-        lruTimestamp = entry.timestamp;
-        lruKey = key;
-      }
-    });
-
-    if (lruKey) {
-      const entry = cache.current.get(lruKey);
-      if (entry?.tags) {
-        removeFromTagIndex(lruKey, entry.tags);
-      }
-      cache.current.delete(lruKey);
-      updateStats('evictions');
-      bumpMutation();
-    }
-  }, [updateStats, bumpMutation]);
-
+  // Helpers must be declared before any callbacks that depend on them to avoid
+  // temporal dead zone issues when React evaluates dependency arrays.
   const removeFromTagIndex = useCallback((key: string, tags: string[]) => {
     tags.forEach(tag => {
       const keys = tagIndex.current.get(tag);
@@ -139,6 +119,28 @@ export function usePerformanceCache<T>(options: CacheOptions = {}) {
       tagIndex.current.get(tag)!.add(key);
     });
   }, []);
+
+  const evictLRU = useCallback(() => {
+    let lruKey = '';
+    let lruTimestamp = Date.now();
+
+    cache.current.forEach((entry, key) => {
+      if (entry.timestamp < lruTimestamp) {
+        lruTimestamp = entry.timestamp;
+        lruKey = key;
+      }
+    });
+
+    if (lruKey) {
+      const entry = cache.current.get(lruKey);
+      if (entry?.tags) {
+        removeFromTagIndex(lruKey, entry.tags);
+      }
+      cache.current.delete(lruKey);
+      updateStats('evictions');
+      bumpMutation();
+    }
+  }, [updateStats, bumpMutation, removeFromTagIndex]);
 
   const get = useCallback((key: string): T | undefined => {
     const entry = cache.current.get(key);
@@ -299,8 +301,10 @@ export function usePerformanceCache<T>(options: CacheOptions = {}) {
       if (typeof obj !== 'object') return String(obj);
       if (Array.isArray(obj)) return `[${obj.map(stringify).join(',')}]`;
       
-      const keys = Object.keys(obj).sort();
-      return `{${keys.map(k => `${k}:${stringify(obj[k])}`).join(',')}}`;
+      // Treat remaining cases as plain objects with string keys
+      const record = obj as Record<string, unknown>;
+      const keys = Object.keys(record).sort();
+      return `{${keys.map(k => `${k}:${stringify(record[k])}`).join(',')}}`;
     };
 
     const str = stringify(data);
@@ -321,7 +325,7 @@ export function usePerformanceCache<T>(options: CacheOptions = {}) {
   const hitRate = useMemo(() => {
     const total = stats.hits + stats.misses;
     return total > 0 ? (stats.hits / total) * 100 : 0;
-  }, [stats.hits, stats.misses, mutationCounter.current]);
+  }, [stats.hits, stats.misses]);
 
   const memoryUsage = useMemo(() => {
     if (!enableStats) return undefined;
@@ -332,7 +336,7 @@ export function usePerformanceCache<T>(options: CacheOptions = {}) {
       totalSize += JSON.stringify(entry).length * 2; // Rough estimate (2 bytes per char)
     });
     return totalSize;
-  }, [enableStats, mutationCounter.current]);
+  }, [enableStats]);
 
   // Clean up expired entries periodically
   const cleanup = useCallback(() => {

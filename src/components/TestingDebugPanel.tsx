@@ -43,10 +43,6 @@ interface TestData {
 
 type TestStatus = TestResult['status'];
 
-interface CacheOperations {
-  clearCache: () => void;
-  invalidateStudent: (studentId: string) => void;
-}
 
 export const TestingDebugPanel: React.FC<TestingDebugPanelProps> = ({ className = "" }) => {
   const [isRunningTests, setIsRunningTests] = useState(false);
@@ -69,6 +65,7 @@ export const TestingDebugPanel: React.FC<TestingDebugPanelProps> = ({ className 
   const [cacheStats, setCacheStats] = useState(analyticsWorker.cacheStats);
   
   useEffect(() => {
+    // eslint-disable-next-line no-restricted-syntax -- Interval is created inside useEffect with proper cleanup
     const interval = setInterval(() => {
       setCacheStats(analyticsWorker.cacheStats);
     }, 1000);
@@ -110,7 +107,6 @@ export const TestingDebugPanel: React.FC<TestingDebugPanelProps> = ({ className 
       });
       setTestResults([...results]);
       
-      const analyticsStatus = analyticsManager.getAnalyticsStatus();
       const initStatus = universalAnalyticsInitializer.getInitializationStatus();
       
       results[1] = {
@@ -288,8 +284,8 @@ export const TestingDebugPanel: React.FC<TestingDebugPanelProps> = ({ className 
           {testResults.length > 0 && (
             <div className="space-y-3">
               <h4 className="text-sm font-medium">Test Results:</h4>
-              {testResults.map((result, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+              {testResults.map((result) => (
+                <div key={result.name} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                   <div className="flex items-center gap-3">
                     {getStatusIcon(result.status)}
                     <div>

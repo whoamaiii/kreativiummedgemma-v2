@@ -5,14 +5,20 @@ import { AnalyticsData } from '@/types/analytics';
 // Mock dependencies first
 vi.mock('@/lib/logger');
 vi.mock('@/lib/diagnostics');
-vi.mock('@/lib/analyticsConfig', () => ({
-  analyticsConfig: {
-    getConfig: vi.fn(() => ({
-      cache: { invalidateOnConfigChange: false }
-    })),
-    subscribe: vi.fn(() => vi.fn())
-  }
-}));
+vi.mock('@/lib/analyticsConfig', async () => {
+  // Re-export actual module to preserve all named exports (like DEFAULT_ANALYTICS_CONFIG),
+  // then override only the analyticsConfig manager with minimal behavior for this test.
+  const actual = await vi.importActual<any>('@/lib/analyticsConfig');
+  return {
+    ...actual,
+    analyticsConfig: {
+      getConfig: vi.fn(() => ({
+        cache: { invalidateOnConfigChange: false },
+      })),
+      subscribe: vi.fn(() => vi.fn()),
+    },
+  };
+});
 
 // Mock the analytics worker fallback
 vi.mock('@/lib/analyticsWorkerFallback', () => ({

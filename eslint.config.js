@@ -8,7 +8,7 @@ import jsxA11y from "eslint-plugin-jsx-a11y";
 import i18nextPlugin from "eslint-plugin-i18next";
 
 export default tseslint.config(
-  { ignores: ["dist", "*.config.ts", "*.config.js", "scripts/**", "tests/**", "validate-components.ts", "validate-style.ts"] },
+  { ignores: ["dist", "*.config.ts", "*.config.js", "validate-components.ts", "validate-style.ts"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
@@ -38,13 +38,35 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      // Ban imports from deprecated shim path. Migrate to '@/lib/analytics/cache-key'.
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@/lib/analyticsCacheKey',
+              message: "Deprecated shim. Import from '@/lib/analytics/cache-key' instead.",
+            },
+            {
+              name: './src/lib/analyticsCacheKey',
+              message: "Deprecated shim. Import from '@/lib/analytics/cache-key' instead.",
+            },
+            {
+              name: 'src/lib/analyticsCacheKey',
+              message: "Deprecated shim. Import from '@/lib/analytics/cache-key' instead.",
+            }
+          ],
+          patterns: []
+        }
+      ],
       // Disallow literal UI strings in JSX. Allow numbers and a curated whitelist.
       "react/jsx-no-literals": [
-        "error",
+        "warn",
         {
           noStrings: true,
-          ignoreProps: false,
-          noAttributeStrings: true,
+          // Allow strings in props/attributes (e.g., className for Tailwind, aria-*)
+          ignoreProps: true,
+          noAttributeStrings: false,
           allowedStrings: [
             "OK",
             "Ok",
@@ -54,22 +76,29 @@ export default tseslint.config(
             "ms",
             "KB",
             "MB",
-            "GB"
+            "GB",
+            // Allow common punctuation/unit tokens in JSX without forcing i18n
+            ":",
+            "-",
+            "%",
+            "(",
+            ")",
+            "•",
+            "/",
+            "x"
           ],
         },
       ],
       // i18n guardrail: ensure strings are translated via t() or <Trans />. Do not allow literals in markup or attributes (including aria-*)
       "i18next/no-literal-string": [
-        "error",
+        "warn",
         {
-          markupOnly: false,
+          // Check only visible text nodes in markup for now. Attributes and non-UI strings are ignored.
+          markupOnly: true,
           onlyAttribute: false,
           validateTemplate: true,
-          // allow calling these wrappers
           ignoreCallee: ["t", "i18n.t"],
-          // don't ignore aria-* so we enforce translations there too
           ignoreAttribute: [
-            // technical attrs we can ignore
             "id",
             "key",
             "htmlFor",
@@ -80,7 +109,6 @@ export default tseslint.config(
             "testId",
             "role"
           ],
-          // allow these functions/components to contain text
           components: ["Trans"],
         },
       ],
@@ -128,7 +156,8 @@ export default tseslint.config(
       "no-unreachable": "error",
       "no-dead-code": "off", // TypeScript handles this
       // Memory leak prevention rules
-      "react/no-array-index-key": "error",
+      "react/no-array-index-key": "warn",
+      "no-console": "error",
       "no-restricted-syntax": [
         "error",
         {
@@ -142,14 +171,41 @@ export default tseslint.config(
         {
           "selector": "NewExpression[callee.name='Worker']:not(:has(Identifier[name='useEffect'], Identifier[name='useLayoutEffect']))",
           "message": "Worker instantiation should be managed through custom hooks with proper cleanup (worker.terminate()) to prevent memory leaks"
+        },
+        {
+          "selector": "JSXAttribute[name.name='style'][value.type='JSXExpressionContainer'][value.expression.type='ObjectExpression']",
+          "message": "Avoid inline styles (style={{}}). Use Tailwind CSS classes or CSS custom properties for styling. See rule 3wIMH0UDSwsNj5RYGo17Vg. Exception: Radix primitives with // RADIX_INLINE_STYLE_ALLOWED comment."
         }
-      ]
+      ],
+      // Flag but do not fail builds on these opinions while migrating
+      "no-empty": "warn"
     },
   },
   {
-    files: ["src/lib/storageUtils.ts", "**/*.test.{ts,tsx}", "src/**/*.test.{ts,tsx}"],
+    // Override for scripts and tests with different tsconfig and relaxed rules
+    files: ["scripts/**/*.ts", "tests/**/*"],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: './tsconfig.scripts.json',
+        tsconfigRootDir: process.cwd(),
+      },
+    },
+    rules: {
+      // Scripts and tests can use console for output/debugging
+      "no-console": "off",
+      // Relax i18n rules for scripts as they typically don't have UI strings
+      "i18next/no-literal-string": "warn",
+      "react/jsx-no-literals": "off",
+      "no-restricted-syntax": "off"
+    }
+  },
+  {
+    files: ["src/lib/storageUtils.ts", "**/*.test.{ts,tsx}", "src/**/*.test.{ts,tsx}", "tests/**/*.ts"],
     rules: {
       "no-restricted-syntax": "off",
+      // Tests can use console for debugging
+      "no-console": "off",
       // During tests we relax i18n literal checks to reduce friction when building fixtures
       "i18next/no-literal-string": "off",
       "react/jsx-no-literals": "off"

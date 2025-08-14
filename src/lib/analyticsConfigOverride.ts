@@ -1,4 +1,4 @@
-import { analyticsConfig } from './analyticsConfig';
+import { analyticsConfig, STORAGE_KEYS } from './analyticsConfig';
 import { logger } from './logger';
 
 /**
@@ -11,9 +11,9 @@ export function applyDevelopmentAnalyticsConfig() {
   // Clear analytics cache first to avoid localStorage quota issues before writing config
   try {
     const cacheKeys = Object.keys(localStorage).filter(key => 
-      key.includes('analytics-cache') || 
-      key.includes('performance-cache') ||
-      key.includes('sensory-compass-analytics')
+      key.includes(STORAGE_KEYS.cachePrefix) || 
+      key.includes(STORAGE_KEYS.performancePrefix) ||
+      key.includes(STORAGE_KEYS.analyticsConfig)
     );
     cacheKeys.forEach(key => localStorage.removeItem(key));
     logger.info(`Cleared ${cacheKeys.length} analytics cache entries`);
@@ -71,7 +71,7 @@ export function applyDevelopmentAnalyticsConfig() {
   }
 }
 
-// Auto-apply in development mode
-if (import.meta.env.DEV) {
+// Auto-apply in development mode when explicitly enabled
+if (import.meta.env.DEV && import.meta.env.VITE_ANALYTICS_DEV_OVERRIDE === '1') {
   applyDevelopmentAnalyticsConfig();
 }

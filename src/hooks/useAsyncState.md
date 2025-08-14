@@ -1,29 +1,32 @@
 # Async State Hook
 
-The `useAsyncState` hook provides a flexible way to handle asynchronous operations in React applications.
+The `useAsyncState` hook provides a flexible way to handle asynchronous operations in React
+applications.
 
 ## TypeScript Interfaces
 
 ### AsyncState
+
 ```typescript
 interface AsyncState<T> {
-  data: T | null;          // The data returned from the async operation
-  loading: boolean;        // Indicates if the async operation is in progress
-  error: Error | null;     // Any error that occurred during the async operation
-  isSuccess: boolean;      // Indicates if the operation was successful
-  isError: boolean;        // Indicates if there was an error
-  isIdle: boolean;         // Indicates if the operation has not started
+  data: T | null; // The data returned from the async operation
+  loading: boolean; // Indicates if the async operation is in progress
+  error: Error | null; // Any error that occurred during the async operation
+  isSuccess: boolean; // Indicates if the operation was successful
+  isError: boolean; // Indicates if there was an error
+  isIdle: boolean; // Indicates if the operation has not started
 }
 ```
 
 ### UseAsyncStateOptions
+
 ```typescript
 interface UseAsyncStateOptions {
-  onSuccess?: <T>(data: T) => void;  // Callback on success
-  onError?: (error: Error) => void;  // Callback on error
-  retryCount?: number;               // Number of retry attempts
-  retryDelay?: number;               // Delay between retries (ms)
-  showErrorToast?: boolean;          // Option to show toast on error
+  onSuccess?: <T>(data: T) => void; // Callback on success
+  onError?: (error: Error) => void; // Callback on error
+  retryCount?: number; // Number of retry attempts
+  retryDelay?: number; // Delay between retries (ms)
+  showErrorToast?: boolean; // Option to show toast on error
 }
 ```
 
@@ -39,7 +42,7 @@ const fetchData = async () => {
 
 const { state, execute } = useAsyncState(null, {
   onSuccess: (data) => console.log('Data loaded:', data),
-  onError: (error) => console.error('Failed to load data:', error)
+  onError: (error) => console.error('Failed to load data:', error),
 });
 
 useEffect(() => {
@@ -96,13 +99,16 @@ const handleLoad = () => execute(() => api.fetchData());
 ## Best Practices
 
 1. **Consistent Hook Options**:
-  - Provide default options for retries and error handling across app for consistency.
+
+- Provide default options for retries and error handling across app for consistency.
 
 2. **Use with Context Providers**:
-  - Combine hook results with context providers to share async state across components.
+
+- Combine hook results with context providers to share async state across components.
 
 3. **Separate Logic from UI**:
-  - Separate pure data fetching logic from UI components for reusability and testability.
+
+- Separate pure data fetching logic from UI components for reusability and testability.
 
 ## Testing the Hook
 
@@ -123,7 +129,7 @@ it('should set loading to false and data when successful', async () => {
   expect(result.current.state).toMatchObject({
     loading: false,
     data: mockData,
-    error: null
+    error: null,
   });
 });
 ```

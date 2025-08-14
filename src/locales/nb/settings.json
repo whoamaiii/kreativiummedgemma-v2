@@ -19,6 +19,20 @@
     "backup": "Sikkerhetskopi",
     "restore": "Gjenopprett"
   },
+  "dataExport": {
+    "title": "Dataeksport",
+    "description": "Eksporter alle data for sikkerhetskopi eller ekstern analyse. Eksport kjøres lokalt i nettleseren.",
+    "actions": {
+      "exportAllCsv": "Eksporter alt som CSV",
+      "exportAllJson": "Eksporter alt som JSON",
+      "createBackup": "Opprett full sikkerhetskopi"
+    },
+    "success_csv": "CSV eksportert",
+    "success_json": "JSON eksportert",
+    "success_backup": "Sikkerhetskopi opprettet",
+    "error_generic": "Eksport feilet. Prøv igjen.",
+    "note": "Store eksporter kan ta noen sekunder. Ikke lukk fanen."
+  },
   "privacy": {
     "title": "Personvern",
     "description": "Alle data lagres lokalt på din enhet i samsvar med FERPA-krav.",

@@ -73,10 +73,13 @@ export class CachedPatternAnalysisEngine {
    * @example
    * const emotionPatterns = cachedAnalysis.analyzeEmotionPatterns(student.emotions, 30);
    */
-  analyzeEmotionPatterns(emotions: EmotionEntry[], timeframeDays: number = 30): PatternResult[] {
+  analyzeEmotionPatterns(emotions: EmotionEntry[], timeframeDays?: number): PatternResult[] {
+    const cfg = analyticsConfig.getConfig();
+    const effectiveDays = timeframeDays ?? cfg.timeWindows.defaultAnalysisDays;
+
     const cacheKey = this.cache.createKey('emotion-patterns', {
       fingerprint: this.cache.getDataFingerprint(emotions),
-      timeframeDays,
+      timeframeDays: effectiveDays,
       count: emotions.length,
       configHash: this.currentConfigHash
     });
@@ -84,7 +87,7 @@ export class CachedPatternAnalysisEngine {
     const cached = this.cache.get(cacheKey) as PatternResult[] | undefined;
     if (cached) return cached;
 
-    const result = patternAnalysis.analyzeEmotionPatterns(emotions, timeframeDays);
+    const result = patternAnalysis.analyzeEmotionPatterns(emotions, effectiveDays);
     
     // Tag with student IDs for targeted invalidation
     const studentIdsSet = new Set<string>();
@@ -108,10 +111,13 @@ export class CachedPatternAnalysisEngine {
    * @example
    * const sensoryPatterns = cachedAnalysis.analyzeSensoryPatterns(student.sensoryInputs, 30);
    */
-  analyzeSensoryPatterns(sensoryInputs: SensoryEntry[], timeframeDays: number = 30): PatternResult[] {
+  analyzeSensoryPatterns(sensoryInputs: SensoryEntry[], timeframeDays?: number): PatternResult[] {
+    const cfg = analyticsConfig.getConfig();
+    const effectiveDays = timeframeDays ?? cfg.timeWindows.defaultAnalysisDays;
+
     const cacheKey = this.cache.createKey('sensory-patterns', {
       fingerprint: this.cache.getDataFingerprint(sensoryInputs),
-      timeframeDays,
+      timeframeDays: effectiveDays,
       count: sensoryInputs.length,
       configHash: this.currentConfigHash
     });
@@ -119,7 +125,7 @@ export class CachedPatternAnalysisEngine {
     const cached = this.cache.get(cacheKey) as PatternResult[] | undefined;
     if (cached) return cached;
 
-    const result = patternAnalysis.analyzeSensoryPatterns(sensoryInputs, timeframeDays);
+    const result = patternAnalysis.analyzeSensoryPatterns(sensoryInputs, effectiveDays);
     
     // Tag with student IDs for targeted invalidation
     const studentIdsSet = new Set<string>();

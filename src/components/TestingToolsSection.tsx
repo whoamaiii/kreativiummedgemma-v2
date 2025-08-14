@@ -4,12 +4,16 @@ import { Button } from "@/components/ui/button";
 import { MockDataLoader } from "@/components/MockDataLoader";
 import { TestingDebugPanel } from "@/components/TestingDebugPanel";
 import { Database, Bug, Beaker } from "lucide-react";
+import { IS_PROD } from "@/lib/env";
 
 /**
  * TestingToolsSection Component
  * Provides easy access to testing and debugging tools
  */
 export const TestingToolsSection = () => {
+  if (IS_PROD) {
+    return null;
+  }
   return (
     <div className="space-y-6">
       <div>

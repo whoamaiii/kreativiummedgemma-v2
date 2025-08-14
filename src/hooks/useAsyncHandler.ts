@@ -11,8 +11,13 @@ interface UseAsyncHandlerOptions<R = unknown> {
 export function useAsyncHandler<T extends unknown[], R>(
   asyncFunction: (...args: T) => Promise<R>,
   options: UseAsyncHandlerOptions<R> = {}
-) {
-  const [loading, setLoading] = useState(false);
+): {
+  execute: (...args: T) => Promise<R | undefined>;
+  loading: boolean;
+  error: Error | null;
+  clearError: () => void;
+} {
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
   const execute = useCallback(

@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback, memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DropdownMenu,
@@ -9,30 +8,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AlertManager } from "@/components/AlertManager";
 import React, { Suspense } from 'react';
-const LazyInteractiveDataVisualization = React.lazy(() => import('@/components/lazy/LazyInteractiveDataVisualization').then(m => ({ default: m.LazyInteractiveDataVisualization })));
 import { AnalyticsSettings } from "@/components/AnalyticsSettings";
+import { LazyChartsPanel } from '@/components/lazy/LazyChartsPanel';
+import { LazyPatternsPanel } from '@/components/lazy/LazyPatternsPanel';
+import { LazyCorrelationsPanel } from '@/components/lazy/LazyCorrelationsPanel';
+import { LazyAlertsPanel } from '@/components/lazy/LazyAlertsPanel';
 import {
   TrendingUp,
   Brain,
   Eye,
-  Clock,
   BarChart3,
   Download,
   FileText,
   FileSpreadsheet,
   FileJson,
   Settings,
-  Info
 } from "lucide-react";
 import { Student, TrackingEntry, EmotionEntry, SensoryEntry } from "@/types/student";
-import { PatternResult, CorrelationResult } from "@/lib/patternAnalysis";
-import { EChartContainer } from "@/components/charts/EChartContainer";
-import { buildCorrelationHeatmapOption } from "@/components/charts/ChartKit";
-import { enhancedPatternAnalysis } from "@/lib/enhancedPatternAnalysis";
-import type { EChartsOption } from "echarts";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { useAnalyticsWorker } from "@/hooks/useAnalyticsWorker";
 import { analyticsManager } from "@/lib/analyticsManager";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -40,6 +33,14 @@ import { analyticsExport, ExportFormat } from "@/lib/analyticsExport";
 import { toast } from "sonner";
 import { logger } from "@/lib/logger";
 import { ErrorBoundary } from "./ErrorBoundary";
+import { useSyncedTabParam } from '@/hooks/useSyncedTabParam';
+
+// Typed tab keys to avoid stringly-typed errors
+
+// Centralized mapping of tabs to i18n keys and data-testids
+// Labels come from the analytics namespace: analytics.tabs.*
+// moved to ./analyticsTabs to satisfy react-refresh rule
+import { TABS } from './analyticsTabs';
 
 /**
  * @interface AnalyticsDashboardProps
@@ -73,13 +74,44 @@ export const AnalyticsDashboard = memo(({
   filteredData = { entries: [], emotions: [], sensoryInputs: [] },
 }: AnalyticsDashboardProps) => {
   // All hooks must be called at the top level, not inside try-catch
-  const { tStudent } = useTranslation();
-  const [isExporting, setIsExporting] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
+  const { tStudent, tAnalytics, tCommon } = useTranslation();
+  const [isExporting, setIsExporting] = useState<boolean>(false);
+  const [showSettings, setShowSettings] = useState<boolean>(false);
+  const [isSeeding, setIsSeeding] = useState<boolean>(false);
   const visualizationRef = useRef<HTMLDivElement>(null);
   
   // Always call hook at top level - hooks cannot be inside try-catch
-  const { results, isAnalyzing, error, runAnalysis, invalidateCacheForStudent } = useAnalyticsWorker({ precomputeOnIdle: false });
+  const { results, isAnalyzing, /* eslint-disable @typescript-eslint/no-unused-vars */ error, /* eslint-enable @typescript-eslint/no-unused-vars */ runAnalysis, invalidateCacheForStudent } = useAnalyticsWorker({ precomputeOnIdle: false });
+
+  // Dev-only guard
+  const isDevSeedEnabled = (() => {
+    try {
+      // Vite-style envs
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const env: any = (import.meta as any)?.env ?? {};
+      return Boolean(env?.DEV || env?.MODE === 'development' || env?.VITE_ENABLE_DEV_SEED === 'true');
+    } catch {
+      return false;
+    }
+  })();
+
+  const handleSeedDemo = useCallback(async () => {
+    setIsSeeding(true);
+    try {
+      const mod = await import('@/lib/mock/mockSeeders');
+      const { seedDemoData } = mod as typeof import('@/lib/mock/mockSeeders');
+      const { totalStudentsAffected, totalEntriesCreated } = await seedDemoData({ forExistingStudents: true, createNewStudents: 1, batchesPerStudent: 1 });
+      toast.success(String(tAnalytics('dev.seed.success', { students: totalStudentsAffected, entries: totalEntriesCreated })));
+      // Invalidate analysis cache for this student and re-run to reflect new data if provided by parent
+      invalidateCacheForStudent(student.id);
+      runAnalysis(filteredData);
+    } catch (e) {
+      logger.error('[AnalyticsDashboard] Demo seed failed', { error: e });
+      toast.error(String(tAnalytics('dev.seed.failure')));
+    } finally {
+      setIsSeeding(false);
+    }
+  }, [filteredData, invalidateCacheForStudent, runAnalysis, student.id, tAnalytics]);
 
   // Effect to trigger the analysis in the worker whenever the filtered data changes.
   useEffect(() => {
@@ -125,13 +157,15 @@ export const AnalyticsDashboard = memo(({
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      // Component cleanup
+      // Component cleanup noop to satisfy no-empty
+      void 0;
     };
   }, []);
 
   // useMemo hooks to prevent re-calculating derived data on every render.
   const patterns = useMemo(() => results?.patterns || [], [results]);
   const correlations = useMemo(() => results?.correlations || [], [results]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const environmentalCorrelations = useMemo(() => results?.environmentalCorrelations || results?.correlations || [], [results]);
   const insights = useMemo(() => results?.insights || [], [results]);
 
@@ -178,28 +212,29 @@ export const AnalyticsDashboard = memo(({
           : undefined
       };
 
-      switch (format) {
-        case 'pdf':
-          await analyticsExport.exportToPDF(exportData);
-          toast.success('PDF report exported successfully');
-          break;
-        case 'csv':
-          analyticsExport.exportToCSV(exportData);
-          toast.success('CSV data exported successfully');
-          break;
-        case 'json':
-          analyticsExport.exportToJSON(exportData);
-          toast.success('JSON data exported successfully');
-          break;
-      }
-    } catch (error) {
-      logger.error('Export failed:', error);
-      toast.error('Failed to export analytics data');
-    } finally {
-      setIsExporting(false);
-    }
-  }, [filteredData, student, patterns, correlations, insights, results]);
+          switch (format) {
+            case 'pdf':
+              await analyticsExport.exportToPDF(exportData);
+              toast.success(String(tAnalytics('export.success.pdf')));
+              break;
+            case 'csv':
+              analyticsExport.exportToCSV(exportData);
+              toast.success(String(tAnalytics('export.success.csv')));
+              break;
+            case 'json':
+              analyticsExport.exportToJSON(exportData);
+              toast.success(String(tAnalytics('export.success.json')));
+              break;
+          }
+        } catch (error) {
+          logger.error('Export failed:', error);
+          toast.error(String(tAnalytics('export.failure')));
+        } finally {
+          setIsExporting(false);
+        }
+      }, [filteredData, student, patterns, correlations, insights, results, tAnalytics]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getPatternIcon = (type: string) => {
     switch (type) {
       case 'emotion':
@@ -213,42 +248,75 @@ export const AnalyticsDashboard = memo(({
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getConfidenceColor = (confidence: number) => {
     if (confidence > 0.7) return 'text-green-600';
     if (confidence > 0.4) return 'text-yellow-600';
     return 'text-orange-600';
   };
 
-  // Track active tab for diagnostics and to ensure controlled behavior
-  const [activeTab, setActiveTab] = useState<string>('visualizations');
+// Track active tab synced with URL
+  // URL-synced hook for persistence across reloads and deep links
+  const [activeTab, setActiveTab] = useSyncedTabParam({ debounceMs: 150, paramKey: 'tab', defaultTab: 'charts' });
 
+  // Live region for announcing tab changes
+  const [liveMessage, setLiveMessage] = useState<string>("");
   useEffect(() => {
     try {
-      logger.debug('[AnalyticsDashboard] Active tab changed', { activeTab });
-    } catch {}
-  }, [activeTab]);
+      logger.debug('[AnalyticsDashboard] Active tab changed', { studentId: student.id, tab: activeTab });
+    } catch { void 0; }
+    const current = TABS.find(t => t.key === activeTab);
+    if (current) {
+      const label = String(tAnalytics(current.labelKey));
+      setLiveMessage(label);
+    }
+  }, [activeTab, tAnalytics, student.id]);
 
   return (
     <ErrorBoundary>
-      <div className="space-y-6">
+      {/* Skip link for keyboard users */}
+      <a
+        href="#analytics-tabpanel"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:rounded-md focus:bg-primary focus:text-primary-foreground"
+      >
+        {String(tAnalytics('skipToContent'))}
+      </a>
+      <section role="region" aria-labelledby="analytics-dashboard-title" className="space-y-6">
+      {/* Hidden live region for announcing tab changes */}
+      <div id="analytics-live-region" className="sr-only" aria-live="polite" aria-atomic="true" role="status">
+        {liveMessage}
+      </div>
       {/* Header card, displays the student's name and export options. */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Analytics Dashboard - {student.name}</CardTitle>
+          <CardTitle id="analytics-dashboard-title">
+            {String(tAnalytics('dashboard.title', { name: student.name }))}
+          </CardTitle>
           <div className="flex items-center gap-2">
+            {isDevSeedEnabled && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSeedDemo}
+                disabled={isSeeding}
+                aria-label={String(tAnalytics('dev.seed.aria'))}
+              >
+                {isSeeding ? String(tAnalytics('dev.seed.seeding')) : String(tAnalytics('dev.seed.button'))}
+              </Button>
+            )}
             <Button
               variant="outline"
               size="sm"
               onClick={() => setShowSettings(true)}
             >
               <Settings className="h-4 w-4 mr-2" />
-              Settings
+              {String(tCommon('settings'))}
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" disabled={isExporting}>
                   <Download className="h-4 w-4 mr-2" />
-                  {isExporting ? 'Exporting...' : 'Export'}
+                  {isExporting ? String(tCommon('exporting')) : String(tCommon('export'))}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -257,21 +325,21 @@ export const AnalyticsDashboard = memo(({
                   disabled={isExporting}
                 >
                   <FileText className="h-4 w-4 mr-2" />
-                  Export as PDF
+                  {String(tCommon('exportAsPdf'))}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => handleExport('csv')}
                   disabled={isExporting}
                 >
                   <FileSpreadsheet className="h-4 w-4 mr-2" />
-                  Export as CSV
+                  {String(tCommon('exportAsCsv'))}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => handleExport('json')}
                   disabled={isExporting}
                 >
                   <FileJson className="h-4 w-4 mr-2" />
-                  Export as JSON
+                  {String(tCommon('exportAsJson'))}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -285,7 +353,7 @@ export const AnalyticsDashboard = memo(({
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Sessions</p>
+                <p className="text-sm font-medium text-muted-foreground">{String(tAnalytics('metrics.totalSessions'))}</p>
                 <p className="text-2xl font-bold">{filteredData.entries.length}</p>
               </div>
               <BarChart3 className="h-8 w-8 text-muted-foreground" />
@@ -321,7 +389,7 @@ export const AnalyticsDashboard = memo(({
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Patterns Found</p>
+                <p className="text-sm font-medium text-muted-foreground">{String(tAnalytics('metrics.patternsFound'))}</p>
                 <p className="text-2xl font-bold">{patterns.length}</p>
               </div>
               <TrendingUp className="h-8 w-8 text-muted-foreground" />
@@ -331,259 +399,61 @@ export const AnalyticsDashboard = memo(({
       </div>
 
       {/* Main tabbed interface for displaying detailed analysis results. */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 relative z-10">
-          <TabsTrigger value="visualizations" aria-label="Charts tab">Charts</TabsTrigger>
-          <TabsTrigger value="patterns">Patterns</TabsTrigger>
-          <TabsTrigger value="correlations" data-testid="dashboard-correlations-tab">Correlations</TabsTrigger>
-          <TabsTrigger value="alerts">Alerts</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={setActiveTab as (v: string) => void} className="w-full">
+        <TabsList className="grid w-full grid-cols-4 relative z-10" aria-label={String(tAnalytics('tabs.label'))}>
+          {TABS.map(({ key, labelKey, testId, ariaLabelKey }) => (
+            <TabsTrigger
+              key={key}
+              value={key}
+              aria-label={ariaLabelKey ? String(tAnalytics(ariaLabelKey)) : String(tAnalytics(labelKey))}
+              data-testid={testId}
+            >
+              {String(tAnalytics(labelKey))}
+            </TabsTrigger>
+          ))}
         </TabsList>
 
-        <TabsContent value="visualizations" className="space-y-6">
-          <div ref={visualizationRef}>
-            <Suspense fallback={<div className="h-[360px] rounded-xl border bg-card animate-pulse" aria-label="Loading visualization" /> }>
-              <LazyInteractiveDataVisualization
-                emotions={filteredData.emotions}
-                sensoryInputs={filteredData.sensoryInputs}
-                trackingEntries={filteredData.entries}
-                studentName={student.name}
-              />
-            </Suspense>
-          </div>
-        </TabsContent>
+        {activeTab === 'charts' && (
+          <TabsContent id="analytics-tabpanel" value="charts" className="space-y-6" tabIndex={-1}>
+            <div ref={visualizationRef}>
+              <ErrorBoundary showToast={false}>
+                <Suspense fallback={<div className="h-[360px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label={String(tAnalytics('states.analyzing'))} />}> 
+                  <LazyChartsPanel studentName={student.name} filteredData={filteredData} />
+                </Suspense>
+              </ErrorBoundary>
+            </div>
+          </TabsContent>
+        )}
 
-        <TabsContent value="patterns" className="space-y-6" forceMount>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Behavioral Patterns</CardTitle>
-              <Button 
-                variant="outline" 
-                onClick={() => runAnalysis(filteredData)}
-                disabled={isAnalyzing}
-              >
-                {isAnalyzing ? 'Analyzing...' : 'Refresh Analysis'}
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {/* Conditional rendering based on the worker's state (analyzing, error, or results). */}
-              {isAnalyzing && (
-                 <div className="text-center py-8 text-muted-foreground">
-                   <Clock className="h-12 w-12 mx-auto mb-4 animate-spin opacity-50" />
-                   <p>Analyzing data...</p>
-                 </div>
-              )}
-              {!isAnalyzing && error && (
-                <div className="text-center py-8 text-destructive">
-                  <p>{error}</p>
-                </div>
-              )}
-              {!isAnalyzing && !error && patterns.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Clock className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>No significant patterns detected yet.</p>
-                  <p className="text-sm">More data may be needed for pattern analysis.</p>
-                </div>
-              )}
-              {!isAnalyzing && !error && patterns.length > 0 && (
-                <div className="space-y-4">
-                  {patterns.map((pattern: PatternResult, index) => (
-                    <Card key={index} className="border-l-4 border-l-primary">
-                      <CardContent className="pt-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start gap-3">
-                            {getPatternIcon(pattern.type)}
-                            <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <h4 className="font-medium text-foreground">
-                                {String((pattern as PatternResult & {pattern?: string; name?: string}).pattern ?? (pattern as PatternResult & {pattern?: string; name?: string}).name ?? 'Pattern')
-                                  .replace('-', ' ')
-                                  .replace(/\b\w/g, (l: string) => l.toUpperCase())}
-                              </h4>
-                              <HoverCard openDelay={100} closeDelay={80}>
-                                <HoverCardTrigger asChild>
-                                  <button
-                                    aria-label="Vis forklaringen"
-                                    className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] leading-none text-muted-foreground hover:bg-accent/40"
-                                  >
-                                    <Info className="h-3 w-3" />
-                                    Vis forklaringen
-                                  </button>
-                                </HoverCardTrigger>
-                                <HoverCardContent className="w-80 text-sm leading-relaxed">
-                                  <p className="mb-1 font-medium">Hva betyr dette mønsteret?</p>
-                                  <p className="text-muted-foreground">
-                                    {String((pattern as PatternResult & {description?: string}).description ?? 'Systemet har funnet et gjentakende mønster i dataene for denne perioden.')} 
-                                  </p>
-                                  <p className="mt-2 text-xs text-muted-foreground/80">
-                                    Tolk alltid sammen med kontekst og pedagogisk vurdering.
-                                  </p>
-                                </HoverCardContent>
-                              </HoverCard>
-                            </div>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {String((pattern as PatternResult & {description?: string}).description ?? '')}
-                              </p>
-                              {pattern.recommendations && (
-                                <div className="mt-3">
-                                  <h5 className="text-sm font-medium mb-2">Recommendations:</h5>
-                                  <ul className="text-sm text-muted-foreground space-y-1">
-                                    {pattern.recommendations.map((rec, recIndex) => (
-                                      <li key={recIndex} className="flex items-start gap-2">
-                                        <span className="text-primary">•</span>
-                                        <span>{rec}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <Badge variant="outline" className={getConfidenceColor(pattern.confidence)}>
-                              {Math.round(pattern.confidence * 100)}% confidence
-                            </Badge>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {pattern.dataPoints} data points
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+        {activeTab === 'patterns' && (
+          <TabsContent value="patterns" className="space-y-6" aria-busy={isAnalyzing}>
+            <ErrorBoundary showToast={false}>
+              <Suspense fallback={<div className="h-[280px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label={String(tAnalytics('states.analyzing'))} />}> 
+                <LazyPatternsPanel filteredData={filteredData} />
+              </Suspense>
+            </ErrorBoundary>
+          </TabsContent>
+        )}
 
-          {/* Insights Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>AI-Generated Insights</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isAnalyzing && <p className="text-muted-foreground">Generating insights...</p>}
-              {!isAnalyzing && insights.length === 0 && (
-                <p className="text-muted-foreground">No insights available yet.</p>
-              )}
-              {!isAnalyzing && insights.length > 0 && (
-                <div className="space-y-3">
-                  {insights.map((insight, index) => (
-                    <div key={index} className="p-3 bg-muted/50 rounded-lg">
-                      <p className="text-sm text-foreground">{insight}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+        {activeTab === 'correlations' && (
+          <TabsContent value="correlations" className="space-y-6">
+            <ErrorBoundary showToast={false}>
+              <Suspense fallback={<div className="h-[420px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label={String(tAnalytics('states.analyzing'))} />}> 
+                <LazyCorrelationsPanel filteredData={filteredData} />
+              </Suspense>
+            </ErrorBoundary>
+          </TabsContent>
+        )}
 
-        <TabsContent value="correlations" forceMount className="space-y-6">
-          <Card className="bg-gradient-card border-0 shadow-soft">
-            <CardHeader className="flex items-start justify-between gap-3">
-              <div>
-                <CardTitle data-testid="environmental-correlations-title">Correlation Heatmap</CardTitle>
-                <p className="text-sm text-muted-foreground">Strength of relationships between tracked factors (−1 to 1)</p>
-              </div>
-              <HoverCard openDelay={150} closeDelay={100}>
-                <HoverCardTrigger asChild>
-                  <button aria-label="Hvordan lese varmekartet" className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs hover:bg-accent/30">
-                    <Info className="h-4 w-4" />
-                    Hvordan lese varmekartet
-                  </button>
-                </HoverCardTrigger>
-                <HoverCardContent className="w-80 text-sm leading-relaxed">
-                  <p>
-                    Farger viser korrelasjon: grønn = positiv sammenheng, rød = negativ. Tall nær 1 eller −1 betyr sterkere samband.
-                    Akser viser faktorer. Hold musepekeren over en celle for detaljer og signifikans.
-                  </p>
-                </HoverCardContent>
-              </HoverCard>
-            </CardHeader>
-            <CardContent>
-              {isAnalyzing && (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Clock className="h-12 w-12 mx-auto mb-4 animate-spin opacity-50" />
-                  <p>Analyzing correlations...</p>
-                </div>
-              )}
-              {!isAnalyzing && error && (
-                <div className="text-center py-8 text-destructive">
-                  <p>{error}</p>
-                </div>
-              )}
-              {(() => {
-                const hasEnoughData = (filteredData.entries?.length ?? 0) >= 10;
-                if (hasEnoughData) {
-                  try {
-                    const matrix = enhancedPatternAnalysis.generateCorrelationMatrix(filteredData.entries);
-                    const option: EChartsOption = buildCorrelationHeatmapOption(matrix);
-                    return (
-                      <>
-                        <div className="rounded-xl border bg-card">
-                          <EChartContainer option={option} height={420} />
-                        </div>
-                        <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
-                          <span>Negativ</span>
-                          <span className="h-3 w-3 rounded" style={{ backgroundColor: '#ef4444' }} />
-                          <span>0</span>
-                          <span className="h-3 w-3 rounded border" style={{ backgroundColor: '#f3f4f6' }} />
-                          <span>Positiv</span>
-                          <span className="h-3 w-3 rounded" style={{ backgroundColor: '#10b981' }} />
-                        </div>
-                      </>
-                    );
-                  } catch {
-                    /* fall through to list */
-                  }
-                }
-                if (!isAnalyzing && !error && environmentalCorrelations.length === 0) {
-                  return (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>No significant correlations found.</p>
-                      <p className="text-sm">More varied environmental data may be needed.</p>
-                    </div>
-                  );
-                }
-                return (
-                  <div className="space-y-4">
-                    {environmentalCorrelations.map((correlation: CorrelationResult, index) => (
-                      <Card key={index} className="border-l-4 border-l-blue-500">
-                        <CardContent className="pt-4">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <h4 className="font-medium text-foreground">
-                                {correlation.factor1} ↔ {correlation.factor2}
-                              </h4>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                {correlation.description}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <Badge variant={correlation.significance === 'high' ? 'default' : 'outline'}>
-                                {correlation.significance} significance
-                              </Badge>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                r = {typeof (correlation as CorrelationResult & {correlation?: number}).correlation === 'number'
-                                  ? (correlation as CorrelationResult & {correlation?: number}).correlation.toFixed(3)
-                                  : '0.000'}
-                              </p>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                );
-              })()}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="alerts" className="space-y-6">
-          <AlertManager studentId={student.id} />
-        </TabsContent>
+        {activeTab === 'alerts' && (
+          <TabsContent value="alerts" className="space-y-6">
+            <ErrorBoundary showToast={false}>
+              <Suspense fallback={<div className="h-[200px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label={String(tAnalytics('states.analyzing'))} />}> 
+                <LazyAlertsPanel filteredData={filteredData} studentId={student.id} />
+              </Suspense>
+            </ErrorBoundary>
+          </TabsContent>
+        )}
       </Tabs>
 
       {/* Analytics Settings Dialog */}
@@ -598,7 +468,7 @@ export const AnalyticsDashboard = memo(({
           onClose={() => setShowSettings(false)}
         />
       )}
-      </div>
+      </section>
     </ErrorBoundary>
   );
 }, (prevProps, nextProps) => {

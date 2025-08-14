@@ -1,4 +1,5 @@
-import React, { Suspense, lazy, ComponentType } from 'react';
+import React, { Suspense, lazy } from 'react';
+import type { ComponentType } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Loader2 } from 'lucide-react';
@@ -90,14 +91,14 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 }
 
 // Utility function to create lazy-loaded components with proper error handling
-export function createLazyComponent<T extends ComponentType<any>>(
+export function createLazyComponent<T extends ComponentType<unknown>>(
   importFunc: () => Promise<{ default: T }>,
   fallback?: React.ReactNode,
   errorFallback?: React.ReactNode
-) {
+): (props: React.ComponentProps<T>) => JSX.Element {
   const LazyComponent = lazy(importFunc);
 
-  return function WrappedLazyComponent(props: React.ComponentProps<T>) {
+  return function WrappedLazyComponent(props: React.ComponentProps<T>): JSX.Element {
     return (
       <LazyLoadWrapper fallback={fallback} errorFallback={errorFallback}>
         <LazyComponent {...props} />

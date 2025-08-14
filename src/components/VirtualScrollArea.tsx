@@ -53,7 +53,7 @@ import { cn } from "@/lib/utils";
  *     itemHeight={40}
  *     containerHeight={400}
  *     renderItem={(item, index) => (
- *       <div key={index} style={{ lineHeight: '40px', padding: '0 10px' }}>
+ *       <div key={index} className="leading-10 px-2.5">
  *         {item}
  *       </div>
  *     )}
@@ -257,31 +257,29 @@ export function VirtualScrollArea<T>({
   // Generate dynamic classes for container height
   const containerHeightClass = containerHeight ? `h-[${containerHeight}px]` : 'h-full';
   
+  // CSS custom properties for dynamic values - follows rule 3wIMH0UDSwsNj5RYGo17Vg
+  const cssVariables = {
+    '--virtual-total-height': `${totalHeight}px`,
+    '--virtual-translate-y': `${visibleRange.start * itemHeight}px`,
+    '--virtual-item-height': `${itemHeight}px`
+  } as React.CSSProperties;
+  
   return (
-    <ScrollArea className={cn(className, "relative", containerHeightClass)}>
+    <ScrollArea 
+      className={cn(className, "relative", containerHeightClass)}
+      style={cssVariables}
+    >
       <div 
         ref={scrollElementRef}
         onScroll={handleScroll}
         className={cn("overflow-auto", containerHeightClass)}
       >
-        <div 
-          className="relative"
-          // Dynamic height must be inline as it changes with item count
-          style={{ height: `${totalHeight}px` }}
-        >
-          <div
-            className="relative"
-            // Transform must be inline as it changes with scroll position
-            style={{
-              transform: `translateY(${visibleRange.start * itemHeight}px)`
-            }}
-          >
+        <div className="relative h-[var(--virtual-total-height)]">
+          <div className="relative translate-y-[var(--virtual-translate-y)]">
             {visibleItems.map((item, index) => (
               <div
                 key={visibleRange.start + index}
-                className="relative"
-                // Item height must be inline as it's configurable
-                style={{ height: `${itemHeight}px` }}
+                className="relative h-[var(--virtual-item-height)]"
               >
                 {renderItem(item, visibleRange.start + index)}
               </div>

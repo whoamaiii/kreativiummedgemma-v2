@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Database, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
@@ -106,15 +107,12 @@ export const StorageManager = () => {
               <span>Used</span>
               <span>{formatBytes(storageInfo.used)} / ~5 MB</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className={cn(
-                  "h-2 rounded-full transition-all w-full origin-left",
-                  usagePercentage > 90 ? 'bg-red-500' : usagePercentage > 70 ? 'bg-yellow-500' : 'bg-green-500'
-                )}
-                style={{ transform: `scaleX(${Math.min(usagePercentage, 100) / 100})` }}
-              />
-            </div>
+          <div className="w-full">
+            <Progress
+              value={Math.min(usagePercentage, 100)}
+              className="h-2"
+            />
+          </div>
           </div>
         </div>
 

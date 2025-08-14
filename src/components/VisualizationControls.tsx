@@ -190,7 +190,13 @@ export const VisualizationControls: React.FC<VisualizationControlsProps> = ({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" aria-label="Select layout mode" title="Select layout mode">
+              <Button
+                variant="outline"
+                size="sm"
+                aria-label="Select layout mode"
+                title="Select layout mode"
+                data-testid="layout-mode-trigger"
+              >
                 {layoutMode === 'grid' && <Grid3x3 className="h-4 w-4 mr-2" />}
                 {layoutMode === 'focus' && <Focus className="h-4 w-4 mr-2" />}
                 {layoutMode === 'comparison' && <Columns className="h-4 w-4 mr-2" />}

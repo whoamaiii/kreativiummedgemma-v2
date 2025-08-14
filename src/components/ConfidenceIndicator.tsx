@@ -99,8 +99,8 @@ export const ConfidenceIndicator = memo<ConfidenceIndicatorProps>(({
               {String(tAnalytics(`confidence.${level}`))}
             </div>
             <div className="space-y-1">
-              {explanations.map((explanation, index) => (
-                <div key={index} className="text-xs text-muted-foreground">
+              {explanations.map((explanation) => (
+                <div key={explanation} className="text-xs text-muted-foreground">
                   • {explanation}
                 </div>
               ))}

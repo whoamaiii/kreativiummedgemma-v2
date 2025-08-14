@@ -1,10 +1,12 @@
 # Data Validation Documentation
 
-The data validation module provides comprehensive schema validation for student tracking data using Zod.
+The data validation module provides comprehensive schema validation for student tracking data using
+Zod.
 
 ## Schema Definitions
 
 ### StudentSchema
+
 ```typescript
 const studentSchema = z.object({
   id: z.string(),
@@ -15,33 +17,36 @@ const studentSchema = z.object({
   scenario: z.enum(['emma', 'lars', 'astrid', 'noah', 'maya', 'olivia']).optional(),
   baselineArousal: z.number().min(0).max(100).optional(),
   baselineValence: z.number().min(-1).max(1).optional(),
-  stressLevel: z.number().min(0).max(10).optional()
+  stressLevel: z.number().min(0).max(10).optional(),
 });
 ```
 
 ### EmotionEntrySchema
+
 ```typescript
 const emotionEntrySchema = z.object({
   timestamp: z.string(),
   emotion: z.string(),
   intensity: z.number().min(0).max(100),
   trigger: z.string().optional(),
-  notes: z.string().optional()
+  notes: z.string().optional(),
 });
 ```
 
 ### SensoryEntrySchema
+
 ```typescript
 const sensoryEntrySchema = z.object({
   timestamp: z.string(),
   sensoryType: z.enum(['visual', 'auditory', 'tactile', 'olfactory', 'vestibular']),
   response: z.number().min(-10).max(10),
   trigger: z.string().optional(),
-  notes: z.string().optional()
+  notes: z.string().optional(),
 });
 ```
 
 ### TrackingEntrySchema
+
 ```typescript
 const trackingEntrySchema = z.object({
   id: z.string(),
@@ -50,21 +55,24 @@ const trackingEntrySchema = z.object({
   activity: z.string(),
   emotions: z.array(emotionEntrySchema),
   sensoryProfile: z.array(sensoryEntrySchema),
-  environmentFactors: z.object({
-    noiseLevel: z.number().min(0).max(100).optional(),
-    lightingLevel: z.number().min(0).max(100).optional(),
-    crowdLevel: z.number().min(0).max(100).optional(),
-    temperature: z.number().min(10).max(40).optional()
-  }).optional(),
+  environmentFactors: z
+    .object({
+      noiseLevel: z.number().min(0).max(100).optional(),
+      lightingLevel: z.number().min(0).max(100).optional(),
+      crowdLevel: z.number().min(0).max(100).optional(),
+      temperature: z.number().min(10).max(40).optional(),
+    })
+    .optional(),
   overallRegulation: z.number().min(1).max(5),
   triggers: z.array(z.string()).optional(),
-  supportStrategies: z.array(z.string()).optional()
+  supportStrategies: z.array(z.string()).optional(),
 });
 ```
 
 ## Validation Methods
 
 ### validateStudent
+
 ```typescript
 export function validateStudent(data: unknown): {
   isValid: boolean;
@@ -73,12 +81,13 @@ export function validateStudent(data: unknown): {
   const result = studentSchema.safeParse(data);
   return {
     isValid: result.success,
-    errors: result.success ? undefined : result.error.errors
+    errors: result.success ? undefined : result.error.errors,
   };
 }
 ```
 
 ### validateEmotionEntry
+
 ```typescript
 export function validateEmotionEntry(data: unknown): {
   isValid: boolean;
@@ -87,12 +96,13 @@ export function validateEmotionEntry(data: unknown): {
   const result = emotionEntrySchema.safeParse(data);
   return {
     isValid: result.success,
-    errors: result.success ? undefined : result.error.errors
+    errors: result.success ? undefined : result.error.errors,
   };
 }
 ```
 
 ### validateSensoryEntry
+
 ```typescript
 export function validateSensoryEntry(data: unknown): {
   isValid: boolean;
@@ -101,12 +111,13 @@ export function validateSensoryEntry(data: unknown): {
   const result = sensoryEntrySchema.safeParse(data);
   return {
     isValid: result.success,
-    errors: result.success ? undefined : result.error.errors
+    errors: result.success ? undefined : result.error.errors,
   };
 }
 ```
 
 ### validateTrackingEntry
+
 ```typescript
 export function validateTrackingEntry(data: unknown): {
   isValid: boolean;
@@ -115,12 +126,13 @@ export function validateTrackingEntry(data: unknown): {
   const result = trackingEntrySchema.safeParse(data);
   return {
     isValid: result.success,
-    errors: result.success ? undefined : result.error.errors
+    errors: result.success ? undefined : result.error.errors,
   };
 }
 ```
 
 ### validateTrackingData
+
 ```typescript
 export function validateTrackingData(data: unknown): {
   isValid: boolean;
@@ -128,13 +140,13 @@ export function validateTrackingData(data: unknown): {
 } {
   const trackingSchema = z.object({
     student: studentSchema,
-    entries: z.array(trackingEntrySchema)
+    entries: z.array(trackingEntrySchema),
   });
-  
+
   const result = trackingSchema.safeParse(data);
   return {
     isValid: result.success,
-    errors: result.success ? undefined : result.error.errors
+    errors: result.success ? undefined : result.error.errors,
   };
 }
 ```
@@ -153,7 +165,7 @@ const studentData = {
   grade: '5th',
   class: 'A',
   age: 10,
-  scenario: 'emma'
+  scenario: 'emma',
 };
 
 const studentResult = validateStudent(studentData);
@@ -171,18 +183,21 @@ const [errors, setErrors] = useState<Record<string, string>>({});
 
 const handleSubmit = (formData: FormData) => {
   const validation = validateTrackingEntry(formData);
-  
+
   if (!validation.isValid) {
-    const errorMap = validation.errors?.reduce((acc, error) => {
-      const path = error.path.join('.');
-      acc[path] = error.message;
-      return acc;
-    }, {} as Record<string, string>);
-    
+    const errorMap = validation.errors?.reduce(
+      (acc, error) => {
+        const path = error.path.join('.');
+        acc[path] = error.message;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+
     setErrors(errorMap || {});
     return;
   }
-  
+
   // Process valid data
   submitData(formData);
 };
@@ -191,25 +206,30 @@ const handleSubmit = (formData: FormData) => {
 ### Batch Validation
 
 ```typescript
-const validateBatch = (entries: unknown[]): {
+const validateBatch = (
+  entries: unknown[],
+): {
   valid: any[];
   invalid: Array<{ data: unknown; errors: z.ZodError['errors'] }>;
 } => {
-  const results = entries.reduce((acc, entry) => {
-    const validation = validateTrackingEntry(entry);
-    
-    if (validation.isValid) {
-      acc.valid.push(entry);
-    } else {
-      acc.invalid.push({
-        data: entry,
-        errors: validation.errors
-      });
-    }
-    
-    return acc;
-  }, { valid: [], invalid: [] });
-  
+  const results = entries.reduce(
+    (acc, entry) => {
+      const validation = validateTrackingEntry(entry);
+
+      if (validation.isValid) {
+        acc.valid.push(entry);
+      } else {
+        acc.invalid.push({
+          data: entry,
+          errors: validation.errors,
+        });
+      }
+
+      return acc;
+    },
+    { valid: [], invalid: [] },
+  );
+
   return results;
 };
 ```
@@ -221,7 +241,7 @@ const validateBatch = (entries: unknown[]): {
 ```typescript
 const formatValidationError = (error: z.ZodError['errors'][0]): string => {
   const { path, message, code } = error;
-  
+
   // Custom messages based on error type
   switch (code) {
     case 'invalid_type':
@@ -246,12 +266,12 @@ const ValidationInput: React.FC<{
   onChange: (value: any) => void;
 }> = ({ name, value, schema, onChange }) => {
   const [error, setError] = useState<string>('');
-  
+
   const handleBlur = () => {
     const result = schema.safeParse(value);
     setError(result.success ? '' : result.error.errors[0].message);
   };
-  
+
   return (
     <div>
       <input
@@ -269,7 +289,8 @@ const ValidationInput: React.FC<{
 
 ## Performance Considerations
 
-1. **Lazy Schema Creation**: Create schemas outside of components to avoid recreation on every render.
+1. **Lazy Schema Creation**: Create schemas outside of components to avoid recreation on every
+   render.
 
 2. **Memoize Validation Results**: Cache validation results for unchanged data.
 
@@ -303,23 +324,23 @@ describe('validateStudent', () => {
       name: 'Test Student',
       grade: '5th',
       class: 'A',
-      age: 10
+      age: 10,
     };
-    
+
     const result = validateStudent(validStudent);
     expect(result.isValid).toBe(true);
     expect(result.errors).toBeUndefined();
   });
-  
+
   it('should reject invalid age', () => {
     const invalidStudent = {
       id: '123',
       name: 'Test Student',
       grade: '5th',
       class: 'A',
-      age: 35 // Too old
+      age: 35, // Too old
     };
-    
+
     const result = validateStudent(invalidStudent);
     expect(result.isValid).toBe(false);
     expect(result.errors?.[0].path).toContain('age');
@@ -330,23 +351,27 @@ describe('validateStudent', () => {
 ## Best Practices
 
 1. **Type Safety**: Use TypeScript's type inference with Zod.
+
 ```typescript
 type Student = z.infer<typeof studentSchema>;
 ```
 
 2. **Composition**: Build complex schemas from simpler ones.
+
 ```typescript
 const baseSchema = z.object({ id: z.string() });
 const extendedSchema = baseSchema.extend({ name: z.string() });
 ```
 
 3. **Custom Validators**: Create reusable custom validation functions.
+
 ```typescript
 const isValidEmail = z.string().email();
 const isValidPhone = z.string().regex(/^\+?[\d\s-()]+$/);
 ```
 
 4. **Error Boundaries**: Wrap validation in try-catch for unexpected errors.
+
 ```typescript
 try {
   const result = validateTrackingData(data);

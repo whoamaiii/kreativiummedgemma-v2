@@ -8,6 +8,7 @@ import { DataRequirementsCalculator } from '@/components/DataRequirementsCalcula
 import { DataQualityFeedback } from '@/components/DataQualityFeedback';
 import { DataCollectionRoadmap } from '@/components/DataCollectionRoadmap';
 import { AnalyticsStatusIndicator } from '@/components/AnalyticsStatusIndicator';
+import { IS_PROD } from '@/lib/env';
 import { DateRangeSelector, TimeRange } from '@/components/DateRangeSelector';
 import { Student, TrackingEntry, EmotionEntry, SensoryEntry, Insights } from '@/types/student';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -106,7 +107,7 @@ export function DashboardSection({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <AnalyticsStatusIndicator studentId={student.id} />
+          <AnalyticsStatusIndicator studentId={student.id} showDetails={!IS_PROD} />
         </CardContent>
       </Card>
 

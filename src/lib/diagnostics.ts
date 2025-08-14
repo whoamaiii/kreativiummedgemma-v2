@@ -5,6 +5,32 @@
 
 import { logger } from './logger';
 
+// Type extension for Chrome performance memory API
+interface PerformanceMemory {
+  usedJSHeapSize: number;
+  totalJSHeapSize: number;
+  jsHeapSizeLimit: number;
+}
+
+// Extend Performance interface for Chrome-specific features
+interface ExtendedPerformance extends Performance {
+  memory?: PerformanceMemory;
+}
+
+// Type-safe timer ID
+type TimerId = ReturnType<typeof setTimeout>;
+
+// Browser-specific setTimeout function arguments
+type SetTimeoutArgs = [handler: TimerHandler, timeout?: number, ...args: unknown[]];
+
+// Window extension for timer tracking
+declare global {
+  interface Window {
+    setTimeout: (...args: SetTimeoutArgs) => TimerId;
+    clearTimeout: (id: TimerId) => void;
+  }
+}
+
 interface DiagnosticInfo {
   timestamp: Date;
   memoryUsage?: {
@@ -16,7 +42,7 @@ interface DiagnosticInfo {
   activeListeners?: number;
   componentName?: string;
   action?: string;
-  data?: any;
+  data?: unknown;
 }
 
 class DiagnosticLogger {
@@ -50,11 +76,11 @@ class DiagnosticLogger {
     return DiagnosticLogger.instance;
   }
 
-  private startPerformanceMonitoring() {
+  private startPerformanceMonitoring(): void {
     // Monitor memory usage every 5 seconds
     setInterval(() => {
-      if (this.diagnosticMode && (performance as any).memory) {
-        const memInfo = (performance as any).memory;
+      if (this.diagnosticMode && (performance as ExtendedPerformance).memory) {
+        const memInfo = (performance as ExtendedPerformance).memory!;
         const usedMB = (memInfo.usedJSHeapSize / 1048576).toFixed(2);
         const totalMB = (memInfo.totalJSHeapSize / 1048576).toFixed(2);
         
@@ -117,7 +143,7 @@ class DiagnosticLogger {
     }
   }
 
-  logWorkerMessage(workerName: string, messageType: string, data?: any) {
+  logWorkerMessage(workerName: string, messageType: string, data?: unknown) {
     if (!this.diagnosticMode) return;
     
     logger.debug('[DIAGNOSTIC] Worker Message', {
@@ -235,14 +261,14 @@ if (typeof window !== 'undefined' && diagnostics.isEnabled()) {
   const originalSetTimeout = window.setTimeout;
   const originalClearTimeout = window.clearTimeout;
 
-  window.setTimeout = function(...args: any[]) {
-    const timerId = originalSetTimeout.apply(window, args as any);
-    diagnostics.trackTimer(timerId as any);
+  window.setTimeout = function(...args: SetTimeoutArgs): TimerId {
+    const timerId = originalSetTimeout.apply(window, args);
+    diagnostics.trackTimer(Number(timerId));
     return timerId;
-  } as typeof window.setTimeout;
+  };
 
-  window.clearTimeout = function(timerId: number) {
-    diagnostics.untrackTimer(timerId);
+  window.clearTimeout = function(timerId: TimerId): void {
+    diagnostics.untrackTimer(Number(timerId));
     return originalClearTimeout.call(window, timerId);
-  } as typeof window.clearTimeout;
+  };
 }

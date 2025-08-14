@@ -75,7 +75,7 @@ export const LazyInteractiveDataVisualization = createLazyComponent(
     };
 
     // Race primary import against a timeout to avoid indefinite Suspense
-    return new Promise<{ default: React.ComponentType<any> }>((resolve, reject) => {
+    return new Promise<{ default: React.ComponentType<unknown> }>((resolve, reject) => {
       let settled = false;
       const timeoutMs = 4000; // 4s safety timeout
       const timer = setTimeout(async () => {

@@ -1,18 +1,51 @@
 {
   "dashboard": {
-    "title": "Analytics Dashboard",
+    "title": "Analytics Dashboard - {{name}}",
     "emotionTrends": "Emotion Trends",
     "sensoryPatterns": "Sensory Patterns",
     "environmentalFactors": "Environmental Factors",
     "weeklyOverview": "Weekly Overview",
     "monthlyTrends": "Monthly Trends"
   },
+  "tabs": {
+    "charts": "Charts",
+    "patterns": "Patterns",
+    "correlations": "Correlations",
+    "alerts": "Alerts"
+  },
+  "aria": {
+    "tabs": {
+      "charts": "View charts",
+      "patterns": "View patterns",
+      "correlations": "View correlations",
+      "alerts": "View alerts"
+    }
+  },
+  "metrics": {
+    "totalSessions": "Total Sessions",
+    "patternsFound": "Patterns Found"
+  },
+  "states": {
+    "analyzing": "Analyzing..."
+  },
+  "actions": {
+    "refreshAnalysis": "Refresh Analysis"
+  },
+  "empty": {
+    "noPatterns": "No patterns found",
+    "moreDataNeeded": "More data is needed for analysis"
+  },
+  "section": {
+    "title": "Analytics",
+    "subtitle": "Deep dive into insights for {{name}}"
+  },
   "charts": {
     "emotionFrequency": "Emotion Frequency",
     "sensoryDistribution": "Sensory Distribution",
     "intensityLevels": "Intensity Levels",
     "dailyActivity": "Daily Activity",
-    "noData": "No data available for selected period"
+    "noData": "No data available for selected period",
+    "loadingLabel": "Loading charts"
   },
   "filters": {
     "dateRange": "Date Range",
@@ -20,6 +53,48 @@
     "sensoryType": "Sensory Type",
     "intensity": "Intensity",
     "all": "All"
+  },
+  "correlations": {
+    "title": "Correlation Heatmap",
+    "subtitle": "Strength of relationships between tracked factors (−1 to 1)",
+    "helpTrigger": "How to read the heatmap",
+    "helpBody": {
+      "p1": "Colors indicate correlation: green = positive, red = negative. Values near 1 or −1 indicate stronger relationships.",
+      "p2": "Axes show factors. Hover a cell for details and significance."
+    },
+    "empty": {
+      "title": "No significant correlations found.",
+      "moreData": "More varied environmental data may be needed."
+    },
+    "legend": {
+      "negative": "Negative",
+      "zero": "0",
+      "positive": "Positive"
+    },
+    "labels": {
+      "significance": "significance",
+      "rPrefix": "r = "
+    },
+    "fallback": {
+      "title": "Unable to render heatmap; showing list instead."
+    }
+  },
+  "export": {
+    "success": {
+      "pdf": "PDF report exported successfully",
+      "csv": "CSV data exported successfully",
+      "json": "JSON data exported successfully"
+    },
+    "failure": "Failed to export analytics data"
+  },
+  "dev": {
+    "seed": {
+      "button": "Seed Demo Data",
+      "seeding": "Seeding...",
+      "aria": "Seed demo data for testing",
+      "success": "Seeded {{students}} students with {{entries}} entries",
+      "failure": "Failed to seed demo data"
+    }
   },
   "reports": {
     "title": "Reports",
@@ -34,10 +109,18 @@
     }
   },
   "insights": {
+    "title": "Insights",
     "patterns": "Patterns Detected",
     "recommendations": "Recommendations",
     "alerts": "Alerts",
-    "noPatterns": "No patterns found yet. Keep collecting data for better insights."
+    "noPatterns": "No patterns found yet. Keep collecting data for better insights.",
+    "explainPattern": "Explain pattern",
+    "patternExplain": {
+      "title": "What does this pattern mean?",
+      "default": "A recurring pattern has been detected in data for this period.",
+      "disclaimer": "Always interpret together with context and professional judgment."
+    },
+    "confidencePercent": "{{percentage}}% confidence"
   },
   "confidence": {
     "low": "Low confidence",

@@ -117,8 +117,8 @@ const AnalyticsConfigTest: React.FC = () => {
         }
       });
       
-      // Give time for cache invalidation
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Give the event loop a tick for cache invalidation without setTimeout
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
       
       results.push({
         name: 'Cache Invalidation',
@@ -271,9 +271,9 @@ const AnalyticsConfigTest: React.FC = () => {
         {testResults.length > 0 && (
           <div className="space-y-2">
             <h4 className="text-sm font-medium">Test Results</h4>
-            {testResults.map((result, index) => (
+            {testResults.map((result) => (
               <div
-                key={index}
+                key={`${result.name}-${result.status}`}
                 className="flex items-start gap-3 p-3 rounded-lg bg-muted/50"
               >
                 {getStatusIcon(result.status)}

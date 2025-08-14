@@ -9,7 +9,7 @@ export enum LogLevel {
   INFO = 1,
   WARN = 2,
   ERROR = 3,
-  NONE = 4
+  NONE = 4,
 }
 
 interface LoggerConfig {
@@ -27,7 +27,7 @@ class Logger {
     this.config = {
       level: process.env.NODE_ENV === 'production' ? LogLevel.ERROR : LogLevel.DEBUG,
       enableConsole: process.env.NODE_ENV !== 'production',
-      enableRemote: false
+      enableRemote: false,
     };
   }
 
@@ -67,16 +67,19 @@ class Logger {
 
   error(message: string, error?: Error | any): void {
     if (this.shouldLog(LogLevel.ERROR)) {
-      const errorData = error instanceof Error ? {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      } : error;
-      
+      const errorData =
+        error instanceof Error
+          ? {
+              message: error.message,
+              stack: error.stack,
+              name: error.name,
+            }
+          : error;
+
       if (this.config.enableConsole) {
         console.error(this.formatMessage('ERROR', message, errorData));
       }
-      
+
       // Send to remote logging service if enabled
       if (this.config.enableRemote && this.config.remoteEndpoint) {
         this.sendToRemote(message, errorData);
@@ -95,8 +98,8 @@ class Logger {
           message,
           data,
           userAgent: navigator.userAgent,
-          url: window.location.href
-        })
+          url: window.location.href,
+        }),
       });
     } catch (error) {
       // Silently fail to avoid infinite loop
@@ -188,7 +191,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.resetTimeoutId) {
       clearTimeout(this.resetTimeoutId);
     }
-    
+
     this.resetTimeoutId = setTimeout(() => {
       this.resetError();
     }, 5000);
@@ -228,7 +231,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <p className="text-sm text-muted-foreground">
                 An unexpected error occurred. The application may not be working correctly.
               </p>
-              
+
               {process.env.NODE_ENV !== 'production' && this.state.error && (
                 <details className="text-xs">
                   <summary className="cursor-pointer font-medium">Error Details</summary>
@@ -244,8 +247,8 @@ export class ErrorBoundary extends Component<Props, State> {
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Try Again
                 </Button>
-                <Button 
-                  onClick={() => window.location.href = '/'} 
+                <Button
+                  onClick={() => window.location.href = '/'}
                   variant="outline"
                 >
                   <Home className="h-4 w-4 mr-2" />
@@ -278,11 +281,11 @@ export function generateUUID(): string {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  
+
   // Fallback to manual UUID v4 generation
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -322,12 +325,12 @@ interface UseAsyncStateReturn<T> {
 
 export function useAsyncState<T = any>(
   asyncFunction: (...args: any[]) => Promise<T>,
-  immediate = false
+  immediate = false,
 ): UseAsyncStateReturn<T> {
   const [state, setState] = useState<AsyncState<T>>({
     data: null,
     loading: false,
-    error: null
+    error: null,
   });
 
   const isMountedRef = useRef(true);
@@ -338,27 +341,30 @@ export function useAsyncState<T = any>(
     };
   }, []);
 
-  const execute = useCallback(async (...args: any[]) => {
-    setState({ data: null, loading: true, error: null });
+  const execute = useCallback(
+    async (...args: any[]) => {
+      setState({ data: null, loading: true, error: null });
 
-    try {
-      const result = await asyncFunction(...args);
-      
-      if (isMountedRef.current) {
-        setState({ data: result, loading: false, error: null });
+      try {
+        const result = await asyncFunction(...args);
+
+        if (isMountedRef.current) {
+          setState({ data: result, loading: false, error: null });
+        }
+      } catch (error) {
+        logger.error('Async operation failed', error);
+
+        if (isMountedRef.current) {
+          setState({
+            data: null,
+            loading: false,
+            error: error instanceof Error ? error : new Error('Unknown error'),
+          });
+        }
       }
-    } catch (error) {
-      logger.error('Async operation failed', error);
-      
-      if (isMountedRef.current) {
-        setState({ 
-          data: null, 
-          loading: false, 
-          error: error instanceof Error ? error : new Error('Unknown error') 
-        });
-      }
-    }
-  }, [asyncFunction]);
+    },
+    [asyncFunction],
+  );
 
   const reset = useCallback(() => {
     setState({ data: null, loading: false, error: null });
@@ -385,24 +391,28 @@ export function useAsyncState<T = any>(
 import { generateId, generateTimestampId } from '@/lib/uuid';
 
 // Generate realistic emotion entry
-const generateEmotionEntry = (studentId: string, timestamp: Date, emotionBias?: string): EmotionEntry => {
+const generateEmotionEntry = (
+  studentId: string,
+  timestamp: Date,
+  emotionBias?: string,
+): EmotionEntry => {
   const emotions = ['happy', 'sad', 'anxious', 'calm', 'excited', 'frustrated', 'content'];
   const biasedEmotion = emotionBias || emotions[Math.floor(Math.random() * emotions.length)];
-  
+
   // Generate intensity based on emotion type
   const intensityMap: Record<string, [number, number]> = {
-    'happy': [3, 5],
-    'sad': [2, 4],
-    'anxious': [3, 5],
-    'calm': [2, 4],
-    'excited': [4, 5],
-    'frustrated': [3, 5],
-    'content': [2, 4]
+    happy: [3, 5],
+    sad: [2, 4],
+    anxious: [3, 5],
+    calm: [2, 4],
+    excited: [4, 5],
+    frustrated: [3, 5],
+    content: [2, 4],
   };
-  
+
   const [minIntensity, maxIntensity] = intensityMap[biasedEmotion] || [2, 4];
   const intensity = Math.floor(Math.random() * (maxIntensity - minIntensity + 1)) + minIntensity;
-  
+
   return {
     id: generateId('emotion'),
     studentId,
@@ -410,7 +420,7 @@ const generateEmotionEntry = (studentId: string, timestamp: Date, emotionBias?: 
     emotion: biasedEmotion,
     intensity,
     triggers: Math.random() > 0.7 ? ['environmental change', 'social interaction'] : [],
-    notes: Math.random() > 0.8 ? `Student seemed ${biasedEmotion} during this period` : ''
+    notes: Math.random() > 0.8 ? `Student seemed ${biasedEmotion} during this period` : '',
   };
 };
 
@@ -427,37 +437,37 @@ export const MockDataLoader = () => {
     try {
       // Simulate loading progress for better UX
       setLoadingProgress(25);
-      
+
       // Generate and load the data based on scenario
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       setLoadingProgress(50);
-      
+
       // Load data based on selected scenario
       if (selectedScenario === 'all') {
         loadMockDataToStorage();
       } else {
         loadScenarioDataToStorage(selectedScenario as 'emma' | 'lars' | 'astrid');
       }
-      
+
       setLoadingProgress(75);
-      
-      await new Promise(resolve => setTimeout(resolve, 300));
+
+      await new Promise((resolve) => setTimeout(resolve, 300));
       setLoadingProgress(100);
-      
+
       // Get stats for success message
       const stats = dataStorage.getStorageStats();
       const mockStudents = generateMockStudents();
-      const selectedStudents = selectedScenario === 'all' 
-        ? mockStudents 
-        : mockStudents.filter(s => s.name.toLowerCase().includes(selectedScenario));
-      
+      const selectedStudents =
+        selectedScenario === 'all'
+          ? mockStudents
+          : mockStudents.filter((s) => s.name.toLowerCase().includes(selectedScenario));
+
       toast.success('Mock data loaded successfully!', {
         description: `Loaded ${selectedStudents.length} student(s) with tracking data`,
       });
-      
+
       // Dispatch a custom event to notify other components
       window.dispatchEvent(new CustomEvent('mockDataLoaded'));
-      
     } catch (error) {
       logger.error('Failed to load mock data', error);
       toast.error('Failed to load mock data', {
@@ -476,23 +486,22 @@ export const MockDataLoader = () => {
 export function loadScenarioDataToStorage(scenario: 'emma' | 'lars' | 'astrid'): void {
   try {
     clearMockDataFromStorage();
-    
+
     const students = generateMockStudents();
-    const selectedStudent = students.find(s => s.name.toLowerCase().includes(scenario));
-    
+    const selectedStudent = students.find((s) => s.name.toLowerCase().includes(scenario));
+
     if (!selectedStudent) {
       throw new Error(`Student not found for scenario: ${scenario}`);
     }
-    
+
     // Save student
     dataStorage.saveStudent(selectedStudent);
-    
+
     // Generate and save tracking entries
     const entries = generateTrackingDataForStudent(selectedStudent, scenario);
-    entries.forEach(entry => {
+    entries.forEach((entry) => {
       dataStorage.saveTrackingEntry(entry);
     });
-    
   } catch (error) {
     logger.error('Failed to load scenario data', error);
     throw new Error('Failed to initialize scenario data');
@@ -504,12 +513,10 @@ export function loadScenarioDataToStorage(scenario: 'emma' | 'lars' | 'astrid'):
 
 ```typescript
 // src/components/AnalyticsDashboard.tsx (fixed version)
-export const AnalyticsDashboard = ({
-  student,
-  filteredData
-}: AnalyticsDashboardProps) => {
+export const AnalyticsDashboard = ({ student, filteredData }: AnalyticsDashboardProps) => {
   const { tStudent } = useTranslation();
-  const { results, isAnalyzing, error, runAnalysis, invalidateCacheForStudent } = useAnalyticsWorker();
+  const { results, isAnalyzing, error, runAnalysis, invalidateCacheForStudent } =
+    useAnalyticsWorker();
   const [isExporting, setIsExporting] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const visualizationRef = useRef<HTMLDivElement>(null);
@@ -533,11 +540,11 @@ export const AnalyticsDashboard = ({
   // Export handler with proper error handling
   const handleExport = async (format: ExportFormat) => {
     if (!isMountedRef.current) return;
-    
+
     setIsExporting(true);
     try {
       // ... export logic ...
-      
+
       if (isMountedRef.current) {
         toast.success(`${format.toUpperCase()} report exported successfully`);
       }
@@ -559,7 +566,7 @@ export const AnalyticsDashboard = ({
 
 ## Implementation Checklist
 
-- [ ] Replace all console.* statements with logger service
+- [ ] Replace all console.\* statements with logger service
 - [ ] Implement UUID generation for all IDs
 - [ ] Add proper cleanup in all useEffect hooks
 - [ ] Implement scenario selection in MockDataLoader

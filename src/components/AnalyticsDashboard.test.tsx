@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { AnalyticsDashboard } from './AnalyticsDashboard';
 import { useAnalyticsWorker } from '@/hooks/useAnalyticsWorker';
-import { mockStudent } from '@/lib/mockData';
 
 vi.mock('@/hooks/useAnalyticsWorker', () => ({
   useAnalyticsWorker: vi.fn(),
 }));
 
+// Scope: loading state and worker invocation only; tab behaviors live in __tests__/AnalyticsDashboard.tabs.test.tsx
 describe('AnalyticsDashboard', () => {
   const mockRunAnalysis = vi.fn();
   const mockInvalidateCache = vi.fn();
@@ -25,37 +25,13 @@ describe('AnalyticsDashboard', () => {
       invalidateCacheForStudent: mockInvalidateCache,
     });
 
-    render(<AnalyticsDashboard student={mockStudent} filteredData={{ entries: [], emotions: [], sensoryInputs: [] }} />);
+    const student = { id: 's1', name: 'Test Student' } as unknown as import('@/types/student').Student;
+    render(<AnalyticsDashboard student={student} filteredData={{ entries: [], emotions: [], sensoryInputs: [] }} />);
 
-    // Expect at least one analyzing indicator present
-    const analyzing = screen.getAllByText(/Analyzing (data|correlations)\.\.\./);
-    expect(analyzing.length).toBeGreaterThan(0);
+    // Expect at least one analyzing indicator present (aria-label on Suspense fallbacks)
+    expect(screen.getAllByLabelText('states.analyzing').length).toBeGreaterThan(0);
   });
 
-  it('should render the dashboard with results', async () => {
-    const mockResults = {
-      patterns: [{ id: '1', pattern: 'test-pattern', description: 'A test pattern', type: 'emotion', confidence: 0.8, dataPoints: 10 }],
-      correlations: [{ factor1: 'A', factor2: 'B', correlation: 0.5, significance: 'high', description: 'Test Correlation' }],
-      insights: ['A test insight'],
-    } as any;
-
-    (useAnalyticsWorker as unknown as vi.Mock).mockReturnValue({
-      results: mockResults,
-      isAnalyzing: false,
-      error: null,
-      runAnalysis: mockRunAnalysis,
-      invalidateCacheForStudent: mockInvalidateCache,
-    });
-
-    render(<AnalyticsDashboard student={mockStudent} filteredData={{ entries: [], emotions: [], sensoryInputs: [] }} />);
-
-    await waitFor(() => {
-      const matches = screen.getAllByText(/\bTest Pattern\b/i);
-      expect(matches.length).toBeGreaterThan(0);
-    });
-    expect(screen.getByText('Test Correlation')).toBeInTheDocument();
-    expect(screen.getByText('A test insight')).toBeInTheDocument();
-  });
 
   it('should call runAnalysis on mount with filtered data', () => {
     (useAnalyticsWorker as unknown as vi.Mock).mockReturnValue({
@@ -72,7 +48,8 @@ describe('AnalyticsDashboard', () => {
       sensoryInputs: [],
     };
 
-    render(<AnalyticsDashboard student={mockStudent} filteredData={filteredData} />);
+    const student = { id: 's1', name: 'Test Student' } as unknown as import('@/types/student').Student;
+    render(<AnalyticsDashboard student={student} filteredData={filteredData} />);
 
     expect(mockRunAnalysis).toHaveBeenCalledWith(filteredData);
   });

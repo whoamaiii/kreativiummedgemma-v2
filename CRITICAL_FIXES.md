@@ -8,23 +8,25 @@
 **Lines:** 268-269
 
 **Problem:** Event listeners added without cleanup
+
 ```javascript
 document.addEventListener('mousemove', handleMouseMove);
 document.addEventListener('mouseup', handleMouseUp);
 ```
 
 **Fix:** Store cleanup in useEffect
+
 ```javascript
 useEffect(() => {
   const handleMouseMove = (e: MouseEvent) => { /* ... */ };
   const handleMouseUp = () => { /* ... */ };
-  
+
   // Add listeners
   if (isDragging) {
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   }
-  
+
   // Cleanup
   return () => {
     document.removeEventListener('mousemove', handleMouseMove);
@@ -39,6 +41,7 @@ useEffect(() => {
 **Issue:** Worker cleanup happens but may have race conditions
 
 **Quick Fix:** Add null check and clear all references
+
 ```javascript
 return () => {
   if (workerRef.current) {
@@ -59,16 +62,18 @@ return () => {
 ### 3. Multiple setInterval without cleanup
 
 **Files with issues:**
+
 - `src/components/TimelineVisualization.tsx` (lines 276, 294)
 - `src/components/MockDataLoader.tsx` (lines 30, 67)
 
 **Template Fix:**
+
 ```javascript
 useEffect(() => {
   const interval = setInterval(() => {
     // your code
   }, 1000);
-  
+
   return () => clearInterval(interval); // MUST HAVE THIS
 }, [dependencies]);
 ```
@@ -76,6 +81,7 @@ useEffect(() => {
 ## Priority 2: Security Vulnerabilities
 
 ### Fix npm vulnerabilities (Run these commands):
+
 ```bash
 # Try automatic fixes first
 npm audit fix
@@ -89,7 +95,9 @@ npm update eslint@latest
 ## Priority 3: TypeScript Configuration
 
 ### Create a new tsconfig for scripts
+
 **File:** `tsconfig.scripts.json`
+
 ```json
 {
   "extends": "./tsconfig.json",
@@ -109,6 +117,7 @@ npm update eslint@latest
 ```
 
 ### Update main tsconfig.json
+
 ```json
 {
   "files": [],
@@ -116,7 +125,7 @@ npm update eslint@latest
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" },
     { "path": "./tsconfig.scripts.json" }
-  ],
+  ]
   // ... rest of config
 }
 ```
@@ -124,15 +133,18 @@ npm update eslint@latest
 ## Priority 4: React Hook Dependencies
 
 ### Most Critical Hook Fix
+
 **File:** `src/hooks/useAnalyticsWorker.ts`  
 **Line:** 235
 
 Change:
+
 ```javascript
 }, [cache]);
 ```
 
 To:
+
 ```javascript
 }, [cache, extractTagsFromData]);
 ```
@@ -188,6 +200,7 @@ echo "Critical fixes applied! Check for any build errors above."
 4. **Fourth:** Fix the React hook dependencies one by one
 
 These fixes will prevent:
+
 - Memory leaks that could crash the browser
 - Security vulnerabilities being exploited
 - Build errors in production

@@ -1,6 +1,7 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeAll } from 'vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 let InteractiveDataVisualization: any;
 
 // Mock the dependencies
@@ -154,12 +155,18 @@ describe('InteractiveDataVisualization', () => {
     );
     // Ensure the Trends tab is active to render the chart
     // Ensure filters are reset to include all data (some defaults may filter)
+    const user = userEvent.setup();
     const filtersButton = screen.getByRole('button', { name: /filters/i });
-    filtersButton.click();
+    await user.click(filtersButton);
     const resetButtons = screen.queryAllByRole('button', { name: /reset/i });
-    resetButtons.forEach(b => b.click?.());
-    screen.getByRole('tab', { name: /trends/i }).click();
-    await new Promise(r => setTimeout(r, 0));
+    for (const b of resetButtons) {
+      if (b && 'click' in b) {
+        await user.click(b as HTMLButtonElement);
+      }
+    }
+    // Close the filters dialog to restore interactions
+    const closeButton = screen.queryByRole('button', { name: /close/i });
+    if (closeButton) await user.click(closeButton);
 
     await waitFor(() => {
       const chartContainers = screen.queryAllByTestId('echart-container');
@@ -177,12 +184,19 @@ describe('InteractiveDataVisualization', () => {
       />
     );
     // Reset any filters and switch to Trends tab
+    const user = userEvent.setup();
     const filtersButton = screen.getByRole('button', { name: /filters/i });
-    filtersButton.click();
+    await user.click(filtersButton);
     const resetButtons = screen.queryAllByRole('button', { name: /reset/i });
-    resetButtons.forEach(b => b.click?.());
-    screen.getByRole('tab', { name: /trends/i }).click();
-    await new Promise(r => setTimeout(r, 0));
+    for (const b of resetButtons) {
+      if (b && 'click' in b) {
+        await user.click(b as HTMLButtonElement);
+      }
+    }
+    // Close the filters dialog to restore interactions
+    const closeButton = screen.queryByRole('button', { name: /close/i });
+    if (closeButton) await user.click(closeButton);
+
     return waitFor(() => {
       const counts = screen.getByLabelText(/data counts/i);
       const scoped = within(counts);

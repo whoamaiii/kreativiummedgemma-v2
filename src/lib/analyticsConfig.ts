@@ -1,6 +1,20 @@
-import { logger } from './logger';
+import { logger } from '@/lib/logger';
+
+// Centralized storage keys and prefixes
+export const STORAGE_KEYS = {
+  analyticsConfig: 'sensory-compass-analytics-config',
+  analyticsProfiles: 'sensoryTracker_analyticsProfiles',
+  cachePrefix: 'analytics-cache',
+  performancePrefix: 'performance-cache',
+} as const;
 
 export interface AnalyticsConfiguration {
+  // Feature flags (non-breaking)
+  features?: {
+    enableStructuredInsights?: boolean;
+    enableSummaryFacade?: boolean;
+  };
+
   // Pattern Analysis Thresholds
   patternAnalysis: {
     minDataPoints: number;
@@ -85,10 +99,19 @@ export interface AnalyticsConfiguration {
     MIN_TRACKING_FOR_ENHANCED: number;
     ANALYSIS_PERIOD_DAYS: number;
   };
+
+  // Emotion taxonomy
+  taxonomy: {
+    positiveEmotions: string[];
+  };
 }
 
 // Default configuration
 export const DEFAULT_ANALYTICS_CONFIG: AnalyticsConfiguration = {
+  features: {
+    enableStructuredInsights: false,
+    enableSummaryFacade: true,
+  },
   patternAnalysis: {
     minDataPoints: 3,
     correlationThreshold: 0.25,
@@ -158,6 +181,9 @@ export const DEFAULT_ANALYTICS_CONFIG: AnalyticsConfiguration = {
     MIN_TRACKING_FOR_CORRELATION: 3,
     MIN_TRACKING_FOR_ENHANCED: 2,
     ANALYSIS_PERIOD_DAYS: 30,
+  },
+  taxonomy: {
+    positiveEmotions: ['happy', 'calm', 'excited', 'content', 'peaceful', 'cheerful', 'relaxed', 'optimistic'],
   },
 };
 
@@ -378,7 +404,8 @@ export class AnalyticsConfigManager {
       !!cfg.insights &&
       !!cfg.confidence &&
       !!cfg.healthScore &&
-      !!cfg.analytics
+      !!cfg.analytics &&
+      !!cfg.taxonomy
     );
   }
 }
@@ -393,3 +420,37 @@ export const ANALYTICS_CONFIG = {
   POSITIVE_EMOTIONS: new Set(['happy', 'calm', 'excited', 'content', 'peaceful', 'cheerful', 'relaxed', 'optimistic'])
 };
 export type AnalyticsConfig = typeof ANALYTICS_CONFIG;
+
+// -----------------------------------------------------------------------------
+// Internal helpers (type-only, not exported)
+// -----------------------------------------------------------------------------
+// Define local type aliases to avoid circular type imports
+type ConfidenceConfig = AnalyticsConfiguration['confidence'];
+type InsightConfig = AnalyticsConfiguration['insights'];
+
+function getEffectiveFullConfig(): AnalyticsConfiguration {
+  try {
+    // Prefer live config; fall back to static defaults
+    return analyticsConfig.getConfig() || (ANALYTICS_CONFIG as AnalyticsConfiguration);
+  } catch {
+    return ANALYTICS_CONFIG as AnalyticsConfiguration;
+  }
+}
+
+function getEffectiveConfidenceConfig(cfgParam?: ConfidenceConfig): ConfidenceConfig {
+  if (cfgParam) return cfgParam;
+  try {
+    return analyticsConfig.getConfig()?.confidence || ANALYTICS_CONFIG.confidence;
+  } catch {
+    return ANALYTICS_CONFIG.confidence;
+  }
+}
+
+function getEffectiveInsightsConfig(cfgParam?: InsightConfig): InsightConfig {
+  if (cfgParam) return cfgParam;
+  try {
+    return analyticsConfig.getConfig()?.insights || ANALYTICS_CONFIG.insights;
+  } catch {
+    return ANALYTICS_CONFIG.insights;
+  }
+}

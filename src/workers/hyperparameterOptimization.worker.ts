@@ -203,7 +203,7 @@ function calculateScore(metrics: ValidationMetrics, evaluationMetric: string): n
  * @returns The optimization results with best parameters and all tested combinations
  */
 async function performGridSearch(request: OptimizationRequest): Promise<OptimizationResult> {
-  const { modelFactory, dataset, parameterGrid, evaluationMetric } = request;
+  const { /* modelFactory */ _, dataset, parameterGrid, evaluationMetric } = request;
   
   try {
     // Parse the serialized model factory function
@@ -309,7 +309,7 @@ async function performGridSearch(request: OptimizationRequest): Promise<Optimiza
  * @returns The optimization results with best parameters and all tested combinations
  */
 async function performRandomSearch(request: OptimizationRequest): Promise<OptimizationResult> {
-  const { modelFactory, dataset, parameterGrid, evaluationMetric } = request;
+  const { /* modelFactory */ _, dataset, parameterGrid, evaluationMetric } = request;
   
   try {
     // Determine the number of random samples to test

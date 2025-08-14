@@ -35,8 +35,10 @@ export class CrossValidator {
       const model = createModel(); // Create a fresh model for each fold
       
       await model.fit(trainFeatures, trainLabels, {
-        epochs: 5, // This should be configurable
-        batchSize: 32, // This should be configurable
+        // Training parameters should be sourced from runtime ML model config (Task 8),
+        // e.g., getRuntimeAnalyticsConfig().ml.models[*].training.{epochs,batchSize}.
+        epochs: 5, // configurable via runtime config
+        batchSize: 32, // configurable via runtime config
         verbose: 0,
       });
 

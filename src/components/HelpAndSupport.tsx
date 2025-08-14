@@ -1,30 +1,29 @@
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { HelpCircle } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 /**
- * Renders a "Help & Support" button that triggers a dialog with support information.
- * This component provides a standardized way to offer help across the application.
- *
- * @returns {JSX.Element} A dialog component for help and support.
+ * Renders a localized "Help & Support" dialog trigger and content.
  */
 export const HelpAndSupport = () => {
+  const { tCommon } = useTranslation();
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="hidden sm:flex items-center justify-center group">
           <HelpCircle className="mr-2 h-4 w-4 transition-transform group-hover:rotate-12" />
-          Hjelp & Støtte
+          {String(tCommon('help.button'))}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Help & Support</DialogTitle>
+          <DialogTitle>{tCommon('help.title')}</DialogTitle>
         </DialogHeader>
         <div>
-          <p>If you need help or support, please contact us at:</p>
+          <p>{tCommon('help.description')}</p>
           <a href="mailto:support@example.com" className="text-primary">
-            support@example.com
+            {tCommon('help.email')}
           </a>
         </div>
       </DialogContent>

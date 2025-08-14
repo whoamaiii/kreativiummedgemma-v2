@@ -319,6 +319,43 @@ export const generateAllMockData = (): { students: Student[]; trackingEntries: T
   return { students, trackingEntries };
 };
 
+/**
+ * Load a specific scenario's mock data into storage.
+ * This is a library-only helper that clears existing mock data and seeds a single
+ * student's dataset matching the given scenario. It is safe and non-breaking for
+ * consumers that still call loadMockDataToStorage().
+ */
+export function loadScenarioDataToStorage(scenario: 'emma' | 'lars' | 'astrid'): void {
+  try {
+    // Remove previously seeded mock data while preserving real data
+    clearMockDataFromStorage();
+
+    const students = generateMockStudents();
+    const selected = students.find(s => s.name.toLowerCase().includes(scenario));
+    if (!selected) {
+      throw new Error(`Student not found for scenario: ${scenario}`);
+    }
+
+    // Save the selected student first
+    dataStorage.saveStudent(selected);
+
+    // Generate and persist tracking entries for this scenario
+    const entries = generateTrackingDataForStudent(selected, scenario);
+    for (const entry of entries) {
+      // Validate before saving to prevent corrupt data
+      const trackingValidation = validateTrackingEntry(entry);
+      if (!trackingValidation.isValid) {
+        logger.error('Generated invalid tracking entry for scenario', { scenario, entry, errors: trackingValidation.errors });
+        continue; // Skip invalid entries rather than failing entire load
+      }
+      dataStorage.saveTrackingEntry(entry);
+    }
+  } catch (error) {
+    logger.error('Failed to load scenario data', error);
+    throw new Error('Failed to initialize scenario data');
+  }
+}
+
 export function loadMockDataToStorage(): void {
   try {
     // Clear only existing mock data first
