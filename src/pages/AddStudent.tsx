@@ -67,12 +67,14 @@ const AddStudent = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <Button
-              variant="outline"
+              variant="ghost"
+              aria-label={String(tStudent('addStudent.backToDashboard'))}
+              title={String(tStudent('addStudent.backToDashboard'))}
               onClick={() => navigate('/')}
               className="font-dyslexia"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              {String(tStudent('addStudent.backToDashboard'))}
+              <span className="hidden sm:inline">{String(tStudent('addStudent.backToDashboard'))}</span>
             </Button>
             <LanguageSettings />
           </div>
@@ -153,9 +155,9 @@ const AddStudent = () => {
 
               {/* Submit Buttons */}
               <div className="flex gap-4 pt-4">
-                <Button
+              <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   onClick={() => navigate('/')}
                   className="flex-1 font-dyslexia"
                   disabled={isLoading}

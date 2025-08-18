@@ -92,8 +92,10 @@ export const UniversalAnalyticsStatus = () => {
             Universal Analytics Status
           </CardTitle>
           <Button
-            variant="outline"
-            size="sm"
+            variant="ghost"
+            size="icon"
+            aria-label="Refresh analytics status"
+            title="Refresh analytics status"
             onClick={handleRefresh}
             disabled={isRefreshing}
             className="h-8"

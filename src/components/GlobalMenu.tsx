@@ -18,14 +18,14 @@ export const GlobalMenu = (): JSX.Element => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className={buttonVariants({ variant: 'outline', size: 'sm' })}
+        className={buttonVariants({ variant: 'ghost', size: 'sm' }) + ' text-muted-foreground hover:text-foreground transition-colors'}
         aria-label={tCommon('navigation.reports')}
         data-testid="global-menu-trigger"
         id="global-menu-trigger"
       >
         <MoreHorizontal className="h-4 w-4" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="backdrop-blur-md bg-popover/90 border border-border/40 shadow-lg">
         <DropdownMenuItem onClick={goReports} className="cursor-pointer" data-testid="menu-reports">
           <FileText className="h-4 w-4 mr-2" /> {String(tCommon('navigation.reports'))}
         </DropdownMenuItem>

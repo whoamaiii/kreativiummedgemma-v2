@@ -330,7 +330,9 @@ const StudentProfile = () => {
             includeFields: ['all'],
             includeCharts: true,
           });
-          filename = `${baseFilename}_report.pdf`;
+          // Note: generatePDFReport currently returns an HTML document for printing.
+          // Use .html extension to avoid browsers trying to open it as a PDF.
+          filename = `${baseFilename}_report.html`;
           break;
         }
         case 'csv': {

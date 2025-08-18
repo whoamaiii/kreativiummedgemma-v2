@@ -1,4 +1,4 @@
-# SensoryTracker: Special Education Tracking Tool
+# Kreativium: Special Education Tracking Tool
 
 A comprehensive FERPA-compliant application designed to help special education teachers track and
 analyze student sensory processing and emotional responses. Built with accessibility and

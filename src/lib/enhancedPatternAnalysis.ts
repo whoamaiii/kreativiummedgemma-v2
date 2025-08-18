@@ -1,3 +1,24 @@
+/**
+ * Module: enhancedPatternAnalysis
+ *
+ * Purpose
+ * - Hybrid statistical + ML analysis for trends, correlations, anomalies, and predictions
+ *
+ * Robust Statistics Integration
+ * - Uses zScoresMedian (MAD-based) and huberRegression to reduce outlier sensitivity
+ * - Prefer robust estimators for heavy-tailed or noisy classroom data
+ *
+ * Parameterization
+ * - All thresholds, windows, and sensitivities are read from analyticsConfig
+ *   - enhancedAnalysis.predictionConfidenceThreshold
+ *   - timeWindows (rolling calculations)
+ *   - patternAnalysis.highIntensityThreshold and related knobs
+ * - No hardcoded constants; provide safe defaults when config is unavailable
+ *
+ * Performance & Safety
+ * - Avoid blocking the main thread; yield in UI layers if long operations are needed
+ * - Log via logger (no console.* in shipped code)
+ */
 import { EmotionEntry, SensoryEntry, TrackingEntry, Goal } from "@/types/student";
 import { isWithinInterval, subDays, format, differenceInDays } from "date-fns";
 import { analyticsConfig } from "@/lib/analyticsConfig";
@@ -255,52 +276,90 @@ class EnhancedPatternAnalysisEngine {
     // Sort by timestamp without mutating the input
     const sortedData = [...data].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
     
-    // Robust linear regression (Huber) for slope/intercept
+    // Robust linear regression (Huber) for slope/intercept on x=0..n-1, y=values
     const n = sortedData.length;
     const x = sortedData.map((_, i) => i);
     const y = sortedData.map(d => d.value);
 
-    const { slope, intercept } = huberRegression(x, y, { maxIter: 200, tol: 1e-8 });
-    
-    // Calculate R-squared for significance
-    const yMean = y.reduce((a, b) => a + b, 0) / n;
-    const yPred = x.map(xi => (Number.isFinite(slope) ? slope * xi + intercept : intercept));
-    const ssRes = y.map((yi, i) => Math.pow(yi - yPred[i], 2)).reduce((a, b) => a + b, 0);
-    const ssTot = y.map(yi => Math.pow(yi - yMean, 2)).reduce((a, b) => a + b, 0);
-    const rSquared = ssTot === 0 ? 0 : Math.max(0, Math.min(1, 1 - (ssRes / ssTot)));
+    const huberCfg = enhancedAnalysis?.huber || { delta: 1.345, maxIter: 50, tol: 1e-6 };
+    const { slope, intercept } = huberRegression(x, y, {
+      maxIter: Number.isFinite(huberCfg.maxIter) ? huberCfg.maxIter : 50,
+      tol: Number.isFinite(huberCfg.tol) ? huberCfg.tol : 1e-6,
+      delta: Number.isFinite(huberCfg.delta) ? huberCfg.delta : 1.345,
+    });
 
-    // Enhanced confidence calculation
+    // Compute predictions and R^2 against actuals with guards for invalid values
+    const interceptSafe = Number.isFinite(intercept) ? intercept : 0;
+    // Build safe pairs for R^2
+    const xSafe: number[] = [];
+    const ySafe: number[] = [];
+    for (let i = 0; i < n; i++) {
+      const yi = y[i];
+      if (Number.isFinite(yi)) {
+        xSafe.push(x[i]);
+        ySafe.push(yi);
+      }
+    }
+    const m = xSafe.length;
+    const yPred: number[] = new Array(n);
+    for (let i = 0; i < n; i++) {
+      const xi = x[i];
+      const pred = (Number.isFinite(slope) ? slope * xi + interceptSafe : interceptSafe);
+      yPred[i] = Number.isFinite(pred) ? pred : 0;
+    }
+    let rSquared = 0;
+    if (m >= 2) {
+      const yMean = ySafe.reduce((a, b) => a + b, 0) / m;
+      let ssRes = 0;
+      let ssTot = 0;
+      for (let k = 0; k < m; k++) {
+        const idx = xSafe[k];
+        const resid = ySafe[k] - yPred[idx];
+        ssRes += resid * resid;
+        const dy = ySafe[k] - yMean;
+        ssTot += dy * dy;
+      }
+      rSquared = ssTot === 0 ? 0 : Math.max(0, Math.min(1, 1 - ssRes / ssTot));
+    }
+
+    // Time span and daily rate (safe timespan guards)
     const timeSpanDays = differenceInDays(
       sortedData[sortedData.length - 1].timestamp,
       sortedData[0].timestamp
     );
-
-    // Guard against zero/negative timespan to avoid NaN/Infinity
     const safeTimeSpanDays = Math.max(1, timeSpanDays || 0);
     const dailyRate = Number.isFinite(slope) ? slope * (n / safeTimeSpanDays) : 0;
     
-    // Multi-factor confidence calculation
-    const analysisPeriodDays = Number(analytics?.ANALYSIS_PERIOD_DAYS);
-    const defaultAnalysisDays = Number(timeWindows?.defaultAnalysisDays);
-    const dataQuality = analysisPeriodDays > 0 ? Math.min(1, n / analysisPeriodDays) : 0; // Better with more data points
-    const timeSpanQuality = defaultAnalysisDays > 0 ? Math.min(1, timeSpanDays / defaultAnalysisDays) : 0; // Better with longer timespan
-    const patternStrength = Math.max(0, rSquared); // R-squared strength
-    const enhancedConfidence = (dataQuality * 0.3 + timeSpanQuality * 0.3 + patternStrength * 0.4);
+    // Data and timespan quality from configured targets
+    const pointsTarget = Number(enhancedAnalysis?.qualityTargets?.pointsTarget);
+    const timeSpanTarget = Number(enhancedAnalysis?.qualityTargets?.timeSpanDaysTarget);
+    const dataQuality = Number.isFinite(pointsTarget) && pointsTarget > 0 ? Math.min(1, n / pointsTarget) : 0;
+    const timeSpanQuality = Number.isFinite(timeSpanTarget) && timeSpanTarget > 0 ? Math.min(1, timeSpanDays / timeSpanTarget) : 0;
+    const patternStrength = Math.max(0, rSquared);
+    const enhancedConfidenceRaw = dataQuality * 0.3 + timeSpanQuality * 0.3 + patternStrength * 0.4;
+    const enhancedConfidence = Number.isFinite(enhancedConfidenceRaw) ? enhancedConfidenceRaw : 0;
 
-    const direction = Math.abs(dailyRate) < enhancedAnalysis.trendThreshold ? 'stable' :
-                     dailyRate > 0 ? 'increasing' : 'decreasing';
+    // Determine direction using configured threshold
+    const threshold = Number(enhancedAnalysis?.trendThreshold) || 0;
+    const direction = Math.abs(dailyRate) < threshold ? 'stable' : dailyRate > 0 ? 'increasing' : 'decreasing';
+
+    // Forecasts (ensure finite values)
+    const lastPred = yPred[yPred.length - 1] ?? 0;
+    const slopeSafe = Number.isFinite(slope) ? slope : 0;
+    const next7 = lastPred + slopeSafe * (Number(timeWindows?.recentDataDays) || 7);
+    const next30 = lastPred + slopeSafe * (Number(timeWindows?.defaultAnalysisDays) || 30);
 
     return {
       metric: 'Overall Trend',
       direction,
       rate: Number.isFinite(dailyRate) ? dailyRate : 0,
       significance: Number.isFinite(rSquared) ? rSquared : 0,
-      confidence: Number.isFinite(enhancedConfidence) ? enhancedConfidence : 0,
+      confidence: enhancedConfidence,
       forecast: {
-        next7Days: (yPred[yPred.length - 1] ?? 0) + ((Number.isFinite(slope) ? slope : 0) * 7),
-        next30Days: (yPred[yPred.length - 1] ?? 0) + ((Number.isFinite(slope) ? slope : 0) * 30),
-        confidence: Number.isFinite(enhancedConfidence) ? enhancedConfidence : 0
-      }
+        next7Days: Number.isFinite(next7) ? next7 : 0,
+        next30Days: Number.isFinite(next30) ? next30 : 0,
+        confidence: enhancedConfidence,
+      },
     };
   }
 
@@ -348,20 +407,34 @@ class EnhancedPatternAnalysisEngine {
       }
     }
 
-    // rSquared strength bands using patternAnalysis.correlationThreshold (guard missing)
-    if (typeof patternAnalysis?.correlationThreshold === 'number') {
-      const corrT = patternAnalysis.correlationThreshold;
-      const strongCut = Math.max(0.7, corrT + 0.4);
-      if (rSquared < corrT) {
-        factors.push(`weakPattern:${rSquared.toFixed(3)}:ct=${corrT}`);
-      } else if (rSquared > strongCut) {
-        factors.push(`strongPattern:${rSquared.toFixed(3)}:ct=${corrT}`);
+    // rSquared strength bands using configured significance thresholds (guard missing)
+    const sig = enhancedAnalysis?.correlationSignificance;
+    if (sig && typeof sig.low === 'number' && typeof sig.moderate === 'number' && typeof sig.high === 'number') {
+      if (rSquared < sig.low) {
+        factors.push(`weakPattern:${rSquared.toFixed(3)}:low=${sig.low}`);
+      } else if (rSquared >= sig.high) {
+        factors.push(`strongPattern:${rSquared.toFixed(3)}:high=${sig.high}`);
+      } else if (rSquared >= sig.moderate) {
+        factors.push(`moderatePattern:${rSquared.toFixed(3)}:moderate=${sig.moderate}`);
       } else {
-        factors.push(`moderatePattern:ct=${corrT}`);
+        factors.push(`lowPattern:${rSquared.toFixed(3)}:low=${sig.low}`);
       }
     } else {
-      // No threshold available; avoid bold claims
-      factors.push('moderatePattern');
+      // Fallback to legacy correlationThreshold if available
+      if (typeof patternAnalysis?.correlationThreshold === 'number') {
+        const corrT = patternAnalysis.correlationThreshold;
+        const strongCut = Math.max(0.7, corrT + 0.4);
+        if (rSquared < corrT) {
+          factors.push(`weakPattern:${rSquared.toFixed(3)}:ct=${corrT}`);
+        } else if (rSquared > strongCut) {
+          factors.push(`strongPattern:${rSquared.toFixed(3)}:ct=${corrT}`);
+        } else {
+          factors.push(`moderatePattern:ct=${corrT}`);
+        }
+      } else {
+        // No threshold available; avoid bold claims
+        factors.push('moderatePattern');
+      }
     }
 
     // Determine overall level and explanation using insights.HIGH_CONFIDENCE_PATTERN_THRESHOLD
@@ -412,16 +485,19 @@ class EnhancedPatternAnalysisEngine {
 
     // Apply anomaly sensitivity multiplier (base threshold)
     const anomalyThreshold = enhancedAnalysis.anomalyThreshold * alertSensitivity.anomalyMultiplier;
+    const severityLevels = enhancedAnalysis.anomalySeverityLevels || { medium: 2.5, high: 3.0 };
 
     const zEmotion = zScoresMedian(emotionIntensities);
 
     emotions.forEach((emotion, idx) => {
       const zScore = Math.abs(zEmotion[idx] ?? 0);
       if (zScore > anomalyThreshold) {
+        const severity: 'low' | 'medium' | 'high' =
+          zScore >= severityLevels.high ? 'high' : zScore >= severityLevels.medium ? 'medium' : 'low';
         anomalies.push({
           timestamp: emotion.timestamp,
           type: 'emotion',
-          severity: zScore > (anomalyThreshold + 1.5) ? 'high' : zScore > (anomalyThreshold + 0.5) ? 'medium' : 'low',
+          severity,
           description: `Unusual ${emotion.emotion} intensity detected (${emotion.intensity}/5)`,
           deviationScore: zScore,
           recommendations: this.getAnomalyRecommendations('emotion', emotion.emotion, zScore)
@@ -440,10 +516,12 @@ class EnhancedPatternAnalysisEngine {
         const count = dailySensoryCounts[date];
         const zScore = Math.abs(zCounts[idx] ?? 0);
         if (zScore > anomalyThreshold) {
+          const severity: 'low' | 'medium' | 'high' =
+            zScore >= severityLevels.high ? 'high' : zScore >= severityLevels.medium ? 'medium' : 'low';
           anomalies.push({
             timestamp: new Date(date),
             type: 'sensory',
-            severity: zScore > (anomalyThreshold + 1.5) ? 'high' : zScore > (anomalyThreshold + 0.5) ? 'medium' : 'low',
+            severity,
             description: `Unusual sensory activity level detected (${count} inputs)`,
             deviationScore: zScore,
             recommendations: this.getAnomalyRecommendations('sensory', 'frequency', zScore)
@@ -492,23 +570,35 @@ class EnhancedPatternAnalysisEngine {
     const matrix: number[][] = [];
     const significantPairs: CorrelationMatrix['significantPairs'] = [];
 
-    // Base threshold and derived tiers for significance labeling
-    const baseThreshold = Math.max(0, Math.min(1, patternAnalysis.correlationThreshold));
-    const moderateCut = Math.min(baseThreshold + 0.2, 0.95);
-    const highCut = Math.min(baseThreshold + 0.4, 0.95);
+    // Significance thresholds from config with safe fallbacks
+    const sig = enhancedAnalysis?.correlationSignificance;
+    const baseThreshold = Math.max(0, Math.min(1, (sig?.low ?? patternAnalysis.correlationThreshold ?? 0.3)));
+    const moderateCut = Math.max(baseThreshold, Math.min(1, sig?.moderate ?? (baseThreshold + 0.2)));
+    const highCut = Math.max(moderateCut, Math.min(1, sig?.high ?? (baseThreshold + 0.4)));
 
     factors.forEach((factor1, i) => {
       matrix[i] = [];
       factors.forEach((factor2, j) => {
-        const values1 = dataPoints.map(d => d[factor1 as keyof typeof d]).filter(v => v !== undefined);
-        const values2 = dataPoints.map(d => d[factor2 as keyof typeof d]).filter(v => v !== undefined);
-        
-        const correlation = pearsonCorrelation(values1 as number[], values2 as number[]);
+        // Build paired arrays guarding index alignment and validity
+        const x: number[] = [];
+        const y: number[] = [];
+        for (let k = 0; k < dataPoints.length; k++) {
+          const dv = dataPoints[k] as any;
+          const v1 = dv[factor1];
+          const v2 = dv[factor2];
+          if (typeof v1 === 'number' && Number.isFinite(v1) && typeof v2 === 'number' && Number.isFinite(v2)) {
+            x.push(v1);
+            y.push(v2);
+          }
+        }
+
+        const nPairs = x.length;
+        const correlation = pearsonCorrelation(x, y);
         matrix[i][j] = correlation;
 
         // Significance gate uses |r| >= baseThreshold and minimum sample size from enhancedAnalysis
-        if (i < j && Math.abs(correlation) >= baseThreshold && values1.length >= enhancedAnalysis.minSampleSize) {
-          const pValue = pValueForCorrelation(correlation, values1.length);
+        if (i < j && Math.abs(correlation) >= baseThreshold && nPairs >= enhancedAnalysis.minSampleSize) {
+          const pValue = pValueForCorrelation(correlation, nPairs);
           const absR = Math.abs(correlation);
           const significance: 'low' | 'moderate' | 'high' =
             absR >= highCut ? 'high' : absR >= moderateCut ? 'moderate' : 'low';
@@ -604,15 +694,22 @@ class EnhancedPatternAnalysisEngine {
     };
 
     // Apply sensitivity multiplier for risk assessment
-    const riskThreshold = enhancedAnalysis.riskAssessmentThreshold *
-      (1 / alertSensitivity.emotionIntensityMultiplier);
+    // Incidents threshold: prefer configured value if present; fallback to 3
+    const incidentsThreshold = Math.max(1, Math.floor((enhancedAnalysis as any)?.riskAssessmentThreshold ?? 3));
 
-    // High stress accumulation risk - fixed for 1-5 scale
-    const highStressCount = recentData.emotions.filter(e =>
-      e.intensity >= 4 && ['anxious', 'frustrated', 'overwhelmed', 'angry'].includes(e.emotion.toLowerCase())
-    ).length;
+    // High stress accumulation risk (use configured intensity and emotions)
+    const stressIntensityT = cfg?.enhancedAnalysis?.riskAssessment?.stressIntensityThreshold;
+    const stressEmotionsCfg = cfg?.enhancedAnalysis?.riskAssessment?.stressEmotions;
+    const stressEmotions = Array.isArray(stressEmotionsCfg) ? stressEmotionsCfg.map((e: string) => e.toLowerCase()) : [];
 
-    if (highStressCount >= Math.floor(riskThreshold)) {
+    let highStressCount = 0;
+    if (typeof stressIntensityT === 'number' && stressEmotions.length > 0) {
+      highStressCount = recentData.emotions.filter(e =>
+        e.intensity >= stressIntensityT && stressEmotions.includes(e.emotion.toLowerCase())
+      ).length;
+    }
+
+    if (highStressCount >= incidentsThreshold && highStressCount > 0) {
       risks.push({
         type: 'risk',
         title: 'Stress Accumulation Risk',
@@ -746,8 +843,15 @@ class EnhancedPatternAnalysisEngine {
   }
 
   private getTrendSeverity(trend: TrendAnalysis): 'low' | 'medium' | 'high' {
-    if (trend.direction === 'decreasing' && trend.significance > 0.7) return 'high';
-    if (trend.direction === 'decreasing' && trend.significance > 0.4) return 'medium';
+    // Use configured significance bands; default to 0.7/0.5 if missing
+    const cfgAny: any = analyticsConfig as any;
+    const cfg = typeof cfgAny.get === 'function' ? cfgAny.get() : analyticsConfig.getConfig();
+    const bands = cfg?.enhancedAnalysis?.correlationSignificance;
+    const highT = typeof bands?.high === 'number' ? bands.high : 0.7;
+    const medT = typeof bands?.moderate === 'number' ? bands.moderate : 0.5;
+
+    if (trend.direction === 'decreasing' && trend.significance >= highT) return 'high';
+    if (trend.direction === 'decreasing' && trend.significance >= medT) return 'medium';
     return 'low';
   }
 
@@ -782,17 +886,22 @@ class EnhancedPatternAnalysisEngine {
     const recommendations: string[] = [];
 
     // Check each sensory modality
+    const cfgAny: any = analyticsConfig as any;
+    const cfg = typeof cfgAny.get === 'function' ? cfgAny.get() : analyticsConfig.getConfig();
+    const bands = cfg?.enhancedAnalysis?.correlationSignificance;
+    const highBand = typeof bands?.high === 'number' ? bands.high : 0.7;
+
     Object.entries(prediction.sensoryResponse).forEach(([sense, response]) => {
-      if (response.avoiding > 0.7) {
+      if (response.avoiding > highBand) {
         recommendations.push(`High ${sense} avoidance predicted - minimize ${sense} stimuli`);
-      } else if (response.seeking > 0.7) {
+      } else if (response.seeking > highBand) {
         recommendations.push(`High ${sense} seeking predicted - provide ${sense} input opportunities`);
       }
     });
 
     // Environmental trigger recommendations
     prediction.environmentalTriggers.forEach(trigger => {
-      if (trigger.probability > 0.7) {
+      if (trigger.probability > highBand) {
         recommendations.push(`High probability of reaction to ${trigger.trigger} - prepare alternatives`);
       }
     });

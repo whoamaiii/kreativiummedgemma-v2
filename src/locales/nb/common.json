@@ -20,6 +20,96 @@
     "reload": "Last på nytt",
     "home": "Hjem"
   },
+  "reports": {
+"builder": {
+      "ui": { "headerTitle": "Rapportbygger", "headerDesc": "Generer tilpassede rapporter." },
+      "form": {
+        "reportTemplate": "Rapportmal",
+        "reportTitle": "Rapporttittel",
+        "reportingTeacher": "Rapporterende lærer",
+        "reportingTeacherPlaceholder": "Lærernavn",
+        "reportPeriod": "Rapportperiode",
+        "startDate": "Startdato",
+        "endDate": "Sluttdato",
+        "reportSections": "Rapportseksjoner",
+        "includeCharts": "Inkluder grafer og visualiseringer",
+        "includeRawData": "Inkluder rådatatabeller",
+        "additionalNotes": "Tilleggsnotater",
+        "additionalNotesPlaceholder": "Legg til eventuelle observasjoner eller notater...",
+        "exportCsv": "Eksporter CSV",
+        "generatePdf": "Generer PDF"
+      },
+      "sections": {
+        "student-info": "Elevinformasjon",
+        "goal-progress": "Målprogresjon",
+        "behavioral-patterns": "Atferdsmønstre",
+        "sensory-patterns": "Sensoriske mønstre",
+        "environmental-factors": "Miljøfaktorer",
+        "achievements": "Prestasjoner",
+        "challenges": "Utfordringer",
+        "recommendations": "Anbefalinger",
+        "next-steps": "Neste steg",
+        "interventions": "Tiltak"
+      },
+      "errors": { "invalidDateRange": "Ugyldig datoområde", "startBeforeEnd": "Startdato må være før sluttdato" },
+      "toast": { "reportGenerated": "Rapport generert!", "csvExported": "CSV eksportert!" },
+      "title": "Rapportbygger",
+      "description": "Velg en elev og mal for å generere en tilpasset rapport.",
+      "configure": "Konfigurasjon",
+      "configureDesc": "Velg elev og kontroller valgt mal.",
+      "student": "Elev",
+      "selectStudentPlaceholder": "Velg en elev",
+      "template": "Mal",
+      "previewTitle": "Forhåndsvisning for {{name}}",
+      "previewDesc": "Juster alternativer i dialogen og eksporter når du er klar."
+    },
+    "hubTitle": "Rapporter og dokumentasjon",
+    "hubDescription": "Generer omfattende rapporter for IEP-møter og fremgangssporing.",
+    "goToExports": "Åpne dataeksport",
+    "templatesHeading": "Rapportmaler",
+    "sectionsCount": "{{count}} seksjoner",
+    "createReport": "Opprett rapport",
+    "templates": {
+      "progress-summary": { "name": "Fremgangsrapport", "description": "Helhetlig oversikt over elevens fremgang på alle mål" },
+      "iep-meeting": { "name": "IEP-møterapport", "description": "Detaljert rapport for IEP-teammøter" },
+      "behavioral-analysis": { "name": "Atferdsanalyse", "description": "Fokus på emosjonelle og sensoriske mønstre" },
+      "quarterly-review": { "name": "Kvartalsrapport", "description": "Tremåneders gjennomgang av fremgang" }
+    },
+    "analyticsPdf": {
+      "button": "Eksporter analyse-PDF",
+      "title": "Analyse-PDF",
+      "student": "Elev",
+      "selectStudent": "Velg en elev",
+      "chartHint": "Forhåndsvisning: aktivitet per dag (inline). Dette bildet legges inn i PDF-en.",
+      "chartTitle": "Aktivitet per dag",
+      "export": "Eksporter PDF",
+      "helper": "Åpner Analyse for denne eleven og datoperioden for å eksportere PDF med grafer."
+    },
+    "exportFilters": {
+      "dateRange": "Datoområde",
+      "start": "Start",
+      "end": "Slutt",
+      "anonymize": "Anonymiser personopplysninger",
+      "backupUseFilters": "Bruk datoområde også for sikkerhetskopi",
+      "presets": {
+        "all": "Hele perioden",
+        "last7": "Siste 7 dager",
+        "last30": "Siste 30 dager",
+        "last90": "Siste 90 dager",
+        "qtd": "Kvartal til dato",
+        "custom": "Egendefinert"
+      },
+    "summary": {
+        "errors": { "invalidRange": "Velg en gyldig start- og sluttdato." },
+        "progress": "Forbereder eksport: {{percent}}%",
+        "withRangeAnon": "Eksporterer data fra {{start}} til {{end}} (anonymisert)",
+        "withRange": "Eksporterer data fra {{start}} til {{end}}",
+        "allAnon": "Eksporterer alle data (anonymisert)",
+        "all": "Eksporterer alle data"
+      }
+    }
+  },
+
   "navigation": {
     "dashboard": "Hovedside",
     "students": "Elever",

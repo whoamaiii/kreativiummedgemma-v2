@@ -134,7 +134,7 @@ export const DateRangeSelector = ({ onRangeChange, selectedRange, className }: D
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
+            variant="ghost"
             className={cn(
               "w-[280px] justify-start text-left font-normal bg-input",
               !dateRange && "text-muted-foreground"

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Student, TrackingEntry } from "@/types/student";
 import { useNavigate } from "react-router-dom";
 import { isToday } from "date-fns";
@@ -148,32 +148,78 @@ window.addEventListener('storage', handleStorageChange);
       <div className="relative z-10 min-h-screen px-4 py-8 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           
-          {/* Header */}
-          <header className="flex justify-between items-center mb-16 animate-fade-in">
-            <div>
-              <h1 className="text-4xl font-bold tracking-tight text-foreground">
-                Sensory<span className="text-primary">Tracker</span> - {String(tDashboard('title')).split(' - ')[1]}
-              </h1>
-              <p className="mt-3 text-lg text-muted-foreground">
-                {String(tDashboard('subtitle'))}
-              </p>
+          {/* Enhanced Header with Gradient and Animations */}
+          <header className="relative mb-16 overflow-hidden">
+            {/* Decorative background elements */}
+            <div className="absolute inset-0 -z-10">
+              <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-10 motion-safe:animate-blob"></div>
+              <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-10 motion-safe:animate-blob animation-delay-2000"></div>
+              <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-10 motion-safe:animate-blob animation-delay-4000"></div>
             </div>
-            <div className="flex items-center space-x-4">
-              {POC_MODE && <POCBadge />}
-              
-              <GlobalMenu />
-              <HelpAndSupport />
-              <LanguageSettings />
+            
+            <div className="relative glass-card rounded-2xl p-8 shadow-2xl backdrop-blur-xl border border-primary/20">
+              <div className="flex justify-between items-center">
+                <div className="space-y-4">
+                  {/* Animated title with gradient */}
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-pink-500 rounded-2xl blur-xl opacity-50 motion-safe:animate-pulse"></div>
+                      <div className="relative bg-gradient-to-br from-primary/20 to-purple-500/20 p-4 rounded-2xl border border-primary/30 group">
+                        <div className="text-3xl font-bold text-white motion-safe:group-hover:animate-bounce-slow">K</div>
+                      </div>
+                    </div>
+                    <div>
+                      <h1 className="text-5xl lg:text-6xl font-black bg-gradient-to-r from-white via-primary-foreground to-purple-200 bg-clip-text text-transparent motion-safe:animate-gradient-x">
+                        {String(tDashboard('title'))}
+                      </h1>
+                      <div className="flex items-center gap-2 mt-2">
+                        <div className="h-0.5 w-8 bg-gradient-to-r from-primary to-purple-500 rounded-full"></div>
+                        <div className="h-0.5 w-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                        <div className="h-0.5 w-2 bg-pink-500 rounded-full"></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Subtitle with elegant styling */}
+                  <p className="text-lg lg:text-xl text-muted-foreground/90 font-light tracking-wide max-w-2xl leading-relaxed">
+                    {String(tDashboard('subtitle'))}
+                  </p>
+                  
+                  {/* Stats pills */}
+                  <div className="flex flex-wrap gap-3 pt-2">
+                    <div className="px-4 py-2 bg-primary/10 rounded-full border border-primary/20 backdrop-blur-sm">
+                      <span className="text-xs font-medium text-primary">{students.length} {String(tDashboard('pills.students'))}</span>
+                    </div>
+                    <div className="px-4 py-2 bg-purple-500/10 rounded-full border border-purple-500/20 backdrop-blur-sm">
+                      <span className="text-xs font-medium text-purple-400">{todayEntries} {String(tDashboard('pills.today'))}</span>
+                    </div>
+                    <div className="px-4 py-2 bg-pink-500/10 rounded-full border border-pink-500/20 backdrop-blur-sm">
+                      <span className="text-xs font-medium text-pink-400">{totalEntries} {String(tDashboard('pills.total'))}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Action buttons with glassmorphism */}
+                <div className="flex items-center gap-3">
+                  {POC_MODE && <POCBadge />}
+                  
+                  <div className="flex items-center gap-2" role="toolbar" aria-label={tCommon('a11y.headerControls')}>
+                    <GlobalMenu />
+                    <HelpAndSupport />
+                    <LanguageSettings />
+                  </div>
+                </div>
+              </div>
             </div>
           </header>
 
           <main>
             {/* Overview section with buttons */}
             <div 
-              className="flex justify-between items-center mb-8 animate-fade-in" 
+              className="flex justify-between items-center mb-8 motion-safe:animate-fade-in" 
               data-animation-delay="0.2s"
             >
-              <h2 className="text-3xl font-bold tracking-tight text-foreground">Oversikt</h2>
+              <h2 className="text-3xl font-bold tracking-tight text-foreground">{String(tDashboard('overview.title'))}</h2>
               <div className="flex items-center space-x-4">
                 <Button 
                   variant="outline" 
@@ -192,15 +238,15 @@ window.addEventListener('storage', handleStorageChange);
                   className="flex items-center justify-center group"
                 >
                   <Plus className="mr-2 h-4 w-4 group-hover:animate-bounce" />
-                  Ny Registrering
+                  {String(tDashboard('actions.newEntry'))}
                 </Button>
               </div>
             </div>
 
             {/* Stats cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              <Card 
-                className="animate-fade-in" 
+                <Card 
+                className="motion-safe:animate-fade-in" 
                 data-animation-delay="0.3s"
               >
                 <div className="flex justify-between items-start">
@@ -211,18 +257,18 @@ window.addEventListener('storage', handleStorageChange);
                     <Users className="text-primary h-5 w-5" />
                   </div>
                 </div>
-                <p className="text-5xl font-bold mt-6 text-foreground animate-number-pop" data-animation-delay="0.4s">
+                <p className="text-5xl font-bold mt-6 text-foreground motion-safe:animate-number-pop" data-animation-delay="0.4s">
                   <AnimatedCounter value={isLoading ? 0 : students.length} />
                 </p>
                 <div className="flex items-center text-sm mt-3">
                   {weeklyTrend.students >= 0 ? <TrendingUp className="text-green-400 h-4 w-4 mr-1" /> : <TrendingDown className="text-red-400 h-4 w-4 mr-1" />}
                   <span className={cn(weeklyTrend.students >= 0 ? "text-green-400" : "text-red-400")}>{Math.abs(weeklyTrend.students).toFixed(0)}%</span>
-                  <span className="ml-1 text-muted-foreground">from last week</span>
+                  <span className="ml-1 text-muted-foreground">{String(tDashboard('stats.fromLastWeek'))}</span>
                 </div>
               </Card>
 
               <Card 
-                className="animate-fade-in" 
+                className="motion-safe:animate-fade-in" 
                 data-animation-delay="0.4s"
               >
                 <div className="flex justify-between items-start">
@@ -233,18 +279,18 @@ window.addEventListener('storage', handleStorageChange);
                     <CalendarDays className="text-primary h-5 w-5" />
                   </div>
                 </div>
-                <p className="text-5xl font-bold mt-6 text-foreground animate-number-pop" data-animation-delay="0.5s">
+                <p className="text-5xl font-bold mt-6 text-foreground motion-safe:animate-number-pop" data-animation-delay="0.5s">
                   <AnimatedCounter value={isLoading ? 0 : todayEntries} />
                 </p>
                 <div className="flex items-center text-sm mt-3">
                   {weeklyTrend.entries >= 0 ? <TrendingUp className="text-green-400 h-4 w-4 mr-1" /> : <TrendingDown className="text-red-400 h-4 w-4 mr-1" />}
                   <span className={cn(weeklyTrend.entries >= 0 ? "text-green-400" : "text-red-400")}>{Math.abs(weeklyTrend.entries).toFixed(0)}%</span>
-                  <span className="ml-1 text-muted-foreground">from last week</span>
+                  <span className="ml-1 text-muted-foreground">{String(tDashboard('stats.fromLastWeek'))}</span>
                 </div>
               </Card>
 
               <Card 
-                className="animate-fade-in" 
+                className="motion-safe:animate-fade-in" 
                 data-animation-delay="0.5s"
               >
                 <div className="flex justify-between items-start">
@@ -255,7 +301,7 @@ window.addEventListener('storage', handleStorageChange);
                     <BarChart3 className="text-primary h-5 w-5" />
                   </div>
                 </div>
-                <p className="text-5xl font-bold mt-6 text-foreground animate-number-pop" data-animation-delay="0.6s">
+                <p className="text-5xl font-bold mt-6 text-foreground motion-safe:animate-number-pop" data-animation-delay="0.6s">
                   <AnimatedCounter value={isLoading ? 0 : totalEntries} />
                 </p>
                 <div className="flex items-center text-sm mt-3">
@@ -269,10 +315,10 @@ window.addEventListener('storage', handleStorageChange);
             {/* Students section */}
             <div>
               <div 
-                className="flex justify-between items-center mb-8 text-foreground animate-fade-in" 
+                className="flex justify-between items-center mb-8 text-foreground motion-safe:animate-fade-in" 
                 data-animation-delay="0.6s"
               >
-                <h2 className="text-3xl font-bold tracking-tight">Elever</h2>
+                <h2 className="text-3xl font-bold tracking-tight">{String(tDashboard('students.title'))}</h2>
                 <Button 
                   variant="default" 
                   onClick={handleAddStudent}
@@ -280,13 +326,13 @@ window.addEventListener('storage', handleStorageChange);
                   className="flex items-center justify-center group"
                 >
                   <Plus className="mr-2 h-4 w-4 group-hover:animate-bounce transition-transform" />
-                  Legg til elev
+                  {String(tDashboard('actions.addStudent'))}
                 </Button>
               </div>
 
               {/* Students grid or empty state */}
               {isLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in" data-animation-delay="0.7s">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 motion-safe:animate-fade-in" data-animation-delay="0.7s">
                   {[...Array(3)].map((_, i) => (
                     <div key={i} className="glass-card rounded-3xl p-6 animate-pulse">
                       <div className="flex items-start gap-4 mb-4">
@@ -344,10 +390,10 @@ window.addEventListener('storage', handleStorageChange);
                         <Users className="text-primary h-12 w-12 transition-transform duration-300 group-hover:rotate-6" />
                       </div>
                       <h3 className="text-2xl font-semibold text-foreground">
-                        Welcome to Sensory Tracker
+                        {String(tDashboard('empty.welcome'))}
                       </h3>
                       <p className="mt-3 max-w-md text-base text-muted-foreground">
-                        It looks like you don't have any students yet. Get started by adding your first student and start tracking their sensory data.
+                        {String(tDashboard('empty.description'))}
                       </p>
                       <Button 
                         variant="default" 
@@ -356,7 +402,7 @@ window.addEventListener('storage', handleStorageChange);
                         className="mt-8 flex items-center justify-center group"
                       >
                         <Plus className="mr-2 h-4 w-4 group-hover:animate-bounce transition-transform" />
-                        Add Your First Student
+                        {String(tDashboard('empty.addFirstStudent'))}
                       </Button>
                     </div>
                   </div>
@@ -369,21 +415,24 @@ window.addEventListener('storage', handleStorageChange);
                     <Card className="mt-8 bg-gradient-card border-0 shadow-soft">
                       <CardContent className="p-6">
                         <div className="text-center mb-4">
-                          <h4 className="text-lg font-semibold text-foreground">Want to explore with sample data?</h4>
+                          <h4 className="text-lg font-semibold text-foreground">{String(tDashboard('empty.sample.title'))}</h4>
                           <p className="text-sm text-muted-foreground mt-1">
-                            Load mock data to test features and see how the app works
+                            {String(tDashboard('empty.sample.description'))}
                           </p>
                         </div>
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button variant="outline" className="w-full">
                               <FlaskConical className="h-4 w-4 mr-2" />
-                              Load Sample Data
+                              {String(tDashboard('empty.sample.loadButton'))}
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-2xl">
                             <DialogHeader>
-                              <DialogTitle>Mock Data Loader</DialogTitle>
+                              <DialogTitle>{String(tDashboard('empty.sample.dialogTitle'))}</DialogTitle>
+                              <DialogDescription>
+                                {String(tDashboard('empty.sample.dialogDescription'))}
+                              </DialogDescription>
                             </DialogHeader>
                             <MockDataLoader />
                           </DialogContent>

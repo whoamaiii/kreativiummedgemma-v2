@@ -130,7 +130,7 @@ const TrackStudent = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={() => navigate(`/student/${student.id}`)}
               className="font-dyslexia"
             >
@@ -211,7 +211,7 @@ const TrackStudent = () => {
         {/* Save Session */}
         <div className="flex gap-4">
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={() => navigate(`/student/${student.id}`)}
             className="flex-1 font-dyslexia"
           >

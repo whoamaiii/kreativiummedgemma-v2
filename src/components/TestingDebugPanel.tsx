@@ -266,16 +266,18 @@ export const TestingDebugPanel: React.FC<TestingDebugPanelProps> = ({ className 
               disabled={isRunningTests}
               size="sm"
               variant="outline"
+              aria-label="Run system tests"
+              title="Run system tests"
             >
               {isRunningTests ? (
                 <>
                   <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Running Tests...
+                  <span className="hidden sm:inline">Running Tests...</span>
                 </>
               ) : (
                 <>
                   <TestTube className="h-4 w-4 mr-2" />
-                  Run System Tests
+                  <span className="hidden sm:inline">Run System Tests</span>
                 </>
               )}
             </Button>
@@ -378,24 +380,28 @@ export const TestingDebugPanel: React.FC<TestingDebugPanelProps> = ({ className 
               <div className="pt-4 border-t border-border space-y-3">
                 <h4 className="text-sm font-medium">Cache Actions</h4>
                 <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={handleClearCache}
-                    className="flex-1"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Clear All Cache
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => uiCache.cleanup()}
-                    className="flex-1"
-                  >
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Clean Expired
-                  </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleClearCache}
+                  className="flex-1"
+                  aria-label="Clear all analytics cache"
+                  title="Clear all analytics cache"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">Clear All Cache</span>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => uiCache.cleanup()}
+                  className="flex-1"
+                  aria-label="Clean expired cache entries"
+                  title="Clean expired cache entries"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">Clean Expired</span>
+                </Button>
                 </div>
                 
                 <div className="text-xs text-muted-foreground">

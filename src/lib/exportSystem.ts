@@ -238,7 +238,7 @@ class ExportSystem {
       sensoryInputs: allData.sensoryInputs,
       goals: allData.goals,
       metadata: {
-        exportedBy: 'SensoryTracker',
+        exportedBy: 'Kreativium',
         totalRecords: allData.trackingEntries.length + allData.emotions.length + allData.sensoryInputs.length + allData.goals.length,
         dateRange: {
           earliest: dates[0] || new Date(),

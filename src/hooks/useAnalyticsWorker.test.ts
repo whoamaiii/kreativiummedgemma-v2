@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 
 // Force non-POC mode so the worker is initialized in tests
-vi.mock('@/lib/env', () => ({ POC_MODE: false }));
+vi.mock('@/lib/env', () => ({ POC_MODE: false, DISABLE_ANALYTICS_WORKER: false }));
 
 import { useAnalyticsWorker } from './useAnalyticsWorker';
 
@@ -41,13 +41,20 @@ describe('useAnalyticsWorker', () => {
     const { result } = renderHook(() => useAnalyticsWorker());
     const testData = { entries: [], emotions: [], sensoryInputs: [] };
 
+    // Allow the init effect to run
+    await new Promise(r => setTimeout(r, 0));
+
     // Wait until the mocked worker has been constructed
     const mod: any = await import('@/workers/analytics.worker?worker');
     let tries = 0;
-    while (!mod.__getLastWorker() && tries < 10) {
-      await new Promise(r => setTimeout(r, 0));
+    while (!mod.__getLastWorker() && tries < 20) {
+      await new Promise(r => setTimeout(r, 5));
       tries++;
     }
+    // Mark worker as ready so queued tasks flush immediately
+    const worker = mod.__getLastWorker();
+    worker.onmessage({ data: { type: 'progress', progress: { stage: 'ready', percent: 1 } } });
+
     await act(async () => {
       await result.current.runAnalysis(testData);
     });
@@ -73,15 +80,15 @@ describe('useAnalyticsWorker', () => {
     const mod: any = await import('@/workers/analytics.worker?worker');
     let worker = mod.__getLastWorker();
     let tries = 0;
-    while (!worker && tries < 10) {
-      await new Promise(r => setTimeout(r, 0));
+    while (!worker && tries < 20) {
+      await new Promise(r => setTimeout(r, 5));
       worker = mod.__getLastWorker();
       tries++;
     }
 
-    // Simulate complete message
-    (result.current as any).isAnalyzing = true;
+    // Simulate ready then complete message
     await act(async () => {
+      worker.onmessage({ data: { type: 'progress', progress: { stage: 'ready', percent: 1 } } });
       worker.onmessage({ data: { type: 'complete', payload: testResults } });
     });
 
@@ -99,8 +106,8 @@ describe('useAnalyticsWorker', () => {
     // Simulate an error message from the mocked worker
     const mod: any = await import('@/workers/analytics.worker?worker');
     const worker = mod.__getLastWorker();
-    (result.current as any).isAnalyzing = true;
     await act(async () => {
+      worker.onmessage({ data: { type: 'progress', progress: { stage: 'ready', percent: 1 } } });
       worker.onmessage({ data: { type: 'error', error: testError } });
     });
 

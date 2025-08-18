@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Goal, Student, GoalDataPoint, Milestone } from "@/types/student";
 import { dataStorage } from "@/lib/dataStorage";
 import { Calendar, Plus, Crosshair, TrendingUp, CheckCircle, Edit, Trash2, Calendar as CalendarIcon } from "lucide-react";
@@ -302,6 +302,9 @@ export const GoalManager = ({ student, onGoalUpdate }: GoalManagerProps) => {
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Create New IEP Goal</DialogTitle>
+              <DialogDescription>
+                Enter goal details, targets, and measurable objectives.
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
@@ -423,10 +426,10 @@ export const GoalManager = ({ student, onGoalUpdate }: GoalManagerProps) => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button variant="ghost" size="icon" aria-label="Edit goal" title="Edit goal">
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => deleteGoal(goal.id)}>
+                    <Button variant="ghost" size="icon" aria-label="Delete goal" title="Delete goal" onClick={() => deleteGoal(goal.id)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -490,7 +493,9 @@ export const GoalManager = ({ student, onGoalUpdate }: GoalManagerProps) => {
                         <div key={milestone.id} className="flex items-center gap-2 p-2 bg-muted/30 rounded">
                           <Button
                             variant="ghost"
-                            size="sm"
+                            size="icon"
+                            aria-label={milestone.isCompleted ? 'Milestone completed' : 'Mark milestone complete'}
+                            title={milestone.isCompleted ? 'Milestone completed' : 'Mark milestone complete'}
                             onClick={() => !milestone.isCompleted && completeMilestone(goal.id, milestone.id)}
                             disabled={milestone.isCompleted}
                           >

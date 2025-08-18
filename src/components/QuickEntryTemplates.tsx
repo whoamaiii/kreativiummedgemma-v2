@@ -7,7 +7,7 @@ import { Sparkles, Zap, Brain, Clock, Sun, Moon, RefreshCw, Plus, X, Trash2, Edi
 import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -299,14 +299,17 @@ export const QuickEntryTemplates: React.FC<QuickEntryTemplatesProps> = ({
           </CardTitle>
           <Dialog open={isCreating} onOpenChange={setIsCreating}>
             <DialogTrigger asChild>
-              <Button size="sm" variant="outline">
+              <Button size="sm" variant="outline" aria-label="Create new template" title="Create new template">
                 <Plus className="h-4 w-4 mr-2" />
-                New Template
+                <span className="hidden sm:inline">New Template</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>Create Quick Entry Template</DialogTitle>
+                <DialogDescription>
+                  Define a name, optional description, category, and default values.
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
@@ -414,15 +417,19 @@ export const QuickEntryTemplates: React.FC<QuickEntryTemplatesProps> = ({
                     {!template.isDefault && (
                       <div className="flex gap-1">
                         <Button
-                          size="sm"
+                          size="icon"
                           variant="ghost"
+                          aria-label="Edit template"
+                          title="Edit template"
                           onClick={() => setEditingTemplate(template)}
                         >
                           <Edit className="h-3 w-3" />
                         </Button>
                         <Button
-                          size="sm"
+                          size="icon"
                           variant="ghost"
+                          aria-label="Delete template"
+                          title="Delete template"
                           onClick={() => deleteTemplate(template.id)}
                         >
                           <Trash2 className="h-3 w-3" />

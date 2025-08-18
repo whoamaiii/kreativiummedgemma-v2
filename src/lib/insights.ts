@@ -177,6 +177,68 @@ export function generateInsights(
   config?: InsightConfig
 ): InsightOutput;
 
+export type StructuredInsight = { key: string; params?: Record<string, unknown> };
+
+export function generateInsightsStructured(
+  results: {
+    patterns: PatternResult[];
+    correlations: CorrelationResult[];
+    predictiveInsights: Array<{ description: string; confidence: number }>;
+  },
+  emotions: readonly EmotionEntry[],
+  trackingEntries: readonly TrackingEntry[],
+  cfgParam?: InsightConfig
+): StructuredInsight[] {
+  const cfg = getEffectiveInsightsConfig(cfgParam);
+  const messages: StructuredInsight[] = [];
+
+  if (trackingEntries.length === 0) {
+    return [{ key: 'analytics.insights.messages.noTrackingData' }];
+  }
+
+  if (trackingEntries.length < cfg.MIN_SESSIONS_FOR_FULL_ANALYTICS) {
+    messages.push({ key: 'analytics.insights.messages.limitedData', params: { sessions: trackingEntries.length } });
+  }
+
+  results.patterns
+    .filter(p => p.confidence > cfg.HIGH_CONFIDENCE_PATTERN_THRESHOLD)
+    .slice(0, cfg.MAX_PATTERNS_TO_SHOW)
+    .forEach(pattern => messages.push({
+      key: 'analytics.insights.messages.patternDetected',
+      params: { description: pattern.description, confidencePct: Math.round(pattern.confidence * 100) }
+    }));
+
+  results.correlations
+    .filter(c => (c as any).significance === 'high')
+    .slice(0, cfg.MAX_CORRELATIONS_TO_SHOW)
+    .forEach(correlation => messages.push({ key: 'analytics.insights.messages.strongCorrelation', params: { description: correlation.description } }));
+
+  results.predictiveInsights
+    .slice(0, cfg.MAX_PREDICTIONS_TO_SHOW)
+    .forEach(pi => messages.push({ key: 'analytics.insights.messages.prediction', params: { description: pi.description, confidencePct: Math.round(pi.confidence * 100) } }));
+
+  if (emotions.length >= cfg.RECENT_EMOTION_COUNT) {
+    const recent = emotions.slice(-cfg.RECENT_EMOTION_COUNT);
+    // POSITIVE_EMOTIONS may be a Set<string>
+    const fullCfg = getEffectiveFullConfig() as typeof ANALYTICS_CONFIG;
+    const positiveSet: Set<string> = (fullCfg.POSITIVE_EMOTIONS ?? ANALYTICS_CONFIG.POSITIVE_EMOTIONS) as Set<string>;
+    const positives = recent.filter(e => positiveSet.has(e.emotion.toLowerCase())).length;
+    const positiveRate = positives / recent.length;
+    const pct = Math.round(positiveRate * 100);
+    if (positiveRate > cfg.POSITIVE_EMOTION_TREND_THRESHOLD) {
+      messages.push({ key: 'analytics.insights.messages.positiveTrend', params: { percentage: pct } });
+    } else if (positiveRate < cfg.NEGATIVE_EMOTION_TREND_THRESHOLD) {
+      messages.push({ key: 'analytics.insights.messages.negativeTrend', params: { percentage: pct } });
+    }
+  }
+
+  if (messages.length === 0) {
+    messages.push({ key: 'analytics.insights.messages.analyticsActive' });
+  }
+
+  return messages;
+}
+
 export function generateInsights(...args: any[]): InsightOutput {
   // Branch 1: New signature with results object first
   if (args.length >= 3 && args[0] && typeof args[0] === 'object' && 'patterns' in args[0]) {

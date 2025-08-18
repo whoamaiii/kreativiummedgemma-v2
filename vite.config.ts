@@ -17,13 +17,13 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    // Always enable browser-echo in non-production modes to surface console errors consistently
-    mode !== 'production' &&
+    // Enable browser-echo only when not production and not explicitly disabled via env
+    (mode !== 'production' && process.env.BROWSER_ECHO !== '0') &&
     browserEcho({
       stackMode: 'condensed',
       colors: true,
     }),
-    mode === 'development' &&
+    (mode === 'development' && process.env.COMPONENT_TAGGER !== '0') &&
     componentTagger(),
     // Add bundle analyzer for build analysis
     mode !== 'development' && 
@@ -55,7 +55,8 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     exclude: ['echarts'],
-    include: ['date-fns']
+    include: ['date-fns'],
+    entries: ['index.html']
   },
   build: {
     rollupOptions: {

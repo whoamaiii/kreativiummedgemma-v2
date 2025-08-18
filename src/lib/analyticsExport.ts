@@ -31,6 +31,12 @@ export interface AnalyticsExportData {
     element: HTMLElement;
     title: string;
   }[];
+  chartExports?: {
+    title: string;
+    type?: string;
+    dataURL?: string;
+    svgString?: string;
+  }[];
 }
 
 class AnalyticsExport {
@@ -232,8 +238,53 @@ class AnalyticsExport {
       });
     }
 
-    // Add Charts
-    if (exportData.charts && exportData.charts.length > 0) {
+    // Add Charts (preferred path: provided chartExports)
+    if (exportData.chartExports && exportData.chartExports.length > 0) {
+      for (const chart of exportData.chartExports) {
+        try {
+          pdf.addPage();
+          currentY = margin;
+          pdf.setFontSize(16);
+          pdf.text(chart.title, margin, currentY);
+          currentY += 10;
+
+          if (chart.svgString) {
+            // jsPDF can render SVG via addSvgAsImage (plugin) or convert to image. Use image fallback for compatibility.
+            // Convert SVG to image via canvas for broad compatibility
+            const svgBlob = new Blob([chart.svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+            const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+              const i = new Image();
+              i.onload = () => resolve(i);
+              i.onerror = reject;
+              i.src = url;
+            });
+            const imgWidth = pageWidth - margin * 2;
+            const scale = imgWidth / img.width;
+            const imgHeight = img.height * scale;
+            const canvas = document.createElement('canvas');
+            canvas.width = imgWidth * 2;
+            canvas.height = imgHeight * 2;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              const dataUrl = canvas.toDataURL('image/png');
+              pdf.addImage(dataUrl, 'PNG', margin, currentY, imgWidth, imgHeight);
+            }
+            URL.revokeObjectURL(url);
+          } else if (chart.dataURL) {
+            const imgWidth = pageWidth - margin * 2;
+            // We don't know original size; maintain aspect ratio by assuming typical 16:9 chart if needed
+            const imgHeight = (imgWidth * 9) / 16;
+            pdf.addImage(chart.dataURL, 'PNG', margin, currentY, imgWidth, imgHeight);
+          }
+        } catch (error) {
+          logger.error('Error adding chart export to PDF:', error);
+        }
+      }
+    } else if (exportData.charts && exportData.charts.length > 0) {
       for (const chart of exportData.charts) {
         try {
           pdf.addPage();

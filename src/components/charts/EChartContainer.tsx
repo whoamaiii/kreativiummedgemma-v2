@@ -1,4 +1,4 @@
-import React, { useMemo, memo } from "react";
+import React, { useMemo, memo, useRef, useImperativeHandle } from "react";
 import ReactECharts from "echarts-for-react";
 // Use our trimmed ECharts core to keep the chart chunk small
 import { echarts } from '@/lib/echartsCore';
@@ -12,8 +12,22 @@ import type {
 import { cn } from "@/lib/utils";
 import { logger } from "@/lib/logger";
 import { Skeleton } from "@/components/ui/skeleton";
+import type ReactEChartsType from "echarts-for-react";
+import { useChartExport } from "@/hooks/useChartExport";
+import { chartRegistry, type ChartType } from "@/lib/chartRegistry";
 
 type EventsMap = Record<string, (params: unknown) => void>;
+
+export type EChartExportRegistration = {
+  /** Unique id for registry; provide to group charts and ensure stable keys */
+  id?: string;
+  /** Optional chart type to aid titling and selection */
+  type?: ChartType;
+  /** Optional human-readable title used in PDF */
+  title?: string;
+  /** Optional student id for scoping */
+  studentId?: string;
+};
 
 export type EChartContainerProps = {
   option: EChartsOption;
@@ -27,6 +41,10 @@ export type EChartContainerProps = {
    * These are shallow-merged after the base theme to allow per-instance control.
    */
   chartDefaults?: Partial<EChartsOption>;
+  /** Optional registration so this chart can be included in PDF export */
+  exportRegistration?: EChartExportRegistration;
+  /** INTERNAL: ref to ReactECharts instance for export hooks */
+  __innerChartRef__?: React.Ref<ReactEChartsType>;
 };
 
 /**
@@ -299,7 +317,8 @@ function EChartContainerBase({
   width = "100%",
   onEvents,
   style,
-  chartDefaults
+  chartDefaults,
+  __innerChartRef__
 }: EChartContainerProps) {
   // Defensive: guard against undefined/empty/invalid options
   const safeOption: EChartsOption = useMemo(() => {
@@ -454,6 +473,7 @@ function EChartContainerBase({
           style={{ height, width: width ?? "100%", ...style }}
           onEvents={onEvents}
           echarts={echarts as unknown as any}
+          ref={__innerChartRef__ as any}
         />
       ) : (
         <div className="p-4">
@@ -465,5 +485,32 @@ function EChartContainerBase({
   );
 }
 
-export const EChartContainer = memo(EChartContainerBase);
+
+function EChartContainerWithExport(props: EChartContainerProps & { exportRegistration?: EChartExportRegistration }) {
+  const innerRef = useRef<ReactEChartsType>(null as unknown as ReactEChartsType);
+
+  const exportMethods = useChartExport(innerRef as unknown as React.RefObject<ReactEChartsType>);
+
+  // Register/unregister with registry when id provided
+  React.useEffect(() => {
+    const reg = props.exportRegistration;
+    if (reg?.id) {
+      chartRegistry.register({
+        id: reg.id,
+        type: reg.type ?? 'custom',
+        title: reg.title ?? 'Chart',
+        studentId: reg.studentId,
+        getMethods: () => exportMethods,
+      });
+      return () => chartRegistry.unregister(reg.id!);
+    }
+    return;
+  }, [props.exportRegistration?.id, props.exportRegistration?.title, props.exportRegistration?.studentId, props.exportRegistration?.type, exportMethods]);
+
+  return (
+    <EChartContainerBase {...props} __innerChartRef__={innerRef} />
+  );
+}
+
+export const EChartContainer = memo(EChartContainerWithExport);
 

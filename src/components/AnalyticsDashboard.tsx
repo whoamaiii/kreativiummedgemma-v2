@@ -207,8 +207,40 @@ export const AnalyticsDashboard = memo(({
         charts: format === 'pdf' && visualizationRef.current
           ? [{
               element: visualizationRef.current,
-              title: 'Emotion & Sensory Trends'
+              title: String(tAnalytics('export.chartTitle'))
             }]
+          : undefined,
+        chartExports: format === 'pdf'
+          ? await (async () => {
+              try {
+                const regs = (await import('@/lib/chartRegistry')).chartRegistry.all();
+                if (!regs || regs.length === 0) {
+                  toast.error(String(tAnalytics('export.noCharts')));
+                  return [];
+                }
+                const selected = regs.slice(0, 6); // simple cap for now
+                const items = await Promise.all(selected.map(async r => {
+                  const methods = r.getMethods();
+                  const dataURL = methods.getImage({ pixelRatio: 2, backgroundColor: '#ffffff' });
+                  const svgString = methods.getSVG();
+                  return {
+                    title: r.title,
+                    type: r.type,
+                    dataURL: dataURL,
+                    svgString: svgString,
+                  };
+                }));
+                const filtered = items.filter(i => i.dataURL || i.svgString);
+                if (filtered.length === 0) {
+                  toast.error(String(tAnalytics('export.noCharts')));
+                }
+                return filtered;
+              } catch (e) {
+                logger.error('Failed to collect chart exports', e);
+                toast.error(String(tAnalytics('export.noCharts')));
+                return [];
+              }
+            })()
           : undefined
       };
 
@@ -300,6 +332,7 @@ export const AnalyticsDashboard = memo(({
                 onClick={handleSeedDemo}
                 disabled={isSeeding}
                 aria-label={String(tAnalytics('dev.seed.aria'))}
+                title={String(tAnalytics('dev.seed.button'))}
               >
                 {isSeeding ? String(tAnalytics('dev.seed.seeding')) : String(tAnalytics('dev.seed.button'))}
               </Button>
@@ -307,16 +340,18 @@ export const AnalyticsDashboard = memo(({
             <Button
               variant="outline"
               size="sm"
+              aria-label={String(tCommon('settings'))}
+              title={String(tCommon('settings'))}
               onClick={() => setShowSettings(true)}
             >
               <Settings className="h-4 w-4 mr-2" />
-              {String(tCommon('settings'))}
+              <span className="hidden sm:inline">{String(tCommon('settings'))}</span>
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" disabled={isExporting}>
+                <Button variant="outline" size="sm" disabled={isExporting} aria-label={String(tCommon('export'))} title={String(tCommon('export'))}>
                   <Download className="h-4 w-4 mr-2" />
-                  {isExporting ? String(tCommon('exporting')) : String(tCommon('export'))}
+                  <span className="hidden sm:inline">{isExporting ? String(tCommon('exporting')) : String(tCommon('export'))}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -413,47 +448,39 @@ export const AnalyticsDashboard = memo(({
           ))}
         </TabsList>
 
-        {activeTab === 'charts' && (
-          <TabsContent id="analytics-tabpanel" value="charts" className="space-y-6" tabIndex={-1}>
-            <div ref={visualizationRef}>
-              <ErrorBoundary showToast={false}>
-                <Suspense fallback={<div className="h-[360px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label={String(tAnalytics('states.analyzing'))} />}> 
-                  <LazyChartsPanel studentName={student.name} filteredData={filteredData} />
-                </Suspense>
-              </ErrorBoundary>
-            </div>
-          </TabsContent>
-        )}
-
-        {activeTab === 'patterns' && (
-          <TabsContent value="patterns" className="space-y-6" aria-busy={isAnalyzing}>
+        <TabsContent id="analytics-tabpanel" value="charts" className="space-y-6" tabIndex={-1}>
+          <div ref={visualizationRef}>
             <ErrorBoundary showToast={false}>
-              <Suspense fallback={<div className="h-[280px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label={String(tAnalytics('states.analyzing'))} />}> 
-                <LazyPatternsPanel filteredData={filteredData} />
+              <Suspense fallback={<div className="h-[360px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label={String(tAnalytics('states.analyzing'))} />}> 
+                <LazyChartsPanel studentName={student.name} filteredData={filteredData} />
               </Suspense>
             </ErrorBoundary>
-          </TabsContent>
-        )}
+          </div>
+        </TabsContent>
 
-        {activeTab === 'correlations' && (
-          <TabsContent value="correlations" className="space-y-6">
-            <ErrorBoundary showToast={false}>
-              <Suspense fallback={<div className="h-[420px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label={String(tAnalytics('states.analyzing'))} />}> 
-                <LazyCorrelationsPanel filteredData={filteredData} />
-              </Suspense>
-            </ErrorBoundary>
-          </TabsContent>
-        )}
+        <TabsContent value="patterns" className="space-y-6" aria-busy={isAnalyzing}>
+          <ErrorBoundary showToast={false}>
+            <Suspense fallback={<div className="h-[280px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label={String(tAnalytics('states.analyzing'))} />}> 
+              <LazyPatternsPanel filteredData={filteredData} />
+            </Suspense>
+          </ErrorBoundary>
+        </TabsContent>
 
-        {activeTab === 'alerts' && (
-          <TabsContent value="alerts" className="space-y-6">
-            <ErrorBoundary showToast={false}>
-              <Suspense fallback={<div className="h-[200px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label={String(tAnalytics('states.analyzing'))} />}> 
-                <LazyAlertsPanel filteredData={filteredData} studentId={student.id} />
-              </Suspense>
-            </ErrorBoundary>
-          </TabsContent>
-        )}
+        <TabsContent value="correlations" className="space-y-6">
+          <ErrorBoundary showToast={false}>
+            <Suspense fallback={<div className="h-[420px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label={String(tAnalytics('states.analyzing'))} />}> 
+              <LazyCorrelationsPanel filteredData={filteredData} />
+            </Suspense>
+          </ErrorBoundary>
+        </TabsContent>
+
+        <TabsContent value="alerts" className="space-y-6">
+          <ErrorBoundary showToast={false}>
+            <Suspense fallback={<div className="h-[200px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label={String(tAnalytics('states.analyzing'))} />}> 
+              <LazyAlertsPanel filteredData={filteredData} studentId={student.id} />
+            </Suspense>
+          </ErrorBoundary>
+        </TabsContent>
       </Tabs>
 
       {/* Analytics Settings Dialog */}

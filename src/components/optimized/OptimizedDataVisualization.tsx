@@ -138,7 +138,12 @@ export const OptimizedDataVisualization = memo(({
                   useDualYAxis: true,
                   thresholds: { emotion: 7, sensory: 5 },
                 });
-                return <EChartContainer option={option} height={300} aria-label="Emotion trends line chart" />;
+                return <EChartContainer 
+                  option={option} 
+                  height={300} 
+                  aria-label="Emotion trends line chart"
+                  exportRegistration={{ id: 'emotion-trends', type: 'trends', title: 'Emotion Trends' }}
+                />;
               })()}
             </ErrorBoundary>
           </CardContent>
@@ -182,7 +187,12 @@ export const OptimizedDataVisualization = memo(({
                       },
                     ],
                   };
-                  return <EChartContainer option={option} height={250} aria-label="Emotion distribution donut chart" />;
+                  return <EChartContainer 
+                    option={option} 
+                    height={250} 
+                    aria-label="Emotion distribution donut chart"
+                    exportRegistration={{ id: 'emotion-distribution', type: 'distribution', title: 'Emotion Distribution' }}
+                  />;
                 })()}
               </ErrorBoundary>
             </CardContent>
@@ -218,7 +228,12 @@ export const OptimizedDataVisualization = memo(({
                       { type: "bar", name: "Neutral", encode: { x: "type", y: "neutral" }, itemStyle: { color: "#6B7280" } },
                     ],
                   };
-                  return <EChartContainer option={option} height={250} aria-label="Sensory response patterns stacked bars" />;
+                  return <EChartContainer 
+                    option={option} 
+                    height={250} 
+                    aria-label="Sensory response patterns stacked bars"
+                    exportRegistration={{ id: 'sensory-responses', type: 'distribution', title: 'Sensory Response Patterns' }}
+                  />;
                 })()}
               </ErrorBoundary>
             </CardContent>

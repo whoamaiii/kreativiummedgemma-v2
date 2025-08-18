@@ -45,6 +45,11 @@ export interface AnalyticsConfiguration {
     trendThreshold: number;
     predictionConfidenceThreshold: number;
     anomalyThreshold: number; // Switch to z-score threshold
+    // Optional severity levels for anomaly z-scores; if omitted, defaults will be applied
+    anomalySeverityLevels?: {
+      medium: number; // z >= medium => medium
+      high: number;   // z >= high => high
+    };
     huber: {
       delta: number;
       maxIter: number;
@@ -170,6 +175,7 @@ export const DEFAULT_ANALYTICS_CONFIG: AnalyticsConfiguration = {
     trendThreshold: 0.02, // Moved from hardcoded 0
     predictionConfidenceThreshold: 0.6,
     anomalyThreshold: 2.5, // Switch to z-score threshold
+    anomalySeverityLevels: { medium: 2.5, high: 3.0 },
     huber: {
       delta: 1.345,
       maxIter: 50,

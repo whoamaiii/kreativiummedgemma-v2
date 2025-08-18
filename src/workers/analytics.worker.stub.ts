@@ -14,7 +14,7 @@ self.onmessage = (event: MessageEvent) => {
       environmentalCorrelations: [],
       predictiveInsights: [],
       anomalies: [],
-      insights: ['POC mode: lightweight analytics stub'],
+      insights: [],
       cacheKey
     }
   });

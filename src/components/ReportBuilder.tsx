@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Student, Goal, TrackingEntry, EmotionEntry, SensoryEntry } from "@/types/student";
@@ -14,6 +14,7 @@ import { FileText, Download, Printer, Mail, Calendar, TrendingUp, Crosshair } fr
 import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
 import { toast } from "sonner";
 import { downloadBlob } from "@/lib/utils";
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface ReportBuilderProps {
   student: Student;
@@ -33,31 +34,32 @@ interface ReportTemplate {
 const reportTemplates: ReportTemplate[] = [
   {
     id: 'progress-summary',
-    name: 'Progress Summary Report',
-    description: 'Comprehensive overview of student progress across all goals',
+    name: 'reports.templates.progress-summary.name',
+    description: 'reports.templates.progress-summary.description',
     sections: ['student-info', 'goal-progress', 'recent-activities', 'recommendations']
   },
   {
     id: 'iep-meeting',
-    name: 'IEP Meeting Report',
-    description: 'Detailed report for IEP team meetings',
+    name: 'reports.templates.iep-meeting.name',
+    description: 'reports.templates.iep-meeting.description',
     sections: ['student-info', 'goal-progress', 'behavioral-patterns', 'environmental-factors', 'recommendations', 'next-steps']
   },
   {
     id: 'behavioral-analysis',
-    name: 'Behavioral Analysis Report',
-    description: 'Focus on emotional and sensory patterns',
+    name: 'reports.templates.behavioral-analysis.name',
+    description: 'reports.templates.behavioral-analysis.description',
     sections: ['student-info', 'behavioral-patterns', 'sensory-patterns', 'environmental-factors', 'interventions']
   },
   {
     id: 'quarterly-review',
-    name: 'Quarterly Review',
-    description: 'Three-month progress review',
+    name: 'reports.templates.quarterly-review.name',
+    description: 'reports.templates.quarterly-review.description',
     sections: ['student-info', 'goal-progress', 'data-trends', 'achievements', 'challenges', 'next-quarter-planning']
   }
 ];
 
 export const ReportBuilder = ({ student, goals, trackingEntries, emotions, sensoryInputs }: ReportBuilderProps) => {
+  const { tCommon } = useTranslation();
   const [showBuilder, setShowBuilder] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('progress-summary');
   const [reportData, setReportData] = useState({
@@ -81,7 +83,7 @@ export const ReportBuilder = ({ student, goals, trackingEntries, emotions, senso
       setSelectedTemplate(templateId);
       setReportData(prev => ({
         ...prev,
-        title: template.name,
+        title: tCommon(template.name as unknown as string),
         sections: template.sections
       }));
     }
@@ -100,12 +102,12 @@ export const ReportBuilder = ({ student, goals, trackingEntries, emotions, senso
     
     // Validate date parsing
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      toast.error('Invalid date range selected');
+      toast.error(tCommon('reports.builder.errors.invalidDateRange'));
       return null;
     }
     
     if (startDate > endDate) {
-      toast.error('Start date must be before end date');
+      toast.error(tCommon('reports.builder.errors.startBeforeEnd'));
       return null;
     }
 
@@ -408,7 +410,7 @@ export const ReportBuilder = ({ student, goals, trackingEntries, emotions, senso
       printWindow.print();
     }, 1000);
 
-    toast.success("Report generated successfully!");
+    toast.success(tCommon('reports.builder.toast.reportGenerated'));
   };
 
   const exportCSV = () => {
@@ -455,15 +457,15 @@ export const ReportBuilder = ({ student, goals, trackingEntries, emotions, senso
     const blob = new Blob([csvString], { type: 'text/csv' });
     downloadBlob(blob, `${student.name.replace(/\s+/g, '_')}_${reportData.title.replace(/\s+/g, '_')}_${format(new Date(), 'yyyy-MM-dd')}.csv`);
 
-    toast.success("CSV exported successfully!");
+    toast.success(tCommon('reports.builder.toast.csvExported'));
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">Reports & Documentation</h3>
-          <p className="text-muted-foreground">Generate comprehensive reports for IEP meetings and progress tracking</p>
+          <h3 className="text-lg font-semibold">{tCommon('reports.builder.title')}</h3>
+          <p className="text-muted-foreground">{tCommon('reports.builder.description')}</p>
         </div>
         <Dialog open={showBuilder} onOpenChange={setShowBuilder}>
           <DialogTrigger asChild>
@@ -474,13 +476,16 @@ export const ReportBuilder = ({ student, goals, trackingEntries, emotions, senso
           </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Report Builder</DialogTitle>
+              <DialogTitle>{tCommon('reports.builder.title')}</DialogTitle>
+              <DialogDescription>
+                {String(tCommon('reports.builder.description'))}
+              </DialogDescription>
             </DialogHeader>
             
             <div className="space-y-6">
               {/* Template Selection */}
               <div>
-                <Label>Report Template</Label>
+                <Label>{tCommon('reports.builder.form.reportTemplate')}</Label>
                 <Select value={selectedTemplate} onValueChange={handleTemplateChange}>
                   <SelectTrigger>
                     <SelectValue />
@@ -488,20 +493,20 @@ export const ReportBuilder = ({ student, goals, trackingEntries, emotions, senso
                   <SelectContent>
                     {reportTemplates.map(template => (
                       <SelectItem key={template.id} value={template.id}>
-                        {template.name}
+                        {tCommon(template.name as unknown as string)}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {reportTemplates.find(t => t.id === selectedTemplate)?.description}
+                  {tCommon((reportTemplates.find(t => t.id === selectedTemplate)?.description || '') as unknown as string)}
                 </p>
               </div>
 
               {/* Report Configuration */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="reportTitle">Report Title</Label>
+                  <Label htmlFor="reportTitle">{tCommon('reports.builder.form.reportTitle')}</Label>
                   <Input
                     id="reportTitle"
                     value={reportData.title}
@@ -509,22 +514,22 @@ export const ReportBuilder = ({ student, goals, trackingEntries, emotions, senso
                   />
                 </div>
                 <div>
-                  <Label htmlFor="teacher">Reporting Teacher</Label>
+                  <Label htmlFor="teacher">{tCommon('reports.builder.form.reportingTeacher')}</Label>
                   <Input
                     id="teacher"
                     value={reportData.reportingTeacher}
                     onChange={(e) => setReportData(prev => ({ ...prev, reportingTeacher: e.target.value }))}
-                    placeholder="Teacher name"
+                    placeholder={tCommon('reports.builder.form.reportingTeacherPlaceholder')}
                   />
                 </div>
               </div>
 
               {/* Date Range */}
               <div>
-                <Label>Report Period</Label>
+                <Label>{tCommon('reports.builder.form.reportPeriod')}</Label>
                 <div className="grid grid-cols-2 gap-4 mt-1">
                   <div>
-                    <Label htmlFor="startDate" className="text-sm">Start Date</Label>
+                    <Label htmlFor="startDate" className="text-sm">{tCommon('reports.builder.form.startDate')}</Label>
                     <Input
                       id="startDate"
                       type="date"
@@ -536,7 +541,7 @@ export const ReportBuilder = ({ student, goals, trackingEntries, emotions, senso
                     />
                   </div>
                   <div>
-                    <Label htmlFor="endDate" className="text-sm">End Date</Label>
+                    <Label htmlFor="endDate" className="text-sm">{tCommon('reports.builder.form.endDate')}</Label>
                     <Input
                       id="endDate"
                       type="date"
@@ -552,20 +557,20 @@ export const ReportBuilder = ({ student, goals, trackingEntries, emotions, senso
 
               {/* Sections */}
               <div>
-                <Label>Report Sections</Label>
+                <Label>{tCommon('reports.builder.form.reportSections')}</Label>
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   {[
-                    { id: 'student-info', label: 'Student Information' },
-                    { id: 'goal-progress', label: 'Goal Progress' },
-                    { id: 'behavioral-patterns', label: 'Behavioral Patterns' },
-                    { id: 'sensory-patterns', label: 'Sensory Patterns' },
-                    { id: 'environmental-factors', label: 'Environmental Factors' },
-                    { id: 'achievements', label: 'Achievements' },
-                    { id: 'challenges', label: 'Challenges' },
-                    { id: 'recommendations', label: 'Recommendations' },
-                    { id: 'next-steps', label: 'Next Steps' },
-                    { id: 'interventions', label: 'Interventions' }
-                  ].map(section => (
+                    'student-info',
+                    'goal-progress',
+                    'behavioral-patterns',
+                    'sensory-patterns',
+                    'environmental-factors',
+                    'achievements',
+                    'challenges',
+                    'recommendations',
+                    'next-steps',
+                    'interventions'
+                  ].map(id => ({ id, label: tCommon(`reports.builder.sections.${id}`) })).map(section => (
                     <div key={section.id} className="flex items-center space-x-2">
                       <Checkbox
                         id={section.id}
@@ -593,7 +598,7 @@ export const ReportBuilder = ({ student, goals, trackingEntries, emotions, senso
                     checked={reportData.includeCharts}
                     onCheckedChange={(checked) => setReportData(prev => ({ ...prev, includeCharts: !!checked }))}
                   />
-                  <Label htmlFor="includeCharts">Include charts and visualizations</Label>
+                  <Label htmlFor="includeCharts">{tCommon('reports.builder.form.includeCharts')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -601,18 +606,18 @@ export const ReportBuilder = ({ student, goals, trackingEntries, emotions, senso
                     checked={reportData.includeRawData}
                     onCheckedChange={(checked) => setReportData(prev => ({ ...prev, includeRawData: !!checked }))}
                   />
-                  <Label htmlFor="includeRawData">Include raw data tables</Label>
+                  <Label htmlFor="includeRawData">{tCommon('reports.builder.form.includeRawData')}</Label>
                 </div>
               </div>
 
               {/* Custom Notes */}
               <div>
-                <Label htmlFor="customNotes">Additional Notes</Label>
+                <Label htmlFor="customNotes">{tCommon('reports.builder.form.additionalNotes')}</Label>
                 <Textarea
                   id="customNotes"
                   value={reportData.customNotes}
                   onChange={(e) => setReportData(prev => ({ ...prev, customNotes: e.target.value }))}
-                  placeholder="Add any additional observations or notes..."
+                  placeholder={tCommon('reports.builder.form.additionalNotesPlaceholder')}
                   rows={3}
                 />
               </div>
@@ -621,11 +626,11 @@ export const ReportBuilder = ({ student, goals, trackingEntries, emotions, senso
               <div className="flex gap-2 justify-end">
                 <Button variant="outline" onClick={exportCSV}>
                   <Download className="h-4 w-4 mr-2" />
-                  Export CSV
+                  {tCommon('reports.builder.form.exportCsv')}
                 </Button>
                 <Button onClick={generatePDF}>
                   <Printer className="h-4 w-4 mr-2" />
-                  Generate PDF
+                  {tCommon('reports.builder.form.generatePdf')}
                 </Button>
               </div>
             </div>
@@ -642,12 +647,12 @@ export const ReportBuilder = ({ student, goals, trackingEntries, emotions, senso
                   setShowBuilder(true);
                 }}>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">{template.name}</CardTitle>
+              <CardTitle className="text-sm">{tCommon(template.name as unknown as string)}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground mb-3">{template.description}</p>
+              <p className="text-xs text-muted-foreground mb-3">{tCommon(template.description as unknown as string)}</p>
               <Badge variant="outline" className="text-xs">
-                {template.sections.length} sections
+                {tCommon('reports.sectionsCount', { count: template.sections.length })}
               </Badge>
             </CardContent>
           </Card>

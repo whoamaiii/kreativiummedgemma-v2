@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Eye, RotateCcw, ZoomIn, ZoomOut, Move3d } from 'lucide-react';
 import * as THREE from 'three';
+import { colorForeground } from '@/lib/resolveCssColorVar';
 
 interface Visualization3DProps {
   emotions: EmotionEntry[];
@@ -131,7 +132,7 @@ const AxisLabels: React.FC<{ xLabel: string; yLabel: string; zLabel: string }> =
       <Text
         position={[size + 0.5, 0, 0]}
         fontSize={0.5}
-        color="var(--foreground)"
+        color={colorForeground()}
         anchorX="left"
       >
         {xLabel}
@@ -145,7 +146,7 @@ const AxisLabels: React.FC<{ xLabel: string; yLabel: string; zLabel: string }> =
       <Text
         position={[0, size + 0.5, 0]}
         fontSize={0.5}
-        color="var(--foreground)"
+        color={colorForeground()}
         anchorX="center"
       >
         {yLabel}
@@ -159,7 +160,7 @@ const AxisLabels: React.FC<{ xLabel: string; yLabel: string; zLabel: string }> =
       <Text
         position={[0, 0, size + 0.5]}
         fontSize={0.5}
-        color="var(--foreground)"
+        color={colorForeground()}
         anchorX="center"
       >
         {zLabel}
@@ -434,10 +435,21 @@ export const Visualization3D: React.FC<Visualization3DProps> = ({
 
         {/* 3D Visualization */}
         <div className="relative w-full h-[600px] bg-gray-50 rounded-lg overflow-hidden">
-          <Canvas
+          cCanvas
             camera={{ position: [10, 10, 10], fov: 50 }}
             className="w-full h-full"
-          >
+            onCreated={({ gl }) => {
+              const canvas = gl.domElement;
+              const onLost = (e: Event) => {
+                e.preventDefault();
+              };
+              const onRestored = () => {
+                // no-op: react-three-fiber re-renders; keep minimal
+              };
+              canvas.addEventListener('webglcontextlost', onLost, { passive: false });
+              canvas.addEventListener('webglcontextrestored', onRestored);
+            }}
+          e
             <ambientLight intensity={0.5} />
             <pointLight position={[10, 10, 10]} />
             <pointLight position={[-10, -10, -10]} intensity={0.5} />

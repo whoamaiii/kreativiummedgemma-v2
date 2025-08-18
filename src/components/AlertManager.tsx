@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { AlertTriangle, CheckCircle, Eye, TrendingUp } from "lucide-react";
 import { alertSystem, AlertHistoryEntry } from "@/lib/alertSystem";
 import { toast } from "sonner";
@@ -195,6 +195,9 @@ export const AlertManager = ({ studentId, showOnlyUnresolved = false }: AlertMan
                     <DialogContent>
                       <DialogHeader>
                         <DialogTitle>{String(tAnalytics('alerts.resolveTitle'))}</DialogTitle>
+                        <DialogDescription>
+                          Review details and add resolution notes before confirming.
+                        </DialogDescription>
                       </DialogHeader>
                       <div className="space-y-4">
                         <div>

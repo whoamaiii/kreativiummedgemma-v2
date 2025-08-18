@@ -1,7 +1,16 @@
 import * as tf from '@tensorflow/tfjs';
-import { Student, TrackingEntry, EmotionEntry, SensoryEntry } from '../types/student';
+import { TrackingEntry } from '../types/student';
 import { ValidationResults } from '../types/ml';
 import { analyticsConfig } from '@/lib/analyticsConfig';
+import { 
+  toMLSessions, 
+  prepareEmotionDataset, 
+  prepareSensoryDataset,
+  encodeTimeFeatures 
+} from '@/lib/dataPreprocessing';
+import { recordEvaluation, type EvaluationRun } from '@/lib/modelEvaluation';
+import { createCacheKey } from '@/lib/analytics/cache-key';
+import { CrossValidator, type TimeSeriesValidationConfig } from '@/lib/validation/crossValidation';
 
 // Model versioning and metadata
 export interface ModelMetadata {
@@ -17,6 +26,8 @@ export interface ModelMetadata {
   epochs: number;
   dataPoints: number;
   validationResults?: ValidationResults;
+  /** Optional preprocessing schema version used to prepare the training data */
+  preprocessingSchemaVersion?: string;
 }
 
 // ML Model types
@@ -146,21 +157,36 @@ class ModelStorage {
  * Sets up the object store if it does not already exist.
  */
 async init(): Promise<void> {
+    // Check if IndexedDB is available
+    if (typeof indexedDB === 'undefined') {
+      console.warn('IndexedDB not available, ML models will not persist');
+      return;
+    }
+    
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.dbName, 1);
-      
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => {
-        this.db = request.result;
-        resolve();
-      };
-      
-      request.onupgradeneeded = (event) => {
-        const db = (event.target as IDBOpenDBRequest).result;
-        if (!db.objectStoreNames.contains(this.storeName)) {
-          db.createObjectStore(this.storeName, { keyPath: 'name' });
-        }
-      };
+      try {
+        const request = indexedDB.open(this.dbName, 1);
+        
+        request.onerror = () => {
+          console.warn('Failed to open IndexedDB:', request.error);
+          resolve(); // Don't reject, just continue without persistence
+        };
+        
+        request.onsuccess = () => {
+          this.db = request.result;
+          resolve();
+        };
+        
+        request.onupgradeneeded = (event) => {
+          const db = (event.target as IDBOpenDBRequest).result;
+          if (!db.objectStoreNames.contains(this.storeName)) {
+            db.createObjectStore(this.storeName, { keyPath: 'name' });
+          }
+        };
+      } catch (error) {
+        console.warn('IndexedDB initialization failed:', error);
+        resolve(); // Don't reject, just continue without persistence
+      }
     });
   }
 
@@ -174,6 +200,10 @@ async init(): Promise<void> {
  */
 async saveModel(name: ModelType, model: tf.LayersModel, metadata: ModelMetadata): Promise<void> {
     if (!this.db) await this.init();
+    if (!this.db) {
+      console.warn('Cannot save model - IndexedDB not available');
+      return;
+    }
     
     // Save model to IndexedDB
     const modelData = await model.save(tf.io.withSaveHandler(async (artifacts) => {
@@ -204,6 +234,10 @@ async saveModel(name: ModelType, model: tf.LayersModel, metadata: ModelMetadata)
  */
 async loadModel(name: ModelType): Promise<StoredModel | null> {
     if (!this.db) await this.init();
+    if (!this.db) {
+      console.warn('Cannot load model - IndexedDB not available');
+      return null;
+    }
     
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.storeName], 'readonly');
@@ -236,6 +270,10 @@ async loadModel(name: ModelType): Promise<StoredModel | null> {
  */
 async deleteModel(name: ModelType): Promise<void> {
     if (!this.db) await this.init();
+    if (!this.db) {
+      console.warn('Cannot delete model - IndexedDB not available');
+      return;
+    }
     
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.storeName], 'readwrite');
@@ -254,6 +292,10 @@ async deleteModel(name: ModelType): Promise<void> {
  */
 async listModels(): Promise<ModelMetadata[]> {
     if (!this.db) await this.init();
+    if (!this.db) {
+      console.warn('Cannot list models - IndexedDB not available');
+      return [];
+    }
     
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.storeName], 'readonly');
@@ -270,130 +312,6 @@ async listModels(): Promise<ModelMetadata[]> {
   }
 }
 
-// Data preprocessing utilities
-/**
- * @deprecated DataPreprocessor is deprecated. Use the preprocessing facade from @/lib/preprocessing/facade instead.
- * This class will be removed in a future version.
- * Utility class for preprocessing data related to ML models.
- */
-export class DataPreprocessor {
-  /**
-   * @deprecated Use normalizeData from @/lib/preprocessing/facade instead.
-   * Normalize an array of numbers to a 0-1 range based on defined min and max.
-   *
-   * @param data - The array of numbers to normalize.
-   * @param min - Optional minimum value for normalization. Defaults to min of data.
-   * @param max - Optional maximum value for normalization. Defaults to max of data.
-   * @returns Normalized array of numbers.
-   */
-  static normalizeData(data: number[], min?: number, max?: number): number[] {
-    // Import lazy-loaded to avoid circular dependency
-    const { deprecate } = require('@/lib/deprecation');
-    const { normalizeData: newNormalizeData } = require('@/lib/preprocessing/facade');
-    
-    deprecate(
-      'DataPreprocessor.normalizeData',
-      'normalizeData from @/lib/preprocessing/facade',
-      'This provides the same functionality with enhanced pipeline integration options.'
-    );
-    
-    return newNormalizeData(data, min, max);
-  }
-
-  /**
-   * @deprecated Use extractTimeFeatures from @/lib/preprocessing/facade instead.
-   * Extract cyclically encoded time features from a date.
-   * Applies sine and cosine transformations for cyclic representation.
-   *
-   * @param date - The date from which to extract features.
-   * @returns Array of encoded time features.
-   */
-  static extractTimeFeatures(date: Date): number[] {
-    // Import lazy-loaded to avoid circular dependency
-    const { deprecate } = require('@/lib/deprecation');
-    const { extractTimeFeatures: newExtractTimeFeatures } = require('@/lib/preprocessing/facade');
-    
-    deprecate(
-      'DataPreprocessor.extractTimeFeatures',
-      'extractTimeFeatures from @/lib/preprocessing/facade',
-      'This provides the same functionality with enhanced pipeline integration options.'
-    );
-    
-    return newExtractTimeFeatures(date);
-  }
-
-  /**
-   * @deprecated Use convertTrackingEntriesToSessions from @/lib/preprocessing/facade instead.
-   * Converts tracking entries into ML-compatible session format.
-   *
-   * @param entries - Array of raw tracking entries from the database.
-   * @returns Array of MLSession objects with normalized data.
-   * @example
-   * const sessions = DataPreprocessor.convertTrackingEntriesToSessions(trackingEntries);
-   * // Returns sessions with averaged emotions, categorized sensory responses, and environmental data.
-   */
-  static convertTrackingEntriesToSessions(entries: TrackingEntry[]): MLSession[] {
-    // Import lazy-loaded to avoid circular dependency
-    const { deprecate } = require('@/lib/deprecation');
-    const { convertTrackingEntriesToSessions: newConvertTrackingEntriesToSessions } = require('@/lib/preprocessing/facade');
-    
-    deprecate(
-      'DataPreprocessor.convertTrackingEntriesToSessions',
-      'convertTrackingEntriesToSessions from @/lib/preprocessing/facade',
-      'This provides the same functionality with enhanced pipeline integration options.'
-    );
-    
-    return newConvertTrackingEntriesToSessions(entries);
-  }
-
-  /**
-   * @deprecated Use prepareEmotionData from @/lib/preprocessing/facade instead.
-   * Prepare emotion data for LSTM training.
-   * Sequences are created with recent sessions, preparing for predictions.
-   *
-   * @param sessions - Array of MLSession objects containing emotion data.
-   * @param sequenceLength - Optional sequence length for training, default is 7.
-   * @returns Object containing normalized inputs and outputs for training.
-   */
-  static prepareEmotionData(sessions: MLSession[], sequenceLength: number = 7): {
-    inputs: tf.Tensor3D;
-    outputs: tf.Tensor2D;
-    normalizers: { min: number; max: number };
-  } {
-    // Import lazy-loaded to avoid circular dependency
-    const { deprecate } = require('@/lib/deprecation');
-    const { prepareEmotionData: newPrepareEmotionData } = require('@/lib/preprocessing/facade');
-    
-    deprecate(
-      'DataPreprocessor.prepareEmotionData',
-      'prepareEmotionData from @/lib/preprocessing/facade',
-      'The new version supports pipeline configuration options for enhanced preprocessing.'
-    );
-    
-    return newPrepareEmotionData(sessions, { sequenceLength });
-  }
-
-  /**
-   * @deprecated Use prepareSensoryData from @/lib/preprocessing/facade instead.
-   * Prepare sensory data for training.
-   */
-  static prepareSensoryData(sessions: MLSession[]): {
-    inputs: tf.Tensor2D;
-    outputs: tf.Tensor2D;
-  } {
-    // Import lazy-loaded to avoid circular dependency
-    const { deprecate } = require('@/lib/deprecation');
-    const { prepareSensoryData: newPrepareSensoryData } = require('@/lib/preprocessing/facade');
-    
-    deprecate(
-      'DataPreprocessor.prepareSensoryData',
-      'prepareSensoryData from @/lib/preprocessing/facade',
-      'The new version supports pipeline configuration options for enhanced preprocessing.'
-    );
-    
-    return newPrepareSensoryData(sessions);
-  }
-}
 
 // Main ML Models class
 export class MLModels {
@@ -493,12 +411,13 @@ export class MLModels {
   async trainEmotionModel(
     trackingEntries: TrackingEntry[],
     epochs: number = 50,
-    callbacks?: tf.CustomCallbackArgs
+    callbacks?: tf.CustomCallbackArgs,
+    options?: { devRunTimeSeriesCV?: boolean; tsConfig?: Partial<TimeSeriesValidationConfig> }
   ): Promise<void> {
-    const sessions = DataPreprocessor.convertTrackingEntriesToSessions(trackingEntries);
+    const sessions = toMLSessions(trackingEntries);
     const model = this.createEmotionModel();
-    const { inputs, outputs, normalizers } = DataPreprocessor.prepareEmotionData(sessions);
-    
+    const { inputs, outputs, meta } = prepareEmotionDataset(sessions);
+
     const history = await model.fit(inputs, outputs, {
       epochs,
       batchSize: 32,
@@ -506,27 +425,117 @@ export class MLModels {
       callbacks,
       shuffle: true
     });
-    
+
+    // Record evaluation (regression-style metrics using validation history)
+    try {
+      const cfg = analyticsConfig.getConfig();
+      const finalLoss = history.history.loss?.[history.history.loss.length - 1] as number | undefined;
+      const finalValMSE = (history.history.val_mse?.[history.history.val_mse.length - 1] as number | undefined)
+        ?? (history.history.mse?.[history.history.mse.length - 1] as number | undefined);
+      const finalValMAE = (history.history.val_mae?.[history.history.val_mae.length - 1] as number | undefined)
+        ?? (history.history.mae?.[history.history.mae.length - 1] as number | undefined);
+
+      const dataSignature = createCacheKey({
+        namespace: 'ml-training:data',
+        input: {
+          modelType: 'emotion-prediction',
+          dataPoints: trackingEntries.length,
+          epochs,
+          preprocessingSchemaVersion: meta?.schemaVersion,
+        },
+        version: cfg.schemaVersion,
+      });
+      const configSignature = createCacheKey({
+        namespace: 'ml-training:config',
+        input: {
+          inputShape: [7, 13],
+          outputShape: [7],
+          architecture: 'LSTM',
+        },
+        version: cfg.schemaVersion,
+      });
+
+      const run: EvaluationRun = {
+        id: `${Date.now()}-emotion`,
+        modelType: 'emotion-prediction',
+        timestamp: Date.now(),
+        dataSignature,
+        configSignature,
+        taskType: 'regression',
+        metrics: {
+          regression: {
+            mse: finalValMSE,
+            mae: finalValMAE,
+          }
+        },
+        schemaVersion: cfg.schemaVersion,
+        notes: meta?.schemaVersion ? `preprocessingSchemaVersion=${meta.schemaVersion}` : undefined,
+      };
+      recordEvaluation(run);
+
+      // Optionally run time-series CV in development only
+      if (import.meta.env?.DEV && options?.devRunTimeSeriesCV) {
+        const validator = new CrossValidator();
+        const tsCfg: TimeSeriesValidationConfig = {
+          strategy: options.tsConfig?.strategy ?? 'rolling',
+          windowSize: options.tsConfig?.windowSize ?? Math.min(7, Math.max(3, Math.floor(inputs.shape[0] / 3) || 3)),
+          horizon: options.tsConfig?.horizon ?? 1,
+          gap: options.tsConfig?.gap ?? 0,
+          folds: options.tsConfig?.folds,
+          taskType: 'regression',
+        };
+        const tsResults = await validator.validateTimeSeriesModel(() => this.createEmotionModel(), { features: inputs, labels: outputs }, tsCfg);
+        const cvSig = createCacheKey({
+          namespace: 'ml-training:cv',
+          input: { tsCfg, preprocessingSchemaVersion: meta?.schemaVersion },
+          version: cfg.schemaVersion,
+        });
+        const cvRun: EvaluationRun = {
+          id: `${Date.now()}-emotion-tscv`,
+          modelType: 'emotion-prediction',
+          timestamp: Date.now(),
+          dataSignature,
+          configSignature: cvSig,
+          taskType: 'regression',
+          metrics: {
+            regression: tsResults.average?.regression ? {
+              mse: tsResults.average.regression.mse,
+              rmse: tsResults.average.regression.rmse,
+              mae: tsResults.average.regression.mae,
+              mape: tsResults.average.regression.mape,
+            } : undefined,
+          },
+          cv: { strategy: 'time-series', horizon: tsCfg.horizon, windowSize: tsCfg.windowSize, folds: tsCfg.folds },
+          schemaVersion: cfg.schemaVersion,
+          notes: 'Time-series cross-validation (dev-only)'
+        };
+        recordEvaluation(cvRun);
+      }
+    } catch {
+      // Fail-soft: never block training if evaluation capture fails
+    }
+
     // Save model with metadata
     const metadata: ModelMetadata = {
       name: 'emotion-prediction',
       version: '1.0.0',
       createdAt: new Date(),
       lastTrainedAt: new Date(),
-      accuracy: history.history.val_mse ? 
-        history.history.val_mse[history.history.val_mse.length - 1] as number : 
+      accuracy: history.history.val_mse ?
+        history.history.val_mse[history.history.val_mse.length - 1] as number :
         undefined,
       loss: history.history.loss[history.history.loss.length - 1] as number,
       inputShape: [7, 13],
       outputShape: [7],
       architecture: 'LSTM',
       epochs,
-      dataPoints: trackingEntries.length
+      dataPoints: trackingEntries.length,
+      preprocessingSchemaVersion: meta?.schemaVersion
     };
-    
+
     await this.storage.saveModel('emotion-prediction', model, metadata);
     this.models.set('emotion-prediction', { model, metadata });
-    
+
     // Clean up tensors
     inputs.dispose();
     outputs.dispose();
@@ -536,12 +545,13 @@ export class MLModels {
   async trainSensoryModel(
     trackingEntries: TrackingEntry[],
     epochs: number = 50,
-    callbacks?: tf.CustomCallbackArgs
+    callbacks?: tf.CustomCallbackArgs,
+    options?: { devRunTimeSeriesCV?: boolean; tsConfig?: Partial<TimeSeriesValidationConfig> }
   ): Promise<void> {
-    const sessions = DataPreprocessor.convertTrackingEntriesToSessions(trackingEntries);
+    const sessions = toMLSessions(trackingEntries);
     const model = this.createSensoryModel();
-    const { inputs, outputs } = DataPreprocessor.prepareSensoryData(sessions);
-    
+    const { inputs, outputs, meta } = prepareSensoryDataset(sessions);
+
     const history = await model.fit(inputs, outputs, {
       epochs,
       batchSize: 32,
@@ -549,27 +559,116 @@ export class MLModels {
       callbacks,
       shuffle: true
     });
-    
+
+    // Record evaluation (classification metrics using validation history)
+    try {
+      const cfg = analyticsConfig.getConfig();
+      const finalLoss = history.history.loss?.[history.history.loss.length - 1] as number | undefined;
+      // TFJS sometimes exposes val_accuracy or acc
+      const finalValAcc = (history.history.val_accuracy?.[history.history.val_accuracy.length - 1] as number | undefined)
+        ?? (history.history.accuracy?.[history.history.accuracy.length - 1] as number | undefined)
+        ?? (history.history.acc?.[history.history.acc.length - 1] as number | undefined);
+
+      const dataSignature = createCacheKey({
+        namespace: 'ml-training:data',
+        input: {
+          modelType: 'sensory-response',
+          dataPoints: trackingEntries.length,
+          epochs,
+          preprocessingSchemaVersion: meta?.schemaVersion,
+        },
+        version: cfg.schemaVersion,
+      });
+      const configSignature = createCacheKey({
+        namespace: 'ml-training:config',
+        input: {
+          inputShape: [12],
+          outputShape: [15],
+          architecture: 'Dense',
+        },
+        version: cfg.schemaVersion,
+      });
+
+      const run: EvaluationRun = {
+        id: `${Date.now()}-sensory`,
+        modelType: 'sensory-response',
+        timestamp: Date.now(),
+        dataSignature,
+        configSignature,
+        taskType: 'classification',
+        metrics: {
+          classification: {
+            accuracy: finalValAcc,
+          }
+        },
+        schemaVersion: cfg.schemaVersion,
+        notes: meta?.schemaVersion ? `preprocessingSchemaVersion=${meta.schemaVersion}` : undefined,
+      };
+      recordEvaluation(run);
+
+      // Optionally run time-series CV in development only (classification)
+      if (import.meta.env?.DEV && options?.devRunTimeSeriesCV) {
+        const validator = new CrossValidator();
+        const tsCfg: TimeSeriesValidationConfig = {
+          strategy: options.tsConfig?.strategy ?? 'rolling',
+          windowSize: options.tsConfig?.windowSize ?? Math.min(8, Math.max(3, Math.floor(inputs.shape[0] / 3) || 3)),
+          horizon: options.tsConfig?.horizon ?? 1,
+          gap: options.tsConfig?.gap ?? 0,
+          folds: options.tsConfig?.folds,
+          taskType: 'classification',
+        };
+        const tsResults = await validator.validateTimeSeriesModel(() => this.createSensoryModel(), { features: inputs, labels: outputs }, tsCfg);
+        const cvSig = createCacheKey({
+          namespace: 'ml-training:cv',
+          input: { tsCfg, preprocessingSchemaVersion: meta?.schemaVersion },
+          version: cfg.schemaVersion,
+        });
+        const cvRun: EvaluationRun = {
+          id: `${Date.now()}-sensory-tscv`,
+          modelType: 'sensory-response',
+          timestamp: Date.now(),
+          dataSignature,
+          configSignature: cvSig,
+          taskType: 'classification',
+          metrics: {
+            classification: tsResults.average?.classification ? {
+              accuracy: tsResults.average.classification.accuracy,
+              precision: tsResults.average.classification.precision,
+              recall: tsResults.average.classification.recall,
+              f1: tsResults.average.classification.f1Score,
+            } : undefined,
+          },
+          cv: { strategy: 'time-series', horizon: tsCfg.horizon, windowSize: tsCfg.windowSize, folds: tsCfg.folds },
+          schemaVersion: cfg.schemaVersion,
+          notes: 'Time-series cross-validation (dev-only)'
+        };
+        recordEvaluation(cvRun);
+      }
+    } catch {
+      // Fail-soft
+    }
+
     // Save model with metadata
     const metadata: ModelMetadata = {
       name: 'sensory-response',
       version: '1.0.0',
       createdAt: new Date(),
       lastTrainedAt: new Date(),
-      accuracy: history.history.acc ? 
-        history.history.acc[history.history.acc.length - 1] as number : 
+      accuracy: history.history.acc ?
+        history.history.acc[history.history.acc.length - 1] as number :
         undefined,
       loss: history.history.loss[history.history.loss.length - 1] as number,
       inputShape: [12],
       outputShape: [15],
       architecture: 'Dense',
       epochs,
-      dataPoints: trackingEntries.length
+      dataPoints: trackingEntries.length,
+      preprocessingSchemaVersion: meta?.schemaVersion
     };
-    
+
     await this.storage.saveModel('sensory-response', model, metadata);
     this.models.set('sensory-response', { model, metadata });
-    
+
     // Clean up tensors
     inputs.dispose();
     outputs.dispose();
@@ -580,7 +679,7 @@ export class MLModels {
     recentEntries: TrackingEntry[],
     daysToPredict: number = 7
   ): Promise<EmotionPrediction[]> {
-    const recentSessions = DataPreprocessor.convertTrackingEntriesToSessions(recentEntries);
+    const recentSessions = toMLSessions(recentEntries);
     const model = this.models.get('emotion-prediction');
     if (!model) {
       throw new Error('Emotion prediction model not found');
@@ -590,7 +689,7 @@ export class MLModels {
     const currentSessions = [...recentSessions];
     
     for (let day = 0; day < daysToPredict; day++) {
-      const { inputs, normalizers } = DataPreprocessor.prepareEmotionData(
+      const { inputs, meta } = prepareEmotionDataset(
         currentSessions.slice(-7),
         7
       );
@@ -683,7 +782,7 @@ export class MLModels {
       environment.textures ? 1 : 0
     ];
     
-    const timeFeatures = DataPreprocessor.extractTimeFeatures(date);
+    const timeFeatures = encodeTimeFeatures(date);
     const input = tf.tensor2d([[...environmentFeatures, ...timeFeatures]]);
     
     const prediction = model.model.predict(input) as tf.Tensor;

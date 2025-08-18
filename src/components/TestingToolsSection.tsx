@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { MockDataLoader } from "@/components/MockDataLoader";
 import { TestingDebugPanel } from "@/components/TestingDebugPanel";
@@ -46,6 +46,9 @@ export const TestingToolsSection = () => {
               <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Mock Data for Testing & Analysis</DialogTitle>
+                  <DialogDescription>
+                    Load realistic sample students and entries to explore features safely.
+                  </DialogDescription>
                 </DialogHeader>
                 <MockDataLoader />
               </DialogContent>
@@ -75,6 +78,9 @@ export const TestingToolsSection = () => {
               <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Debug & Data Inspection</DialogTitle>
+                  <DialogDescription>
+                    Advanced debugging tools for inspecting state, storage, and analytics.
+                  </DialogDescription>
                 </DialogHeader>
                 <TestingDebugPanel />
               </DialogContent>

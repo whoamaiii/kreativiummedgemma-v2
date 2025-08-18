@@ -26,6 +26,9 @@ const EnvironmentalCorrelationsTest = (!IS_PROD || POC_MODE)
   : null as unknown as React.LazyExoticComponent<() => JSX.Element>;
 import { ErrorWrapper } from "./components/ErrorWrapper";
 
+// Additional lazies for custom routes
+const ReportBuilderPage = lazy(() => import('./pages/ReportBuilderPage').then(m => ({ default: m.default })));
+
 // Lazy-loaded Developer Tools page (non-prod/POC only)
 const DevTools = !IS_PROD || POC_MODE
   ? lazy(() => import("./pages/DevTools").then(m => ({ default: m.default })))
@@ -49,6 +52,10 @@ const App = () => (
                 <Route path="/track/:studentId" element={<TrackStudent />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/reports" element={<Reports />} />
+                {/* Export tools (previous /reports) */}
+                <Route path="/reports/export" element={<Reports />} />
+                {/* Report Builder route */}
+                <Route path="/reports/builder" element={<ReportBuilderPage />} />
                 {!IS_PROD && EnvironmentalCorrelationsTest && (
                   <Route path="/environmental-correlations-test" element={<EnvironmentalCorrelationsTest />} />
                 )}

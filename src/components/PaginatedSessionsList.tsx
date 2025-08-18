@@ -148,21 +148,21 @@ export const PaginatedSessionsList: React.FC<PaginatedSessionsListProps> = memo(
                 
                 <div className="flex items-center gap-1">
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant="ghost"
+                    size="icon"
+                    aria-label="First page"
                     onClick={goToFirstPage}
                     disabled={!hasPreviousPage}
-                    className="px-2"
                   >
                     <ChevronsLeft className="h-4 w-4" />
                   </Button>
                   
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Previous page"
                     onClick={goToPreviousPage}
                     disabled={!hasPreviousPage}
-                    className="px-2"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
@@ -191,21 +191,21 @@ export const PaginatedSessionsList: React.FC<PaginatedSessionsListProps> = memo(
                   })}
 
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Next page"
                     onClick={goToNextPage}
                     disabled={!hasNextPage}
-                    className="px-2"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                   
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Last page"
                     onClick={goToLastPage}
                     disabled={!hasNextPage}
-                    className="px-2"
                   >
                     <ChevronsRight className="h-4 w-4" />
                   </Button>

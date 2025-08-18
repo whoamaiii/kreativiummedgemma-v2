@@ -1,5 +1,5 @@
 import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "./ui/dialog";
 import { HelpCircle } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -11,7 +11,13 @@ export const HelpAndSupport = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="hidden sm:flex items-center justify-center group">
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label={String(tCommon('help.button'))}
+          title={String(tCommon('help.title'))}
+          className="hidden sm:flex items-center justify-center group text-muted-foreground hover:text-foreground transition-colors"
+        >
           <HelpCircle className="mr-2 h-4 w-4 transition-transform group-hover:rotate-12" />
           {String(tCommon('help.button'))}
         </Button>
@@ -19,6 +25,9 @@ export const HelpAndSupport = () => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{tCommon('help.title')}</DialogTitle>
+          <DialogDescription>
+            {String(tCommon('help.description'))}
+          </DialogDescription>
         </DialogHeader>
         <div>
           <p>{tCommon('help.description')}</p>
@@ -29,4 +38,4 @@ export const HelpAndSupport = () => {
       </DialogContent>
     </Dialog>
   );
-}; 
+};

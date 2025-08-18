@@ -317,7 +317,12 @@ export const ProgressDashboard = ({ student, goals }: ProgressDashboardProps) =>
                     },
                   ],
                 };
-                return <EChartContainer option={option} height={300} aria-label="Progress trends line chart" />;
+                return <EChartContainer 
+                  option={option} 
+                  height={300} 
+                  aria-label="Progress trends line chart"
+                  exportRegistration={{ id: 'progress-trends', type: 'progress', title: 'Progress Trends (Last 3 Months)' }}
+                />;
               })()}
             </CardContent>
           </Card>
@@ -387,7 +392,12 @@ export const ProgressDashboard = ({ student, goals }: ProgressDashboardProps) =>
                     },
                   ],
                 };
-                return <EChartContainer option={option} height={300} aria-label="Goal completion by category bar chart" />;
+                  return <EChartContainer 
+                    option={option} 
+                    height={300} 
+                    aria-label="Goal completion by category bar chart"
+                    exportRegistration={{ id: 'goal-completion-by-category', type: 'progress', title: 'Goal Completion by Category' }}
+                  />;
               })()}
             </CardContent>
           </Card>
@@ -423,7 +433,12 @@ export const ProgressDashboard = ({ student, goals }: ProgressDashboardProps) =>
                       },
                     ],
                   };
-                  return <EChartContainer option={option} height={250} aria-label="Progress by category donut chart" />;
+                  return <EChartContainer 
+                    option={option} 
+                    height={250} 
+                    aria-label="Progress by category donut chart"
+                    exportRegistration={{ id: 'progress-by-category', type: 'progress', title: 'Progress by Category' }}
+                  />;
                 })()}
               </CardContent>
             </Card>

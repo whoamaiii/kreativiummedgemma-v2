@@ -7,6 +7,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/h
 import { useAnalyticsWorker } from '@/hooks/useAnalyticsWorker';
 import { TrackingEntry, EmotionEntry, SensoryEntry } from '@/types/student';
 import { PatternResult } from '@/lib/patternAnalysis';
+import { generateInsightsStructured } from '@/lib/insights';
 import { stableKeyFromPattern } from '@/lib/key';
 import { useTranslation } from '@/hooks/useTranslation';
 import { hashOfString } from '@/lib/key';
@@ -50,7 +51,15 @@ export const PatternsPanel = memo(function PatternsPanel({ filteredData }: Patte
   }, [filteredData, runAnalysis]);
 
   const patterns: PatternResult[] = results?.patterns || [];
-  const insights: string[] = results?.insights || [];
+  const structured = generateInsightsStructured(
+    {
+      patterns: results?.patterns || [],
+      correlations: (results as any)?.correlations || [],
+      predictiveInsights: (results as any)?.predictiveInsights || [],
+    },
+    filteredData.emotions,
+    filteredData.entries
+  );
 
   return (
     <>
@@ -157,14 +166,14 @@ export const PatternsPanel = memo(function PatternsPanel({ filteredData }: Patte
         </CardHeader>
         <CardContent>
           {isAnalyzing && <p className="text-muted-foreground">{String(tAnalytics('states.analyzing'))}</p>}
-          {!isAnalyzing && insights.length === 0 && (
+          {!isAnalyzing && structured.length === 0 && (
             <p className="text-muted-foreground">{String(tAnalytics('insights.noPatterns'))}</p>
           )}
-          {!isAnalyzing && insights.length > 0 && (
+          {!isAnalyzing && structured.length > 0 && (
             <div className="space-y-3">
-              {insights.map((insight) => (
-                <div key={insight} className="p-3 bg-muted/50 rounded-lg">
-                  <p className="text-sm text-foreground">{insight}</p>
+              {structured.map((msg, idx) => (
+                <div key={idx} className="p-3 bg-muted/50 rounded-lg">
+                  <p className="text-sm text-foreground">{String(tAnalytics(msg.key.replace(/^analytics\./, ''), msg.params as any))}</p>
                 </div>
               ))}
             </div>

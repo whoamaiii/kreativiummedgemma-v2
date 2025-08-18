@@ -1,4 +1,10 @@
 {
+  "worker": {
+    "fallbackTitle": "Analytics running in fallback mode",
+    "fallbackDescription": "Background worker failed. Using safe fallback to keep the UI responsive.",
+    "disabledTitle": "Analytics worker disabled",
+    "disabledDescription": "Running analytics without a background worker (debug mode)."
+  },
   "dashboard": {
     "title": "Analytics Dashboard - {{name}}",
     "emotionTrends": "Emotion Trends",
@@ -85,8 +91,125 @@
       "csv": "CSV data exported successfully",
       "json": "JSON data exported successfully"
     },
-    "failure": "Failed to export analytics data"
+    "failure": "Failed to export analytics data",
+    "chartTitle": "Emotion & Sensory Trends",
+    "noCharts": "No charts available to export"
   },
+  "settings": {
+    "title": "Analytics Settings",
+    "subtitle": "Configure analysis behavior and performance",
+    "tabs": {
+      "thresholds": "Thresholds",
+      "sensitivity": "Sensitivity",
+      "timeWindows": "Time Windows",
+      "mlModels": "ML Models",
+      "advanced": "Advanced"
+    },
+    "thresholds": {
+      "title": "Pattern Analysis Thresholds",
+      "description": "Adjust minimum requirements and thresholds for pattern detection",
+      "minDataPoints": "Minimum Data Points",
+      "correlationThreshold": "Correlation Threshold",
+      "concernFrequency": "Concern Frequency Threshold",
+      "enhancedTitle": "Enhanced Analysis Thresholds",
+      "enhancedDescription": "Configure advanced pattern detection and anomaly thresholds",
+      "anomalySensitivity": "Anomaly Detection Sensitivity",
+      "minSampleSize": "Minimum Sample Size"
+    },
+    "sensitivity": {
+      "title": "Alert Sensitivity",
+      "description": "Control how sensitive the system is to potential issues",
+      "low": { "title": "Low Sensitivity", "desc": "Only alert for significant patterns with high confidence" },
+      "medium": { "title": "Medium Sensitivity", "desc": "Balanced approach to pattern detection and alerts" },
+      "high": { "title": "High Sensitivity", "desc": "Alert for subtle patterns and potential concerns early" },
+      "currentMultipliers": "Current Multipliers",
+      "emotion": "Emotion",
+      "frequency": "Frequency",
+      "anomaly": "Anomaly"
+    },
+    "timewindows": {
+      "title": "Analysis Time Windows",
+      "description": "Configure the time periods used for different analyses",
+      "default": "Default Analysis Period",
+      "recent": "Recent Data Window",
+      "longTerm": "Long-term Analysis Window"
+    },
+    "ml": {
+      "enable": "Enable ML",
+      "loading": "Loading ML models...",
+      "trained": "Trained",
+      "notTrained": "Not Trained",
+      "version": "Version",
+      "lastTrained": "Last Trained",
+      "accuracy": "Accuracy",
+      "dataPoints": "Data Points",
+      "training": "Training...",
+      "retrain": "Retrain",
+      "deleting": "Deleting...",
+      "delete": "Delete",
+      "train": "Train Model",
+      "about": {
+        "title": "About Machine Learning",
+        "intro": "ML models enhance predictions by learning from historical patterns. They require:",
+        "emotionReq": "Emotion prediction: 7+ days of data",
+        "sensoryReq": "Sensory response: 10+ tracking sessions",
+        "baselineReq": "Baseline clustering: 10+ tracking entries",
+        "localTraining": "Models are trained locally in your browser and improve over time as more data is collected."
+      },
+      "trainingBackground": "Training {{model}} model in background...",
+      "modelUpdated": "{{model}} model has been updated",
+      "modelDeleted": "{{model}} model has been removed",
+      "deleteFailed": "Failed to delete model"
+    },
+    "advanced": {
+      "cache": {
+        "title": "Cache Settings",
+        "description": "Configure performance optimization settings",
+        "duration": "Cache Duration",
+        "invalidateOnChange": "Invalidate cache on config change"
+      },
+      "ie": {
+        "title": "Import/Export Configuration",
+        "description": "Save and share your configuration settings",
+        "export": "Export Config",
+        "import": "Import Config",
+        "importAria": "Import configuration file"
+      }
+    },
+    "actions": {
+      "reset": "Reset to Defaults",
+      "unsaved": "Unsaved changes",
+      "cancel": "Cancel",
+      "save": "Save Changes"
+    },
+    "common": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "toasts": {
+      "loadModelsFailed": "Failed to load ML models: Could not retrieve model status. Some features may be unavailable.",
+      "presetApplied": "Applied {{name}} configuration",
+      "configUpdated": "Analytics configuration has been updated",
+      "resetToDefaults": "Settings have been reset to defaults",
+      "exported": "Configuration saved to analytics-config.json",
+      "imported": "Successfully imported configuration",
+      "invalidConfig": "Invalid configuration file",
+      "importFailed": "Failed to read configuration file"
+    },
+    "tooltips": {
+      "minDataPoints": "Minimum number of data points required for analysis",
+      "correlationThreshold": "Minimum correlation coefficient to consider significant",
+      "concernFrequency": "Percentage of sessions that must show concerning patterns",
+      "anomalySensitivity": "Number of standard deviations to trigger anomaly alert",
+      "minSampleSize": "Minimum data points for statistical analysis",
+      "defaultAnalysis": "Standard time window for pattern analysis",
+      "recentData": "Time window for recent activity alerts",
+      "longTerm": "Extended time window for trend analysis",
+      "cacheTTL": "How long to keep cached analytics results",
+      "invalidateOnChange": "Clear cached results when settings change"
+    }
+  },
+
   "dev": {
     "seed": {
       "button": "Seed Demo Data",
@@ -94,6 +217,47 @@
       "aria": "Seed demo data for testing",
       "success": "Seeded {{students}} students with {{entries}} entries",
       "failure": "Failed to seed demo data"
+    },
+    "modelDiagnostics": {
+      "title": "Model diagnostics",
+      "a11y": {
+        "skipToContent": "Skip to diagnostics content"
+      },
+      "formDescription": "Run a lightweight time-series cross-validation to validate folding parameters. No training occurs.",
+      "filters": {
+        "modelType": "Model type",
+        "all": "All"
+      },
+      "cv": {
+        "strategy": "Strategy",
+        "rolling": "Rolling",
+        "expanding": "Expanding",
+        "windowSize": "Window size",
+        "horizon": "Horizon",
+        "folds": "Folds"
+      },
+      "runTsCv": "Run time-series CV",
+      "clearHistory": "Clear history",
+      "running": "Running...",
+      "latestRuns": "Latest runs",
+      "list": {
+        "strategy": "Strategy",
+        "windowSize": "Window",
+        "horizon": "Horizon",
+        "folds": "Folds"
+      },
+      "errors": {
+        "windowSize": "Window size must be a positive number",
+        "horizon": "Horizon must be a positive number",
+        "folds": "Folds must be a positive integer"
+      },
+      "announced": {
+        "loaded": "Loaded {{count}} evaluation runs",
+        "formInvalid": "Please fix the form errors before running cross-validation.",
+        "cvComplete": "Cross-validation complete with {{folds}} folds",
+        "cvFailed": "Failed to run cross-validation",
+        "cleared": "History cleared"
+      }
     }
   },
   "reports": {
@@ -108,6 +272,22 @@
       "json": "JSON"
     }
   },
+  "alerts": {
+    "none": "No alerts",
+    "noneUnresolved": "No unresolved alerts",
+    "resolveTitle": "Resolve Alert",
+    "details": "Details",
+    "resolutionNotes": "Resolution notes",
+    "resolutionNotesPlaceholder": "Describe actions taken or observations...",
+    "resolvedBy": "Resolved by",
+    "recommendedActions": "Recommended actions",
+    "markedViewed": "Alert marked as viewed",
+    "resolveSuccess": "Alert resolved successfully",
+    "resolveFailure": "Failed to resolve alert. Please try again.",
+    "resolvedLabel": "Resolved",
+    "dataPoints": "data points"
+  },
+
   "insights": {
     "title": "Insights",
     "patterns": "Patterns Detected",
@@ -222,7 +402,7 @@
     }
   },
   "interface": {
-    "advancedSearchFiltering": "Advanced Search & Filtering",
+    "advancedSearchFiltering": "Advanced Search \u0026 Filtering",
     "totalSessions": "Total Sessions",
     "periodComparison": "Period Comparison",
     "previous": "Previous",

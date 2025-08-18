@@ -77,6 +77,31 @@ const workerCache = {
     }
     return count;
   },
+
+  // Utilities required by CachedPatternAnalysisEngine
+  getDataFingerprint(data: unknown): string {
+    const stringify = (obj: unknown): string => {
+      if (obj === null || obj === undefined) return 'null';
+      if (typeof obj !== 'object') return String(obj);
+      if (Array.isArray(obj)) return `[${obj.map(stringify).join(',')}]`;
+      const rec = obj as Record<string, unknown>;
+      const keys = Object.keys(rec).sort();
+      return `{${keys.map(k => `${k}:${stringify(rec[k])}`).join(',')}}`;
+    };
+    const str = stringify(data);
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const ch = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + ch;
+      hash = hash & hash;
+    }
+    return Math.abs(hash).toString(36);
+  },
+
+  createKey(prefix: string, params: Record<string, unknown>): string {
+    const sorted = Object.keys(params).sort().map(k => `${k}:${JSON.stringify((params as any)[k])}`).join(':');
+    return `${prefix}:${sorted}`;
+  },
   
 };
 
@@ -404,5 +429,33 @@ if (useSummaryFacade) {
 
 // Attach the handler to self.onmessage for the worker context
 if (typeof self !== 'undefined' && 'onmessage' in self) {
+  // Global safety nets to surface runtime failures without crashing silently
+  try {
+    self.addEventListener('error', (e: ErrorEvent) => {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (postMessage as any)({ type: 'error', error: e.message, cacheKey: undefined, payload: {
+          patterns: [], correlations: [], predictiveInsights: [], anomalies: [], insights: ['Worker runtime error encountered.'], updatedCharts: ['insightList']
+        }});
+      } catch { /* noop */ }
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    self.addEventListener('unhandledrejection', (e: any) => {
+      const msg = typeof e?.reason === 'string' ? e.reason : (e?.reason?.message ?? 'Unhandled rejection in worker');
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (postMessage as any)({ type: 'error', error: String(msg), cacheKey: undefined, payload: {
+          patterns: [], correlations: [], predictiveInsights: [], anomalies: [], insights: ['Worker unhandled rejection.'], updatedCharts: ['insightList']
+        }});
+      } catch { /* noop */ }
+    });
+  } catch { /* noop */ }
+
+  // Signal readiness so main thread can flush any queued tasks
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (postMessage as any)({ type: 'progress', progress: { stage: 'ready', percent: 1 } });
+  } catch { /* noop */ }
+
   self.onmessage = handleMessage;
 }

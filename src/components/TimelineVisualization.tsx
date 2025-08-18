@@ -542,8 +542,10 @@ export const TimelineVisualization: React.FC<TimelineVisualizationProps> = ({
               </Badge>
             )}
             <Button
-              size="sm"
-              variant="outline"
+              size="icon"
+              variant="ghost"
+              aria-label="Reset view"
+              title="Reset view"
               onClick={() => {
                 setZoomLevel(1);
                 setPanOffset(0);
@@ -562,8 +564,10 @@ export const TimelineVisualization: React.FC<TimelineVisualizationProps> = ({
             {/* Zoom controls */}
             <div className="flex items-center gap-2">
               <Button
-                size="sm"
-                variant="outline"
+                size="icon"
+                variant="ghost"
+                aria-label="Zoom out"
+                title="Zoom out"
                 onClick={() => handleZoom(-0.5)}
                 disabled={zoomLevel <= 0.5}
               >
@@ -573,8 +577,10 @@ export const TimelineVisualization: React.FC<TimelineVisualizationProps> = ({
                 {Math.round(zoomLevel * 100)}%
               </span>
               <Button
-                size="sm"
-                variant="outline"
+                size="icon"
+                variant="ghost"
+                aria-label="Zoom in"
+                title="Zoom in"
                 onClick={() => handleZoom(0.5)}
                 disabled={zoomLevel >= 10}
               >
@@ -585,15 +591,19 @@ export const TimelineVisualization: React.FC<TimelineVisualizationProps> = ({
             {/* Pan controls */}
             <div className="flex items-center gap-2">
               <Button
-                size="sm"
-                variant="outline"
+                size="icon"
+                variant="ghost"
+                aria-label="Pan left"
+                title="Pan left"
                 onClick={() => handlePan(50)}
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <Button
-                size="sm"
-                variant="outline"
+                size="icon"
+                variant="ghost"
+                aria-label="Pan right"
+                title="Pan right"
                 onClick={() => handlePan(-50)}
               >
                 <ChevronRight className="h-4 w-4" />
@@ -603,8 +613,10 @@ export const TimelineVisualization: React.FC<TimelineVisualizationProps> = ({
             {/* Playback controls */}
             <div className="flex items-center gap-2">
               <Button
-                size="sm"
-                variant={isPlaying ? 'default' : 'outline'}
+                size="icon"
+                variant={isPlaying ? 'default' : 'ghost'}
+                aria-label={isPlaying ? 'Pause playback' : 'Start playback'}
+                title={isPlaying ? 'Pause playback' : 'Start playback'}
                 onClick={() => setIsPlaying(!isPlaying)}
               >
                 {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}

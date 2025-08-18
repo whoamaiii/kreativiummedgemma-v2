@@ -238,7 +238,7 @@ export const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           </CardTitle>
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <CollapsibleTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button variant="ghost" size="sm">
                 <Filter className="h-4 w-4 mr-2" />
                 {String(tCommon('interface.filters'))}
                 {activeFiltersCount > 0 && (

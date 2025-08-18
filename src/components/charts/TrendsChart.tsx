@@ -71,7 +71,11 @@ export const TrendsChart: React.FC<TrendsChartProps> = ({ chartData, selectedCha
         break;
     }
 
-    return <EChartContainer option={option} height={400} />;
+    return <EChartContainer 
+      option={option} 
+      height={400}
+      exportRegistration={{ id: 'trends-main', type: 'trends', title: 'Emotion & Sensory Trends' }}
+    />;
 
   } catch (error) {
     logger.error("TrendsChart.renderChart failed", { error });

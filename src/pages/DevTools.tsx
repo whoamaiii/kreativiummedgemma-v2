@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { TestingToolsSection } from '@/components/TestingToolsSection';
 import { IS_PROD, POC_MODE } from '@/lib/env';
-import { Database, Wrench } from 'lucide-react';
+import { Database, Wrench, Stethoscope } from 'lucide-react';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useTranslation } from '@/hooks/useTranslation';
 
 const StorageManager = lazy(() => import('@/components/StorageManager').then(m => ({ default: m.StorageManager })));
+const ModelDiagnosticsPanel = lazy(() => import('@/components/dev/ModelDiagnosticsPanel').then(m => ({ default: m.ModelDiagnosticsPanel })));
 
 /**
  * Developer Tools page - centralizes non user-facing utilities
@@ -76,6 +77,37 @@ const DevTools = (): JSX.Element => {
                 </DialogHeader>
                 <Suspense fallback={<div className="p-4 text-sm text-muted-foreground">Loading…</div>}>
                   <StorageManager />
+                </Suspense>
+              </DialogContent>
+            </Dialog>
+          </CardContent>
+        </Card>
+
+        {/* Diagnostics Panel (dev-only), lazy loaded */}
+        <Card className="bg-gradient-card border-0 shadow-soft">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Stethoscope className="h-5 w-5 text-primary" />
+              Model Diagnostics
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">
+              Run time-series cross-validation and inspect recent evaluation runs. Loaded on demand to keep main bundle small.
+            </p>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full">
+                  <Stethoscope className="h-4 w-4 mr-2" />
+                  Open Diagnostics Panel
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Model Diagnostics</DialogTitle>
+                </DialogHeader>
+                <Suspense fallback={<div className="p-4 text-sm text-muted-foreground">Loading diagnostics…</div>}>
+                  <ModelDiagnosticsPanel />
                 </Suspense>
               </DialogContent>
             </Dialog>

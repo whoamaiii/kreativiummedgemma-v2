@@ -740,8 +740,10 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
                           </Button>
                           {onDeleteFilter && (
                             <Button
-                              size="sm"
-                              variant="outline"
+                              size="icon"
+                              variant="ghost"
+                              aria-label="Delete saved filter"
+                              title="Delete saved filter"
                               onClick={() => onDeleteFilter(filter.id)}
                             >
                               <Trash2 className="h-4 w-4" />

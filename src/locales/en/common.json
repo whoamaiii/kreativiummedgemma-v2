@@ -20,6 +20,96 @@
     "reload": "Reload",
     "home": "Home"
   },
+  "reports": {
+"builder": {
+      "ui": { "headerTitle": "Report builder", "headerDesc": "Generate tailored reports." },
+      "form": {
+        "reportTemplate": "Report Template",
+        "reportTitle": "Report Title",
+        "reportingTeacher": "Reporting Teacher",
+        "reportingTeacherPlaceholder": "Teacher name",
+        "reportPeriod": "Report Period",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "reportSections": "Report Sections",
+        "includeCharts": "Include charts and visualizations",
+        "includeRawData": "Include raw data tables",
+        "additionalNotes": "Additional Notes",
+        "additionalNotesPlaceholder": "Add any additional observations or notes...",
+        "exportCsv": "Export CSV",
+        "generatePdf": "Generate PDF"
+      },
+      "sections": {
+        "student-info": "Student Information",
+        "goal-progress": "Goal Progress",
+        "behavioral-patterns": "Behavioral Patterns",
+        "sensory-patterns": "Sensory Patterns",
+        "environmental-factors": "Environmental Factors",
+        "achievements": "Achievements",
+        "challenges": "Challenges",
+        "recommendations": "Recommendations",
+        "next-steps": "Next Steps",
+        "interventions": "Interventions"
+      },
+      "errors": { "invalidDateRange": "Invalid date range selected", "startBeforeEnd": "Start date must be before end date" },
+      "toast": { "reportGenerated": "Report generated successfully!", "csvExported": "CSV exported successfully!" },
+      "title": "Report builder",
+      "description": "Select a student and template to generate a tailored report.",
+      "configure": "Configuration",
+      "configureDesc": "Choose the student and verify the selected template.",
+      "student": "Student",
+      "selectStudentPlaceholder": "Select a student",
+      "template": "Template",
+      "previewTitle": "Preview for {{name}}",
+      "previewDesc": "Adjust options in the dialog and export when ready."
+    },
+    "hubTitle": "Reports & Documentation",
+    "hubDescription": "Generate comprehensive reports for IEP meetings and progress tracking.",
+    "goToExports": "Open data export tools",
+    "templatesHeading": "Report templates",
+    "sectionsCount": "{{count}} sections",
+    "createReport": "Create report",
+    "templates": {
+      "progress-summary": { "name": "Progress Summary Report", "description": "Comprehensive overview of student progress across all goals" },
+      "iep-meeting": { "name": "IEP Meeting Report", "description": "Detailed report for IEP team meetings" },
+      "behavioral-analysis": { "name": "Behavioral Analysis Report", "description": "Focus on emotional and sensory patterns" },
+      "quarterly-review": { "name": "Quarterly Review", "description": "Three-month progress review" }
+    },
+    "analyticsPdf": {
+      "button": "Export analytics PDF",
+      "title": "Analytics PDF",
+      "student": "Student",
+      "selectStudent": "Select a student",
+      "chartHint": "Preview: activity per day (inline). This snapshot will be embedded in the PDF.",
+      "chartTitle": "Activity per day",
+      "export": "Export PDF",
+      "helper": "Opens Analytics with this student and date range to export a PDF with charts."
+    },
+    "exportFilters": {
+      "dateRange": "Date range",
+      "start": "Start",
+      "end": "End",
+      "anonymize": "Anonymize personal identifiers",
+      "backupUseFilters": "Apply date range to backup as well",
+      "presets": {
+        "all": "All time",
+        "last7": "Last 7 days",
+        "last30": "Last 30 days",
+        "last90": "Last 90 days",
+        "qtd": "Quarter to date",
+        "custom": "Custom"
+      },
+      "summary": {
+        "errors": { "invalidRange": "Please select a valid start and end date." },
+        "progress": "Preparing export: {{percent}}%",
+        "withRangeAnon": "Exporting data from {{start}} to {{end}} (anonymized)",
+        "withRange": "Exporting data from {{start}} to {{end}}",
+        "allAnon": "Exporting all data (anonymized)",
+        "all": "Exporting all data"
+      }
+    }
+  },
+
   "navigation": {
     "dashboard": "Dashboard",
     "students": "Students",

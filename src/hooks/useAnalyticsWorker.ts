@@ -15,9 +15,147 @@ import { analyticsConfig } from '@/lib/analyticsConfig';
 import { getValidatedConfig, validateAnalyticsRuntimeConfig } from '@/lib/analyticsConfigValidation';
 import { buildInsightsCacheKey, buildInsightsTask } from '@/lib/analyticsManager';
 import { logger } from '@/lib/logger';
+import { toast } from '@/hooks/use-toast';
 import { diagnostics } from '@/lib/diagnostics';
 import { analyticsWorkerFallback } from '@/lib/analyticsWorkerFallback';
-import { POC_MODE } from '@/lib/env';
+import { POC_MODE, DISABLE_ANALYTICS_WORKER } from '@/lib/env';
+
+// -----------------------------------------------------------------------------
+// Module-level singleton to prevent duplicate workers across multiple consumers
+// -----------------------------------------------------------------------------
+interface WorkerSingleton {
+  worker: Worker | null;
+  refs: number;
+  ready: boolean;
+  circuitUntil: number; // epoch ms; when > now, do not attempt worker usage
+}
+
+const singleton: WorkerSingleton = {
+  worker: null,
+  refs: 0,
+  ready: false,
+  circuitUntil: 0,
+};
+
+function nowMs(): number { return Date.now(); }
+function isCircuitOpen(): boolean { return nowMs() < singleton.circuitUntil; }
+function openCircuit(ms: number): void { singleton.circuitUntil = nowMs() + Math.max(0, ms); }
+
+// Simple once-per-key dedupe for user-facing notifications
+const onceWindow = new Map<string, number>();
+function doOnce(key: string, ttlMs: number, fn: () => void) {
+  const now = nowMs();
+  const last = onceWindow.get(key) ?? 0;
+  if (now - last > ttlMs) {
+    onceWindow.set(key, now);
+    try { fn(); } catch { /* noop */ }
+  }
+}
+
+// Queue tasks until worker signals ready
+const pendingTasks: MessageEvent['data'][] = [];
+// Per-hook cleanup stack (listeners, timers)
+const cleanupFns: Array<() => void> = [];
+
+function flushQueuedTasks(): void {
+  if (!singleton.worker || !singleton.ready) return;
+  while (pendingTasks.length) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (singleton.worker as any).postMessage(pendingTasks.shift());
+    } catch (e) {
+      // If posting fails, stop flushing to avoid spin
+      break;
+    }
+  }
+}
+
+async function ensureWorkerInitialized(): Promise<Worker | null> {
+  if (POC_MODE || DISABLE_ANALYTICS_WORKER) return null;
+  if (singleton.worker) return singleton.worker;
+  if (isCircuitOpen()) return null;
+
+  try {
+    const mod = await import('@/workers/analytics.worker?worker');
+    const WorkerCtor = (mod as unknown as { default: { new(): Worker } }).default;
+    const worker = new WorkerCtor();
+
+    // Attach handlers once at creation time
+    worker.onmessage = (event: MessageEvent<AnalyticsWorkerMessage>) => {
+      // Any message implies liveness; mark ready when first progress received or on any first message
+      if (!singleton.ready) {
+        const msg = event.data as AnalyticsWorkerMessage | undefined;
+        if (!msg || msg.type === 'progress' || msg.type === 'partial' || msg.type === 'complete' || msg.type === 'error') {
+          singleton.ready = true;
+          flushQueuedTasks();
+        }
+      }
+    };
+
+    worker.onerror = (error: ErrorEvent) => {
+      logger.error('[useAnalyticsWorker] Worker runtime error, switching to fallback', error);
+      try {
+        worker.terminate();
+      } catch { /* noop */ }
+      singleton.worker = null;
+      singleton.ready = false;
+      // Open circuit for 60s to avoid thrash
+      openCircuit(60_000);
+      // One-time user-facing toast per cooldown window (localized elsewhere if needed)
+      doOnce('analytics_worker_failure', 60_000, () => {
+        // i18n keys under analytics:worker
+        try {
+          // Dynamically import to avoid pulling react-i18next into this hook directly
+          import('@/hooks/useTranslation').then(({ useTranslation }) => {
+            const { t } = useTranslation('analytics');
+            toast({
+              title: t('worker.fallbackTitle'),
+              description: t('worker.fallbackDescription'),
+            });
+          }).catch(() => {
+            // Fallback to English strings if i18n not ready here
+            toast({
+              title: 'Analytics running in fallback mode',
+              description: 'Background worker failed. Using safe fallback to keep the UI responsive.',
+            });
+          });
+        } catch {
+          toast({
+            title: 'Analytics running in fallback mode',
+            description: 'Background worker failed. Using safe fallback to keep the UI responsive.',
+          });
+        }
+      });
+    };
+
+    singleton.worker = worker;
+    singleton.ready = false; // will flip true on first onmessage
+    logger.info('[useAnalyticsWorker] Analytics worker initialized successfully');
+    return worker;
+  } catch (error) {
+    logger.error('[useAnalyticsWorker] Failed to initialize worker', error as Error);
+    singleton.worker = null;
+    // Shorter circuit on init failure
+    openCircuit(15_000);
+    return null;
+  }
+}
+
+function retainWorker(): void {
+  singleton.refs += 1;
+}
+
+function releaseWorker(): void {
+  singleton.refs = Math.max(0, singleton.refs - 1);
+  if (singleton.refs === 0 && singleton.worker) {
+    try {
+      logger.debug('[useAnalyticsWorker] Terminating analytics worker');
+      singleton.worker.terminate();
+    } catch { /* noop */ }
+    singleton.worker = null;
+    singleton.ready = false;
+  }
+}
 
 // Define CacheStats type if not imported from usePerformanceCache
 interface CacheStats {
@@ -85,6 +223,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const idleCallbackRef = useRef<number | null>(null);
+  const [isWorkerReady, setIsWorkerReady] = useState<boolean>(false);
 
   // Initialize performance cache with appropriate settings
   const cache = usePerformanceCache<AnalyticsResults>({
@@ -117,173 +256,120 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
 
   useEffect(() => {
     let isMounted = true; // Race condition guard
-    
-    // Initialize the analytics web worker
-    const initializeWorker = async () => {
-      try {
-        if (POC_MODE) {
-          // In POC mode, skip worker to reduce overhead and use fallback path
-          if (isMounted) {
-            workerRef.current = null;
-          }
-          return;
-        }
-        
-        // Dynamically import the worker only when not in POC mode
-        const mod = await import('@/workers/analytics.worker?worker');
-        if (!isMounted) return; // Check if component is still mounted
-        
-        const WorkerCtor = (mod as any).default as { new(): Worker };
-        const worker = new WorkerCtor();
-        
-        if (!isMounted) {
-          // If component unmounted during initialization, clean up
-          worker.terminate();
-          return;
-        }
-        
-        // Set up message handler for receiving results from the worker
-        worker.onmessage = (event: MessageEvent<AnalyticsWorkerMessage>) => {
-          if (!isMounted) return; // Ignore messages if component unmounted
-          
-          const { data: msg } = event;
 
-          // Any message resets watchdog (heartbeat)
-          if (watchdogRef.current) {
-            clearTimeout(watchdogRef.current);
-            watchdogRef.current = null;
-          }
-
-          if (msg.type === 'progress') {
-            // Re-arm watchdog on heartbeat, keep analyzing true
-            setIsAnalyzing(true);
-            const timeoutMs = Math.max(15000, 3000);
-            watchdogRef.current = setTimeout(() => {
-              if (!isMounted) return;
-              diagnostics.logWorkerTimeout('analytics', timeoutMs);
-              setError('Worker timeout during progress.');
-              setIsAnalyzing(false);
-            }, timeoutMs);
-            return;
-          }
-
-          if (msg.type === 'error') {
-            logger.error('[useAnalyticsWorker] Worker error', msg.error);
-            setError(msg.error || 'Unknown worker error');
-            setIsAnalyzing(false);
-            return;
-          }
-
-          if (msg.type === 'partial' && msg.payload) {
-            // Merge partials into current results to enable incremental UI updates
-            setResults(prev => {
-              const base: AnalyticsResults = prev || {
-                patterns: [],
-                correlations: [],
-                environmentalCorrelations: [],
-                predictiveInsights: [],
-                anomalies: [],
-                insights: [],
-                cacheKey: msg.cacheKey,
-              };
-              const merged: AnalyticsResults = {
-                ...base,
-                ...msg.payload,
-                environmentalCorrelations: msg.payload.environmentalCorrelations || base.environmentalCorrelations || [],
-                cacheKey: msg.cacheKey || base.cacheKey,
-              };
-              return merged;
-            });
-            setError(null);
-            // Re-arm watchdog for next step
-            const timeoutMs = Math.max(15000, 3000);
-            watchdogRef.current = setTimeout(() => {
-              if (!isMounted) return;
-              diagnostics.logWorkerTimeout('analytics', timeoutMs);
-              setError('Worker timeout after partial update.');
-              setIsAnalyzing(false);
-            }, timeoutMs);
-            return;
-          }
-
-          if (msg.type === 'complete' && msg.payload) {
-            const resultsWithDefaults: AnalyticsResults = {
-              ...msg.payload,
-              environmentalCorrelations: msg.payload.environmentalCorrelations || [],
-            } as AnalyticsResults;
-
-            const tags = extractTagsFn(resultsWithDefaults);
-            if (resultsWithDefaults.cacheKey) {
-              cache.set(resultsWithDefaults.cacheKey, resultsWithDefaults, tags);
+    const init = async () => {
+      if (POC_MODE || DISABLE_ANALYTICS_WORKER) {
+        workerRef.current = null;
+        setIsWorkerReady(false);
+        // Inform user once per minute if worker is disabled via flag
+        if (DISABLE_ANALYTICS_WORKER) {
+          doOnce('analytics_worker_disabled', 60_000, () => {
+            try {
+              import('@/hooks/useTranslation').then(({ useTranslation }) => {
+                const { t } = useTranslation('analytics');
+                toast({
+                  title: t('worker.disabledTitle'),
+                  description: t('worker.disabledDescription'),
+                });
+              }).catch(() => {
+                toast({
+                  title: 'Analytics worker disabled',
+                  description: 'Running analytics without a background worker (debug mode).',
+                });
+              });
+            } catch {
+              toast({
+                title: 'Analytics worker disabled',
+                description: 'Running analytics without a background worker (debug mode).',
+              });
             }
+          });
+        }
+        return;
+      }
+      if (isCircuitOpen()) {
+        workerRef.current = null;
+        setIsWorkerReady(false);
+        return;
+      }
+      retainWorker();
+      const worker = await ensureWorkerInitialized();
+      if (!isMounted) {
+        releaseWorker();
+        return;
+      }
+      workerRef.current = worker;
+      setIsWorkerReady(!!(singleton.ready && worker));
 
-            setResults(resultsWithDefaults);
-            setError(null);
-            setIsAnalyzing(false);
-            logger.debug('[useAnalyticsWorker] Received complete results from worker', { 
-              cacheKey: resultsWithDefaults.cacheKey,
-              patternsCount: resultsWithDefaults.patterns?.length || 0,
-              insightsCount: resultsWithDefaults.insights?.length || 0,
-              chartsUpdated: msg.chartsUpdated,
-            });
-            return;
+      // Attach per-hook message listener to consume results
+      if (worker) {
+        const onMessage = (event: MessageEvent<AnalyticsWorkerMessage>) => {
+          const data = event.data as AnalyticsWorkerMessage | undefined;
+          if (!data) return;
+          // Any inbound message means the worker is alive
+          if (!singleton.ready) {
+            singleton.ready = true;
+            flushQueuedTasks();
           }
-        };
 
-        // Set up error handler for worker failures
-        worker.onerror = async (error: ErrorEvent) => {
-          if (!isMounted) return;
-          
-          logger.error('[useAnalyticsWorker] Worker runtime error, switching to fallback', error);
-          
-          // Clear watchdog timer
+          // Reset watchdog on any message
           if (watchdogRef.current) {
             clearTimeout(watchdogRef.current);
             watchdogRef.current = null;
           }
-          
-          // Terminate the failed worker and set to null to trigger fallback
-          if (workerRef.current) {
-            workerRef.current.terminate();
-            workerRef.current = null;
+
+          // Handle message types
+          try {
+            switch (data.type) {
+              case 'partial':
+                // For now, do not merge partials into results to avoid flicker; could add later
+                break;
+              case 'complete':
+                setResults(data.payload as unknown as AnalyticsResults);
+                setIsAnalyzing(false);
+                setError(null);
+                break;
+              case 'error':
+                setIsAnalyzing(false);
+                setError(typeof (data as any).error === 'string' ? (data as any).error : 'Analytics worker error');
+                // Provide minimal safe results to prevent UI crashes per rules
+                setResults((prev) => prev ?? ({
+                  patterns: [], correlations: [], environmentalCorrelations: [], predictiveInsights: [], anomalies: [], insights: ['Analytics temporarily unavailable.']
+                } as AnalyticsResults));
+                break;
+              case 'progress':
+                // No-op: used for readiness/heartbeat
+                break;
+              default:
+                break;
+            }
+          } catch (e) {
+            logger.error('[useAnalyticsWorker] Failed handling worker message', e as Error);
           }
-          
-          // If we have pending analysis, process with fallback
-          // This ensures we don't lose the current analysis request
-          setError('Analytics worker encountered an error. Switching to fallback mode.');
-          
-          // Note: The next call to runAnalysis will automatically use the fallback
-          // since workerRef.current is now null
         };
-        
-        // Only assign if still mounted
-        if (isMounted) {
-          workerRef.current = worker;
-          logger.info('[useAnalyticsWorker] Analytics worker initialized successfully');
-        } else {
-          // Clean up if component unmounted during initialization
-          worker.terminate();
-        }
-      } catch (error) {
-        // If worker initialization fails, log and use fallback mode
-        if (isMounted) {
-          logger.error('[useAnalyticsWorker] Failed to initialize worker', error);
-          workerRef.current = null;
-        }
+
+        const onMessageError = (evt: MessageEvent) => {
+          logger.error('[useAnalyticsWorker] messageerror from analytics worker', evt);
+        };
+
+        worker.addEventListener('message', onMessage as EventListener);
+        worker.addEventListener('messageerror', onMessageError as EventListener);
+
+        // Cleanup these listeners if this hook unmounts while worker persists
+        cleanupFns.push(() => {
+          try {
+            worker.removeEventListener('message', onMessage as EventListener);
+            worker.removeEventListener('messageerror', onMessageError as EventListener);
+          } catch { /* noop */ }
+        });
       }
     };
-    
-    initializeWorker();
 
-    // Cleanup function to properly terminate worker on unmount
+    init();
+
     return () => {
       isMounted = false;
-      
-      if (workerRef.current) {
-        logger.debug('[useAnalyticsWorker] Terminating analytics worker');
-        workerRef.current.terminate();
-        workerRef.current = null;
-      }
+      // Local cleanup only; singleton handles actual termination when refs reach 0
       if (idleCallbackRef.current) {
         cancelIdleCallback(idleCallbackRef.current);
         idleCallbackRef.current = null;
@@ -292,8 +378,15 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
         clearTimeout(watchdogRef.current);
         watchdogRef.current = null;
       }
+      // Run any per-hook cleanup fns (like removing event listeners)
+      while (cleanupFns.length) {
+        try { (cleanupFns.pop() as () => void)(); } catch { /* noop */ }
+      }
+      releaseWorker();
     };
-  }, [cache, extractTagsFn]);
+  // Stable on mount; do not re-init on cache identity churn
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /**
    * Creates a cache key based on the analytics data using centralized helper
@@ -338,7 +431,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
     }
 
     // If no worker available, use fallback
-    if (!workerRef.current) {
+    if (!workerRef.current || DISABLE_ANALYTICS_WORKER) {
       // Only log fallback mode once per session
       if (!cache.get('_logged_fallback_mode')) {
         logger.debug('[useAnalyticsWorker] No worker available, using fallback');
@@ -466,7 +559,23 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
         });
         cache.set(workerLogKey, true, ['logging'], 60000); // Log once per minute per cache key
       }
-      workerRef.current.postMessage(task);
+
+      // If worker not available or circuit is open, queue or fallback
+      if (!workerRef.current || isCircuitOpen()) {
+        // If no worker at all, route to fallback immediately (do not queue unbounded)
+        if (!singleton.worker) {
+          throw new Error('Worker unavailable or circuit open');
+        }
+      }
+
+      // If worker exists but is not ready yet, queue the task
+      if (workerRef.current && !singleton.ready) {
+        pendingTasks.push(task as unknown as MessageEvent['data']);
+      } else if (workerRef.current) {
+        workerRef.current.postMessage(task);
+      } else {
+        throw new Error('Worker reference missing');
+      }
     } catch (postErr) {
       logger.error('[WORKER_MESSAGE] Failed to post message to worker, falling back to sync', { error: postErr });
       if (watchdogRef.current) {
