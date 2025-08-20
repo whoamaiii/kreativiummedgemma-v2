@@ -1,4 +1,4 @@
-import React, { useMemo, memo, useRef, useImperativeHandle } from "react";
+import React, { useMemo, memo, useRef } from "react";
 import ReactECharts from "echarts-for-react";
 // Use our trimmed ECharts core to keep the chart chunk small
 import { echarts } from '@/lib/echartsCore';
@@ -280,7 +280,6 @@ const baseTheme = {
           type: 'dashed'
         } 
       },
-      name: "Intensity",
       nameTextStyle: {
         color: "hsl(var(--muted-foreground))",
         fontSize: 12,
@@ -454,7 +453,7 @@ function EChartContainerBase({
     <div
       className={cn("rounded-xl border bg-card w-full", className)}
       data-testid="echart-container"
-      style={{
+      style={{ // RADIX_INLINE_STYLE_ALLOWED - ECharts container needs explicit overflow control
         // Let tooltips/axis pointers render outside if needed; prevents canvas disappearing in some browsers
         overflow: "visible",
         // Ensure container has a visible size even if parent has no intrinsic height
@@ -470,7 +469,7 @@ function EChartContainerBase({
           notMerge
           lazyUpdate={false}
           // Keep chart itself explicitly sized
-          style={{ height, width: width ?? "100%", ...style }}
+          style={{ height, width: width ?? "100%", ...style }} // RADIX_INLINE_STYLE_ALLOWED - ReactECharts requires style prop for dimensions
           onEvents={onEvents}
           echarts={echarts as unknown as any}
           ref={__innerChartRef__ as any}
