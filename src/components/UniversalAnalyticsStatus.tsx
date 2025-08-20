@@ -110,9 +110,9 @@ export const UniversalAnalyticsStatus = () => {
         <div className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
           <div className="flex items-center gap-2">
             {allStudentsInitialized ? (
-              <CheckCircle className="h-5 w-5 text-green-500" />
+              <CheckCircle className="h-5 w-5 text-success" />
             ) : (
-              <AlertCircle className="h-5 w-5 text-yellow-500" />
+              <AlertCircle className="h-5 w-5 text-warning" />
             )}
             <span className="font-medium">
               System Status
@@ -152,8 +152,8 @@ export const UniversalAnalyticsStatus = () => {
               <div key={student.studentId} className="flex items-center justify-between p-2 bg-background/30 rounded">
                 <div className="flex items-center gap-2">
                   <div className={`w-2 h-2 rounded-full ${
-                    student.hasMinimumData ? 'bg-green-500' : 
-                    student.isInitialized ? 'bg-yellow-500' : 'bg-gray-400'
+                    student.hasMinimumData ? 'bg-success' : 
+                    student.isInitialized ? 'bg-warning' : 'bg-gray-400'
                   }`} />
                   <span className="text-sm font-medium">{student.studentName}</span>
                 </div>
@@ -174,8 +174,8 @@ export const UniversalAnalyticsStatus = () => {
 
         {/* Success Message */}
         {allStudentsInitialized && hasStudentsWithData && (
-          <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-            <div className="flex items-center gap-2 text-green-800">
+          <div className="p-3 bg-success/10 border border-success/20 rounded-lg">
+            <div className="flex items-center gap-2 text-success-foreground">
               <CheckCircle className="h-4 w-4" />
               <span className="text-sm font-medium">
                 ✨ Universal pattern detection is active for all students!
@@ -186,8 +186,8 @@ export const UniversalAnalyticsStatus = () => {
 
         {/* Instructions */}
         {status.totalStudents === 0 && (
-          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="text-blue-800 text-sm">
+          <div className="p-3 bg-info/10 border border-info/20 rounded-lg">
+            <div className="text-info-foreground text-sm">
               Add your first student to see universal analytics in action. Pattern detection will start immediately!
             </div>
           </div>

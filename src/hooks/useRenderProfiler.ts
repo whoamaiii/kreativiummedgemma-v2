@@ -154,5 +154,3 @@ declare global {
     };
   }
 }
-
-export default useRenderProfiler;

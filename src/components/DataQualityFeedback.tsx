@@ -186,10 +186,10 @@ export const DataQualityFeedback = memo(({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'excellent': return 'text-green-600 bg-green-50 dark:bg-green-950/20';
-      case 'good': return 'text-blue-600 bg-blue-50 dark:bg-blue-950/20';
-      case 'fair': return 'text-yellow-600 bg-yellow-50 dark:bg-yellow-950/20';
-      case 'poor': return 'text-red-600 bg-red-50 dark:bg-red-950/20';
+      case 'excellent': return 'text-success-foreground bg-success';
+      case 'good': return 'text-info-foreground bg-info';
+      case 'fair': return 'text-warning-foreground bg-warning';
+      case 'poor': return 'text-destructive-foreground bg-destructive';
       default: return 'text-gray-600 bg-gray-50 dark:bg-gray-950/20';
     }
   };

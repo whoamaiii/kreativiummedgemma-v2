@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2025-08-15T16:51:09.939Z",
+  "generatedAt": "2025-08-20T02:00:21.994Z",
   "offenders": [
     {
       "file": "src/App.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Loading...",
-      "line": 47,
-      "column": 38,
-      "context": "<Toaster /> <BrowserRouter> <Suspense fallback={<div>Loading...</div>}> <Routes> <Route path=\"/\" elemen"
+      "line": 51,
+      "column": 19,
+      "context": "<div role=\"status\" aria-live=\"polite\" className=\"p-4\"> Loading... </div> }> <Routes>"
     },
     {
       "file": "src/workers/analytics.worker.ts",
@@ -86,154 +86,19 @@
       "file": "src/pages/Dashboard.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
-      "value": "Sensory",
-      "line": 155,
-      "column": 17,
-      "context": "className=\"text-4xl font-bold tracking-tight text-foreground\"> Sensory<span className=\"text-primary\">Tracker</span> - {String(tDashboard('title"
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "Tracker",
-      "line": 155,
-      "column": 55,
-      "context": "g-tight text-foreground\"> Sensory<span className=\"text-primary\">Tracker</span> - {String(tDashboard('title')).split(' - ')[1]} </h"
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "Oversikt",
-      "line": 176,
-      "column": 81,
-      "context": "<h2 className=\"text-3xl font-bold tracking-tight text-foreground\">Oversikt</h2> <div className=\"flex items-center space-x-4\">"
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "Ny Registrering",
-      "line": 195,
-      "column": 19,
-      "context": "<Plus className=\"mr-2 h-4 w-4 group-hover:animate-bounce\" /> Ny Registrering </Button> </div> </div"
+      "value": "K",
+      "line": 168,
+      "column": 116,
+      "context": "ame=\"text-3xl font-bold text-white motion-safe:group-hover:animate-bounce-slow\">K</div> </div> </div>"
     },
     {
       "file": "src/pages/Dashboard.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "from last week",
-      "line": 220,
-      "column": 64,
-      "context": "ixed(0)}%</span> <span className=\"ml-1 text-muted-foreground\">from last week</span> </div> </Card>"
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "from last week",
-      "line": 242,
-      "column": 64,
-      "context": "ixed(0)}%</span> <span className=\"ml-1 text-muted-foreground\">from last week</span> </div> </Card>"
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "from last week",
-      "line": 264,
-      "column": 64,
-      "context": "d-400\">5%</span> <span className=\"ml-1 text-muted-foreground\">from last week</span> </div> </Card> <"
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "Elever",
-      "line": 275,
-      "column": 67,
-      "context": "> <h2 className=\"text-3xl font-bold tracking-tight\">Elever</h2> <Button variant=\"default\""
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "Legg til elev",
-      "line": 283,
-      "column": 19,
-      "context": "2 h-4 w-4 group-hover:animate-bounce transition-transform\" /> Legg til elev </Button> </div> {/*"
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "Welcome to Sensory Tracker",
-      "line": 347,
-      "column": 25,
-      "context": "<h3 className=\"text-2xl font-semibold text-foreground\"> Welcome to Sensory Tracker </h3> <p"
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "It looks like you don't have any students yet. Get started by adding your first student and start tracking their sensory data.",
-      "line": 350,
-      "column": 25,
-      "context": "ssName=\"mt-3 max-w-md text-base text-muted-foreground\"> It looks like you don't have any students yet. Get started by adding your first"
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "Add Your First Student",
-      "line": 359,
-      "column": 25,
-      "context": "w-4 group-hover:animate-bounce transition-transform\" /> Add Your First Student </Button> </div"
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "Want to explore with sample data?",
-      "line": 372,
-      "column": 81,
-      "context": "<h4 className=\"text-lg font-semibold text-foreground\">Want to explore with sample data?</h4> <p className=\"t"
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "Load mock data to test features and see how the app works",
-      "line": 374,
-      "column": 29,
-      "context": "<p className=\"text-sm text-muted-foreground mt-1\"> Load mock data to test features and see how the app works"
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "Load Sample Data",
-      "line": 381,
-      "column": 31,
-      "context": "<FlaskConical className=\"h-4 w-4 mr-2\" /> Load Sample Data </Button>"
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "Mock Data Loader",
-      "line": 386,
-      "column": 44,
-      "context": "<DialogHeader> <DialogTitle>Mock Data Loader</DialogTitle> <DialogDescription>"
-    },
-    {
-      "file": "src/pages/Dashboard.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "Quickly populate the app with demo students and tracking data for exploration.",
-      "line": 388,
-      "column": 33,
-      "context": "<DialogDescription> Quickly populate the app with demo students and tracking data for exploration."
+      "line": 310,
+      "column": 66,
+      "context": "ive\">5%</span> <span className=\"ml-1 text-muted-foreground\">from last week</span> </div> </Card>"
     },
     {
       "file": "src/pages/DevTools.tsx",
@@ -731,6 +596,78 @@
       "context": "-cols-4 gap-6\"> <aside className=\"md:col-span-1 space-y-2\" aria-label=\"Settings navigation\"> <ul className=\"text-sm\"> <li> <"
     },
     {
+      "file": "src/pages/StudentProfile.original.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "Auto-seeding minimal demo data for mock route",
+      "line": 178,
+      "column": 21,
+      "context": ".current = true; setIsSeedingData(true); try { logger.info('Auto-seeding minimal demo data for mock route', { studentId });"
+    },
+    {
+      "file": "src/pages/StudentProfile.original.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Failed to auto-seed mock data",
+      "line": 194,
+      "column": 22,
+      "context": "reloadData(); } } catch (error) { logger.error('Failed to auto-seed mock data', { error, studentId }); toast.error(Stri"
+    },
+    {
+      "file": "src/pages/StudentProfile.original.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Error generating insights",
+      "line": 243,
+      "column": 24,
+      "context": "} } catch (error) { if (!signal.aborted) { logger.error('Error generating insights', { error }); setInsights(null);"
+    },
+    {
+      "file": "src/pages/StudentProfile.original.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "[SAFE] analyticsManager.triggerAnalyticsForStudent failed",
+      "line": 273,
+      "column": 26,
+      "context": "} }) .catch((err) => { logger.error('[SAFE] analyticsManager.triggerAnalyticsForStudent failed', { error: err, stude"
+    },
+    {
+      "file": "src/pages/StudentProfile.original.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "[SAFE] analyticsManager.initializeStudentAnalytics failed",
+      "line": 285,
+      "column": 24,
+      "context": "entAnalytics done'); } } catch (err) { logger.error('[SAFE] analyticsManager.initializeStudentAnalytics failed', { error: err, stude"
+    },
+    {
+      "file": "src/pages/StudentProfile.original.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "[SAFE] analyticsManager outer try/catch caught error",
+      "line": 290,
+      "column": 20,
+      "context": "/ Extra safety net; never rethrow from analytics side-effect logger.error('[SAFE] analyticsManager outer try/catch caught error', { error: err }); }"
+    },
+    {
+      "file": "src/pages/StudentProfile.original.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Export error",
+      "line": 357,
+      "column": 20,
+      "context": "(tCommon('status.success'))); } catch (error: unknown) { logger.error('Export error', { error }); const errorMessage = error instanceof Error ?"
+    },
+    {
+      "file": "src/pages/StudentProfile.original.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Backup error",
+      "line": 381,
+      "column": 20,
+      "context": "ss(String(tCommon('status.success'))); } catch (error) { logger.error('Backup error', { error }); toast.error(String(tCommon('error.title')));"
+    },
+    {
       "file": "src/pages/StudentProfile.tsx",
       "kind": "MessageAPI",
       "detail": "Message API call: info()",
@@ -891,6 +828,69 @@
       "line": 386,
       "column": 19,
       "context": "atch (error) { logger.error('Backup error', { error }); toast.error('Backup failed. Please try again.'); } }, [student, trackingEntries, allEm"
+    },
+    {
+      "file": "src/pages/StudentProfileOptimized.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: success()",
+      "value": "Demo data created successfully",
+      "line": 123,
+      "column": 23,
+      "context": "window.dispatchEvent(new CustomEvent('mockDataLoaded')); toast.success('Demo data created successfully'); if (reloadData) reloadData(); }"
+    },
+    {
+      "file": "src/pages/StudentProfileOptimized.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.success()",
+      "value": "Demo data created successfully",
+      "line": 123,
+      "column": 23,
+      "context": "window.dispatchEvent(new CustomEvent('mockDataLoaded')); toast.success('Demo data created successfully'); if (reloadData) reloadData(); }"
+    },
+    {
+      "file": "src/pages/StudentProfileOptimized.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Failed to auto-seed mock data",
+      "line": 126,
+      "column": 22,
+      "context": "if (reloadData) reloadData(); } catch (error) { logger.error('Failed to auto-seed mock data', { error, studentId }); toast.error('Fai"
+    },
+    {
+      "file": "src/pages/StudentProfileOptimized.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Failed to create demo data",
+      "line": 127,
+      "column": 21,
+      "context": "ror('Failed to auto-seed mock data', { error, studentId }); toast.error('Failed to create demo data'); } finally { setIsSeedingData(false)"
+    },
+    {
+      "file": "src/pages/StudentProfileOptimized.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.error()",
+      "value": "Failed to create demo data",
+      "line": 127,
+      "column": 21,
+      "context": "ror('Failed to auto-seed mock data', { error, studentId }); toast.error('Failed to create demo data'); } finally { setIsSeedingData(false)"
+    },
+    {
+      "file": "src/pages/StudentProfileOptimized.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Failed to get insights",
+      "line": 154,
+      "column": 26,
+      "context": "ewInsights); } } catch (error) { logger.error('Failed to get insights', { error }); } finally { setIsLoa"
+    },
+    {
+      "file": "src/pages/StudentProfileOptimized.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Export error",
+      "line": 212,
+      "column": 20,
+      "context": "essfully as ${format.toUpperCase()}`); } catch (error) { logger.error('Export error', { error }); toast.error(`Export failed: ${error instanceof"
     },
     {
       "file": "src/pages/TrackStudent.tsx",
@@ -1179,6 +1179,15 @@
       "line": 613,
       "column": 18,
       "context": "inputs.goals?.length ?? 0, }, }; } catch (error) { logger.error('[analyticsManager.orchestrator] getInsights failed', { error }); const cach"
+    },
+    {
+      "file": "src/lib/analyticsManagerLite.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "[analyticsManagerLite] Failed to initialize student",
+      "line": 26,
+      "column": 20,
+      "context": "Student initialized', { studentId }); } catch (error) { logger.error('[analyticsManagerLite] Failed to initialize student', { error, studentId });"
     },
     {
       "file": "src/lib/analyticsProfiles.ts",
@@ -1478,6 +1487,114 @@
       "context": "{ keyPath: 'id' }); } } catch (err) { logger.error('[modelEvaluation] onupgradeneeded failed', err); } }; requ"
     },
     {
+      "file": "src/lib/sessionManager.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[SessionManager] Created new session",
+      "line": 146,
+      "column": 17,
+      "context": "sessionId, sessionData); this.persistSession(sessionData); logger.info('[SessionManager] Created new session', { sessionId, studentId }); return se"
+    },
+    {
+      "file": "src/lib/sessionManager.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[SessionManager] Completed session",
+      "line": 256,
+      "column": 17,
+      "context": "it analyticsManager.triggerAnalyticsForStudent(student); } logger.info('[SessionManager] Completed session', { sessionId, entryId: tracki"
+    },
+    {
+      "file": "src/lib/sessionManager.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[SessionManager] Abandoned session",
+      "line": 279,
+      "column": 17,
+      "context": ".delete(sessionId); this.clearPersistedSession(sessionId); logger.info('[SessionManager] Abandoned session', { sessionId }); } /** * Pause a se"
+    },
+    {
+      "file": "src/lib/sessionManager.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[SessionManager] Paused session",
+      "line": 292,
+      "column": 17,
+      "context": ".metadata.status = 'paused'; this.persistSession(session); logger.info('[SessionManager] Paused session', { sessionId }); return true; } /**"
+    },
+    {
+      "file": "src/lib/sessionManager.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[SessionManager] Resumed session",
+      "line": 306,
+      "column": 17,
+      "context": ".metadata.status = 'active'; this.persistSession(session); logger.info('[SessionManager] Resumed session', { sessionId }); return true; } /**"
+    },
+    {
+      "file": "src/lib/sessionManager.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "[SessionManager] Failed to recover session",
+      "line": 344,
+      "column": 22,
+      "context": "veItem(key); } } } catch (error) { logger.error('[SessionManager] Failed to recover session', { key, error }); localStor"
+    },
+    {
+      "file": "src/lib/sessionManager.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[SessionManager] Recovered sessions",
+      "line": 351,
+      "column": 19,
+      "context": "if (recovered.length > 0) { this.saveSessionHistory(); logger.info('[SessionManager] Recovered sessions', { count: recovered.length }); }"
+    },
+    {
+      "file": "src/lib/sessionManager.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "[SessionManager] Failed to persist session",
+      "line": 574,
+      "column": 20,
+      "context": "setItem(key, JSON.stringify(session)); } catch (error) { logger.error('[SessionManager] Failed to persist session', { sessionId: session.sess"
+    },
+    {
+      "file": "src/lib/sessionManager.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "[SessionManager] Failed to load session history",
+      "line": 603,
+      "column": 20,
+      "context": "ime) : undefined, })); } } catch (error) { logger.error('[SessionManager] Failed to load session history', { error }); this.sessio"
+    },
+    {
+      "file": "src/lib/sessionManager.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "[SessionManager] Failed to save session history",
+      "line": 615,
+      "column": 20,
+      "context": "JSON.stringify(this.sessionHistory)); } catch (error) { logger.error('[SessionManager] Failed to save session history', { error }); } } /**"
+    },
+    {
+      "file": "src/lib/sessionManager.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[SessionManager] Updated validation rules",
+      "line": 640,
+      "column": 17,
+      "context": "this.validationRules = { ...this.validationRules, ...rules }; logger.info('[SessionManager] Updated validation rules', { rules }); } /** * Get val"
+    },
+    {
+      "file": "src/lib/sessionManager.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[SessionManager] Cleared all sessions",
+      "line": 664,
+      "column": 17,
+      "context": "); keys.forEach(key => localStorage.removeItem(key)); logger.info('[SessionManager] Cleared all sessions'); } } // Export singleton instance ex"
+    },
+    {
       "file": "src/lib/storageUtils.ts",
       "kind": "MessageAPI",
       "detail": "Message API call: error()",
@@ -1712,6 +1829,123 @@
       "context": "}); } }; worker.onerror = (error) => { logger.error('ML training worker error:', error); setTrainingStatus({ isTrainin"
     },
     {
+      "file": "src/hooks/useMockDataSeeding.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "Manually seeding mock data",
+      "line": 48,
+      "column": 19,
+      "context": "setIsSeeding(true); setSeedingError(null); try { logger.info('Manually seeding mock data', { studentId }); await seedMinimalDemo"
+    },
+    {
+      "file": "src/hooks/useMockDataSeeding.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: success()",
+      "value": "Demo data created successfully",
+      "line": 55,
+      "column": 21,
+      "context": "ow.dispatchEvent(new CustomEvent('mockDataLoaded')); toast.success('Demo data created successfully', { description: 'Sample data has been g"
+    },
+    {
+      "file": "src/hooks/useMockDataSeeding.ts",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.success()",
+      "value": "Demo data created successfully",
+      "line": 55,
+      "column": 21,
+      "context": "ow.dispatchEvent(new CustomEvent('mockDataLoaded')); toast.success('Demo data created successfully', { description: 'Sample data has been g"
+    },
+    {
+      "file": "src/hooks/useMockDataSeeding.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Failed to seed mock data",
+      "line": 64,
+      "column": 20,
+      "context": "stanceof Error ? error.message : 'Failed to seed mock data'; logger.error('Failed to seed mock data', { error, studentId }); setSeedingError(errorMe"
+    },
+    {
+      "file": "src/hooks/useMockDataSeeding.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Failed to create demo data",
+      "line": 66,
+      "column": 19,
+      "context": ", { error, studentId }); setSeedingError(errorMessage); toast.error('Failed to create demo data', { description: 'Please try loading mock da"
+    },
+    {
+      "file": "src/hooks/useMockDataSeeding.ts",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.error()",
+      "value": "Failed to create demo data",
+      "line": 66,
+      "column": 19,
+      "context": ", { error, studentId }); setSeedingError(errorMessage); toast.error('Failed to create demo data', { description: 'Please try loading mock da"
+    },
+    {
+      "file": "src/hooks/useMockDataSeeding.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "Auto-seeding minimal demo data for mock route",
+      "line": 112,
+      "column": 21,
+      "context": "tIsSeeding(true); setSeedingError(null); try { logger.info('Auto-seeding minimal demo data for mock route', { studentId });"
+    },
+    {
+      "file": "src/hooks/useMockDataSeeding.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: success()",
+      "value": "Demo data created successfully",
+      "line": 120,
+      "column": 23,
+      "context": "); // Show non-intrusive success message toast.success('Demo data created successfully', { description: 'Sample data has been"
+    },
+    {
+      "file": "src/hooks/useMockDataSeeding.ts",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.success()",
+      "value": "Demo data created successfully",
+      "line": 120,
+      "column": 23,
+      "context": "); // Show non-intrusive success message toast.success('Demo data created successfully', { description: 'Sample data has been"
+    },
+    {
+      "file": "src/hooks/useMockDataSeeding.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Failed to auto-seed mock data",
+      "line": 129,
+      "column": 22,
+      "context": "f Error ? error.message : 'Failed to auto-seed mock data'; logger.error('Failed to auto-seed mock data', { error, studentId }); setSeedingError("
+    },
+    {
+      "file": "src/hooks/useMockDataSeeding.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Failed to create demo data",
+      "line": 131,
+      "column": 21,
+      "context": "error, studentId }); setSeedingError(errorMessage); toast.error('Failed to create demo data', { description: 'Please try loading mock"
+    },
+    {
+      "file": "src/hooks/useMockDataSeeding.ts",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.error()",
+      "value": "Failed to create demo data",
+      "line": 131,
+      "column": 21,
+      "context": "error, studentId }); setSeedingError(errorMessage); toast.error('Failed to create demo data', { description: 'Please try loading mock"
+    },
+    {
+      "file": "src/hooks/usePerformanceMonitor.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[Performance Report]",
+      "line": 371,
+      "column": 17,
+      "context": "logReport = useCallback(() => { const report = getReport(); logger.info('[Performance Report]', report); }, [getReport]); return { trackCompone"
+    },
+    {
       "file": "src/hooks/useProgressiveChartData.ts",
       "kind": "MessageAPI",
       "detail": "Message API call: error()",
@@ -1757,6 +1991,330 @@
       "context": "catch (e) { setError('Failed to load student data.'); logger.error('Failed to load student data:', e); } finally { setIsLoading(false);"
     },
     {
+      "file": "src/hooks/useStudentExport.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "No student data available to export",
+      "line": 38,
+      "column": 19,
+      "context": "ync (format: 'pdf' | 'csv' | 'json') => { if (!student) { toast.error('No student data available to export'); return; } try { con"
+    },
+    {
+      "file": "src/hooks/useStudentExport.ts",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.error()",
+      "value": "No student data available to export",
+      "line": 38,
+      "column": 19,
+      "context": "ync (format: 'pdf' | 'csv' | 'json') => { if (!student) { toast.error('No student data available to export'); return; } try { con"
+    },
+    {
+      "file": "src/hooks/useStudentExport.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "Data exported",
+      "line": 88,
+      "column": 19,
+      "context": "ta exported successfully as ${format.toUpperCase()}`); logger.info('Data exported', { format, studentId: student.id }); } catch (error: unknown"
+    },
+    {
+      "file": "src/hooks/useStudentExport.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Export error",
+      "line": 90,
+      "column": 20,
+      "context": "at, studentId: student.id }); } catch (error: unknown) { logger.error('Export error', { error, format }); const errorMessage = error instanceof"
+    },
+    {
+      "file": "src/hooks/useStudentExport.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "No student data available to backup",
+      "line": 101,
+      "column": 19,
+      "context": "dleBackupData = useCallback(async () => { if (!student) { toast.error('No student data available to backup'); return; } try { con"
+    },
+    {
+      "file": "src/hooks/useStudentExport.ts",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.error()",
+      "value": "No student data available to backup",
+      "line": 101,
+      "column": 19,
+      "context": "dleBackupData = useCallback(async () => { if (!student) { toast.error('No student data available to backup'); return; } try { con"
+    },
+    {
+      "file": "src/hooks/useStudentExport.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: success()",
+      "value": "Backup created successfully",
+      "line": 120,
+      "column": 21,
+      "context": "')}.json`; downloadBlob(backupBlob, filename); toast.success('Backup created successfully'); logger.info('Backup created', { studentId:"
+    },
+    {
+      "file": "src/hooks/useStudentExport.ts",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.success()",
+      "value": "Backup created successfully",
+      "line": 120,
+      "column": 21,
+      "context": "')}.json`; downloadBlob(backupBlob, filename); toast.success('Backup created successfully'); logger.info('Backup created', { studentId:"
+    },
+    {
+      "file": "src/hooks/useStudentExport.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "Backup created",
+      "line": 121,
+      "column": 19,
+      "context": "); toast.success('Backup created successfully'); logger.info('Backup created', { studentId: student.id }); } catch (error) { logger"
+    },
+    {
+      "file": "src/hooks/useStudentExport.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Backup error",
+      "line": 123,
+      "column": 20,
+      "context": "created', { studentId: student.id }); } catch (error) { logger.error('Backup error', { error }); toast.error('Backup failed. Please try again.'"
+    },
+    {
+      "file": "src/hooks/useStudentExport.ts",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Backup failed. Please try again.",
+      "line": 124,
+      "column": 19,
+      "context": "atch (error) { logger.error('Backup error', { error }); toast.error('Backup failed. Please try again.'); } }, [student, options]); return {"
+    },
+    {
+      "file": "src/hooks/useStudentExport.ts",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.error()",
+      "value": "Backup failed. Please try again.",
+      "line": 124,
+      "column": 19,
+      "context": "atch (error) { logger.error('Backup error', { error }); toast.error('Backup failed. Please try again.'); } }, [student, options]); return {"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: warning()",
+      "value": "Session timed out due to inactivity",
+      "line": 190,
+      "column": 23,
+      "context": "ntax sessionTimeoutRef.current = setTimeout(() => { toast.warning('Session timed out due to inactivity'); endSession(true); }, newCo"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.warning()",
+      "value": "Session timed out due to inactivity",
+      "line": 190,
+      "column": 23,
+      "context": "ntax sessionTimeoutRef.current = setTimeout(() => { toast.warning('Session timed out due to inactivity'); endSession(true); }, newCo"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[TrackingContext] Started new session",
+      "line": 195,
+      "column": 17,
+      "context": "endSession(true); }, newConfig.sessionTimeout); } logger.info('[TrackingContext] Started new session', { sessionId, studentId }); }, [curren"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[TrackingContext] Ended session",
+      "line": 222,
+      "column": 17,
+      "context": "on_${currentSession.studentId}`); setCurrentSession(null); logger.info('[TrackingContext] Ended session', { sessionId: currentSession.id }); }, [curr"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[TrackingContext] Paused session",
+      "line": 243,
+      "column": 17,
+      "context": "imerRef.current); autoSaveTimerRef.current = null; } logger.info('[TrackingContext] Paused session', { sessionId: currentSession.id }); }, [cur"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[TrackingContext] Resumed session",
+      "line": 268,
+      "column": 17,
+      "context": "n(); } }, sessionConfig.autoSaveInterval); } logger.info('[TrackingContext] Resumed session', { sessionId: currentSession.id }); }, [cu"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: warning()",
+      "value": "Session timed out due to inactivity",
+      "line": 299,
+      "column": 23,
+      "context": "ntax sessionTimeoutRef.current = setTimeout(() => { toast.warning('Session timed out due to inactivity'); endSession(true); }, sessi"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.warning()",
+      "value": "Session timed out due to inactivity",
+      "line": 299,
+      "column": 23,
+      "context": "ntax sessionTimeoutRef.current = setTimeout(() => { toast.warning('Session timed out due to inactivity'); endSession(true); }, sessi"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: warning()",
+      "value": "Session timed out due to inactivity",
+      "line": 351,
+      "column": 23,
+      "context": "ntax sessionTimeoutRef.current = setTimeout(() => { toast.warning('Session timed out due to inactivity'); endSession(true); }, sessi"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.warning()",
+      "value": "Session timed out due to inactivity",
+      "line": 351,
+      "column": 23,
+      "context": "ntax sessionTimeoutRef.current = setTimeout(() => { toast.warning('Session timed out due to inactivity'); endSession(true); }, sessi"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: success()",
+      "value": "Session saved successfully",
+      "line": 478,
+      "column": 21,
+      "context": "lyticsManager.triggerAnalyticsForStudent(student); } toast.success('Session saved successfully'); logger.info('[TrackingContext] Session save"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.success()",
+      "value": "Session saved successfully",
+      "line": 478,
+      "column": 21,
+      "context": "lyticsManager.triggerAnalyticsForStudent(student); } toast.success('Session saved successfully'); logger.info('[TrackingContext] Session save"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[TrackingContext] Session saved",
+      "line": 479,
+      "column": 19,
+      "context": "; } toast.success('Session saved successfully'); logger.info('[TrackingContext] Session saved', { sessionId: currentSession.id,"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "[TrackingContext] Failed to save session",
+      "line": 486,
+      "column": 20,
+      "context": "}); return trackingEntry; } catch (error) { logger.error('[TrackingContext] Failed to save session', { error }); toast.error('Faile"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Failed to save session",
+      "line": 487,
+      "column": 19,
+      "context": "error('[TrackingContext] Failed to save session', { error }); toast.error('Failed to save session'); return null; } }, [currentSession, valida"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.error()",
+      "value": "Failed to save session",
+      "line": 487,
+      "column": 19,
+      "context": "error('[TrackingContext] Failed to save session', { error }); toast.error('Failed to save session'); return null; } }, [currentSession, valida"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "Session discarded",
+      "line": 530,
+      "column": 16,
+      "context": "ion_${currentSession.studentId}`); setCurrentSession(null); toast.info('Session discarded'); logger.info('[TrackingContext] Session discarded', { s"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.info()",
+      "value": "Session discarded",
+      "line": 530,
+      "column": 16,
+      "context": "ion_${currentSession.studentId}`); setCurrentSession(null); toast.info('Session discarded'); logger.info('[TrackingContext] Session discarded', { s"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[TrackingContext] Session discarded",
+      "line": 531,
+      "column": 17,
+      "context": "setCurrentSession(null); toast.info('Session discarded'); logger.info('[TrackingContext] Session discarded', { sessionId: currentSession.id }); }, ["
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Session not found",
+      "line": 540,
+      "column": 19,
+      "context": "= sessions.find(s => s.id === sessionId); if (!session) { toast.error('Session not found'); return; } setCurrentSession(session); t"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.error()",
+      "value": "Session not found",
+      "line": 540,
+      "column": 19,
+      "context": "= sessions.find(s => s.id === sessionId); if (!session) { toast.error('Session not found'); return; } setCurrentSession(session); t"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: success()",
+      "value": "Session recovered",
+      "line": 545,
+      "column": 19,
+      "context": "found'); return; } setCurrentSession(session); toast.success('Session recovered'); logger.info('[TrackingContext] Session recovered', { s"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.success()",
+      "value": "Session recovered",
+      "line": 545,
+      "column": 19,
+      "context": "found'); return; } setCurrentSession(session); toast.success('Session recovered'); logger.info('[TrackingContext] Session recovered', { s"
+    },
+    {
+      "file": "src/contexts/TrackingContext.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[TrackingContext] Session recovered",
+      "line": 546,
+      "column": 17,
+      "context": "urrentSession(session); toast.success('Session recovered'); logger.info('[TrackingContext] Session recovered', { sessionId }); }, [sessions]); /**"
+    },
+    {
       "file": "src/config/validators/analytics.validator.ts",
       "kind": "MessageAPI",
       "detail": "Message API call: error()",
@@ -1773,15 +2331,6 @@
       "line": 209,
       "column": 17,
       "context": "t(() => { cachedConfig = null; cacheStamp = Date.now(); logger.info('analytics.loader hot-reloaded: cache invalidated'); }); } // Optional: consu"
-    },
-    {
-      "file": "src/components/AccessibilityWrapper.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "Skip to main content",
-      "line": 21,
-      "column": 11,
-      "context": "primary-foreground px-4 py-2 rounded-md z-50 font-dyslexia\" > Skip to main content </a> )} <div id=\"main-content\" c"
     },
     {
       "file": "src/components/AdvancedFilterPanel.tsx",
@@ -1809,6 +2358,24 @@
       "line": 697,
       "column": 30,
       "context": "eholder={String(tCommon('filterNamePlaceholder'))} aria-label=\"Filter name\" value={filterName} onChange={("
+    },
+    {
+      "file": "src/components/AdvancedFilterPanel.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Delete saved filter",
+      "line": 745,
+      "column": 42,
+      "context": "variant=\"ghost\" aria-label=\"Delete saved filter\" title=\"Delete saved filter\""
+    },
+    {
+      "file": "src/components/AdvancedFilterPanel.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Delete saved filter",
+      "line": 746,
+      "column": 37,
+      "context": "aria-label=\"Delete saved filter\" title=\"Delete saved filter\" onClick={() => onDeleteFilte"
     },
     {
       "file": "src/components/AdvancedSearch.tsx",
@@ -1925,7 +2492,7 @@
       "value": "Resolved",
       "line": 159,
       "column": 25,
-      "context": "<Badge variant=\"outline\" className=\"text-green-600\"> Resolved </Badge> )}"
+      "context": "utline\" className=\"text-success-foreground bg-success\"> Resolved </Badge> )}"
     },
     {
       "file": "src/components/AlertManager.tsx",
@@ -2157,7 +2724,7 @@
       "kind": "MessageAPI",
       "detail": "Message API call: error()",
       "value": "Error comparing timestamps in AnalyticsDashboard memo:",
-      "line": 522,
+      "line": 525,
       "column": 23,
       "context": "return prevTime === nextTime; } catch (error) { logger.error('Error comparing timestamps in AnalyticsDashboard memo:', error); retur"
     },
@@ -3445,8 +4012,8 @@
       "detail": "Static JSX text node",
       "value": "Tidsestimat",
       "line": 229,
-      "column": 80,
-      "context": "<span className=\"font-medium text-blue-900 dark:text-blue-100\">Tidsestimat</span> </div> <p className=\"text-sm text"
+      "column": 68,
+      "context": "ext-info\" /> <span className=\"font-medium text-info-foreground\">Tidsestimat</span> </div> <p className=\"text-sm text"
     },
     {
       "file": "src/components/DataRequirementsCalculator.tsx",
@@ -3455,7 +4022,7 @@
       "value": "Med",
       "line": 232,
       "column": 17,
-      "context": "<p className=\"text-sm text-blue-800 dark:text-blue-200\"> Med {getRecommendedRate()} datapunkt(er) per dag vil du nå{' '}"
+      "context": "> <p className=\"text-sm text-info-foreground/80\"> Med {getRecommendedRate()} datapunkt(er) per dag vil du nå{' '}"
     },
     {
       "file": "src/components/DataRequirementsCalculator.tsx",
@@ -3464,7 +4031,7 @@
       "value": "datapunkt(er) per dag vil du nå",
       "line": 232,
       "column": 44,
-      "context": "m text-blue-800 dark:text-blue-200\"> Med {getRecommendedRate()} datapunkt(er) per dag vil du nå{' '} <span className=\"font-mediu"
+      "context": "e=\"text-sm text-info-foreground/80\"> Med {getRecommendedRate()} datapunkt(er) per dag vil du nå{' '} <span className=\"font-mediu"
     },
     {
       "file": "src/components/DataRequirementsCalculator.tsx",
@@ -3517,8 +4084,8 @@
       "detail": "Static JSX text node",
       "value": "Anbefalinger",
       "line": 284,
-      "column": 82,
-      "context": "<span className=\"font-medium text-purple-900 dark:text-purple-100\">Anbefalinger</span> </div> <ul className=\"text-sm text-p"
+      "column": 69,
+      "context": "primary\" /> <span className=\"font-medium text-primary-foreground\">Anbefalinger</span> </div> <ul className=\"text-sm text-p"
     },
     {
       "file": "src/components/DataRequirementsCalculator.tsx",
@@ -3527,7 +4094,7 @@
       "value": "• Samle",
       "line": 287,
       "column": 19,
-      "context": "ame=\"text-sm text-purple-800 dark:text-purple-200 space-y-1\"> <li>• Samle {getRecommendedRate()} datapunkt(er) per dag for optimal fremgang</li>"
+      "context": "<ul className=\"text-sm text-primary-foreground/80 space-y-1\"> <li>• Samle {getRecommendedRate()} datapunkt(er) per dag for optimal fremgang</li>"
     },
     {
       "file": "src/components/DataRequirementsCalculator.tsx",
@@ -3536,7 +4103,7 @@
       "value": "datapunkt(er) per dag for optimal fremgang",
       "line": 287,
       "column": 50,
-      "context": "rk:text-purple-200 space-y-1\"> <li>• Samle {getRecommendedRate()} datapunkt(er) per dag for optimal fremgang</li> <li>• Registrer da"
+      "context": "mary-foreground/80 space-y-1\"> <li>• Samle {getRecommendedRate()} datapunkt(er) per dag for optimal fremgang</li> <li>• Registrer da"
     },
     {
       "file": "src/components/DataRequirementsCalculator.tsx",
@@ -3693,10 +4260,37 @@
     },
     {
       "file": "src/components/DevErrorBanner.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Dev error captured",
+      "line": 39,
+      "column": 22,
+      "context": "// Use central logger to record the error logger.error('Dev error captured', ...args); } catch {} // Always forward to the"
+    },
+    {
+      "file": "src/components/DevErrorBanner.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Window error",
+      "line": 49,
+      "column": 20,
+      "context": "=> c + 1); // Log window errors through central logger logger.error('Window error', e.error || new Error(e.message)); }; const onUnhandledRe"
+    },
+    {
+      "file": "src/components/DevErrorBanner.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Unhandled promise rejection",
+      "line": 58,
+      "column": 20,
+      "context": "1); // Log unhandled rejections through central logger logger.error('Unhandled promise rejection', reason instanceof Error ? reason : new Error(msg)"
+    },
+    {
+      "file": "src/components/DevErrorBanner.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Dev error captured (",
-      "line": 65,
+      "line": 82,
       "column": 59,
       "context": "className=\"min-w-0\"> <div className=\"font-medium text-destructive\">Dev error captured ({errorCount})</div> <div className=\"mt-1 truncat"
     },
@@ -3705,7 +4299,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Dismiss",
-      "line": 84,
+      "line": 101,
       "column": 15,
       "context": "nt\" onClick={() => setIsHidden(true)} > Dismiss </button> </div> </div> </div> <"
     },
@@ -4020,7 +4614,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "% confidence",
-      "line": 306,
+      "line": 307,
       "column": 63,
       "context": "> {Math.round(insight.confidence * 100)}% confidence </Badge> <div className"
     },
@@ -4029,7 +4623,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Continue collecting data to generate predictive insights",
-      "line": 319,
+      "line": 320,
       "column": 18,
       "context": "<Brain className=\"h-16 w-16 mx-auto mb-4 opacity-50\" /> <p>Continue collecting data to generate predictive insights</p> </div>"
     },
@@ -4038,7 +4632,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Strength Level:",
-      "line": 338,
+      "line": 339,
       "column": 75,
       "context": "p-2\"> <span className=\"text-xs text-muted-foreground\">Strength Level:</span> <Progress value={strength.confi"
     },
@@ -4047,7 +4641,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Strengths will be identified as patterns emerge from data collection",
-      "line": 351,
+      "line": 352,
       "column": 18,
       "context": "<Heart className=\"h-16 w-16 mx-auto mb-4 opacity-50\" /> <p>Strengths will be identified as patterns emerge from data collection</p>"
     },
@@ -4056,7 +4650,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "priority",
-      "line": 385,
+      "line": 386,
       "column": 50,
       "context": "ry' }> {opportunity.priority} priority </Badge> </div>"
     },
@@ -4065,7 +4659,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Action Steps:",
-      "line": 391,
+      "line": 392,
       "column": 68,
       "context": "Name=\"mt-3\"> <h5 className=\"text-sm font-medium mb-2\">Action Steps:</h5> <ul className=\"text-sm text-muted-f"
     },
@@ -4074,7 +4668,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "•",
-      "line": 395,
+      "line": 396,
       "column": 64,
       "context": "ms-start gap-2\"> <span className=\"text-primary\">•</span> <span>{rec}</span>"
     },
@@ -4083,7 +4677,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Growth opportunities will be identified based on data patterns",
-      "line": 410,
+      "line": 411,
       "column": 18,
       "context": "<Target className=\"h-16 w-16 mx-auto mb-4 opacity-50\" /> <p>Growth opportunities will be identified based on data patterns</p> <"
     },
@@ -4092,7 +4686,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Emotional Pattern:",
-      "line": 424,
+      "line": 425,
       "column": 55,
       "context": "<div className=\"flex-1\"> <h4 className=\"font-semibold\">Emotional Pattern: {pattern.pattern.replace('-', ' ')}</h4>"
     },
@@ -4101,7 +4695,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "% confidence",
-      "line": 428,
+      "line": 429,
       "column": 67,
       "context": "nt=\"outline\"> {Math.round(pattern.confidence * 100)}% confidence </Badge> <span"
     },
@@ -4110,7 +4704,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "data points",
-      "line": 431,
+      "line": 432,
       "column": 50,
       "context": "ext-xs text-muted-foreground\"> {pattern.dataPoints} data points </span> </div>"
     },
@@ -4119,7 +4713,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Sensory Pattern:",
-      "line": 445,
+      "line": 446,
       "column": 55,
       "context": "<div className=\"flex-1\"> <h4 className=\"font-semibold\">Sensory Pattern: {pattern.pattern.replace('-', ' ')}</h4>"
     },
@@ -4128,7 +4722,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "% confidence",
-      "line": 449,
+      "line": 450,
       "column": 67,
       "context": "nt=\"outline\"> {Math.round(pattern.confidence * 100)}% confidence </Badge> <span"
     },
@@ -4137,7 +4731,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "data points",
-      "line": 452,
+      "line": 453,
       "column": 50,
       "context": "ext-xs text-muted-foreground\"> {pattern.dataPoints} data points </span> </div>"
     },
@@ -4146,7 +4740,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Patterns will emerge as more data is collected",
-      "line": 464,
+      "line": 465,
       "column": 18,
       "context": "<BarChart3 className=\"h-16 w-16 mx-auto mb-4 opacity-50\" /> <p>Patterns will emerge as more data is collected</p> </div>"
     },
@@ -4155,7 +4749,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "severity",
-      "line": 492,
+      "line": 493,
       "column": 46,
       "context": "ondary' }> {anomaly.severity} severity </Badge> </div>"
     },
@@ -4164,7 +4758,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Recommended Actions:",
-      "line": 500,
+      "line": 501,
       "column": 68,
       "context": "Name=\"mt-3\"> <h5 className=\"text-sm font-medium mb-2\">Recommended Actions:</h5> <ul className=\"text-sm text-"
     },
@@ -4173,7 +4767,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "•",
-      "line": 504,
+      "line": 505,
       "column": 64,
       "context": "ms-start gap-2\"> <span className=\"text-primary\">•</span> <span>{rec}</span>"
     },
@@ -4182,7 +4776,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "No significant anomalies detected in recent data",
-      "line": 519,
+      "line": 520,
       "column": 18,
       "context": "<Shield className=\"h-16 w-16 mx-auto mb-4 opacity-50\" /> <p>No significant anomalies detected in recent data</p> </div>"
     },
@@ -4791,6 +5385,42 @@
     },
     {
       "file": "src/components/GoalManager.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Edit goal",
+      "line": 429,
+      "column": 68,
+      "context": "flex gap-2\"> <Button variant=\"ghost\" size=\"icon\" aria-label=\"Edit goal\" title=\"Edit goal\"> <Edit className=\"h-4 w-4\" /"
+    },
+    {
+      "file": "src/components/GoalManager.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Edit goal",
+      "line": 429,
+      "column": 86,
+      "context": "<Button variant=\"ghost\" size=\"icon\" aria-label=\"Edit goal\" title=\"Edit goal\"> <Edit className=\"h-4 w-4\" />"
+    },
+    {
+      "file": "src/components/GoalManager.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Delete goal",
+      "line": 432,
+      "column": 68,
+      "context": "</Button> <Button variant=\"ghost\" size=\"icon\" aria-label=\"Delete goal\" title=\"Delete goal\" onClick={() => deleteGoal(goal.id)}>"
+    },
+    {
+      "file": "src/components/GoalManager.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Delete goal",
+      "line": 432,
+      "column": 88,
+      "context": "<Button variant=\"ghost\" size=\"icon\" aria-label=\"Delete goal\" title=\"Delete goal\" onClick={() => deleteGoal(goal.id)}> <Trash2"
+    },
+    {
+      "file": "src/components/GoalManager.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Progress",
@@ -4884,7 +5514,7 @@
       "kind": "MessageAPI",
       "detail": "Message API call: prompt()",
       "value": "Enter current progress value:",
-      "line": 523,
+      "line": 525,
       "column": 44,
       "context": "onClick={() => { const value = prompt(\"Enter current progress value:\"); const notes = prompt(\"Pr"
     },
@@ -4893,7 +5523,7 @@
       "kind": "MessageAPI",
       "detail": "Message API call: prompt()",
       "value": "Progress notes (optional):",
-      "line": 524,
+      "line": 526,
       "column": 44,
       "context": "pt(\"Enter current progress value:\"); const notes = prompt(\"Progress notes (optional):\"); if (value) {"
     },
@@ -4902,7 +5532,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Update Progress",
-      "line": 531,
+      "line": 533,
       "column": 21,
       "context": "<TrendingUp className=\"h-4 w-4 mr-1\" /> Update Progress </Button> </div>"
     },
@@ -5600,58 +6230,76 @@
       "context": "className=\"text-sm text-muted-foreground\"> Page {currentPage} of {totalPages} </div> <div cla"
     },
     {
-      "file": "src/components/PatternDetectionEmptyState.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "Krav for mønstergjenkjenning:",
-      "line": 86,
-      "column": 47,
-      "context": "<div className=\"space-y-3\"> <h4 className=\"text-sm font-medium\">Krav for mønstergjenkjenning:</h4> {requirements.map((req, index) => ("
+      "file": "src/components/PaginatedSessionsList.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "First page",
+      "line": 153,
+      "column": 32,
+      "context": "variant=\"ghost\" size=\"icon\" aria-label=\"First page\" onClick={goToFirstPage} dis"
+    },
+    {
+      "file": "src/components/PaginatedSessionsList.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Previous page",
+      "line": 163,
+      "column": 32,
+      "context": "variant=\"ghost\" size=\"icon\" aria-label=\"Previous page\" onClick={goToPreviousPage}"
+    },
+    {
+      "file": "src/components/PaginatedSessionsList.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Next page",
+      "line": 196,
+      "column": 32,
+      "context": "variant=\"ghost\" size=\"icon\" aria-label=\"Next page\" onClick={goToNextPage} disab"
+    },
+    {
+      "file": "src/components/PaginatedSessionsList.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Last page",
+      "line": 206,
+      "column": 32,
+      "context": "variant=\"ghost\" size=\"icon\" aria-label=\"Last page\" onClick={goToLastPage} disab"
     },
     {
       "file": "src/components/PatternDetectionEmptyState.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
-      "value": "Tips for bedre mønstergjenkjenning:",
-      "line": 103,
-      "column": 13,
-      "context": "ssName=\"text-sm font-medium text-blue-900 dark:text-blue-100 mb-2\"> Tips for bedre mønstergjenkjenning: </h4> <ul className=\"tex"
-    },
-    {
-      "file": "src/components/PatternDetectionEmptyState.tsx",
-      "kind": "JSXText",
-      "detail": "Static JSX text node",
-      "value": "• Registrer data på samme tid hver dag",
-      "line": 106,
+      "value": "•",
+      "line": 125,
       "column": 17,
-      "context": "className=\"text-sm text-blue-800 dark:text-blue-200 space-y-1\"> <li>• Registrer data på samme tid hver dag</li> <li>• Inkluder både føle"
+      "context": "<ul className=\"text-sm text-info-foreground/80 space-y-1\"> <li>• {String(tAnalytics('patternDetection.tips.sameTime'))}</li> <li>•"
     },
     {
       "file": "src/components/PatternDetectionEmptyState.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
-      "value": "• Inkluder både følelser og sensoriske opplevelser",
-      "line": 107,
+      "value": "•",
+      "line": 126,
       "column": 17,
-      "context": "1\"> <li>• Registrer data på samme tid hver dag</li> <li>• Inkluder både følelser og sensoriske opplevelser</li> <li>• Legg m"
+      "context": "i>• {String(tAnalytics('patternDetection.tips.sameTime'))}</li> <li>• {String(tAnalytics('patternDetection.tips.includeAll'))}</li> <li>"
     },
     {
       "file": "src/components/PatternDetectionEmptyState.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
-      "value": "• Legg merke til miljøfaktorer (støy, lys, aktivitet)",
-      "line": 108,
+      "value": "•",
+      "line": 127,
       "column": 17,
-      "context": "<li>• Inkluder både følelser og sensoriske opplevelser</li> <li>• Legg merke til miljøfaktorer (støy, lys, aktivitet)</li> <li>• Vær"
+      "context": "• {String(tAnalytics('patternDetection.tips.includeAll'))}</li> <li>• {String(tAnalytics('patternDetection.tips.noteEnvironment'))}</li>"
     },
     {
       "file": "src/components/PatternDetectionEmptyState.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
-      "value": "• Vær konsistent i minst 2-3 uker",
-      "line": 109,
+      "value": "•",
+      "line": 128,
       "column": 17,
-      "context": "<li>• Legg merke til miljøfaktorer (støy, lys, aktivitet)</li> <li>• Vær konsistent i minst 2-3 uker</li> </ul> </div> {"
+      "context": "ring(tAnalytics('patternDetection.tips.noteEnvironment'))}</li> <li>• {String(tAnalytics('patternDetection.tips.beConsistent'))}</li> </ul"
     },
     {
       "file": "src/components/PeriodComparison.tsx",
@@ -6011,7 +6659,7 @@
       "value": "⚠️ This goal is past its target date and may need review or extension.",
       "line": 500,
       "column": 25,
-      "context": "50 border border-red-200 rounded text-sm text-red-700\"> ⚠️ This goal is past its target date and may need review or extension."
+      "context": "uctive/20 rounded text-sm text-destructive-foreground\"> ⚠️ This goal is past its target date and may need review or extension."
     },
     {
       "file": "src/components/ProgressDashboard.tsx",
@@ -6020,7 +6668,7 @@
       "value": "📈 Consider increasing intervention intensity to meet target date.",
       "line": 505,
       "column": 25,
-      "context": "der border-yellow-200 rounded text-sm text-yellow-700\"> 📈 Consider increasing intervention intensity to meet target date."
+      "context": "er-warning/20 rounded text-sm text-warning-foreground\"> 📈 Consider increasing intervention intensity to meet target date."
     },
     {
       "file": "src/components/ProgressDashboard.tsx",
@@ -6028,8 +6676,8 @@
       "detail": "Static JSX text node",
       "value": "All goals are on track!",
       "line": 513,
-      "column": 71,
-      "context": "mb-2\" /> <p className=\"text-lg font-medium text-green-600\">All goals are on track!</p> <p className=\"text-muted-foregro"
+      "column": 80,
+      "context": "<p className=\"text-lg font-medium text-success-foreground\">All goals are on track!</p> <p className=\"text-muted-foregro"
     },
     {
       "file": "src/components/ProgressDashboard.tsx",
@@ -6168,12 +6816,30 @@
     },
     {
       "file": "src/components/QuickEntryTemplates.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Create new template",
+      "line": 302,
+      "column": 62,
+      "context": "ogTrigger asChild> <Button size=\"sm\" variant=\"outline\" aria-label=\"Create new template\" title=\"Create new template\"> <Plus classNa"
+    },
+    {
+      "file": "src/components/QuickEntryTemplates.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Create new template",
+      "line": 302,
+      "column": 90,
+      "context": "<Button size=\"sm\" variant=\"outline\" aria-label=\"Create new template\" title=\"Create new template\"> <Plus className=\"h-4 w-4 mr-2\" />"
+    },
+    {
+      "file": "src/components/QuickEntryTemplates.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "New Template",
       "line": 304,
-      "column": 17,
-      "context": "nt=\"outline\"> <Plus className=\"h-4 w-4 mr-2\" /> New Template </Button> </DialogTrigger> <D"
+      "column": 52,
+      "context": "className=\"h-4 w-4 mr-2\" /> <span className=\"hidden sm:inline\">New Template</span> </Button> </DialogTrigger>"
     },
     {
       "file": "src/components/QuickEntryTemplates.tsx",
@@ -6330,10 +6996,46 @@
     },
     {
       "file": "src/components/QuickEntryTemplates.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Edit template",
+      "line": 422,
+      "column": 38,
+      "context": "variant=\"ghost\" aria-label=\"Edit template\" title=\"Edit template\""
+    },
+    {
+      "file": "src/components/QuickEntryTemplates.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Edit template",
+      "line": 423,
+      "column": 33,
+      "context": "aria-label=\"Edit template\" title=\"Edit template\" onClick={() => setEditingTemplate(temp"
+    },
+    {
+      "file": "src/components/QuickEntryTemplates.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Delete template",
+      "line": 431,
+      "column": 38,
+      "context": "variant=\"ghost\" aria-label=\"Delete template\" title=\"Delete template\""
+    },
+    {
+      "file": "src/components/QuickEntryTemplates.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Delete template",
+      "line": 432,
+      "column": 33,
+      "context": "aria-label=\"Delete template\" title=\"Delete template\" onClick={() => deleteTemplate(templa"
+    },
+    {
+      "file": "src/components/QuickEntryTemplates.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "No quick entry templates yet",
-      "line": 445,
+      "line": 449,
       "column": 16,
       "context": "<Zap className=\"h-12 w-12 mx-auto mb-3 opacity-50\" /> <p>No quick entry templates yet</p> <p className=\"text-sm\">Create templ"
     },
@@ -6342,7 +7044,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Create templates for common tracking scenarios",
-      "line": 446,
+      "line": 450,
       "column": 36,
       "context": "<p>No quick entry templates yet</p> <p className=\"text-sm\">Create templates for common tracking scenarios</p> </div> )}"
     },
@@ -6825,28 +7527,46 @@
     },
     {
       "file": "src/components/TestingDebugPanel.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Run system tests",
+      "line": 269,
+      "column": 26,
+      "context": "size=\"sm\" variant=\"outline\" aria-label=\"Run system tests\" title=\"Run system tests\" >"
+    },
+    {
+      "file": "src/components/TestingDebugPanel.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Run system tests",
+      "line": 270,
+      "column": 21,
+      "context": "riant=\"outline\" aria-label=\"Run system tests\" title=\"Run system tests\" > {isRunningTests ? ("
+    },
+    {
+      "file": "src/components/TestingDebugPanel.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Running Tests...",
-      "line": 273,
-      "column": 19,
-      "context": "<RefreshCw className=\"h-4 w-4 mr-2 animate-spin\" /> Running Tests... </> ) : ( <>"
+      "line": 275,
+      "column": 54,
+      "context": "w-4 mr-2 animate-spin\" /> <span className=\"hidden sm:inline\">Running Tests...</span> </> ) : ("
     },
     {
       "file": "src/components/TestingDebugPanel.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Run System Tests",
-      "line": 278,
-      "column": 19,
-      "context": "<> <TestTube className=\"h-4 w-4 mr-2\" /> Run System Tests </> )} </Button>"
+      "line": 280,
+      "column": 54,
+      "context": "lassName=\"h-4 w-4 mr-2\" /> <span className=\"hidden sm:inline\">Run System Tests</span> </> )} </Butto"
     },
     {
       "file": "src/components/TestingDebugPanel.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Test Results:",
-      "line": 286,
+      "line": 288,
       "column": 51,
       "context": "<div className=\"space-y-3\"> <h4 className=\"text-sm font-medium\">Test Results:</h4> {testResults.map((result) => ("
     },
@@ -6855,7 +7575,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Quick Stats:",
-      "line": 305,
+      "line": 307,
       "column": 54,
       "context": "4 border-t border-border\"> <h4 className=\"text-sm font-medium mb-2\">Quick Stats:</h4> <div className=\"grid grid-cols-3 gap-3 text-center"
     },
@@ -6864,7 +7584,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Students",
-      "line": 309,
+      "line": 311,
       "column": 62,
       "context": "ted-foreground\" /> <p className=\"text-xs text-muted-foreground\">Students</p> </div> <div> <Database"
     },
@@ -6873,7 +7593,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Entries",
-      "line": 313,
+      "line": 315,
       "column": 62,
       "context": "ted-foreground\" /> <p className=\"text-xs text-muted-foreground\">Entries</p> </div> <div> <BarChart3"
     },
@@ -6882,7 +7602,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Analytics",
-      "line": 317,
+      "line": 319,
       "column": 62,
       "context": "ted-foreground\" /> <p className=\"text-xs text-muted-foreground\">Analytics</p> </div> </div> </div> <"
     },
@@ -6891,7 +7611,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Analytics Cache Management",
-      "line": 329,
+      "line": 331,
       "column": 13,
       "context": "ex items-center gap-2\"> <Archive className=\"h-5 w-5\" /> Analytics Cache Management </CardTitle> </CardHeader>"
     },
@@ -6900,7 +7620,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Cache Hit Rate",
-      "line": 338,
+      "line": 340,
       "column": 57,
       "context": "enter justify-between\"> <span className=\"text-sm font-medium\">Cache Hit Rate</span> <div className=\"flex items-center gap-2\""
     },
@@ -6909,7 +7629,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Cache Size",
-      "line": 347,
+      "line": 349,
       "column": 69,
       "context": "flex-col\"> <span className=\"text-xs text-muted-foreground\">Cache Size</span> <span className=\"text-lg font-semibold\">{c"
     },
@@ -6918,7 +7638,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Memory Usage",
-      "line": 351,
+      "line": 353,
       "column": 69,
       "context": "flex-col\"> <span className=\"text-xs text-muted-foreground\">Memory Usage</span> <span className=\"text-lg font-semibold\">"
     },
@@ -6927,7 +7647,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Hits",
-      "line": 362,
+      "line": 364,
       "column": 66,
       "context": "tats.hits}</p> <p className=\"text-xs text-muted-foreground\">Hits</p> </div> <div className=\"text-center"
     },
@@ -6936,7 +7656,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Misses",
-      "line": 367,
+      "line": 369,
       "column": 66,
       "context": "ts.misses}</p> <p className=\"text-xs text-muted-foreground\">Misses</p> </div> <div className=\"text-cente"
     },
@@ -6945,7 +7665,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Sets",
-      "line": 372,
+      "line": 374,
       "column": 66,
       "context": "tats.sets}</p> <p className=\"text-xs text-muted-foreground\">Sets</p> </div> </div> </div>"
     },
@@ -6954,34 +7674,70 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Cache Actions",
-      "line": 379,
+      "line": 381,
       "column": 53,
       "context": "t border-border space-y-3\"> <h4 className=\"text-sm font-medium\">Cache Actions</h4> <div className=\"flex gap-2\">"
+    },
+    {
+      "file": "src/components/TestingDebugPanel.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Clear all analytics cache",
+      "line": 388,
+      "column": 30,
+      "context": "leClearCache} className=\"flex-1\" aria-label=\"Clear all analytics cache\" title=\"Clear all analytics cache\""
+    },
+    {
+      "file": "src/components/TestingDebugPanel.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Clear all analytics cache",
+      "line": 389,
+      "column": 25,
+      "context": "aria-label=\"Clear all analytics cache\" title=\"Clear all analytics cache\" > <Trash2 classNam"
     },
     {
       "file": "src/components/TestingDebugPanel.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Clear All Cache",
-      "line": 388,
-      "column": 21,
-      "context": "> <Trash2 className=\"h-4 w-4 mr-2\" /> Clear All Cache </Button> <Button"
+      "line": 392,
+      "column": 54,
+      "context": "lassName=\"h-4 w-4 mr-2\" /> <span className=\"hidden sm:inline\">Clear All Cache</span> </Button> <Button"
+    },
+    {
+      "file": "src/components/TestingDebugPanel.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Clean expired cache entries",
+      "line": 399,
+      "column": 30,
+      "context": "he.cleanup()} className=\"flex-1\" aria-label=\"Clean expired cache entries\" title=\"Clean expired cache entri"
+    },
+    {
+      "file": "src/components/TestingDebugPanel.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Clean expired cache entries",
+      "line": 400,
+      "column": 25,
+      "context": "aria-label=\"Clean expired cache entries\" title=\"Clean expired cache entries\" > <RefreshCw cla"
     },
     {
       "file": "src/components/TestingDebugPanel.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Clean Expired",
-      "line": 397,
-      "column": 21,
-      "context": "<RefreshCw className=\"h-4 w-4 mr-2\" /> Clean Expired </Button> </div>"
+      "line": 403,
+      "column": 54,
+      "context": "lassName=\"h-4 w-4 mr-2\" /> <span className=\"hidden sm:inline\">Clean Expired</span> </Button> </div>"
     },
     {
       "file": "src/components/TestingDebugPanel.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "• Cache TTL: 5 minutes",
-      "line": 402,
+      "line": 408,
       "column": 22,
       "context": "<div className=\"text-xs text-muted-foreground\"> <p>• Cache TTL: 5 minutes</p> <p>• Eviction: LRU (Least Recently"
     },
@@ -6990,7 +7746,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "• Eviction: LRU (Least Recently Used)",
-      "line": 403,
+      "line": 409,
       "column": 22,
       "context": "reground\"> <p>• Cache TTL: 5 minutes</p> <p>• Eviction: LRU (Least Recently Used)</p> <p>• Invalidations:"
     },
@@ -6999,7 +7755,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "• Invalidations:",
-      "line": 404,
+      "line": 410,
       "column": 22,
       "context": "<p>• Eviction: LRU (Least Recently Used)</p> <p>• Invalidations: {cacheStats.invalidations || 0}</p> </div>"
     },
@@ -7239,10 +7995,100 @@
     },
     {
       "file": "src/components/TimelineVisualization.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Reset view",
+      "line": 547,
+      "column": 26,
+      "context": "size=\"icon\" variant=\"ghost\" aria-label=\"Reset view\" title=\"Reset view\" onClick={() => {"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Reset view",
+      "line": 548,
+      "column": 21,
+      "context": "variant=\"ghost\" aria-label=\"Reset view\" title=\"Reset view\" onClick={() => { setZoomLevel(1);"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Zoom out",
+      "line": 569,
+      "column": 28,
+      "context": "size=\"icon\" variant=\"ghost\" aria-label=\"Zoom out\" title=\"Zoom out\" onClick={() => handl"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Zoom out",
+      "line": 570,
+      "column": 23,
+      "context": "variant=\"ghost\" aria-label=\"Zoom out\" title=\"Zoom out\" onClick={() => handleZoom(-0.5)} disa"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Zoom in",
+      "line": 582,
+      "column": 28,
+      "context": "size=\"icon\" variant=\"ghost\" aria-label=\"Zoom in\" title=\"Zoom in\" onClick={() => handleZ"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Zoom in",
+      "line": 583,
+      "column": 23,
+      "context": "variant=\"ghost\" aria-label=\"Zoom in\" title=\"Zoom in\" onClick={() => handleZoom(0.5)} disabl"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Pan left",
+      "line": 596,
+      "column": 28,
+      "context": "size=\"icon\" variant=\"ghost\" aria-label=\"Pan left\" title=\"Pan left\" onClick={() => handl"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Pan left",
+      "line": 597,
+      "column": 23,
+      "context": "variant=\"ghost\" aria-label=\"Pan left\" title=\"Pan left\" onClick={() => handlePan(50)} >"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Pan right",
+      "line": 605,
+      "column": 28,
+      "context": "size=\"icon\" variant=\"ghost\" aria-label=\"Pan right\" title=\"Pan right\" onClick={() => han"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Pan right",
+      "line": 606,
+      "column": 23,
+      "context": "variant=\"ghost\" aria-label=\"Pan right\" title=\"Pan right\" onClick={() => handlePan(-50)} >"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "x",
-      "line": 621,
+      "line": 633,
       "column": 32,
       "context": "<span className=\"text-sm text-muted-foreground\"> {playbackSpeed}x </span> </div> {/* Stream visibility to"
     },
@@ -7251,7 +8097,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Emotions",
-      "line": 635,
+      "line": 647,
       "column": 17,
       "context": "> <Brain className=\"h-4 w-4 mr-1\" /> Emotions </Toggle> <Toggle size=\"sm\""
     },
@@ -7260,7 +8106,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Sensory",
-      "line": 645,
+      "line": 657,
       "column": 17,
       "context": "> <Eye className=\"h-4 w-4 mr-1\" /> Sensory </Toggle> <Toggle size=\"sm\""
     },
@@ -7269,7 +8115,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Anomalies",
-      "line": 655,
+      "line": 667,
       "column": 17,
       "context": "> <AlertCircle className=\"h-4 w-4 mr-1\" /> Anomalies </Toggle> </div> </div>"
     },
@@ -7278,7 +8124,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "minutes",
-      "line": 664,
+      "line": 676,
       "column": 65,
       "context": "=\"font-medium\"> {differenceInMinutes(timeRange[1], timeRange[0])} minutes </span> <span>{format(timeRange[1], 'MMM dd, yyy"
     },
@@ -7287,7 +8133,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Data Streams",
-      "line": 744,
+      "line": 756,
       "column": 54,
       "context": "rounded-lg p-3 shadow-lg\"> <h4 className=\"font-medium text-sm mb-2\">Data Streams</h4> <div className=\"space-y-1\"> {dataStr"
     },
@@ -7296,7 +8142,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Events:",
-      "line": 761,
+      "line": 773,
       "column": 18,
       "context": "-3 shadow-lg\"> <div className=\"text-xs space-y-1\"> <p>Events: {timelineEvents.length}</p> <p>Zoom: {Math.round(zoomLevel"
     },
@@ -7305,7 +8151,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Zoom:",
-      "line": 762,
+      "line": 774,
       "column": 18,
       "context": "ace-y-1\"> <p>Events: {timelineEvents.length}</p> <p>Zoom: {Math.round(zoomLevel * 100)}%</p> {brushSelection && ("
     },
@@ -7314,7 +8160,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Selection:",
-      "line": 764,
+      "line": 776,
       "column": 20,
       "context": "nd(zoomLevel * 100)}%</p> {brushSelection && ( <p>Selection: {differenceInMinutes(brushSelection[1], brushSelection[0])} min</p>"
     },
@@ -7323,7 +8169,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "min",
-      "line": 764,
+      "line": 776,
       "column": 91,
       "context": "<p>Selection: {differenceInMinutes(brushSelection[1], brushSelection[0])} min</p> )} </div> </div> </div>"
     },
@@ -7365,19 +8211,37 @@
     },
     {
       "file": "src/components/UniversalAnalyticsStatus.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Refresh analytics status",
+      "line": 97,
+      "column": 24,
+      "context": "tton variant=\"ghost\" size=\"icon\" aria-label=\"Refresh analytics status\" title=\"Refresh analytics status\""
+    },
+    {
+      "file": "src/components/UniversalAnalyticsStatus.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Refresh analytics status",
+      "line": 98,
+      "column": 19,
+      "context": "size=\"icon\" aria-label=\"Refresh analytics status\" title=\"Refresh analytics status\" onClick={handleRefresh} disab"
+    },
+    {
+      "file": "src/components/UniversalAnalyticsStatus.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "System Status",
-      "line": 116,
+      "line": 118,
       "column": 15,
-      "context": "500\" /> )} <span className=\"font-medium\"> System Status </span> </div> <Badge variant={all"
+      "context": "ing\" /> )} <span className=\"font-medium\"> System Status </span> </div> <Badge variant={all"
     },
     {
       "file": "src/components/UniversalAnalyticsStatus.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Students with Analytics",
-      "line": 131,
+      "line": 133,
       "column": 15,
       "context": "/div> <div className=\"text-sm text-muted-foreground\"> Students with Analytics </div> </div>"
     },
@@ -7386,7 +8250,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Students with Data",
-      "line": 140,
+      "line": 142,
       "column": 15,
       "context": "/div> <div className=\"text-sm text-muted-foreground\"> Students with Data </div> </div> </div> {"
     },
@@ -7395,7 +8259,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Student Details:",
-      "line": 148,
+      "line": 150,
       "column": 71,
       "context": "ace-y-2\"> <h4 className=\"font-medium text-sm text-muted-foreground\">Student Details:</h4> {status.studentStatuses.map(student => ("
     },
@@ -7404,7 +8268,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Health:",
-      "line": 160,
+      "line": 162,
       "column": 21,
       "context": "<Badge variant=\"outline\" className=\"text-xs\"> Health: {student.healthScore}% </Badge> {stu"
     },
@@ -7413,7 +8277,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Pattern Detection Active",
-      "line": 164,
+      "line": 166,
       "column": 23,
       "context": "<Badge variant=\"default\" className=\"text-xs\"> Pattern Detection Active </Badge> )}"
     },
@@ -7422,7 +8286,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "✨ Universal pattern detection is active for all students!",
-      "line": 179,
+      "line": 181,
       "column": 17,
       "context": "-4 w-4\" /> <span className=\"text-sm font-medium\"> ✨ Universal pattern detection is active for all students! </span>"
     },
@@ -7431,25 +8295,25 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Add your first student to see universal analytics in action. Pattern detection will start immediately!",
-      "line": 189,
+      "line": 191,
       "column": 15,
-      "context": "rounded-lg\"> <div className=\"text-blue-800 text-sm\"> Add your first student to see universal analytics in action. Pattern detection w"
+      "context": "d-lg\"> <div className=\"text-info-foreground text-sm\"> Add your first student to see universal analytics in action. Pattern detection w"
     },
     {
       "file": "src/components/Visualization3D.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "×",
-      "line": 55,
+      "line": 57,
       "column": 13,
-      "context": "ted-foreground hover:text-foreground transition-colors\" > × </button> </div> <p className=\"font-medium\">{point.l"
+      "context": "ground transition-colors motion-reduce:transition-none\" > × </button> </div> <p className=\"font-medium\">{point.l"
     },
     {
       "file": "src/components/Visualization3D.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "X:",
-      "line": 60,
+      "line": 62,
       "column": 14,
       "context": "<div className=\"text-sm text-muted-foreground mt-1 space-y-1\"> <p>X: {point.x.toFixed(2)}</p> <p>Y: {point.y.toFixed(2)}</p> <"
     },
@@ -7458,7 +8322,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Y:",
-      "line": 61,
+      "line": 63,
       "column": 14,
       "context": "reground mt-1 space-y-1\"> <p>X: {point.x.toFixed(2)}</p> <p>Y: {point.y.toFixed(2)}</p> <p>Z: {point.z.toFixed(2)}</p> {"
     },
@@ -7467,7 +8331,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Z:",
-      "line": 62,
+      "line": 64,
       "column": 14,
       "context": "{point.x.toFixed(2)}</p> <p>Y: {point.y.toFixed(2)}</p> <p>Z: {point.z.toFixed(2)}</p> {point.intensity && <p>Intensity: {point.i"
     },
@@ -7476,7 +8340,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Intensity:",
-      "line": 63,
+      "line": 65,
       "column": 34,
       "context": "}</p> <p>Z: {point.z.toFixed(2)}</p> {point.intensity && <p>Intensity: {point.intensity}</p>} </div> </div> </Html> ); }"
     },
@@ -7485,7 +8349,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "3D Correlation Visualization",
-      "line": 334,
+      "line": 346,
       "column": 11,
       "context": "Name=\"flex items-center gap-2\"> <Eye className=\"h-5 w-5\" /> 3D Correlation Visualization </CardTitle> </CardHeader> <Car"
     },
@@ -7494,7 +8358,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "X Axis",
-      "line": 342,
+      "line": 354,
       "column": 65,
       "context": "<div> <label className=\"text-sm font-medium mb-1 block\">X Axis</label> <Select value={xAxis} onValueChange={setXAxis}>"
     },
@@ -7503,7 +8367,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Y Axis",
-      "line": 358,
+      "line": 370,
       "column": 65,
       "context": "<div> <label className=\"text-sm font-medium mb-1 block\">Y Axis</label> <Select value={yAxis} onValueChange={setYAxis}>"
     },
@@ -7512,7 +8376,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Z Axis",
-      "line": 374,
+      "line": 386,
       "column": 65,
       "context": "<div> <label className=\"text-sm font-medium mb-1 block\">Z Axis</label> <Select value={zAxis} onValueChange={setZAxis}>"
     },
@@ -7521,7 +8385,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Color By",
-      "line": 392,
+      "line": 404,
       "column": 65,
       "context": "<div> <label className=\"text-sm font-medium mb-1 block\">Color By</label> <Select value={colorBy} onValueChange={setColorBy"
     },
@@ -7530,7 +8394,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Category",
-      "line": 398,
+      "line": 410,
       "column": 48,
       "context": "<SelectContent> <SelectItem value=\"category\">Category</SelectItem> <SelectItem value=\"intensity\">Intensity<"
     },
@@ -7539,7 +8403,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Intensity",
-      "line": 399,
+      "line": 411,
       "column": 49,
       "context": "category\">Category</SelectItem> <SelectItem value=\"intensity\">Intensity</SelectItem> </SelectContent> </Select>"
     },
@@ -7548,7 +8412,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Filter Category",
-      "line": 405,
+      "line": 417,
       "column": 65,
       "context": "<div> <label className=\"text-sm font-medium mb-1 block\">Filter Category</label> <Select value={filterCategory} onValueChan"
     },
@@ -7557,7 +8421,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "All",
-      "line": 411,
+      "line": 423,
       "column": 43,
       "context": "gger> <SelectContent> <SelectItem value=\"all\">All</SelectItem> <SelectItem value=\"emotion\">Emotions</SelectI"
     },
@@ -7566,7 +8430,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Emotions",
-      "line": 412,
+      "line": 424,
       "column": 47,
       "context": "Item value=\"all\">All</SelectItem> <SelectItem value=\"emotion\">Emotions</SelectItem> <SelectItem value=\"sensory\">Sensory</Sel"
     },
@@ -7575,7 +8439,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Sensory",
-      "line": 413,
+      "line": 425,
       "column": 47,
       "context": "e=\"emotion\">Emotions</SelectItem> <SelectItem value=\"sensory\">Sensory</SelectItem> <SelectItem value=\"environmental\">Environ"
     },
@@ -7584,7 +8448,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Environmental",
-      "line": 414,
+      "line": 426,
       "column": 53,
       "context": "nsory\">Sensory</SelectItem> <SelectItem value=\"environmental\">Environmental</SelectItem> </SelectContent> </Sele"
     },
@@ -7593,7 +8457,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Point Size:",
-      "line": 421,
+      "line": 433,
       "column": 17,
       "context": "<label className=\"text-sm font-medium mb-1 block\"> Point Size: {pointSize.toFixed(2)} </label> <Slider"
     },
@@ -7601,8 +8465,44 @@
       "file": "src/components/Visualization3D.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
+      "value": "Reduced motion enabled",
+      "line": 451,
+      "column": 15,
+      "context": "text-amber-800 dark:text-amber-200 px-3 py-1 rounded-md text-sm\"> Reduced motion enabled </div> )} \u0003cCanvas"
+    },
+    {
+      "file": "src/components/Visualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "\u0003cCanvas\n            camera=",
+      "line": 454,
+      "column": 11,
+      "context": "Reduced motion enabled </div> )} \u0003cCanvas camera={{ position: [10, 10, 10], fov: 50 }} cl"
+    },
+    {
+      "file": "src/components/Visualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "className=\"w-full h-full\"\n            onCreated=",
+      "line": 456,
+      "column": 13,
+      "context": "\u0003cCanvas camera={{ position: [10, 10, 10], fov: 50 }} className=\"w-full h-full\" onCreated={({ gl }) => { con"
+    },
+    {
+      "file": "src/components/Visualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "\u0003e",
+      "line": 468,
+      "column": 11,
+      "context": ".addEventListener('webglcontextrestored', onRestored); }} \u0003e <ambientLight intensity={0.5} /> <pointLight position"
+    },
+    {
+      "file": "src/components/Visualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
       "value": "Legend",
-      "line": 503,
+      "line": 532,
       "column": 54,
       "context": "rounded-lg p-3 shadow-lg\"> <h4 className=\"font-medium text-sm mb-2\">Legend</h4> <div className=\"space-y-1\"> {colorBy === '"
     },
@@ -7611,7 +8511,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Emotions",
-      "line": 509,
+      "line": 538,
       "column": 47,
       "context": "h-3 rounded-full bg-[#10B981]\" /> <span className=\"text-xs\">Emotions</span> </div> <div className=\"flex"
     },
@@ -7620,7 +8520,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Sensory",
-      "line": 513,
+      "line": 542,
       "column": 47,
       "context": "h-3 rounded-full bg-[#3B82F6]\" /> <span className=\"text-xs\">Sensory</span> </div> <div className=\"flex i"
     },
@@ -7629,7 +8529,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Environmental",
-      "line": 517,
+      "line": 546,
       "column": 47,
       "context": "h-3 rounded-full bg-[#F59E0B]\" /> <span className=\"text-xs\">Environmental</span> </div> </>"
     },
@@ -7638,7 +8538,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Low → High",
-      "line": 524,
+      "line": 553,
       "column": 45,
       "context": "a-yellow-500 to-red-500 rounded\" /> <span className=\"text-xs\">Low → High</span> </div> )} </div>"
     },
@@ -7647,7 +8547,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Points:",
-      "line": 532,
+      "line": 561,
       "column": 18,
       "context": "-3 shadow-lg\"> <div className=\"text-xs space-y-1\"> <p>Points: {filteredPoints.length}</p> <p>Total Sessions: {trackingEn"
     },
@@ -7656,7 +8556,7 @@
       "kind": "JSXText",
       "detail": "Static JSX text node",
       "value": "Total Sessions:",
-      "line": 533,
+      "line": 562,
       "column": 18,
       "context": "ace-y-1\"> <p>Points: {filteredPoints.length}</p> <p>Total Sessions: {trackingEntries.length}</p> </div> </div>"
     },
@@ -8027,7 +8927,7 @@
       "value": "Data counts",
       "line": 357,
       "column": 68,
-      "context": "</div> <div className=\"flex items-center gap-2 mt-8\" aria-label=\"Data counts\"> <Badge variant=\"outline\" className=\"bg-green-50 text-"
+      "context": "</div> <div className=\"flex items-center gap-2 mt-8\" aria-label=\"Data counts\"> <Badge variant=\"outline\" className=\"bg-success/10 tex"
     },
     {
       "file": "src/components/VisualizationControls.tsx",
@@ -8036,7 +8936,7 @@
       "value": "emotions",
       "line": 359,
       "column": 46,
-      "context": "text-green-700 border-green-200\"> {filteredData.emotions.length} emotions </Badge> <Badge variant=\"outline\" className=\"bg"
+      "context": "0 text-success border-success/20\"> {filteredData.emotions.length} emotions </Badge> <Badge variant=\"outline\" className=\"bg"
     },
     {
       "file": "src/components/VisualizationControls.tsx",
@@ -8045,7 +8945,7 @@
       "value": "sensory inputs",
       "line": 362,
       "column": 51,
-      "context": "xt-blue-700 border-blue-200\"> {filteredData.sensoryInputs.length} sensory inputs </Badge> <Badge variant=\"outline\" classNa"
+      "context": "10 text-info border-info/20\"> {filteredData.sensoryInputs.length} sensory inputs </Badge> <Badge variant=\"outline\" classNa"
     },
     {
       "file": "src/components/VisualizationControls.tsx",
@@ -8054,7 +8954,7 @@
       "value": "sessions",
       "line": 365,
       "column": 53,
-      "context": "ple-700 border-purple-200\"> {filteredData.trackingEntries.length} sessions </Badge> {filterCriteria.realtime && ("
+      "context": "primary border-primary/20\"> {filteredData.trackingEntries.length} sessions </Badge> {filterCriteria.realtime && ("
     },
     {
       "file": "src/components/VisualizationControls.tsx",
@@ -8063,7 +8963,7 @@
       "value": "new",
       "line": 369,
       "column": 45,
-      "context": "default\" className=\"bg-orange-500\"> {realtimeData.newDataCount} new </Badge> )} </div> </div>"
+      "context": "arning/80 text-warning-foreground\"> {realtimeData.newDataCount} new </Badge> )} </div> </div>"
     },
     {
       "file": "src/components/ui/Breadcrumbs.tsx",
@@ -8264,6 +9164,483 @@
       "context": "=\"Toggle Sidebar\" tabIndex={-1} onClick={toggleSidebar} title=\"Toggle Sidebar\" className={cn( \"absolute inset-y-0 z-20 hidden w-"
     },
     {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "No data collection history yet",
+      "line": 281,
+      "column": 48,
+      "context": "o mb-4 text-muted-foreground\" /> <p className=\"text-muted-foreground\">No data collection history yet</p> <p className=\"text-sm text-muted-fo"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Start your first session to see monitoring insights",
+      "line": 283,
+      "column": 13,
+      "context": "et</p> <p className=\"text-sm text-muted-foreground mt-2\"> Start your first session to see monitoring insights </p> </Car"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Collection Overview",
+      "line": 298,
+      "column": 15,
+      "context": "ems-center gap-2\"> <Activity className=\"h-5 w-5\" /> Collection Overview </CardTitle> </CardHeader> <"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Total Sessions",
+      "line": 305,
+      "column": 62,
+      "context": "totalSessions}</p> <p className=\"text-xs text-muted-foreground\">Total Sessions</p> </div> <div className=\"text-cente"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Completion Rate",
+      "line": 313,
+      "column": 62,
+      "context": "</p> <p className=\"text-xs text-muted-foreground\">Completion Rate</p> </div> <div className=\"text-cent"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Avg Quality",
+      "line": 319,
+      "column": 62,
+      "context": "</p> <p className=\"text-xs text-muted-foreground\">Avg Quality</p> </div> <div className=\"text-center p"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "m",
+      "line": 323,
+      "column": 67,
+      "context": "l font-bold\"> {Math.round(statistics.averageDuration / 60000)}m </p> <p className=\"text-xs text-muted-foregrou"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Avg Duration",
+      "line": 325,
+      "column": 62,
+      "context": "</p> <p className=\"text-xs text-muted-foreground\">Avg Duration</p> </div> </div> {/* Common"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Common Issues",
+      "line": 334,
+      "column": 19,
+      "context": "<AlertCircle className=\"h-4 w-4 text-yellow-500\" /> Common Issues </h4> <div className=\"space-y-1\">"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "times",
+      "line": 341,
+      "column": 39,
+      "context": "ge variant=\"outline\" className=\"text-xs\"> {issue.count} times </Badge> </div>"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Collection Goals",
+      "line": 357,
+      "column": 13,
+      "context": "lex items-center gap-2\"> <Target className=\"h-5 w-5\" /> Collection Goals </CardTitle> </CardHeader> <CardConte"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Target by",
+      "line": 398,
+      "column": 23,
+      "context": "\"> <Calendar className=\"h-3 w-3\" /> Target by {format(goal.deadline, 'MMM d')} </p>"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Recommended Strategies",
+      "line": 414,
+      "column": 15,
+      "context": "\"> <Sparkles className=\"h-5 w-5 text-yellow-500\" /> Recommended Strategies </CardTitle> </CardHeader>"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Effectiveness:",
+      "line": 463,
+      "column": 27,
+      "context": "<span className=\"flex items-center gap-1\"> Effectiveness: {'★'.repeat(strategy.effectiveness)}"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Benefits:",
+      "line": 484,
+      "column": 66,
+      "context": "<div> <h5 className=\"text-xs font-medium mb-1\">Benefits:</h5> <ul className=\"text-xs text-muted-foregro"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "How to implement:",
+      "line": 496,
+      "column": 66,
+      "context": "<div> <h5 className=\"text-xs font-medium mb-1\">How to implement:</h5> <ul className=\"text-xs text-muted"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "You have",
+      "line": 532,
+      "column": 13,
+      "context": "<Info className=\"h-4 w-4\" /> <AlertDescription> You have {activeStrategies.length} active {activeStrategies.length === 1 ? 'stra"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "active",
+      "line": 532,
+      "column": 48,
+      "context": "/> <AlertDescription> You have {activeStrategies.length} active {activeStrategies.length === 1 ? 'strategy' : 'strategies'}."
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": ".\n            Remember to apply",
+      "line": 532,
+      "column": 114,
+      "context": "egies.length} active {activeStrategies.length === 1 ? 'strategy' : 'strategies'}. Remember to apply {activeStrategies.length === 1 ? 'it' : 'them'}"
+    },
+    {
+      "file": "src/components/tracking/DataCollectionMonitor.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "in your next session!",
+      "line": 533,
+      "column": 79,
+      "context": ". Remember to apply {activeStrategies.length === 1 ? 'it' : 'them'} in your next session! </AlertDescription> </Alert> )}"
+    },
+    {
+      "file": "src/components/tracking/SessionIndicator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "emotions",
+      "line": 78,
+      "column": 34,
+      "context": "<Badge variant=\"outline\" className=\"text-xs\"> {quality.emotionCount} emotions </Badge> <Badge variant=\"outline\" className=\"text-xs\">"
+    },
+    {
+      "file": "src/components/tracking/SessionIndicator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "sensory",
+      "line": 81,
+      "column": 34,
+      "context": "<Badge variant=\"outline\" className=\"text-xs\"> {quality.sensoryCount} sensory </Badge> {showControls && ( <div className=\"fl"
+    },
+    {
+      "file": "src/components/tracking/SessionIndicator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Active Session",
+      "line": 111,
+      "column": 53,
+      "context": "or())} /> <div> <h3 className=\"font-semibold text-sm\">Active Session</h3> <p className=\"text-xs text-muted-foreground\">"
+    },
+    {
+      "file": "src/components/tracking/SessionIndicator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Data Quality",
+      "line": 127,
+      "column": 63,
+      "context": "fy-between mb-1\"> <span className=\"text-xs text-muted-foreground\">Data Quality</span> <div className=\"flex items-center gap-1\">"
+    },
+    {
+      "file": "src/components/tracking/SessionIndicator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Emotions",
+      "line": 139,
+      "column": 60,
+      "context": "ty.emotionCount}</p> <p className=\"text-xs text-muted-foreground\">Emotions</p> </div> <div className=\"p-2 rounded bg-muted"
+    },
+    {
+      "file": "src/components/tracking/SessionIndicator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Sensory",
+      "line": 143,
+      "column": 60,
+      "context": "ty.sensoryCount}</p> <p className=\"text-xs text-muted-foreground\">Sensory</p> </div> <div className=\"p-2 rounded bg-muted/"
+    },
+    {
+      "file": "src/components/tracking/SessionIndicator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Environment",
+      "line": 149,
+      "column": 60,
+      "context": "} </p> <p className=\"text-xs text-muted-foreground\">Environment</p> </div> </div> </div> {/*"
+    },
+    {
+      "file": "src/components/tracking/SessionIndicator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Last saved",
+      "line": 159,
+      "column": 15,
+      "context": "ckCircle className=\"h-3 w-3 text-green-500\" /> <span> Last saved {new Date(quality.lastSaved).toLocaleTimeString()} </span"
+    },
+    {
+      "file": "src/components/tracking/SessionIndicator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Resume",
+      "line": 175,
+      "column": 17,
+      "context": "> <Play className=\"h-4 w-4 mr-2\" /> Resume </Button> ) : ( <Button"
+    },
+    {
+      "file": "src/components/tracking/SessionIndicator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Pause",
+      "line": 185,
+      "column": 17,
+      "context": "> <Pause className=\"h-4 w-4 mr-2\" /> Pause </Button> )} <Button"
+    },
+    {
+      "file": "src/components/tracking/SessionIndicator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Save",
+      "line": 197,
+      "column": 15,
+      "context": "20} > <Save className=\"h-4 w-4 mr-2\" /> Save </Button> <Button size=\"sm\""
+    },
+    {
+      "file": "src/components/tracking/SessionIndicator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Add more data to improve session quality",
+      "line": 215,
+      "column": 15,
+      "context": "der-warning/20\"> <p className=\"text-xs text-warning\"> Add more data to improve session quality </p> </div>"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Failed to recover session:",
+      "line": 52,
+      "column": 21,
+      "context": "> s.sessionId !== sessionId) ); } catch (error) { console.error('Failed to recover session:', error); } finally { setIsRecovering(fals"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Unsaved Session Found",
+      "line": 103,
+      "column": 21,
+      "context": "className)}> <AlertTriangle className=\"h-4 w-4\" /> <AlertTitle>Unsaved Session Found</AlertTitle> <AlertDescription className=\"mt-2\">"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "You have an incomplete session from",
+      "line": 106,
+      "column": 13,
+      "context": "escription className=\"mt-2\"> <p className=\"text-sm mb-3\"> You have an incomplete session from {age} with {session.metadata.dataPoints} dat"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "with",
+      "line": 106,
+      "column": 55,
+      "context": "className=\"text-sm mb-3\"> You have an incomplete session from {age} with {session.metadata.dataPoints} data points. </p> <div cl"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "data points.",
+      "line": 106,
+      "column": 90,
+      "context": "You have an incomplete session from {age} with {session.metadata.dataPoints} data points. </p> <div className=\"flex gap-2\"> <"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Recovering...",
+      "line": 118,
+      "column": 19,
+      "context": "<RefreshCw className=\"h-4 w-4 mr-2 animate-spin\" /> Recovering... </> ) : ( <>"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Resume Session",
+      "line": 123,
+      "column": 19,
+      "context": "<> <RefreshCw className=\"h-4 w-4 mr-2\" /> Resume Session </> )} </Button>"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Discard",
+      "line": 133,
+      "column": 15,
+      "context": "} > <Trash2 className=\"h-4 w-4 mr-2\" /> Discard </Button> </div> </AlertDescription>"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Recoverable Sessions",
+      "line": 148,
+      "column": 19,
+      "context": "<AlertTriangle className=\"h-5 w-5 text-yellow-500\" /> <span>Recoverable Sessions</span> </div> <Badge variant=\"outline\">"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Found",
+      "line": 155,
+      "column": 11,
+      "context": "rdContent> <p className=\"text-sm text-muted-foreground mb-4\"> Found {recoverableSessions.length} incomplete session(s) that can be recovered."
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "incomplete session(s) that can be recovered.",
+      "line": 155,
+      "column": 46,
+      "context": "xt-sm text-muted-foreground mb-4\"> Found {recoverableSessions.length} incomplete session(s) that can be recovered. </p> <div classNam"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Started",
+      "line": 176,
+      "column": 59,
+      "context": "-muted-foreground\" /> <span className=\"text-sm font-medium\">Started {age}</span> </div> <Badge"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "data points",
+      "line": 189,
+      "column": 57,
+      "context": "xt-muted-foreground\" /> <span>{session.metadata.dataPoints} data points</span> </div> <div className=\"fl"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "m",
+      "line": 193,
+      "column": 74,
+      "context": "nd\" /> <span>{Math.floor(session.metadata.duration / 60000)}m</span> </div> <div className=\"flex items-c"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Quality:",
+      "line": 196,
+      "column": 61,
+      "context": "tems-center gap-1\"> <span className=\"text-muted-foreground\">Quality:</span> <span className=\"font-medium\">{quality.score"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "emotions",
+      "line": 205,
+      "column": 54,
+      "context": "line\" className=\"text-xs\"> {session.data.emotions.length} emotions </Badge> )} {se"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "sensory",
+      "line": 210,
+      "column": 59,
+      "context": "className=\"text-xs\"> {session.data.sensoryInputs.length} sensory </Badge> )} {ses"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Environmental",
+      "line": 215,
+      "column": 23,
+      "context": "<Badge variant=\"outline\" className=\"text-xs\"> Environmental </Badge> )}"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Recovering...",
+      "line": 231,
+      "column": 25,
+      "context": "<RefreshCw className=\"h-3 w-3 mr-1 animate-spin\" /> Recovering... </> ) : ("
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Resume",
+      "line": 236,
+      "column": 25,
+      "context": "<RefreshCw className=\"h-3 w-3 mr-1\" /> Resume </> )} </Butt"
+    },
+    {
+      "file": "src/components/tracking/SessionRecovery.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Discard All",
+      "line": 261,
+      "column": 13,
+      "context": "uctive\" > <Trash2 className=\"h-4 w-4 mr-2\" /> Discard All </Button> </div> </CardContent> </Card>"
+    },
+    {
       "file": "src/components/settings/AnalyticsConfig.tsx",
       "kind": "MessageAPI",
       "detail": "Message API call: error()",
@@ -8451,6 +9828,204 @@
       "line": 92,
       "column": 11,
       "context": "font-bold\">Verktøy</h2> <p className=\"text-muted-foreground\"> Avanserte verktøy for søk, maler og sammenligning </p> </div>"
+    },
+    {
+      "file": "src/components/optimized/OptimizedAnalyticsDashboard.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "[OptimizedAnalyticsDashboard] Demo seed failed",
+      "line": 145,
+      "column": 20,
+      "context": "d); runAnalysis(normalizedData); } catch (error) { logger.error('[OptimizedAnalyticsDashboard] Demo seed failed', { error }); toast.error("
+    },
+    {
+      "file": "src/components/optimized/OptimizedAnalyticsDashboard.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "[OptimizedAnalyticsDashboard] Export failed",
+      "line": 181,
+      "column": 20,
+      "context": "String(tAnalytics('export.success'))); } catch (error) { logger.error('[OptimizedAnalyticsDashboard] Export failed', { error }); toast.error(Str"
+    },
+    {
+      "file": "src/components/optimized/OptimizedAnalyticsDashboard.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: info()",
+      "value": "[OptimizedAnalyticsDashboard] Tab changed",
+      "line": 209,
+      "column": 17,
+      "context": "back((value: string) => { // Track tab change for analytics logger.info('[OptimizedAnalyticsDashboard] Tab changed', { tab: value }); }, []); // Me"
+    },
+    {
+      "file": "src/components/optimized/OptimizedAnalyticsDashboard.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "No patterns detected yet.",
+      "line": 325,
+      "column": 44,
+      "context": "y-4\"> {patterns.length === 0 ? ( <p className=\"text-muted-foreground\">No patterns detected yet.</p> ) : ( patterns.map((pattern, index) => ("
+    },
+    {
+      "file": "src/components/optimized/OptimizedAnalyticsDashboard.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "No correlations found.",
+      "line": 339,
+      "column": 44,
+      "context": "> {correlations.length === 0 ? ( <p className=\"text-muted-foreground\">No correlations found.</p> ) : ( correlations.map((correlation, index)"
+    },
+    {
+      "file": "src/components/optimized/OptimizedAnalyticsDashboard.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "No insights available.",
+      "line": 353,
+      "column": 44,
+      "context": "y-4\"> {insights.length === 0 ? ( <p className=\"text-muted-foreground\">No insights available.</p> ) : ( insights.map((insight, index) => ("
+    },
+    {
+      "file": "src/components/optimized/OptimizedAnalyticsDashboard.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "No predictions available.",
+      "line": 367,
+      "column": 44,
+      "context": "\"> {predictions.length === 0 ? ( <p className=\"text-muted-foreground\">No predictions available.</p> ) : ( predictions.map((prediction, index"
+    },
+    {
+      "file": "src/components/optimized/OptimizedCorrelationHeatmap.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "No correlation data available",
+      "line": 110,
+      "column": 46,
+      "context": "flex items-center justify-center\"> <p className=\"text-muted-foreground\">No correlation data available</p> </div> ); } return ( <div c"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataRequirementsCalculator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Datakrav for sikkerhetsnivå",
+      "line": 235,
+      "column": 13,
+      "context": "lex items-center gap-2\"> <Target className=\"h-5 w-5\" /> Datakrav for sikkerhetsnivå </CardTitle> </CardHeader>"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataRequirementsCalculator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Ingen data registrert ennå. Start med å samle data for å se fremgang mot sikkerhetsnivåer.",
+      "line": 241,
+      "column": 13,
+      "context": "foreground\" /> <p className=\"text-muted-foreground mb-4\"> Ingen data registrert ennå. Start med å samle data for å se fremgang mot sikkerh"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataRequirementsCalculator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Start datainnsamling",
+      "line": 244,
+      "column": 13,
+      "context": "kkerhetsnivåer. </p> <Button variant=\"outline\"> Start datainnsamling </Button> </CardContent> </Card>"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataRequirementsCalculator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Datakrav for sikkerhetsnivå",
+      "line": 256,
+      "column": 11,
+      "context": "e=\"flex items-center gap-2\"> <Target className=\"h-5 w-5\" /> Datakrav for sikkerhetsnivå </CardTitle> <div className=\"flex it"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataRequirementsCalculator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "datapunkter samlet",
+      "line": 259,
+      "column": 44,
+      "context": "ap-4 text-sm text-muted-foreground\"> <span>{currentStatus.dataPoints} datapunkter samlet</span> <span>{currentStatus.daysSpan} dager med dat"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataRequirementsCalculator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "dager med data",
+      "line": 260,
+      "column": 42,
+      "context": ".dataPoints} datapunkter samlet</span> <span>{currentStatus.daysSpan} dager med data</span> </div> </CardHeader> <CardContent clas"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataRequirementsCalculator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Nåværende sikkerhetsnivå",
+      "line": 267,
+      "column": 40,
+      "context": "bg-muted/50 rounded-lg\"> <div> <p className=\"font-medium\">Nåværende sikkerhetsnivå</p> <p className=\"text-sm text-muted-foregr"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataRequirementsCalculator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "sikkerhet",
+      "line": 273,
+      "column": 25,
+      "context": "</div> <Badge variant={badgeVariant as any}> {badgeText} sikkerhet </Badge> </div> {/* Progress toward next le"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataRequirementsCalculator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Fremgang mot",
+      "line": 281,
+      "column": 43,
+      "context": "=\"flex items-center justify-between\"> <h4 className=\"font-medium\">Fremgang mot {nextTarget.requirement.description}</h4> <span class"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataRequirementsCalculator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "% fullført",
+      "line": 283,
+      "column": 50,
+      "context": "ext-sm text-muted-foreground\"> {Math.round(nextTarget.progress)}% fullført </span> </div> <Pr"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataRequirementsCalculator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Anbefalt: Samle",
+      "line": 307,
+      "column": 19,
+      "context": "nded-lg\"> <p className=\"text-sm font-medium\"> Anbefalt: Samle {recommendedRate} datapunkt{recommendedRate > 1 ? 'er' : ''} per"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataRequirementsCalculator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "datapunkt",
+      "line": 307,
+      "column": 53,
+      "context": "Name=\"text-sm font-medium\"> Anbefalt: Samle {recommendedRate} datapunkt{recommendedRate > 1 ? 'er' : ''} per dag </p>"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataRequirementsCalculator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "per dag",
+      "line": 307,
+      "column": 96,
+      "context": "Anbefalt: Samle {recommendedRate} datapunkt{recommendedRate > 1 ? 'er' : ''} per dag </p> <p className=\"text-xs text-muted-fo"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataRequirementsCalculator.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Måloppnåelse:",
+      "line": 310,
+      "column": 19,
+      "context": "<p className=\"text-xs text-muted-foreground mt-1\"> Måloppnåelse: {formatDate(nextTarget.targetDate)} </p>"
     },
     {
       "file": "src/components/optimized/OptimizedDataVisualization.tsx",
@@ -8894,6 +10469,618 @@
       "context": "<Shield className=\"h-16 w-16 mx-auto mb-4 opacity-50\" /> <p>No significant anomalies detected in recent data</p> </div>"
     },
     {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Please fill in all required fields",
+      "line": 129,
+      "column": 19,
+      "context": ".description.trim() || !newGoal.measurableObjective.trim()) { toast.error(\"Please fill in all required fields\"); return; } if (!newGoal.tar"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.error()",
+      "value": "Please fill in all required fields",
+      "line": 129,
+      "column": 19,
+      "context": ".description.trim() || !newGoal.measurableObjective.trim()) { toast.error(\"Please fill in all required fields\"); return; } if (!newGoal.tar"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Please select a target date",
+      "line": 134,
+      "column": 19,
+      "context": "fields\"); return; } if (!newGoal.targetDate) { toast.error(\"Please select a target date\"); return; } const targetDate = new"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.error()",
+      "value": "Please select a target date",
+      "line": 134,
+      "column": 19,
+      "context": "fields\"); return; } if (!newGoal.targetDate) { toast.error(\"Please select a target date\"); return; } const targetDate = new"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Invalid target date",
+      "line": 140,
+      "column": 19,
+      "context": "e(newGoal.targetDate); if (isNaN(targetDate.getTime())) { toast.error(\"Invalid target date\"); return; } const today = new Date(); t"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.error()",
+      "value": "Invalid target date",
+      "line": 140,
+      "column": 19,
+      "context": "e(newGoal.targetDate); if (isNaN(targetDate.getTime())) { toast.error(\"Invalid target date\"); return; } const today = new Date(); t"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Target date must be in the future",
+      "line": 147,
+      "column": 19,
+      "context": "today.setHours(0, 0, 0, 0); if (targetDate < today) { toast.error(\"Target date must be in the future\"); return; } if (newGoal.targe"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.error()",
+      "value": "Target date must be in the future",
+      "line": 147,
+      "column": 19,
+      "context": "today.setHours(0, 0, 0, 0); if (targetDate < today) { toast.error(\"Target date must be in the future\"); return; } if (newGoal.targe"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: error()",
+      "value": "Target value must be greater than baseline value",
+      "line": 152,
+      "column": 19,
+      "context": "} if (newGoal.targetValue <= newGoal.baselineValue) { toast.error(\"Target value must be greater than baseline value\"); return; } co"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.error()",
+      "value": "Target value must be greater than baseline value",
+      "line": 152,
+      "column": 19,
+      "context": "} if (newGoal.targetValue <= newGoal.baselineValue) { toast.error(\"Target value must be greater than baseline value\"); return; } co"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: success()",
+      "value": "Goal created successfully!",
+      "line": 184,
+      "column": 19,
+      "context": "loadGoals(); resetForm(); setShowCreateDialog(false); toast.success(\"Goal created successfully!\"); onGoalUpdate?.(); }, [newGoal, student.id,"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.success()",
+      "value": "Goal created successfully!",
+      "line": 184,
+      "column": 19,
+      "context": "loadGoals(); resetForm(); setShowCreateDialog(false); toast.success(\"Goal created successfully!\"); onGoalUpdate?.(); }, [newGoal, student.id,"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: success()",
+      "value": "Goal deleted successfully",
+      "line": 207,
+      "column": 21,
+      "context": "{ dataStorage.deleteGoal(goalId); loadGoals(); toast.success(\"Goal deleted successfully\"); onGoalUpdate?.(); } }, [goals, loadGoa"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.success()",
+      "value": "Goal deleted successfully",
+      "line": 207,
+      "column": 21,
+      "context": "{ dataStorage.deleteGoal(goalId); loadGoals(); toast.success(\"Goal deleted successfully\"); onGoalUpdate?.(); } }, [goals, loadGoa"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: success()",
+      "value": "Progress updated!",
+      "line": 235,
+      "column": 19,
+      "context": "urrentProgress: Math.max(0, Math.min(100, progress)) }); toast.success(\"Progress updated!\"); }, [goals, updateGoal]); // Memoized milestone additi"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.success()",
+      "value": "Progress updated!",
+      "line": 235,
+      "column": 19,
+      "context": "urrentProgress: Math.max(0, Math.min(100, progress)) }); toast.success(\"Progress updated!\"); }, [goals, updateGoal]); // Memoized milestone additi"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: success()",
+      "value": "Milestone added!",
+      "line": 255,
+      "column": 19,
+      "context": "milestones: [...goal.milestones, newMilestone] }); toast.success(\"Milestone added!\"); }, [goals, updateGoal]); // Memoized milestone complet"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.success()",
+      "value": "Milestone added!",
+      "line": 255,
+      "column": 19,
+      "context": "milestones: [...goal.milestones, newMilestone] }); toast.success(\"Milestone added!\"); }, [goals, updateGoal]); // Memoized milestone complet"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: success()",
+      "value": "Milestone completed!",
+      "line": 270,
+      "column": 19,
+      "context": "; updateGoal(goalId, { milestones: updatedMilestones }); toast.success(\"Milestone completed!\"); }, [goals, updateGoal]); // Handler for milestone"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "sonner toast.success()",
+      "value": "Milestone completed!",
+      "line": 270,
+      "column": 19,
+      "context": "; updateGoal(goalId, { milestones: updatedMilestones }); toast.success(\"Milestone completed!\"); }, [goals, updateGoal]); // Handler for milestone"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: prompt()",
+      "value": "Milestone title:",
+      "line": 275,
+      "column": 26,
+      "context": "eAddMilestoneClick = useCallback((goalId: string) => { const title = prompt(\"Milestone title:\"); const description = prompt(\"Milestone description:\");"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: prompt()",
+      "value": "Milestone description:",
+      "line": 276,
+      "column": 32,
+      "context": "{ const title = prompt(\"Milestone title:\"); const description = prompt(\"Milestone description:\"); const dateStr = prompt(\"Target date (YYYY-MM-DD):"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: prompt()",
+      "value": "Target date (YYYY-MM-DD):",
+      "line": 277,
+      "column": 28,
+      "context": "onst description = prompt(\"Milestone description:\"); const dateStr = prompt(\"Target date (YYYY-MM-DD):\"); if (title && description && dateStr) { a"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: prompt()",
+      "value": "Enter current progress value:",
+      "line": 285,
+      "column": 26,
+      "context": "pdateProgressClick = useCallback((goalId: string) => { const value = prompt(\"Enter current progress value:\"); const notes = prompt(\"Progress notes (opti"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "MessageAPI",
+      "detail": "Message API call: prompt()",
+      "value": "Progress notes (optional):",
+      "line": 286,
+      "column": 26,
+      "context": "const value = prompt(\"Enter current progress value:\"); const notes = prompt(\"Progress notes (optional):\"); if (value) { addDataPoint(goalId, Numbe"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "IEP Goals & Tracking",
+      "line": 344,
+      "column": 46,
+      "context": "lassName=\"h-6 w-6 text-primary\" /> <h2 className=\"text-2xl font-bold\">IEP Goals & Tracking</h2> </div> <Dialog open={showCrea"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Create New Goal",
+      "line": 351,
+      "column": 15,
+      "context": "over:opacity-90\"> <Plus className=\"h-4 w-4 mr-2\" /> Create New Goal </Button> </DialogTrigger> <Dial"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Create New IEP Goal",
+      "line": 356,
+      "column": 28,
+      "context": "-[90vh] overflow-y-auto\"> <DialogHeader> <DialogTitle>Create New IEP Goal</DialogTitle> <DialogDescription>"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Define a specific, measurable goal for",
+      "line": 358,
+      "column": 17,
+      "context": "te New IEP Goal</DialogTitle> <DialogDescription> Define a specific, measurable goal for {student.name}'s educational progress."
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "'s educational progress.",
+      "line": 358,
+      "column": 70,
+      "context": "scription> Define a specific, measurable goal for {student.name}'s educational progress. </DialogDescription> </Dialog"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Goal Title *",
+      "line": 364,
+      "column": 45,
+      "context": "pace-y-4 mt-4\"> <div> <Label htmlFor=\"goal-title\">Goal Title *</Label> <Input id=\"goal-title\""
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static placeholder attribute",
+      "value": "e.g., Improve Reading Comprehension",
+      "line": 367,
+      "column": 31,
+      "context": "<Input id=\"goal-title\" placeholder=\"e.g., Improve Reading Comprehension\" value={newGoal.title}"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Description *",
+      "line": 374,
+      "column": 51,
+      "context": "<div> <Label htmlFor=\"goal-description\">Description *</Label> <Textarea id=\"goal-descr"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static placeholder attribute",
+      "value": "Describe the goal in detail...",
+      "line": 377,
+      "column": 31,
+      "context": "<Textarea id=\"goal-description\" placeholder=\"Describe the goal in detail...\" value={newGoal.description}"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Category *",
+      "line": 385,
+      "column": 48,
+      "context": "<div> <Label htmlFor=\"goal-category\">Category *</Label> <Select value={newGoal.category} onValueChang"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Behavioral",
+      "line": 391,
+      "column": 52,
+      "context": "<SelectContent> <SelectItem value=\"behavioral\">Behavioral</SelectItem> <SelectItem value=\"academic\">Academi"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Academic",
+      "line": 392,
+      "column": 50,
+      "context": "ioral\">Behavioral</SelectItem> <SelectItem value=\"academic\">Academic</SelectItem> <SelectItem value=\"social\">Social</Sel"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Social",
+      "line": 393,
+      "column": 48,
+      "context": "\"academic\">Academic</SelectItem> <SelectItem value=\"social\">Social</SelectItem> <SelectItem value=\"communication\">Commun"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Communication",
+      "line": 394,
+      "column": 55,
+      "context": "cial\">Social</SelectItem> <SelectItem value=\"communication\">Communication</SelectItem> <SelectItem value=\"motor\">Motor S"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Motor Skills",
+      "line": 395,
+      "column": 47,
+      "context": "ation\">Communication</SelectItem> <SelectItem value=\"motor\">Motor Skills</SelectItem> <SelectItem value=\"sensory\">Sensor"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Sensory",
+      "line": 396,
+      "column": 49,
+      "context": "otor\">Motor Skills</SelectItem> <SelectItem value=\"sensory\">Sensory</SelectItem> <SelectItem value=\"cognitive\">Cognitive"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Cognitive",
+      "line": 397,
+      "column": 51,
+      "context": "sensory\">Sensory</SelectItem> <SelectItem value=\"cognitive\">Cognitive</SelectItem> <SelectItem value=\"emotional\">Emotion"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Emotional",
+      "line": 398,
+      "column": 51,
+      "context": "itive\">Cognitive</SelectItem> <SelectItem value=\"emotional\">Emotional</SelectItem> <SelectItem value=\"selfCare\">Self-Car"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Self-Care",
+      "line": 399,
+      "column": 50,
+      "context": "tional\">Emotional</SelectItem> <SelectItem value=\"selfCare\">Self-Care</SelectItem> <SelectItem value=\"vocational\">Vocati"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Vocational",
+      "line": 400,
+      "column": 52,
+      "context": "Care\">Self-Care</SelectItem> <SelectItem value=\"vocational\">Vocational</SelectItem> </SelectContent> </Sel"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Measurable Objective *",
+      "line": 406,
+      "column": 49,
+      "context": "<div> <Label htmlFor=\"goal-objective\">Measurable Objective *</Label> <Textarea id=\"g"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static placeholder attribute",
+      "value": "e.g., Student will read grade-level text with 80% comprehension...",
+      "line": 409,
+      "column": 31,
+      "context": "<Textarea id=\"goal-objective\" placeholder=\"e.g., Student will read grade-level text with 80% comprehension...\""
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Baseline Value",
+      "line": 418,
+      "column": 50,
+      "context": "gap-4\"> <div> <Label htmlFor=\"goal-baseline\">Baseline Value</Label> <Input id=\"goal-bas"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Target Value",
+      "line": 427,
+      "column": 48,
+      "context": "</div> <div> <Label htmlFor=\"goal-target\">Target Value</Label> <Input id=\"goal-targe"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Target Date *",
+      "line": 438,
+      "column": 44,
+      "context": "> <div> <Label htmlFor=\"goal-date\">Target Date *</Label> <Input id=\"goal-date\""
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Cancel",
+      "line": 449,
+      "column": 19,
+      "context": "<Button variant=\"outline\" onClick={handleDialogCancel}> Cancel </Button> <Button onClick={createGoal}>Cr"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Create Goal",
+      "line": 451,
+      "column": 46,
+      "context": "Cancel </Button> <Button onClick={createGoal}>Create Goal</Button> </div> </div> </DialogC"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "No IEP Goals Yet",
+      "line": 492,
+      "column": 66,
+      "context": "round mb-4\" /> <h3 className=\"text-xl font-semibold text-foreground mb-2\">No IEP Goals Yet</h3> <p className=\"text-muted-foreground text-center mb-6"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Start by creating your first IEP goal to track",
+      "line": 494,
+      "column": 9,
+      "context": "> <p className=\"text-muted-foreground text-center mb-6 max-w-md\"> Start by creating your first IEP goal to track {studentName}'s educational progr"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "'s educational progress.",
+      "line": 494,
+      "column": 69,
+      "context": "max-w-md\"> Start by creating your first IEP goal to track {studentName}'s educational progress. </p> <Button onClick={onCreateClick} classN"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Create First Goal",
+      "line": 498,
+      "column": 9,
+      "context": "er:opacity-90 font-dyslexia\"> <Plus className=\"h-4 w-4 mr-2\" /> Create First Goal </Button> </CardContent> </Card> )); EmptyState.d"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Edit goal",
+      "line": 543,
+      "column": 60,
+      "context": "ssName=\"flex gap-2\"> <Button variant=\"ghost\" size=\"icon\" aria-label=\"Edit goal\" title=\"Edit goal\"> <Edit className=\"h-4 w-4\" />"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Edit goal",
+      "line": 543,
+      "column": 78,
+      "context": "\"> <Button variant=\"ghost\" size=\"icon\" aria-label=\"Edit goal\" title=\"Edit goal\"> <Edit className=\"h-4 w-4\" /> </Button>"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static aria-label attribute",
+      "value": "Delete goal",
+      "line": 546,
+      "column": 60,
+      "context": "</Button> <Button variant=\"ghost\" size=\"icon\" aria-label=\"Delete goal\" title=\"Delete goal\" onClick={handleDelete}> <Trash2"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXAttribute",
+      "detail": "Static title attribute",
+      "value": "Delete goal",
+      "line": 546,
+      "column": 80,
+      "context": "<Button variant=\"ghost\" size=\"icon\" aria-label=\"Delete goal\" title=\"Delete goal\" onClick={handleDelete}> <Trash2 className=\"h-4 w-4\""
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Update Progress",
+      "line": 563,
+      "column": 11,
+      "context": "dleUpdateProgress}> <TrendingUp className=\"h-4 w-4 mr-1\" /> Update Progress </Button> </CardContent> </Card> ); }); Goa"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Progress",
+      "line": 575,
+      "column": 45,
+      "context": "items-center justify-between mb-2\"> <span className=\"text-sm font-medium\">Progress</span> <span className=\"text-sm text-muted-foreground\">{Math.roun"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Measurable Objective",
+      "line": 586,
+      "column": 38,
+      "context": "e: string }) => ( <div className=\"mb-4\"> <h4 className=\"font-medium mb-2\">Measurable Objective</h4> <p className=\"text-sm text-muted-foreground bg-mut"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Created:",
+      "line": 599,
+      "column": 13,
+      "context": "\"> <CalendarIcon className=\"h-4 w-4 text-muted-foreground\" /> <span>Created: {format(goal.createdDate, 'MMM dd, yyyy')}</span> </div> <div c"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Target:",
+      "line": 603,
+      "column": 13,
+      "context": "-sm\"> <Crosshair className=\"h-4 w-4 text-muted-foreground\" /> <span>Target: {format(goal.targetDate, 'MMM dd, yyyy')}</span> </div> </div> ));"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Milestones",
+      "line": 626,
+      "column": 37,
+      "context": "e=\"flex items-center justify-between mb-2\"> <h4 className=\"font-medium\">Milestones</h4> <Button variant=\"outline\" size=\"sm\" onClick={onAdd}>"
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Add",
+      "line": 629,
+      "column": 11,
+      "context": "ize=\"sm\" onClick={onAdd}> <Plus className=\"h-3 w-3 mr-1\" /> Add </Button> </div> {goal.milestones.length === 0 ? ("
+    },
+    {
+      "file": "src/components/optimized/OptimizedGoalManager.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "No milestones yet",
+      "line": 633,
+      "column": 54,
+      "context": "ilestones.length === 0 ? ( <p className=\"text-sm text-muted-foreground\">No milestones yet</p> ) : ( <div className=\"space-y-2\">"
+    },
+    {
       "file": "src/components/optimized/OptimizedStudentCard.tsx",
       "kind": "JSXText",
       "detail": "Static JSX text node",
@@ -8928,6 +11115,276 @@
       "line": 41,
       "column": 46,
       "context": "div className=\"text-center py-12\"> <p className=\"text-muted-foreground\">No students found</p> </div> ); } // Use virtual scrolling for la"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "×",
+      "line": 68,
+      "column": 11,
+      "context": "foreground transition-colors motion-reduce:transition-none\" > × </button> </div> <p className=\"font-medium\">{point.label}<"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "X:",
+      "line": 73,
+      "column": 12,
+      "context": "<div className=\"text-sm text-muted-foreground mt-1 space-y-1\"> <p>X: {point.x.toFixed(2)}</p> <p>Y: {point.y.toFixed(2)}</p> <p>Z:"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Y:",
+      "line": 74,
+      "column": 12,
+      "context": "d-foreground mt-1 space-y-1\"> <p>X: {point.x.toFixed(2)}</p> <p>Y: {point.y.toFixed(2)}</p> <p>Z: {point.z.toFixed(2)}</p> {poin"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Z:",
+      "line": 75,
+      "column": 12,
+      "context": "p>X: {point.x.toFixed(2)}</p> <p>Y: {point.y.toFixed(2)}</p> <p>Z: {point.z.toFixed(2)}</p> {point.intensity && <p>Intensity: {point.int"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Intensity:",
+      "line": 76,
+      "column": 32,
+      "context": "d(2)}</p> <p>Z: {point.z.toFixed(2)}</p> {point.intensity && <p>Intensity: {point.intensity}</p>} </div> </div> </Html> )); Tooltip"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "3D Data Visualization",
+      "line": 400,
+      "column": 11,
+      "context": "e=\"flex items-center gap-2\"> <Move3d className=\"h-5 w-5\" /> 3D Data Visualization </CardTitle> </CardHeader> <CardConten"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "X Axis",
+      "line": 407,
+      "column": 63,
+      "context": "> <div> <label className=\"text-sm font-medium mb-1 block\">X Axis</label> <Select value={xAxis} onValueChange={handleXAxisChang"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Emotion Intensity",
+      "line": 413,
+      "column": 54,
+      "context": "<SelectContent> <SelectItem value=\"emotionIntensity\">Emotion Intensity</SelectItem> <SelectItem value=\"sensoryRespons"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Sensory Response",
+      "line": 414,
+      "column": 53,
+      "context": "tion Intensity</SelectItem> <SelectItem value=\"sensoryResponse\">Sensory Response</SelectItem> <SelectItem value=\"time\">Time</Sel"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Time",
+      "line": 415,
+      "column": 42,
+      "context": "esponse\">Sensory Response</SelectItem> <SelectItem value=\"time\">Time</SelectItem> </SelectContent> </Select>"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Y Axis",
+      "line": 421,
+      "column": 63,
+      "context": "<div> <label className=\"text-sm font-medium mb-1 block\">Y Axis</label> <Select value={yAxis} onValueChange={handleYAxisChang"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Emotion Intensity",
+      "line": 427,
+      "column": 54,
+      "context": "<SelectContent> <SelectItem value=\"emotionIntensity\">Emotion Intensity</SelectItem> <SelectItem value=\"sensoryRespons"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Sensory Response",
+      "line": 428,
+      "column": 53,
+      "context": "tion Intensity</SelectItem> <SelectItem value=\"sensoryResponse\">Sensory Response</SelectItem> <SelectItem value=\"time\">Time</Sel"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Time",
+      "line": 429,
+      "column": 42,
+      "context": "esponse\">Sensory Response</SelectItem> <SelectItem value=\"time\">Time</SelectItem> </SelectContent> </Select>"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Z Axis",
+      "line": 435,
+      "column": 63,
+      "context": "<div> <label className=\"text-sm font-medium mb-1 block\">Z Axis</label> <Select value={zAxis} onValueChange={handleZAxisChang"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Emotion Intensity",
+      "line": 441,
+      "column": 54,
+      "context": "<SelectContent> <SelectItem value=\"emotionIntensity\">Emotion Intensity</SelectItem> <SelectItem value=\"sensoryRespons"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Sensory Response",
+      "line": 442,
+      "column": 53,
+      "context": "tion Intensity</SelectItem> <SelectItem value=\"sensoryResponse\">Sensory Response</SelectItem> <SelectItem value=\"time\">Time</Sel"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Time",
+      "line": 443,
+      "column": 42,
+      "context": "esponse\">Sensory Response</SelectItem> <SelectItem value=\"time\">Time</SelectItem> </SelectContent> </Select>"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Color By",
+      "line": 449,
+      "column": 63,
+      "context": "<div> <label className=\"text-sm font-medium mb-1 block\">Color By</label> <Select value={colorBy} onValueChange={handleColorB"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Category",
+      "line": 455,
+      "column": 46,
+      "context": "ger> <SelectContent> <SelectItem value=\"category\">Category</SelectItem> <SelectItem value=\"intensity\">Intensity</S"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Intensity",
+      "line": 456,
+      "column": 47,
+      "context": "=\"category\">Category</SelectItem> <SelectItem value=\"intensity\">Intensity</SelectItem> </SelectContent> </Select>"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Point Size",
+      "line": 464,
+      "column": 63,
+      "context": "assName=\"flex-1\"> <label className=\"text-sm font-medium mb-1 block\">Point Size</label> <Slider value={[pointSize]}"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Filter",
+      "line": 476,
+      "column": 63,
+      "context": "assName=\"flex-1\"> <label className=\"text-sm font-medium mb-1 block\">Filter</label> <Select value={filterCategory} onValueChange={handleF"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "All Categories",
+      "line": 482,
+      "column": 41,
+      "context": "tTrigger> <SelectContent> <SelectItem value=\"all\">All Categories</SelectItem> <SelectItem value=\"emotion\">Emotions"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Emotions",
+      "line": 483,
+      "column": 45,
+      "context": "e=\"all\">All Categories</SelectItem> <SelectItem value=\"emotion\">Emotions</SelectItem> <SelectItem value=\"sensory\">Sensory</Selec"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Sensory",
+      "line": 484,
+      "column": 45,
+      "context": "lue=\"emotion\">Emotions</SelectItem> <SelectItem value=\"sensory\">Sensory</SelectItem> <SelectItem value=\"environmental\">Environme"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Environmental",
+      "line": 485,
+      "column": 51,
+      "context": "sensory\">Sensory</SelectItem> <SelectItem value=\"environmental\">Environmental</SelectItem> </SelectContent> </Select>"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Loading 3D visualization...",
+      "line": 495,
+      "column": 52,
+      "context": "nter justify-center h-full\"> <p className=\"text-muted-foreground\">Loading 3D visualization...</p> </div> }> <Can"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "data points",
+      "line": 545,
+      "column": 41,
+      "context": "en mt-4 text-sm text-muted-foreground\"> <span>{filteredPoints.length} data points</span> {hoveredPoint && ( <span>Hovering: {hov"
+    },
+    {
+      "file": "src/components/optimized/OptimizedVisualization3D.tsx",
+      "kind": "JSXText",
+      "detail": "Static JSX text node",
+      "value": "Hovering:",
+      "line": 547,
+      "column": 19,
+      "context": "oints.length} data points</span> {hoveredPoint && ( <span>Hovering: {hoveredPoint.label}</span> )} </div> </CardCo"
     },
     {
       "file": "src/components/lazy/LazyInteractiveDataVisualization.tsx",
@@ -9222,7 +11679,7 @@
       "kind": "MessageAPI",
       "detail": "Message API call: error()",
       "value": "[EChartContainer] Option normalization failed",
-      "line": 345,
+      "line": 370,
       "column": 22,
       "context": "tion; } catch (e) { if (import.meta?.env?.DEV) { logger.error(\"[EChartContainer] Option normalization failed\", { error: e }); } re"
     },
@@ -9231,7 +11688,7 @@
       "kind": "MessageAPI",
       "detail": "Message API call: error()",
       "value": "[EChartContainer] Theme merge failed",
-      "line": 416,
+      "line": 441,
       "column": 22,
       "context": "tion; } catch (e) { if (import.meta?.env?.DEV) { logger.error(\"[EChartContainer] Theme merge failed\", { error: e, optionP"
     },
@@ -9377,7 +11834,7 @@
       "value": "Loading chart data",
       "line": 68,
       "column": 23,
-      "context": "border-red-200'; }; if (isAnalyzing) { return ( <div aria-label=\"Loading chart data\" className=\"h-[400px] w-full\"> <div className=\"h-ful"
+      "context": "-destructive/30'; }; if (isAnalyzing) { return ( <div aria-label=\"Loading chart data\" className=\"h-[400px] w-full\"> <div className=\"h-ful"
     },
     {
       "file": "src/components/analysis/PatternAnalysisView.tsx",

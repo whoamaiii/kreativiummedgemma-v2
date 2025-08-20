@@ -46,7 +46,7 @@ const Visualization3DFallback: React.FC = () => (
         </div>
         
         {/* 3D visualization skeleton */}
-        <div className="relative w-full h-[600px] bg-muted/50 rounded-lg overflow-hidden flex items-center justify-center">
+        <div className="relative w-full h-[600px] bg-muted/50 rounded-lg overflow-hidden flex items-center justify-center" role="status" aria-live="polite">
           <div className="text-center space-y-2">
             <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
             <p className="text-sm text-muted-foreground">Loading 3D visualization...</p>

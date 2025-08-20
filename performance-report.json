@@ -1,0 +1,2871 @@
+{
+  "timestamp": "2025-08-19T07:32:53.779Z",
+  "summary": {
+    "componentsAnalyzed": 57,
+    "totalIssues": 142,
+    "critical": 29,
+    "high": 41,
+    "medium": 72,
+    "low": 0
+  },
+  "components": [
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "name": "TimelineVisualization",
+      "linesOfCode": 843,
+      "complexityScore": 118,
+      "issues": [
+        {
+          "file": "src/components/TimelineVisualization.tsx",
+          "line": 468,
+          "type": "heavy-computation",
+          "severity": "high",
+          "message": "Heavy computation detected in render path: filter(stream => stream.visible).map...",
+          "code": "filter(stream => stream.visible).map"
+        },
+        {
+          "file": "src/components/TimelineVisualization.tsx",
+          "line": 817,
+          "type": "heavy-computation",
+          "severity": "high",
+          "message": "Heavy computation detected in render path: filter(s => s.visible).map...",
+          "code": "filter(s => s.visible).map"
+        },
+        {
+          "file": "src/components/TimelineVisualization.tsx",
+          "line": 803,
+          "type": "heavy-computation",
+          "severity": "high",
+          "message": "Heavy computation detected in render path: Object.entries(hoveredEvent.metadata).map...",
+          "code": "Object.entries(hoveredEvent.metadata).map"
+        },
+        {
+          "file": "src/components/TimelineVisualization.tsx",
+          "line": 205,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const emotionData = emotions\n      .filter(e => isWithinInterval(e.timestamp, { "
+        },
+        {
+          "file": "src/components/TimelineVisualization.tsx",
+          "line": 241,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const sensoryData = Array.from(sensoryByHour.entries())\n      .map(([hourKey, da"
+        },
+        {
+          "file": "src/components/TimelineVisualization.tsx",
+          "line": 467,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const renderDataStreams = () => {\n    return dataStreams.filter(stream => stream"
+        },
+        {
+          "file": "src/components/TimelineVisualization.tsx",
+          "line": 301,
+          "type": "heavy-effect-deps",
+          "severity": "high",
+          "message": "useEffect with many dependencies detected"
+        },
+        {
+          "file": "src/components/TimelineVisualization.tsx",
+          "line": 467,
+          "type": "inline-array-chains",
+          "severity": "high",
+          "message": "Chained array operations in render method",
+          "code": "{\n    return dataStreams.filter(stream => stream.visible).map"
+        },
+        {
+          "file": "src/components/TimelineVisualization.tsx",
+          "line": 817,
+          "type": "inline-array-chains",
+          "severity": "high",
+          "message": "Chained array operations in render method",
+          "code": "{dataStreams.filter(s => s.visible).map"
+        },
+        {
+          "file": "src/components/TimelineVisualization.tsx",
+          "line": 300,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "for brush selection with proper cleanup\n  useEffect(() => {\n    if (!isDragging "
+        },
+        {
+          "file": "src/components/TimelineVisualization.tsx",
+          "line": 609,
+          "type": "unbatched-updates",
+          "severity": "high",
+          "message": "Multiple setState calls without batching",
+          "code": "setZoomLevel(1);\n                setPanOffset(0);\n                setBrushSelection(null);\n         "
+        },
+        {
+          "file": "src/components/TimelineVisualization.tsx",
+          "line": 608,
+          "type": "large-inline-function",
+          "severity": "medium",
+          "message": "Large inline function in JSX (recreated on each render)",
+          "code": "onClick={() => {\n                setZoomLevel(1);\n..."
+        },
+        {
+          "file": "src/components/TimelineVisualization.tsx",
+          "line": 249,
+          "type": "nested-maps",
+          "severity": "critical",
+          "message": "Nested map operations detected (O(n²) complexity)",
+          "code": ".map(d => d.value));\n      const maxValue = Math.max(...sensoryData.map("
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 5,
+      "memoizationScore": 35
+    },
+    {
+      "file": "src/components/AdvancedFilterPanel.tsx",
+      "name": "AdvancedFilterPanel",
+      "linesOfCode": 765,
+      "complexityScore": 103,
+      "issues": [
+        {
+          "file": "src/components/AdvancedFilterPanel.tsx",
+          "line": 92,
+          "type": "heavy-computation",
+          "severity": "high",
+          "message": "Heavy computation detected in render path: map(s => s.sensoryType || s.type || '').filter...",
+          "code": "map(s => s.sensoryType || s.type || '').filter"
+        },
+        {
+          "file": "src/components/AdvancedFilterPanel.tsx",
+          "line": 96,
+          "type": "heavy-computation",
+          "severity": "high",
+          "message": "Heavy computation detected in render path: map(t => t.environmentalData?.location).filter...",
+          "code": "map(t => t.environmentalData?.location).filter"
+        },
+        {
+          "file": "src/components/AdvancedFilterPanel.tsx",
+          "line": 92,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const uniqueSensoryTypes = [...new Set(sensoryInputs.map(s => s.sensoryType || s"
+        },
+        {
+          "file": "src/components/AdvancedFilterPanel.tsx",
+          "line": 95,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const uniqueLocations = [...new Set(\n    trackingEntries.map(t => t.environmenta"
+        },
+        {
+          "file": "src/components/AdvancedFilterPanel.tsx",
+          "line": 90,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "map(e => e.emotion))];\n  const uniqueTriggers = [...new Set(emotions.flatMap(e ="
+        },
+        {
+          "file": "src/components/AdvancedFilterPanel.tsx",
+          "line": 734,
+          "type": "large-inline-function",
+          "severity": "medium",
+          "message": "Large inline function in JSX (recreated on each render)",
+          "code": "onClick={() => {\n                              set..."
+        },
+        {
+          "file": "src/components/AdvancedFilterPanel.tsx",
+          "line": 90,
+          "type": "nested-maps",
+          "severity": "critical",
+          "message": "Nested map operations detected (O(n²) complexity)",
+          "code": ".map(e => e.emotion))];\n  const uniqueTriggers = [...new Set(emotions.flatMap(e "
+        },
+        {
+          "file": "src/components/AdvancedFilterPanel.tsx",
+          "line": 725,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: JSON.stringify(filter.criteria[k as keyof FilterCriteria])",
+          "code": "JSON.stringify(filter.criteria[k as keyof FilterCriteria])"
+        },
+        {
+          "file": "src/components/AdvancedFilterPanel.tsx",
+          "line": 726,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: JSON.stringify(criteria[k as keyof FilterCriteria])",
+          "code": "JSON.stringify(criteria[k as keyof FilterCriteria])"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 2,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/ProgressDashboard.tsx",
+      "name": "ProgressDashboard",
+      "linesOfCode": 524,
+      "complexityScore": 64,
+      "issues": [
+        {
+          "file": "src/components/ProgressDashboard.tsx",
+          "line": 203,
+          "type": "heavy-computation",
+          "severity": "high",
+          "message": "Heavy computation detected in render path: filter(g => g.status === 'active')\n      .map...",
+          "code": "filter(g => g.status === 'active')\n      .map"
+        },
+        {
+          "file": "src/components/ProgressDashboard.tsx",
+          "line": 338,
+          "type": "heavy-computation",
+          "severity": "high",
+          "message": "Heavy computation detected in render path: filter(goal => goal.dataPoints.length > 1)\n       ...",
+          "code": "filter(goal => goal.dataPoints.length > 1)\n                  .sort"
+        },
+        {
+          "file": "src/components/ProgressDashboard.tsx",
+          "line": 200,
+          "type": "inline-array-chains",
+          "severity": "high",
+          "message": "Chained array operations in render method",
+          "code": "{\n    const now = new Date();\n    return goals\n      .filter(g => g.status === '"
+        },
+        {
+          "file": "src/components/ProgressDashboard.tsx",
+          "line": 154,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "for smooth transitions\n    setIsAnalyzingTrends(true);\n    \n    // Create timeou"
+        },
+        {
+          "file": "src/components/ProgressDashboard.tsx",
+          "line": 340,
+          "type": "nested-maps",
+          "severity": "critical",
+          "message": "Nested map operations detected (O(n²) complexity)",
+          "code": ".map(dp => dp.timestamp.getTime()));\n                    const bLatest = Math.ma"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 2,
+      "memoizationScore": 2
+    },
+    {
+      "file": "src/components/InteractiveDataVisualization.tsx",
+      "name": "InteractiveDataVisualization",
+      "linesOfCode": 276,
+      "complexityScore": 78,
+      "issues": [
+        {
+          "file": "src/components/InteractiveDataVisualization.tsx",
+          "line": 154,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const allTimestamps = [...filteredData.emotions.map(e => e.timestamp), ...filter"
+        },
+        {
+          "file": "src/components/InteractiveDataVisualization.tsx",
+          "line": 190,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const data = chartData.map(map"
+        },
+        {
+          "file": "src/components/InteractiveDataVisualization.tsx",
+          "line": 150,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "format: ExportFormat) => {\n    // This logic could be moved to a hook or helper\n"
+        },
+        {
+          "file": "src/components/InteractiveDataVisualization.tsx",
+          "line": 154,
+          "type": "nested-maps",
+          "severity": "critical",
+          "message": "Nested map operations detected (O(n²) complexity)",
+          "code": ".map(e => e.timestamp), ...filteredData.sensoryInputs.map(s => s.timestamp), ..."
+        }
+      ],
+      "renderComplexity": 1,
+      "effectsCount": 0,
+      "memoizationScore": 29
+    },
+    {
+      "file": "src/components/EmotionTracker.tsx",
+      "name": "EmotionTracker",
+      "linesOfCode": 314,
+      "complexityScore": 42,
+      "issues": [
+        {
+          "file": "src/components/EmotionTracker.tsx",
+          "line": 85,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "form\n    setSelectedEmotion('');\n    setSelectedSubEmotion('');\n    setIntensity"
+        },
+        {
+          "file": "src/components/EmotionTracker.tsx",
+          "line": 194,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "for better UX while typing\n                  if (value === '') {\n               "
+        },
+        {
+          "file": "src/components/EmotionTracker.tsx",
+          "line": 86,
+          "type": "unbatched-updates",
+          "severity": "high",
+          "message": "Multiple setState calls without batching",
+          "code": "setSelectedEmotion('');\n    setSelectedSubEmotion('');\n    setIntensity(3);\n    setDuration(0);\n    "
+        },
+        {
+          "file": "src/components/EmotionTracker.tsx",
+          "line": 192,
+          "type": "large-inline-function",
+          "severity": "medium",
+          "message": "Large inline function in JSX (recreated on each render)",
+          "code": "onChange={(e) => {\n                  const value =..."
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/MockDataLoader.tsx",
+      "name": "MockDataLoader",
+      "linesOfCode": 256,
+      "complexityScore": 16,
+      "issues": [
+        {
+          "file": "src/components/MockDataLoader.tsx",
+          "line": 47,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "for better UX\n      setLoadingProgress(25);\n      \n      // Generate and load th"
+        },
+        {
+          "file": "src/components/MockDataLoader.tsx",
+          "line": 68,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "fore setting final progress\n      stopLoadingTimers();\n      \n      setLoadingPr"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 2,
+      "memoizationScore": 38
+    },
+    {
+      "file": "src/components/ReportBuilder.tsx",
+      "name": "ReportBuilder",
+      "linesOfCode": 663,
+      "complexityScore": 92,
+      "issues": [
+        {
+          "file": "src/components/ReportBuilder.tsx",
+          "line": 309,
+          "type": "heavy-computation",
+          "severity": "high",
+          "message": "Heavy computation detected in render path: Object.entries(reportAnalysis.emotionSummary).map...",
+          "code": "Object.entries(reportAnalysis.emotionSummary).map"
+        },
+        {
+          "file": "src/components/ReportBuilder.tsx",
+          "line": 328,
+          "type": "heavy-computation",
+          "severity": "high",
+          "message": "Heavy computation detected in render path: Object.entries(reportAnalysis.sensorySummary).map...",
+          "code": "Object.entries(reportAnalysis.sensorySummary).map"
+        },
+        {
+          "file": "src/components/ReportBuilder.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        },
+        {
+          "file": "src/components/ReportBuilder.tsx",
+          "line": 126,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const goalProgress = goals.map(goal => {\n      const progressInPeriod = goal.dat"
+        },
+        {
+          "file": "src/components/ReportBuilder.tsx",
+          "line": 148,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const avgEmotionIntensity = filteredEmotions.length > 0\n      ? filteredEmotions"
+        },
+        {
+          "file": "src/components/ReportBuilder.tsx",
+          "line": 452,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const csvString = csvContent.map(row => \n      row.map"
+        },
+        {
+          "file": "src/components/ReportBuilder.tsx",
+          "line": 645,
+          "type": "large-inline-function",
+          "severity": "medium",
+          "message": "Large inline function in JSX (recreated on each render)",
+          "code": "onClick={() => {\n                  handleTemplateC..."
+        },
+        {
+          "file": "src/components/ReportBuilder.tsx",
+          "line": 435,
+          "type": "nested-maps",
+          "severity": "critical",
+          "message": "Nested map operations detected (O(n²) complexity)",
+          "code": ".map(goal => [\n        goal.title,\n        goal.category,\n        Math.round(goa"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/DataQualityFeedback.tsx",
+      "name": "DataQualityFeedback",
+      "linesOfCode": 310,
+      "complexityScore": 91,
+      "issues": [
+        {
+          "file": "src/components/DataQualityFeedback.tsx",
+          "line": 57,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const allTimestamps = [\n      ...emotions.map(e => e.timestamp),\n      ...sensor"
+        },
+        {
+          "file": "src/components/DataQualityFeedback.tsx",
+          "line": 58,
+          "type": "nested-maps",
+          "severity": "critical",
+          "message": "Nested map operations detected (O(n²) complexity)",
+          "code": ".map(e => e.timestamp),\n      ...sensoryInputs.map(s => s.timestamp),\n      ...e"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 3
+    },
+    {
+      "file": "src/components/SensoryTracker.tsx",
+      "name": "SensoryTracker",
+      "linesOfCode": 301,
+      "complexityScore": 38,
+      "issues": [
+        {
+          "file": "src/components/SensoryTracker.tsx",
+          "line": 84,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "form\n    setSelectedType('');\n    setSelectedResponse('');\n    setIntensity(3);\n"
+        },
+        {
+          "file": "src/components/SensoryTracker.tsx",
+          "line": 85,
+          "type": "unbatched-updates",
+          "severity": "high",
+          "message": "Multiple setState calls without batching",
+          "code": "setSelectedType('');\n    setSelectedResponse('');\n    setIntensity(3);\n    setLocation('');\n    setN"
+        },
+        {
+          "file": "src/components/SensoryTracker.tsx",
+          "line": 242,
+          "type": "large-inline-function",
+          "severity": "medium",
+          "message": "Large inline function in JSX (recreated on each render)",
+          "code": "onClick={() => {\n                    if (!copingSt..."
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/AnalyticsSettings.tsx",
+      "name": "AnalyticsSettings",
+      "linesOfCode": 851,
+      "complexityScore": 33,
+      "issues": [
+        {
+          "file": "src/components/AnalyticsSettings.tsx",
+          "line": 159,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "for cleanup\n  const [trainingRequested, setTrainingRequested] = useState<ModelTy"
+        },
+        {
+          "file": "src/components/AnalyticsSettings.tsx",
+          "line": 117,
+          "type": "unbatched-updates",
+          "severity": "high",
+          "message": "Multiple setState calls without batching",
+          "code": "setToDefaults();\n    setSelectedPreset('balanced');\n    setHasUnsavedChanges(false);\n    "
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 3,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/AnalyticsConfigTest.tsx",
+      "name": "AnalyticsConfigTest.tsx",
+      "linesOfCode": 331,
+      "complexityScore": 21,
+      "issues": [
+        {
+          "file": "src/components/AnalyticsConfigTest.tsx",
+          "line": 139,
+          "type": "heavy-computation",
+          "severity": "high",
+          "message": "Heavy computation detected in render path: JSON.parse(exported)...",
+          "code": "JSON.parse(exported)"
+        },
+        {
+          "file": "src/components/AnalyticsConfigTest.tsx",
+          "line": 293,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "foreground mb-2\">Quick Actions</p>\n          <div className=\"flex flex-wrap gap-"
+        },
+        {
+          "file": "src/components/AnalyticsConfigTest.tsx",
+          "line": 144,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: JSON.stringify(parsed)",
+          "code": "JSON.stringify(parsed)"
+        }
+      ],
+      "renderComplexity": 4,
+      "effectsCount": 2,
+      "memoizationScore": 13
+    },
+    {
+      "file": "src/components/EnvironmentalTracker.tsx",
+      "name": "EnvironmentalTracker",
+      "linesOfCode": 266,
+      "complexityScore": 13,
+      "issues": [
+        {
+          "file": "src/components/EnvironmentalTracker.tsx",
+          "line": 243,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        },
+        {
+          "file": "src/components/EnvironmentalTracker.tsx",
+          "line": 74,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "form\n    setRoomTemperature(22);\n    setLighting('');\n    setNoiseLevel(3);\n    "
+        },
+        {
+          "file": "src/components/EnvironmentalTracker.tsx",
+          "line": 75,
+          "type": "unbatched-updates",
+          "severity": "high",
+          "message": "Multiple setState calls without batching",
+          "code": "setRoomTemperature(22);\n    setLighting('');\n    setNoiseLevel(3);\n    setClassroomActivity('');\n   "
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/CorrelationHeatmap.tsx",
+      "name": "CorrelationHeatmap",
+      "linesOfCode": 68,
+      "complexityScore": 7,
+      "issues": [
+        {
+          "file": "src/components/CorrelationHeatmap.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        },
+        {
+          "file": "src/components/CorrelationHeatmap.tsx",
+          "line": 12,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const chartData = factors.map(factor1 => ({\n    id: factor1,\n    data: factors.m"
+        },
+        {
+          "file": "src/components/CorrelationHeatmap.tsx",
+          "line": 12,
+          "type": "nested-maps",
+          "severity": "critical",
+          "message": "Nested map operations detected (O(n²) complexity)",
+          "code": ".map(factor1 => ({\n    id: factor1,\n    data: factors.map("
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/AnalyticsDashboard.tsx",
+      "name": "AnalyticsDashboard",
+      "linesOfCode": 531,
+      "complexityScore": 75,
+      "issues": [
+        {
+          "file": "src/components/AnalyticsDashboard.tsx",
+          "line": 173,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "while analysis updates other tabs.\n\n  // Export handler with useCallback for per"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 4,
+      "memoizationScore": 50
+    },
+    {
+      "file": "src/components/Visualization3D.tsx",
+      "name": "Visualization3D",
+      "linesOfCode": 552,
+      "complexityScore": 62,
+      "issues": [
+        {
+          "file": "src/components/Visualization3D.tsx",
+          "line": 185,
+          "type": "large-inline-function",
+          "severity": "medium",
+          "message": "Large inline function in JSX (recreated on each render)",
+          "code": "onClick={() => {\n            camera.position.set(1..."
+        },
+        {
+          "file": "src/components/Visualization3D.tsx",
+          "line": 285,
+          "type": "nested-maps",
+          "severity": "critical",
+          "message": "Nested map operations detected (O(n²) complexity)",
+          "code": ".map(p => p.x);\n    const yValues = points.map(p => p.y);\n    const zValues = po"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/GoalManager.tsx",
+      "name": "GoalManager",
+      "linesOfCode": 543,
+      "complexityScore": 60,
+      "issues": [
+        {
+          "file": "src/components/GoalManager.tsx",
+          "line": 58,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "for the current student.\n   * Memoized to prevent recreation on every render.\n  "
+        },
+        {
+          "file": "src/components/GoalManager.tsx",
+          "line": 475,
+          "type": "large-inline-function",
+          "severity": "medium",
+          "message": "Large inline function in JSX (recreated on each render)",
+          "code": "onClick={() => {\n                        const tit..."
+        },
+        {
+          "file": "src/components/GoalManager.tsx",
+          "line": 524,
+          "type": "large-inline-function",
+          "severity": "medium",
+          "message": "Large inline function in JSX (recreated on each render)",
+          "code": "onClick={() => {\n                      const value..."
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 2,
+      "memoizationScore": 4
+    },
+    {
+      "file": "src/components/ui/sidebar.tsx",
+      "name": "SidebarProvider",
+      "linesOfCode": 763,
+      "complexityScore": 34,
+      "issues": [
+        {
+          "file": "src/components/ui/sidebar.tsx",
+          "line": 72,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "for control from outside the component.\n    const [_open, _setOpen] = React.useS"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 1,
+      "memoizationScore": 20
+    },
+    {
+      "file": "src/components/InteractiveDataVisualization.diagnosis.tsx",
+      "name": "InteractiveDataVisualizationDiagnosis",
+      "linesOfCode": 145,
+      "complexityScore": 33,
+      "issues": [
+        {
+          "file": "src/components/InteractiveDataVisualization.diagnosis.tsx",
+          "line": 109,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        },
+        {
+          "file": "src/components/InteractiveDataVisualization.diagnosis.tsx",
+          "line": 79,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "for (let i = 0; i < tests.length; i++) {\n        await runTest(i);\n        await"
+        }
+      ],
+      "renderComplexity": 3,
+      "effectsCount": 2,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/DataRequirementsCalculator.tsx",
+      "name": "DataRequirementsCalculator",
+      "linesOfCode": 297,
+      "complexityScore": 31,
+      "issues": [
+        {
+          "file": "src/components/DataRequirementsCalculator.tsx",
+          "line": 71,
+          "type": "nested-maps",
+          "severity": "critical",
+          "message": "Nested map operations detected (O(n²) complexity)",
+          "code": ".map(e => e.timestamp),\n      ...sensoryInputs.map(s => s.timestamp),\n      ...e"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 10
+    },
+    {
+      "file": "src/components/DataCollectionRoadmap.tsx",
+      "name": "DataCollectionRoadmap",
+      "linesOfCode": 280,
+      "complexityScore": 31,
+      "issues": [
+        {
+          "file": "src/components/DataCollectionRoadmap.tsx",
+          "line": 43,
+          "type": "nested-maps",
+          "severity": "critical",
+          "message": "Nested map operations detected (O(n²) complexity)",
+          "code": ".map(e => e.timestamp),\n      ...sensoryInputs.map(s => s.timestamp),\n      ...e"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 7
+    },
+    {
+      "file": "src/components/EnhancedDataVisualization.tsx",
+      "name": "EnhancedDataVisualization",
+      "linesOfCode": 120,
+      "complexityScore": 28,
+      "issues": [
+        {
+          "file": "src/components/EnhancedDataVisualization.tsx",
+          "line": 27,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "map(e => e[nameKey]))];\n\n    for (let i = 0; i < days; i++) {\n        const date"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 2,
+      "memoizationScore": 9
+    },
+    {
+      "file": "src/components/VirtualScrollArea.tsx",
+      "name": "VirtualScrollArea",
+      "linesOfCode": 289,
+      "complexityScore": 12,
+      "issues": [
+        {
+          "file": "src/components/VirtualScrollArea.tsx",
+          "line": 56,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        },
+        {
+          "file": "src/components/VirtualScrollArea.tsx",
+          "line": 93,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "for smoother scrolling\n *   />\n * );\n * ```\n * \n * @example\n * // Usage with dyn"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 3,
+      "memoizationScore": 43
+    },
+    {
+      "file": "src/components/optimized/OptimizedAnimatedCounter.tsx",
+      "name": "OptimizedAnimatedCounter",
+      "linesOfCode": 74,
+      "complexityScore": 9,
+      "issues": [
+        {
+          "file": "src/components/optimized/OptimizedAnimatedCounter.tsx",
+          "line": 33,
+          "type": "setState-in-loop",
+          "severity": "critical",
+          "message": "setState called inside a loop (causes multiple re-renders)",
+          "code": "for smoother animation\n      const easeOutQuart = 1 - Math.pow(1 - progress, 4);"
+        },
+        {
+          "file": "src/components/optimized/OptimizedAnimatedCounter.tsx",
+          "line": 62,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: .toLocaleString()",
+          "code": ".toLocaleString()"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 2,
+      "memoizationScore": 10
+    },
+    {
+      "file": "src/components/VisualizationControls.tsx",
+      "name": "VisualizationControls",
+      "linesOfCode": 416,
+      "complexityScore": 41,
+      "issues": [
+        {
+          "file": "src/components/VisualizationControls.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        },
+        {
+          "file": "src/components/VisualizationControls.tsx",
+          "line": 126,
+          "type": "unbatched-updates",
+          "severity": "high",
+          "message": "Multiple setState calls without batching",
+          "code": "setSelectedTimeRange('30d');\n                    setSelectedChartType('scatter');\n                  "
+        },
+        {
+          "file": "src/components/VisualizationControls.tsx",
+          "line": 134,
+          "type": "unbatched-updates",
+          "severity": "high",
+          "message": "Multiple setState calls without batching",
+          "code": "setSelectedTimeRange('7d');\n                    setSelectedChartType('line');\n                    se"
+        },
+        {
+          "file": "src/components/VisualizationControls.tsx",
+          "line": 122,
+          "type": "large-inline-function",
+          "severity": "medium",
+          "message": "Large inline function in JSX (recreated on each render)",
+          "code": "onClick={() => {\n                  visualizationSt..."
+        },
+        {
+          "file": "src/components/VisualizationControls.tsx",
+          "line": 151,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: JSON.stringify(filterCriteria[k as keyof typeof filterCriteria])",
+          "code": "JSON.stringify(filterCriteria[k as keyof typeof filterCriteria])"
+        },
+        {
+          "file": "src/components/VisualizationControls.tsx",
+          "line": 152,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: JSON.stringify({\n                    dateRange: { start: null, end: null },\n                    emotions: { types: [], intensityRange: [0, 10], includeTriggers: [], excludeTriggers: [] },\n                    sensory: { types: [], responses: [], intensityRange: [0, 10] },\n                    environmental: {\n                      locations: [],\n                      activities: [],\n                      conditions: { noiseLevel: [0, 10], temperature: [15, 30], lighting: [] },\n                      weather: [],\n                      timeOfDay: []\n                    },\n                    patterns: { anomaliesOnly: false, minConfidence: 0, patternTypes: [] },\n                    realtime: false\n                  }[k as keyof typeof filterCriteria])",
+          "code": "JSON.stringify({\n                    dateRange: { start: null, end: null },\n                    emotions: { types: [], intensityRange: [0, 10], includeTriggers: [], excludeTriggers: [] },\n                    sensory: { types: [], responses: [], intensityRange: [0, 10] },\n                    environmental: {\n                      locations: [],\n                      activities: [],\n                      conditions: { noiseLevel: [0, 10], temperature: [15, 30], lighting: [] },\n                      weather: [],\n                      timeOfDay: []\n                    },\n                    patterns: { anomaliesOnly: false, minConfidence: 0, patternTypes: [] },\n                    realtime: false\n                  }[k as keyof typeof filterCriteria])"
+        }
+      ],
+      "renderComplexity": 1,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/TestingDebugPanel.tsx",
+      "name": "TestingDebugPanel",
+      "linesOfCode": 422,
+      "complexityScore": 29,
+      "issues": [
+        {
+          "file": "src/components/TestingDebugPanel.tsx",
+          "line": 149,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const emptyStudents = students.filter(student => {\n        const studentEntries "
+        },
+        {
+          "file": "src/components/TestingDebugPanel.tsx",
+          "line": 169,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const studentsWithData = students.filter(student => {\n        const studentEntri"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 3,
+      "memoizationScore": 23
+    },
+    {
+      "file": "src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx",
+      "name": "OptimizedEnhancedPersonalizedInsights",
+      "linesOfCode": 508,
+      "complexityScore": 91,
+      "issues": [
+        {
+          "file": "src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        },
+        {
+          "file": "src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx",
+          "line": 32,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const avgEmotionIntensity = filteredData.emotions.reduce((sum, e) => sum + e.int"
+        },
+        {
+          "file": "src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx",
+          "line": 241,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        },
+        {
+          "file": "src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx",
+          "line": 309,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        },
+        {
+          "file": "src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx",
+          "line": 341,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        },
+        {
+          "file": "src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx",
+          "line": 454,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/EnhancedPersonalizedInsights.tsx",
+      "name": "EnhancedPersonalizedInsights",
+      "linesOfCode": 526,
+      "complexityScore": 89,
+      "issues": [
+        {
+          "file": "src/components/EnhancedPersonalizedInsights.tsx",
+          "line": 161,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const avgEmotionIntensity = filteredData.emotions.reduce((sum, e) => sum + e.int"
+        },
+        {
+          "file": "src/components/EnhancedPersonalizedInsights.tsx",
+          "line": 259,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        },
+        {
+          "file": "src/components/EnhancedPersonalizedInsights.tsx",
+          "line": 327,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        },
+        {
+          "file": "src/components/EnhancedPersonalizedInsights.tsx",
+          "line": 359,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        },
+        {
+          "file": "src/components/EnhancedPersonalizedInsights.tsx",
+          "line": 472,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 10
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataVisualization.tsx",
+      "name": "OptimizedDataVisualization",
+      "linesOfCode": 262,
+      "complexityScore": 47,
+      "issues": [
+        {
+          "file": "src/components/optimized/OptimizedDataVisualization.tsx",
+          "line": 130,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const rows = Array.from(byDate.values())\n                  .sort((a, b) => a.dat"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 11
+    },
+    {
+      "file": "src/components/settings/AnalyticsConfig.tsx",
+      "name": "AnalyticsConfig",
+      "linesOfCode": 397,
+      "complexityScore": 46,
+      "issues": [
+        {
+          "file": "src/components/settings/AnalyticsConfig.tsx",
+          "line": 48,
+          "type": "heavy-computation",
+          "severity": "high",
+          "message": "Heavy computation detected in render path: JSON.parse(JSON.stringify(prev)...",
+          "code": "JSON.parse(JSON.stringify(prev)"
+        },
+        {
+          "file": "src/components/settings/AnalyticsConfig.tsx",
+          "line": 48,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: JSON.stringify(prev)",
+          "code": "JSON.stringify(prev)"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 3,
+      "memoizationScore": 55
+    },
+    {
+      "file": "src/components/QuickEntryTemplates.tsx",
+      "name": "QuickEntryTemplates",
+      "linesOfCode": 456,
+      "complexityScore": 44,
+      "issues": [
+        {
+          "file": "src/components/QuickEntryTemplates.tsx",
+          "line": 138,
+          "type": "heavy-computation",
+          "severity": "high",
+          "message": "Heavy computation detected in render path: JSON.parse(saved)...",
+          "code": "JSON.parse(saved)"
+        },
+        {
+          "file": "src/components/QuickEntryTemplates.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        },
+        {
+          "file": "src/components/QuickEntryTemplates.tsx",
+          "line": 396,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={idx}"
+        },
+        {
+          "file": "src/components/QuickEntryTemplates.tsx",
+          "line": 134,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: localStorage.getItem",
+          "code": "localStorage.getItem"
+        },
+        {
+          "file": "src/components/QuickEntryTemplates.tsx",
+          "line": 193,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: localStorage.setItem",
+          "code": "localStorage.setItem"
+        },
+        {
+          "file": "src/components/QuickEntryTemplates.tsx",
+          "line": 193,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: JSON.stringify(updatedTemplates)",
+          "code": "JSON.stringify(updatedTemplates)"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/PeriodComparison.tsx",
+      "name": "PeriodComparison",
+      "linesOfCode": 247,
+      "complexityScore": 41,
+      "issues": [
+        {
+          "file": "src/components/PeriodComparison.tsx",
+          "line": 69,
+          "type": "unmemoized-calculation",
+          "severity": "high",
+          "message": "Expensive calculation without useMemo",
+          "code": "const avgIntensity = filteredEmotions.length > 0 \n      ? filteredEmotions.reduc"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 3
+    },
+    {
+      "file": "src/components/AdvancedSearch.tsx",
+      "name": "AdvancedSearch",
+      "linesOfCode": 477,
+      "complexityScore": 112,
+      "issues": [],
+      "renderComplexity": 0,
+      "effectsCount": 2,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/charts/EChartContainer.tsx",
+      "name": "EChartContainer",
+      "linesOfCode": 517,
+      "complexityScore": 108,
+      "issues": [
+        {
+          "file": "src/components/charts/EChartContainer.tsx",
+          "line": 419,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: JSON.stringify(safeOption, (_k, v)",
+          "code": "JSON.stringify(safeOption, (_k, v)"
+        },
+        {
+          "file": "src/components/charts/EChartContainer.tsx",
+          "line": 447,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: JSON.stringify({ seriesKinds, yAxes })",
+          "code": "JSON.stringify({ seriesKinds, yAxes })"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 1,
+      "memoizationScore": 10
+    },
+    {
+      "file": "src/components/analysis/PatternAnalysisView.tsx",
+      "name": "PatternAnalysisView",
+      "linesOfCode": 260,
+      "complexityScore": 34,
+      "issues": [
+        {
+          "file": "src/components/analysis/PatternAnalysisView.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        },
+        {
+          "file": "src/components/analysis/PatternAnalysisView.tsx",
+          "line": 97,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        },
+        {
+          "file": "src/components/analysis/PatternAnalysisView.tsx",
+          "line": 121,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={i}"
+        },
+        {
+          "file": "src/components/analysis/PatternAnalysisView.tsx",
+          "line": 145,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        },
+        {
+          "file": "src/components/analysis/PatternAnalysisView.tsx",
+          "line": 197,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={i}"
+        },
+        {
+          "file": "src/components/analysis/PatternAnalysisView.tsx",
+          "line": 231,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/analytics-panels/PatternsPanel.tsx",
+      "name": "PatternsPanel",
+      "linesOfCode": 186,
+      "complexityScore": 31,
+      "issues": [
+        {
+          "file": "src/components/analytics-panels/PatternsPanel.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        },
+        {
+          "file": "src/components/analytics-panels/PatternsPanel.tsx",
+          "line": 175,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={idx}"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 2,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/DetailedConfidenceExplanation.tsx",
+      "name": "DetailedConfidenceExplanation",
+      "linesOfCode": 439,
+      "complexityScore": 30,
+      "issues": [
+        {
+          "file": "src/components/DetailedConfidenceExplanation.tsx",
+          "line": 393,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        },
+        {
+          "file": "src/components/DetailedConfidenceExplanation.tsx",
+          "line": 410,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/DevErrorBanner.tsx",
+      "name": "DevErrorBanner",
+      "linesOfCode": 95,
+      "complexityScore": 17,
+      "issues": [
+        {
+          "file": "src/components/DevErrorBanner.tsx",
+          "line": 23,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: JSON.stringify(a)",
+          "code": "JSON.stringify(a)"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 2,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/PaginatedSessionsList.tsx",
+      "name": "PaginatedSessionsList",
+      "linesOfCode": 224,
+      "complexityScore": 16,
+      "issues": [
+        {
+          "file": "src/components/PaginatedSessionsList.tsx",
+          "line": 127,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={idx}"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 6
+    },
+    {
+      "file": "src/components/layouts/DashboardLayout.tsx",
+      "name": "DashboardLayout",
+      "linesOfCode": 171,
+      "complexityScore": 16,
+      "issues": [
+        {
+          "file": "src/components/layouts/DashboardLayout.tsx",
+          "line": 134,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        }
+      ],
+      "renderComplexity": 1,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/profile-sections/DashboardSection.tsx",
+      "name": "DashboardSection",
+      "linesOfCode": 286,
+      "complexityScore": 13,
+      "issues": [
+        {
+          "file": "src/components/profile-sections/DashboardSection.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        },
+        {
+          "file": "src/components/profile-sections/DashboardSection.tsx",
+          "line": 268,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/ui/PremiumStudentCard.tsx",
+      "name": "PremiumStudentCard",
+      "linesOfCode": 275,
+      "complexityScore": 12,
+      "issues": [
+        {
+          "file": "src/components/ui/PremiumStudentCard.tsx",
+          "line": 44,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: JSON.stringify(dataStorage.getStudents()",
+          "code": "JSON.stringify(dataStorage.getStudents()"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 8
+    },
+    {
+      "file": "src/components/PatternDetectionEmptyState.tsx",
+      "name": "PatternDetectionEmptyState",
+      "linesOfCode": 126,
+      "complexityScore": 10,
+      "issues": [
+        {
+          "file": "src/components/PatternDetectionEmptyState.tsx",
+          "line": 88,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={index}"
+        }
+      ],
+      "renderComplexity": 3,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/ui/Breadcrumbs.tsx",
+      "name": "Breadcrumbs",
+      "linesOfCode": 43,
+      "complexityScore": 10,
+      "issues": [
+        {
+          "file": "src/components/ui/Breadcrumbs.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/analytics-panels/CorrelationsPanel.tsx",
+      "name": "CorrelationsPanel",
+      "linesOfCode": 121,
+      "complexityScore": 10,
+      "issues": [
+        {
+          "file": "src/components/analytics-panels/CorrelationsPanel.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/charts/TrendsChart.tsx",
+      "name": "TrendsChart",
+      "linesOfCode": 93,
+      "complexityScore": 9,
+      "issues": [
+        {
+          "file": "src/components/charts/TrendsChart.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/LoadingState.tsx",
+      "name": "LoadingState",
+      "linesOfCode": 62,
+      "complexityScore": 8,
+      "issues": [
+        {
+          "file": "src/components/LoadingState.tsx",
+          "line": 54,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={i}"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/profile-sections/AnalyticsSection.tsx",
+      "name": "AnalyticsSection",
+      "linesOfCode": 95,
+      "complexityScore": 8,
+      "issues": [
+        {
+          "file": "src/components/profile-sections/AnalyticsSection.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 2,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/layouts/VisualizationLayouts.tsx",
+      "name": "GridLayout",
+      "linesOfCode": 66,
+      "complexityScore": 6,
+      "issues": [
+        {
+          "file": "src/components/layouts/VisualizationLayouts.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/profile-sections/ToolsSection.tsx",
+      "name": "ToolsSection",
+      "linesOfCode": 130,
+      "complexityScore": 4,
+      "issues": [
+        {
+          "file": "src/components/profile-sections/ToolsSection.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        }
+      ],
+      "renderComplexity": 3,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/PremiumEmptyState.tsx",
+      "name": "PremiumEmptyState",
+      "linesOfCode": 153,
+      "complexityScore": 2,
+      "issues": [
+        {
+          "file": "src/components/PremiumEmptyState.tsx",
+          "line": 87,
+          "type": "index-as-key",
+          "severity": "medium",
+          "message": "Using array index as React key (causes re-renders)",
+          "code": "key={i}"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/PredictionTimeline.tsx",
+      "name": "PredictionTimeline",
+      "linesOfCode": 88,
+      "complexityScore": 2,
+      "issues": [
+        {
+          "file": "src/components/PredictionTimeline.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/DebugVisualization.tsx",
+      "name": "DebugVisualization",
+      "linesOfCode": 233,
+      "complexityScore": 0,
+      "issues": [
+        {
+          "file": "src/components/DebugVisualization.tsx",
+          "line": 210,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: JSON.stringify(mockEmotions[0], null, 2)",
+          "code": "JSON.stringify(mockEmotions[0], null, 2)"
+        },
+        {
+          "file": "src/components/DebugVisualization.tsx",
+          "line": 216,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: JSON.stringify(mockSensoryInputs[0], null, 2)",
+          "code": "JSON.stringify(mockSensoryInputs[0], null, 2)"
+        },
+        {
+          "file": "src/components/DebugVisualization.tsx",
+          "line": 222,
+          "type": "sync-io",
+          "severity": "medium",
+          "message": "Synchronous I/O operation in render path: JSON.stringify(mockTrackingEntries[0], null, 2)",
+          "code": "JSON.stringify(mockTrackingEntries[0], null, 2)"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/profile-sections/ProgressSection.tsx",
+      "name": "ProgressSection",
+      "linesOfCode": 39,
+      "complexityScore": 0,
+      "issues": [
+        {
+          "file": "src/components/profile-sections/ProgressSection.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/lazy/LazyVisualization3D.tsx",
+      "name": "LazyVisualization3D",
+      "linesOfCode": 67,
+      "complexityScore": 0,
+      "issues": [
+        {
+          "file": "src/components/lazy/LazyVisualization3D.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/lazy/LazyAnalyticsDashboard.tsx",
+      "name": "LazyAnalyticsDashboard",
+      "linesOfCode": 70,
+      "complexityScore": 0,
+      "issues": [
+        {
+          "file": "src/components/lazy/LazyAnalyticsDashboard.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/analytics-panels/ChartsPanel.tsx",
+      "name": "ChartsPanel",
+      "linesOfCode": 34,
+      "complexityScore": 0,
+      "issues": [
+        {
+          "file": "src/components/analytics-panels/ChartsPanel.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    },
+    {
+      "file": "src/components/analytics-panels/AlertsPanel.tsx",
+      "name": "AlertsPanel",
+      "linesOfCode": 26,
+      "complexityScore": 0,
+      "issues": [
+        {
+          "file": "src/components/analytics-panels/AlertsPanel.tsx",
+          "line": 1,
+          "type": "missing-memoization",
+          "severity": "medium",
+          "message": "Component with complex props lacks memoization"
+        }
+      ],
+      "renderComplexity": 0,
+      "effectsCount": 0,
+      "memoizationScore": 0
+    }
+  ],
+  "issues": [
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "line": 468,
+      "type": "heavy-computation",
+      "severity": "high",
+      "message": "Heavy computation detected in render path: filter(stream => stream.visible).map...",
+      "code": "filter(stream => stream.visible).map"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "line": 817,
+      "type": "heavy-computation",
+      "severity": "high",
+      "message": "Heavy computation detected in render path: filter(s => s.visible).map...",
+      "code": "filter(s => s.visible).map"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "line": 803,
+      "type": "heavy-computation",
+      "severity": "high",
+      "message": "Heavy computation detected in render path: Object.entries(hoveredEvent.metadata).map...",
+      "code": "Object.entries(hoveredEvent.metadata).map"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "line": 205,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const emotionData = emotions\n      .filter(e => isWithinInterval(e.timestamp, { "
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "line": 241,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const sensoryData = Array.from(sensoryByHour.entries())\n      .map(([hourKey, da"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "line": 467,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const renderDataStreams = () => {\n    return dataStreams.filter(stream => stream"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "line": 301,
+      "type": "heavy-effect-deps",
+      "severity": "high",
+      "message": "useEffect with many dependencies detected"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "line": 467,
+      "type": "inline-array-chains",
+      "severity": "high",
+      "message": "Chained array operations in render method",
+      "code": "{\n    return dataStreams.filter(stream => stream.visible).map"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "line": 817,
+      "type": "inline-array-chains",
+      "severity": "high",
+      "message": "Chained array operations in render method",
+      "code": "{dataStreams.filter(s => s.visible).map"
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "line": 300,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "for brush selection with proper cleanup\n  useEffect(() => {\n    if (!isDragging "
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "line": 609,
+      "type": "unbatched-updates",
+      "severity": "high",
+      "message": "Multiple setState calls without batching",
+      "code": "setZoomLevel(1);\n                setPanOffset(0);\n                setBrushSelection(null);\n         "
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "line": 608,
+      "type": "large-inline-function",
+      "severity": "medium",
+      "message": "Large inline function in JSX (recreated on each render)",
+      "code": "onClick={() => {\n                setZoomLevel(1);\n..."
+    },
+    {
+      "file": "src/components/TimelineVisualization.tsx",
+      "line": 249,
+      "type": "nested-maps",
+      "severity": "critical",
+      "message": "Nested map operations detected (O(n²) complexity)",
+      "code": ".map(d => d.value));\n      const maxValue = Math.max(...sensoryData.map("
+    },
+    {
+      "file": "src/components/AdvancedFilterPanel.tsx",
+      "line": 92,
+      "type": "heavy-computation",
+      "severity": "high",
+      "message": "Heavy computation detected in render path: map(s => s.sensoryType || s.type || '').filter...",
+      "code": "map(s => s.sensoryType || s.type || '').filter"
+    },
+    {
+      "file": "src/components/AdvancedFilterPanel.tsx",
+      "line": 96,
+      "type": "heavy-computation",
+      "severity": "high",
+      "message": "Heavy computation detected in render path: map(t => t.environmentalData?.location).filter...",
+      "code": "map(t => t.environmentalData?.location).filter"
+    },
+    {
+      "file": "src/components/AdvancedFilterPanel.tsx",
+      "line": 92,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const uniqueSensoryTypes = [...new Set(sensoryInputs.map(s => s.sensoryType || s"
+    },
+    {
+      "file": "src/components/AdvancedFilterPanel.tsx",
+      "line": 95,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const uniqueLocations = [...new Set(\n    trackingEntries.map(t => t.environmenta"
+    },
+    {
+      "file": "src/components/AdvancedFilterPanel.tsx",
+      "line": 90,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "map(e => e.emotion))];\n  const uniqueTriggers = [...new Set(emotions.flatMap(e ="
+    },
+    {
+      "file": "src/components/AdvancedFilterPanel.tsx",
+      "line": 734,
+      "type": "large-inline-function",
+      "severity": "medium",
+      "message": "Large inline function in JSX (recreated on each render)",
+      "code": "onClick={() => {\n                              set..."
+    },
+    {
+      "file": "src/components/AdvancedFilterPanel.tsx",
+      "line": 90,
+      "type": "nested-maps",
+      "severity": "critical",
+      "message": "Nested map operations detected (O(n²) complexity)",
+      "code": ".map(e => e.emotion))];\n  const uniqueTriggers = [...new Set(emotions.flatMap(e "
+    },
+    {
+      "file": "src/components/AdvancedFilterPanel.tsx",
+      "line": 725,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: JSON.stringify(filter.criteria[k as keyof FilterCriteria])",
+      "code": "JSON.stringify(filter.criteria[k as keyof FilterCriteria])"
+    },
+    {
+      "file": "src/components/AdvancedFilterPanel.tsx",
+      "line": 726,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: JSON.stringify(criteria[k as keyof FilterCriteria])",
+      "code": "JSON.stringify(criteria[k as keyof FilterCriteria])"
+    },
+    {
+      "file": "src/components/ProgressDashboard.tsx",
+      "line": 203,
+      "type": "heavy-computation",
+      "severity": "high",
+      "message": "Heavy computation detected in render path: filter(g => g.status === 'active')\n      .map...",
+      "code": "filter(g => g.status === 'active')\n      .map"
+    },
+    {
+      "file": "src/components/ProgressDashboard.tsx",
+      "line": 338,
+      "type": "heavy-computation",
+      "severity": "high",
+      "message": "Heavy computation detected in render path: filter(goal => goal.dataPoints.length > 1)\n       ...",
+      "code": "filter(goal => goal.dataPoints.length > 1)\n                  .sort"
+    },
+    {
+      "file": "src/components/ProgressDashboard.tsx",
+      "line": 200,
+      "type": "inline-array-chains",
+      "severity": "high",
+      "message": "Chained array operations in render method",
+      "code": "{\n    const now = new Date();\n    return goals\n      .filter(g => g.status === '"
+    },
+    {
+      "file": "src/components/ProgressDashboard.tsx",
+      "line": 154,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "for smooth transitions\n    setIsAnalyzingTrends(true);\n    \n    // Create timeou"
+    },
+    {
+      "file": "src/components/ProgressDashboard.tsx",
+      "line": 340,
+      "type": "nested-maps",
+      "severity": "critical",
+      "message": "Nested map operations detected (O(n²) complexity)",
+      "code": ".map(dp => dp.timestamp.getTime()));\n                    const bLatest = Math.ma"
+    },
+    {
+      "file": "src/components/InteractiveDataVisualization.tsx",
+      "line": 154,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const allTimestamps = [...filteredData.emotions.map(e => e.timestamp), ...filter"
+    },
+    {
+      "file": "src/components/InteractiveDataVisualization.tsx",
+      "line": 190,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const data = chartData.map(map"
+    },
+    {
+      "file": "src/components/InteractiveDataVisualization.tsx",
+      "line": 150,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "format: ExportFormat) => {\n    // This logic could be moved to a hook or helper\n"
+    },
+    {
+      "file": "src/components/InteractiveDataVisualization.tsx",
+      "line": 154,
+      "type": "nested-maps",
+      "severity": "critical",
+      "message": "Nested map operations detected (O(n²) complexity)",
+      "code": ".map(e => e.timestamp), ...filteredData.sensoryInputs.map(s => s.timestamp), ..."
+    },
+    {
+      "file": "src/components/EmotionTracker.tsx",
+      "line": 85,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "form\n    setSelectedEmotion('');\n    setSelectedSubEmotion('');\n    setIntensity"
+    },
+    {
+      "file": "src/components/EmotionTracker.tsx",
+      "line": 194,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "for better UX while typing\n                  if (value === '') {\n               "
+    },
+    {
+      "file": "src/components/EmotionTracker.tsx",
+      "line": 86,
+      "type": "unbatched-updates",
+      "severity": "high",
+      "message": "Multiple setState calls without batching",
+      "code": "setSelectedEmotion('');\n    setSelectedSubEmotion('');\n    setIntensity(3);\n    setDuration(0);\n    "
+    },
+    {
+      "file": "src/components/EmotionTracker.tsx",
+      "line": 192,
+      "type": "large-inline-function",
+      "severity": "medium",
+      "message": "Large inline function in JSX (recreated on each render)",
+      "code": "onChange={(e) => {\n                  const value =..."
+    },
+    {
+      "file": "src/components/MockDataLoader.tsx",
+      "line": 47,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "for better UX\n      setLoadingProgress(25);\n      \n      // Generate and load th"
+    },
+    {
+      "file": "src/components/MockDataLoader.tsx",
+      "line": 68,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "fore setting final progress\n      stopLoadingTimers();\n      \n      setLoadingPr"
+    },
+    {
+      "file": "src/components/ReportBuilder.tsx",
+      "line": 309,
+      "type": "heavy-computation",
+      "severity": "high",
+      "message": "Heavy computation detected in render path: Object.entries(reportAnalysis.emotionSummary).map...",
+      "code": "Object.entries(reportAnalysis.emotionSummary).map"
+    },
+    {
+      "file": "src/components/ReportBuilder.tsx",
+      "line": 328,
+      "type": "heavy-computation",
+      "severity": "high",
+      "message": "Heavy computation detected in render path: Object.entries(reportAnalysis.sensorySummary).map...",
+      "code": "Object.entries(reportAnalysis.sensorySummary).map"
+    },
+    {
+      "file": "src/components/ReportBuilder.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/ReportBuilder.tsx",
+      "line": 126,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const goalProgress = goals.map(goal => {\n      const progressInPeriod = goal.dat"
+    },
+    {
+      "file": "src/components/ReportBuilder.tsx",
+      "line": 148,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const avgEmotionIntensity = filteredEmotions.length > 0\n      ? filteredEmotions"
+    },
+    {
+      "file": "src/components/ReportBuilder.tsx",
+      "line": 452,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const csvString = csvContent.map(row => \n      row.map"
+    },
+    {
+      "file": "src/components/ReportBuilder.tsx",
+      "line": 645,
+      "type": "large-inline-function",
+      "severity": "medium",
+      "message": "Large inline function in JSX (recreated on each render)",
+      "code": "onClick={() => {\n                  handleTemplateC..."
+    },
+    {
+      "file": "src/components/ReportBuilder.tsx",
+      "line": 435,
+      "type": "nested-maps",
+      "severity": "critical",
+      "message": "Nested map operations detected (O(n²) complexity)",
+      "code": ".map(goal => [\n        goal.title,\n        goal.category,\n        Math.round(goa"
+    },
+    {
+      "file": "src/components/DataQualityFeedback.tsx",
+      "line": 57,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const allTimestamps = [\n      ...emotions.map(e => e.timestamp),\n      ...sensor"
+    },
+    {
+      "file": "src/components/DataQualityFeedback.tsx",
+      "line": 58,
+      "type": "nested-maps",
+      "severity": "critical",
+      "message": "Nested map operations detected (O(n²) complexity)",
+      "code": ".map(e => e.timestamp),\n      ...sensoryInputs.map(s => s.timestamp),\n      ...e"
+    },
+    {
+      "file": "src/components/SensoryTracker.tsx",
+      "line": 84,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "form\n    setSelectedType('');\n    setSelectedResponse('');\n    setIntensity(3);\n"
+    },
+    {
+      "file": "src/components/SensoryTracker.tsx",
+      "line": 85,
+      "type": "unbatched-updates",
+      "severity": "high",
+      "message": "Multiple setState calls without batching",
+      "code": "setSelectedType('');\n    setSelectedResponse('');\n    setIntensity(3);\n    setLocation('');\n    setN"
+    },
+    {
+      "file": "src/components/SensoryTracker.tsx",
+      "line": 242,
+      "type": "large-inline-function",
+      "severity": "medium",
+      "message": "Large inline function in JSX (recreated on each render)",
+      "code": "onClick={() => {\n                    if (!copingSt..."
+    },
+    {
+      "file": "src/components/AnalyticsSettings.tsx",
+      "line": 159,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "for cleanup\n  const [trainingRequested, setTrainingRequested] = useState<ModelTy"
+    },
+    {
+      "file": "src/components/AnalyticsSettings.tsx",
+      "line": 117,
+      "type": "unbatched-updates",
+      "severity": "high",
+      "message": "Multiple setState calls without batching",
+      "code": "setToDefaults();\n    setSelectedPreset('balanced');\n    setHasUnsavedChanges(false);\n    "
+    },
+    {
+      "file": "src/components/AnalyticsConfigTest.tsx",
+      "line": 139,
+      "type": "heavy-computation",
+      "severity": "high",
+      "message": "Heavy computation detected in render path: JSON.parse(exported)...",
+      "code": "JSON.parse(exported)"
+    },
+    {
+      "file": "src/components/AnalyticsConfigTest.tsx",
+      "line": 293,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "foreground mb-2\">Quick Actions</p>\n          <div className=\"flex flex-wrap gap-"
+    },
+    {
+      "file": "src/components/AnalyticsConfigTest.tsx",
+      "line": 144,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: JSON.stringify(parsed)",
+      "code": "JSON.stringify(parsed)"
+    },
+    {
+      "file": "src/components/EnvironmentalTracker.tsx",
+      "line": 243,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/EnvironmentalTracker.tsx",
+      "line": 74,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "form\n    setRoomTemperature(22);\n    setLighting('');\n    setNoiseLevel(3);\n    "
+    },
+    {
+      "file": "src/components/EnvironmentalTracker.tsx",
+      "line": 75,
+      "type": "unbatched-updates",
+      "severity": "high",
+      "message": "Multiple setState calls without batching",
+      "code": "setRoomTemperature(22);\n    setLighting('');\n    setNoiseLevel(3);\n    setClassroomActivity('');\n   "
+    },
+    {
+      "file": "src/components/CorrelationHeatmap.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/CorrelationHeatmap.tsx",
+      "line": 12,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const chartData = factors.map(factor1 => ({\n    id: factor1,\n    data: factors.m"
+    },
+    {
+      "file": "src/components/CorrelationHeatmap.tsx",
+      "line": 12,
+      "type": "nested-maps",
+      "severity": "critical",
+      "message": "Nested map operations detected (O(n²) complexity)",
+      "code": ".map(factor1 => ({\n    id: factor1,\n    data: factors.map("
+    },
+    {
+      "file": "src/components/AnalyticsDashboard.tsx",
+      "line": 173,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "while analysis updates other tabs.\n\n  // Export handler with useCallback for per"
+    },
+    {
+      "file": "src/components/Visualization3D.tsx",
+      "line": 185,
+      "type": "large-inline-function",
+      "severity": "medium",
+      "message": "Large inline function in JSX (recreated on each render)",
+      "code": "onClick={() => {\n            camera.position.set(1..."
+    },
+    {
+      "file": "src/components/Visualization3D.tsx",
+      "line": 285,
+      "type": "nested-maps",
+      "severity": "critical",
+      "message": "Nested map operations detected (O(n²) complexity)",
+      "code": ".map(p => p.x);\n    const yValues = points.map(p => p.y);\n    const zValues = po"
+    },
+    {
+      "file": "src/components/GoalManager.tsx",
+      "line": 58,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "for the current student.\n   * Memoized to prevent recreation on every render.\n  "
+    },
+    {
+      "file": "src/components/GoalManager.tsx",
+      "line": 475,
+      "type": "large-inline-function",
+      "severity": "medium",
+      "message": "Large inline function in JSX (recreated on each render)",
+      "code": "onClick={() => {\n                        const tit..."
+    },
+    {
+      "file": "src/components/GoalManager.tsx",
+      "line": 524,
+      "type": "large-inline-function",
+      "severity": "medium",
+      "message": "Large inline function in JSX (recreated on each render)",
+      "code": "onClick={() => {\n                      const value..."
+    },
+    {
+      "file": "src/components/ui/sidebar.tsx",
+      "line": 72,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "for control from outside the component.\n    const [_open, _setOpen] = React.useS"
+    },
+    {
+      "file": "src/components/InteractiveDataVisualization.diagnosis.tsx",
+      "line": 109,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/InteractiveDataVisualization.diagnosis.tsx",
+      "line": 79,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "for (let i = 0; i < tests.length; i++) {\n        await runTest(i);\n        await"
+    },
+    {
+      "file": "src/components/DataRequirementsCalculator.tsx",
+      "line": 71,
+      "type": "nested-maps",
+      "severity": "critical",
+      "message": "Nested map operations detected (O(n²) complexity)",
+      "code": ".map(e => e.timestamp),\n      ...sensoryInputs.map(s => s.timestamp),\n      ...e"
+    },
+    {
+      "file": "src/components/DataCollectionRoadmap.tsx",
+      "line": 43,
+      "type": "nested-maps",
+      "severity": "critical",
+      "message": "Nested map operations detected (O(n²) complexity)",
+      "code": ".map(e => e.timestamp),\n      ...sensoryInputs.map(s => s.timestamp),\n      ...e"
+    },
+    {
+      "file": "src/components/EnhancedDataVisualization.tsx",
+      "line": 27,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "map(e => e[nameKey]))];\n\n    for (let i = 0; i < days; i++) {\n        const date"
+    },
+    {
+      "file": "src/components/VirtualScrollArea.tsx",
+      "line": 56,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/VirtualScrollArea.tsx",
+      "line": 93,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "for smoother scrolling\n *   />\n * );\n * ```\n * \n * @example\n * // Usage with dyn"
+    },
+    {
+      "file": "src/components/optimized/OptimizedAnimatedCounter.tsx",
+      "line": 33,
+      "type": "setState-in-loop",
+      "severity": "critical",
+      "message": "setState called inside a loop (causes multiple re-renders)",
+      "code": "for smoother animation\n      const easeOutQuart = 1 - Math.pow(1 - progress, 4);"
+    },
+    {
+      "file": "src/components/optimized/OptimizedAnimatedCounter.tsx",
+      "line": 62,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: .toLocaleString()",
+      "code": ".toLocaleString()"
+    },
+    {
+      "file": "src/components/VisualizationControls.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/VisualizationControls.tsx",
+      "line": 126,
+      "type": "unbatched-updates",
+      "severity": "high",
+      "message": "Multiple setState calls without batching",
+      "code": "setSelectedTimeRange('30d');\n                    setSelectedChartType('scatter');\n                  "
+    },
+    {
+      "file": "src/components/VisualizationControls.tsx",
+      "line": 134,
+      "type": "unbatched-updates",
+      "severity": "high",
+      "message": "Multiple setState calls without batching",
+      "code": "setSelectedTimeRange('7d');\n                    setSelectedChartType('line');\n                    se"
+    },
+    {
+      "file": "src/components/VisualizationControls.tsx",
+      "line": 122,
+      "type": "large-inline-function",
+      "severity": "medium",
+      "message": "Large inline function in JSX (recreated on each render)",
+      "code": "onClick={() => {\n                  visualizationSt..."
+    },
+    {
+      "file": "src/components/VisualizationControls.tsx",
+      "line": 151,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: JSON.stringify(filterCriteria[k as keyof typeof filterCriteria])",
+      "code": "JSON.stringify(filterCriteria[k as keyof typeof filterCriteria])"
+    },
+    {
+      "file": "src/components/VisualizationControls.tsx",
+      "line": 152,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: JSON.stringify({\n                    dateRange: { start: null, end: null },\n                    emotions: { types: [], intensityRange: [0, 10], includeTriggers: [], excludeTriggers: [] },\n                    sensory: { types: [], responses: [], intensityRange: [0, 10] },\n                    environmental: {\n                      locations: [],\n                      activities: [],\n                      conditions: { noiseLevel: [0, 10], temperature: [15, 30], lighting: [] },\n                      weather: [],\n                      timeOfDay: []\n                    },\n                    patterns: { anomaliesOnly: false, minConfidence: 0, patternTypes: [] },\n                    realtime: false\n                  }[k as keyof typeof filterCriteria])",
+      "code": "JSON.stringify({\n                    dateRange: { start: null, end: null },\n                    emotions: { types: [], intensityRange: [0, 10], includeTriggers: [], excludeTriggers: [] },\n                    sensory: { types: [], responses: [], intensityRange: [0, 10] },\n                    environmental: {\n                      locations: [],\n                      activities: [],\n                      conditions: { noiseLevel: [0, 10], temperature: [15, 30], lighting: [] },\n                      weather: [],\n                      timeOfDay: []\n                    },\n                    patterns: { anomaliesOnly: false, minConfidence: 0, patternTypes: [] },\n                    realtime: false\n                  }[k as keyof typeof filterCriteria])"
+    },
+    {
+      "file": "src/components/TestingDebugPanel.tsx",
+      "line": 149,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const emptyStudents = students.filter(student => {\n        const studentEntries "
+    },
+    {
+      "file": "src/components/TestingDebugPanel.tsx",
+      "line": 169,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const studentsWithData = students.filter(student => {\n        const studentEntri"
+    },
+    {
+      "file": "src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx",
+      "line": 32,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const avgEmotionIntensity = filteredData.emotions.reduce((sum, e) => sum + e.int"
+    },
+    {
+      "file": "src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx",
+      "line": 241,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx",
+      "line": 309,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx",
+      "line": 341,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx",
+      "line": 454,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/EnhancedPersonalizedInsights.tsx",
+      "line": 161,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const avgEmotionIntensity = filteredData.emotions.reduce((sum, e) => sum + e.int"
+    },
+    {
+      "file": "src/components/EnhancedPersonalizedInsights.tsx",
+      "line": 259,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/EnhancedPersonalizedInsights.tsx",
+      "line": 327,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/EnhancedPersonalizedInsights.tsx",
+      "line": 359,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/EnhancedPersonalizedInsights.tsx",
+      "line": 472,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/optimized/OptimizedDataVisualization.tsx",
+      "line": 130,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const rows = Array.from(byDate.values())\n                  .sort((a, b) => a.dat"
+    },
+    {
+      "file": "src/components/settings/AnalyticsConfig.tsx",
+      "line": 48,
+      "type": "heavy-computation",
+      "severity": "high",
+      "message": "Heavy computation detected in render path: JSON.parse(JSON.stringify(prev)...",
+      "code": "JSON.parse(JSON.stringify(prev)"
+    },
+    {
+      "file": "src/components/settings/AnalyticsConfig.tsx",
+      "line": 48,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: JSON.stringify(prev)",
+      "code": "JSON.stringify(prev)"
+    },
+    {
+      "file": "src/components/QuickEntryTemplates.tsx",
+      "line": 138,
+      "type": "heavy-computation",
+      "severity": "high",
+      "message": "Heavy computation detected in render path: JSON.parse(saved)...",
+      "code": "JSON.parse(saved)"
+    },
+    {
+      "file": "src/components/QuickEntryTemplates.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/QuickEntryTemplates.tsx",
+      "line": 396,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={idx}"
+    },
+    {
+      "file": "src/components/QuickEntryTemplates.tsx",
+      "line": 134,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: localStorage.getItem",
+      "code": "localStorage.getItem"
+    },
+    {
+      "file": "src/components/QuickEntryTemplates.tsx",
+      "line": 193,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: localStorage.setItem",
+      "code": "localStorage.setItem"
+    },
+    {
+      "file": "src/components/QuickEntryTemplates.tsx",
+      "line": 193,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: JSON.stringify(updatedTemplates)",
+      "code": "JSON.stringify(updatedTemplates)"
+    },
+    {
+      "file": "src/components/PeriodComparison.tsx",
+      "line": 69,
+      "type": "unmemoized-calculation",
+      "severity": "high",
+      "message": "Expensive calculation without useMemo",
+      "code": "const avgIntensity = filteredEmotions.length > 0 \n      ? filteredEmotions.reduc"
+    },
+    {
+      "file": "src/components/charts/EChartContainer.tsx",
+      "line": 419,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: JSON.stringify(safeOption, (_k, v)",
+      "code": "JSON.stringify(safeOption, (_k, v)"
+    },
+    {
+      "file": "src/components/charts/EChartContainer.tsx",
+      "line": 447,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: JSON.stringify({ seriesKinds, yAxes })",
+      "code": "JSON.stringify({ seriesKinds, yAxes })"
+    },
+    {
+      "file": "src/components/analysis/PatternAnalysisView.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/analysis/PatternAnalysisView.tsx",
+      "line": 97,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/analysis/PatternAnalysisView.tsx",
+      "line": 121,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={i}"
+    },
+    {
+      "file": "src/components/analysis/PatternAnalysisView.tsx",
+      "line": 145,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/analysis/PatternAnalysisView.tsx",
+      "line": 197,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={i}"
+    },
+    {
+      "file": "src/components/analysis/PatternAnalysisView.tsx",
+      "line": 231,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/analytics-panels/PatternsPanel.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/analytics-panels/PatternsPanel.tsx",
+      "line": 175,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={idx}"
+    },
+    {
+      "file": "src/components/DetailedConfidenceExplanation.tsx",
+      "line": 393,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/DetailedConfidenceExplanation.tsx",
+      "line": 410,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/DevErrorBanner.tsx",
+      "line": 23,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: JSON.stringify(a)",
+      "code": "JSON.stringify(a)"
+    },
+    {
+      "file": "src/components/PaginatedSessionsList.tsx",
+      "line": 127,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={idx}"
+    },
+    {
+      "file": "src/components/layouts/DashboardLayout.tsx",
+      "line": 134,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/profile-sections/DashboardSection.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/profile-sections/DashboardSection.tsx",
+      "line": 268,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/ui/PremiumStudentCard.tsx",
+      "line": 44,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: JSON.stringify(dataStorage.getStudents()",
+      "code": "JSON.stringify(dataStorage.getStudents()"
+    },
+    {
+      "file": "src/components/PatternDetectionEmptyState.tsx",
+      "line": 88,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={index}"
+    },
+    {
+      "file": "src/components/ui/Breadcrumbs.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/analytics-panels/CorrelationsPanel.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/charts/TrendsChart.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/LoadingState.tsx",
+      "line": 54,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={i}"
+    },
+    {
+      "file": "src/components/profile-sections/AnalyticsSection.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/layouts/VisualizationLayouts.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/profile-sections/ToolsSection.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/PremiumEmptyState.tsx",
+      "line": 87,
+      "type": "index-as-key",
+      "severity": "medium",
+      "message": "Using array index as React key (causes re-renders)",
+      "code": "key={i}"
+    },
+    {
+      "file": "src/components/PredictionTimeline.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/DebugVisualization.tsx",
+      "line": 210,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: JSON.stringify(mockEmotions[0], null, 2)",
+      "code": "JSON.stringify(mockEmotions[0], null, 2)"
+    },
+    {
+      "file": "src/components/DebugVisualization.tsx",
+      "line": 216,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: JSON.stringify(mockSensoryInputs[0], null, 2)",
+      "code": "JSON.stringify(mockSensoryInputs[0], null, 2)"
+    },
+    {
+      "file": "src/components/DebugVisualization.tsx",
+      "line": 222,
+      "type": "sync-io",
+      "severity": "medium",
+      "message": "Synchronous I/O operation in render path: JSON.stringify(mockTrackingEntries[0], null, 2)",
+      "code": "JSON.stringify(mockTrackingEntries[0], null, 2)"
+    },
+    {
+      "file": "src/components/profile-sections/ProgressSection.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/lazy/LazyVisualization3D.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/lazy/LazyAnalyticsDashboard.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/analytics-panels/ChartsPanel.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    },
+    {
+      "file": "src/components/analytics-panels/AlertsPanel.tsx",
+      "line": 1,
+      "type": "missing-memoization",
+      "severity": "medium",
+      "message": "Component with complex props lacks memoization"
+    }
+  ]
+}

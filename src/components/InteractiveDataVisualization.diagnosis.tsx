@@ -44,11 +44,11 @@ export const InteractiveDataVisualizationDiagnosis = () => {
         case 3: // Sub-components Import Test
           logger.debug('Testing sub-components import...');
           const [viz3d, timeline, filter] = await Promise.all([
-            import('@/components/Visualization3D'),
+            import('@/components/lazy/LazyVisualization3D'),
             import('@/components/TimelineVisualization'),
             import('@/components/AdvancedFilterPanel')
           ]);
-          if (!viz3d.Visualization3D) throw new Error('Visualization3D not found');
+          if (!viz3d.LazyVisualization3D) throw new Error('LazyVisualization3D not found');
           if (!timeline.TimelineVisualization) throw new Error('TimelineVisualization not found');
           if (!filter.AdvancedFilterPanel) throw new Error('AdvancedFilterPanel not found');
           break;
@@ -105,8 +105,8 @@ export const InteractiveDataVisualizationDiagnosis = () => {
           </p>
           
           <div className="space-y-2">
-            {tests.map((test, index) => (
-              <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+            {tests.map((test) => (
+              <div key={test.name} className="flex items-center justify-between p-3 border rounded-lg">
                 <div className="flex items-center gap-3">
                   {getStatusIcon(test.status)}
                   <span className="font-medium">{test.name}</span>

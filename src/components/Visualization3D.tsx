@@ -10,6 +10,8 @@ import { Slider } from '@/components/ui/slider';
 import { Eye, RotateCcw, ZoomIn, ZoomOut, Move3d } from 'lucide-react';
 import * as THREE from 'three';
 import { colorForeground } from '@/lib/resolveCssColorVar';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface Visualization3DProps {
   emotions: EmotionEntry[];
@@ -42,6 +44,8 @@ interface TooltipProps {
 
 // Tooltip component for data points
 const Tooltip3D: React.FC<TooltipProps> = ({ point, onClose }) => {
+  const { tAnalytics } = useTranslation();
+  
   return (
     <Html>
       <div className="bg-background border rounded-lg shadow-lg p-3 min-w-[200px]">
@@ -51,17 +55,17 @@ const Tooltip3D: React.FC<TooltipProps> = ({ point, onClose }) => {
           </Badge>
           <button 
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors motion-reduce:transition-none"
           >
             ×
           </button>
         </div>
         <p className="font-medium">{point.label}</p>
         <div className="text-sm text-muted-foreground mt-1 space-y-1">
-          <p>X: {point.x.toFixed(2)}</p>
-          <p>Y: {point.y.toFixed(2)}</p>
-          <p>Z: {point.z.toFixed(2)}</p>
-          {point.intensity && <p>Intensity: {point.intensity}</p>}
+          <p>{tAnalytics('visualization3d.tooltip.xAxis')}: {point.x.toFixed(2)}</p>
+          <p>{tAnalytics('visualization3d.tooltip.yAxis')}: {point.y.toFixed(2)}</p>
+          <p>{tAnalytics('visualization3d.tooltip.zAxis')}: {point.z.toFixed(2)}</p>
+          {point.intensity && <p>{tAnalytics('visualization3d.tooltip.intensity')}: {point.intensity}</p>}
         </div>
       </div>
     </Html>
@@ -76,17 +80,26 @@ const DataPoint: React.FC<{
   point: DataPoint3D;
   onHover: (point: DataPoint3D | null) => void;
   isHighlighted: boolean;
-}> = ({ position, color, size, point, onHover, isHighlighted }) => {
+  reducedMotion?: boolean;
+}> = ({ position, color, size, point, onHover, isHighlighted, reducedMotion = false }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
   useFrame((state) => {
     if (meshRef.current) {
       const scale = hovered || isHighlighted ? 1.5 : 1;
-      meshRef.current.scale.lerp(new THREE.Vector3(scale, scale, scale), 0.1);
       
-      if (hovered) {
-        meshRef.current.rotation.y += 0.02;
+      if (reducedMotion) {
+        // Instant scaling for reduced motion
+        meshRef.current.scale.set(scale, scale, scale);
+      } else {
+        // Smooth animation
+        meshRef.current.scale.lerp(new THREE.Vector3(scale, scale, scale), 0.1);
+        
+        // Only rotate on hover if motion is allowed
+        if (hovered) {
+          meshRef.current.rotation.y += 0.02;
+        }
       }
     }
   });
@@ -201,6 +214,7 @@ export const Visualization3D: React.FC<Visualization3DProps> = ({
   trackingEntries,
   correlationData
 }) => {
+  const prefersReducedMotion = useReducedMotion();
   const [hoveredPoint, setHoveredPoint] = useState<DataPoint3D | null>(null);
   const [selectedPoint, setSelectedPoint] = useState<DataPoint3D | null>(null);
   const [xAxis, setXAxis] = useState<string>('emotionIntensity');
@@ -435,7 +449,12 @@ export const Visualization3D: React.FC<Visualization3DProps> = ({
 
         {/* 3D Visualization */}
         <div className="relative w-full h-[600px] bg-gray-50 rounded-lg overflow-hidden">
-          cCanvas
+          {prefersReducedMotion && (
+            <div className="absolute top-4 right-4 z-10 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 px-3 py-1 rounded-md text-sm">
+              Reduced motion enabled
+            </div>
+          )}
+          <Canvas
             camera={{ position: [10, 10, 10], fov: 50 }}
             className="w-full h-full"
             onCreated={({ gl }) => {
@@ -449,7 +468,7 @@ export const Visualization3D: React.FC<Visualization3DProps> = ({
               canvas.addEventListener('webglcontextlost', onLost, { passive: false });
               canvas.addEventListener('webglcontextrestored', onRestored);
             }}
-          e
+          >
             <ambientLight intensity={0.5} />
             <pointLight position={[10, 10, 10]} />
             <pointLight position={[-10, -10, -10]} intensity={0.5} />
@@ -474,6 +493,7 @@ export const Visualization3D: React.FC<Visualization3DProps> = ({
                 point={point}
                 onHover={setHoveredPoint}
                 isHighlighted={selectedPoint?.id === point.id}
+                reducedMotion={prefersReducedMotion}
               />
             ))}
             
@@ -495,11 +515,11 @@ export const Visualization3D: React.FC<Visualization3DProps> = ({
             
             {/* Controls */}
             <OrbitControls 
-              enableDamping
-              dampingFactor={0.05}
+              enableDamping={!prefersReducedMotion}
+              dampingFactor={prefersReducedMotion ? 0 : 0.05}
               enablePan
               panSpeed={0.5}
-              rotateSpeed={0.5}
+              rotateSpeed={prefersReducedMotion ? 0.3 : 0.5}
               zoomSpeed={0.5}
               minDistance={5}
               maxDistance={50}
@@ -546,7 +566,7 @@ export const Visualization3D: React.FC<Visualization3DProps> = ({
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
   );
 };

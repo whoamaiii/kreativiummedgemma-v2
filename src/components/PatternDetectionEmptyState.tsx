@@ -17,45 +17,46 @@ export const PatternDetectionEmptyState = ({
   onCollectData,
   className
 }: PatternDetectionEmptyStateProps) => {
-  const { tCommon } = useTranslation();
+  const { tAnalytics } = useTranslation();
 
   const getGuidanceMessage = () => {
     if (dataPoints === 0) {
       return {
-        title: "Ingen data registrert ennå",
-        description: "Start med å registrere følelser og sensoriske opplevelser for å oppdage mønstre.",
-        actionText: "Registrer første oppføring",
+        title: String(tAnalytics('patternDetection.guidance.noData.title')),
+        description: String(tAnalytics('patternDetection.guidance.noData.description')),
+        actionText: String(tAnalytics('patternDetection.guidance.noData.actionText')),
         icon: AlertTriangle,
-        color: "text-orange-600"
+        color: 'text-warning'
       };
     }
 
     if (dataPoints < 3) {
+      const needed = 3 - dataPoints;
       return {
-        title: "Trenger mer data for mønstergjenkjenning",
-        description: `Du har ${dataPoints} datapunkter. Registrer minst ${3 - dataPoints} til for å begynne å se mønstre.`,
-        actionText: "Fortsett å registrere data",
+        title: String(tAnalytics('patternDetection.guidance.needMoreData.title')),
+        description: String(tAnalytics('patternDetection.guidance.needMoreData.description', { current: dataPoints, needed })),
+        actionText: String(tAnalytics('patternDetection.guidance.needMoreData.actionText')),
         icon: Target,
-        color: "text-blue-600"
+        color: 'text-info'
       };
     }
 
     if (daysWithData < 7) {
       return {
-        title: "Trenger data over lengre tid",
-        description: `Du har ${daysWithData} dager med data. Samle data over minst 7 dager for å identifisere trender.`,
-        actionText: "Fortsett daglig registrering",
+        title: String(tAnalytics('patternDetection.guidance.needMoreTime.title')),
+        description: String(tAnalytics('patternDetection.guidance.needMoreTime.description', { days: daysWithData })),
+        actionText: String(tAnalytics('patternDetection.guidance.needMoreTime.actionText')),
         icon: Calendar,
-        color: "text-purple-600"
+        color: 'text-primary'
       };
     }
 
     return {
-      title: "Ingen tydelige mønstre oppdaget ennå",
-      description: "Data er tilgjengelig, men ingen sterke mønstre er funnet. Dette kan være positivt - det kan bety stabil tilstand.",
-      actionText: "Fortsett å overvåke",
+      title: String(tAnalytics('patternDetection.guidance.noPatterns.title')),
+      description: String(tAnalytics('patternDetection.guidance.noPatterns.description')),
+      actionText: String(tAnalytics('patternDetection.guidance.noPatterns.actionText')),
       icon: TrendingUp,
-      color: "text-green-600"
+      color: 'text-success'
     };
   };
 
@@ -63,9 +64,27 @@ export const PatternDetectionEmptyState = ({
   const Icon = guidance.icon;
 
   const requirements = [
-    { label: "Minimum datapunkter", current: dataPoints, target: 3, met: dataPoints >= 3 },
-    { label: "Dager med data", current: daysWithData, target: 7, met: daysWithData >= 7 },
-    { label: "Regelmessighet", current: "Variabel", target: "Daglig", met: false }
+    { 
+      id: 'minimum-data-points',
+      label: String(tAnalytics('patternDetection.requirements.minimumDataPoints')), 
+      current: dataPoints, 
+      target: 3, 
+      met: dataPoints >= 3 
+    },
+    { 
+      id: 'days-with-data',
+      label: String(tAnalytics('patternDetection.requirements.daysWithData')), 
+      current: daysWithData, 
+      target: 7, 
+      met: daysWithData >= 7 
+    },
+    { 
+      id: 'regularity',
+      label: String(tAnalytics('patternDetection.requirements.regularity')), 
+      current: String(tAnalytics('patternDetection.requirements.variable')), 
+      target: String(tAnalytics('patternDetection.requirements.daily')), 
+      met: false 
+    }
   ];
 
   return (
@@ -83,30 +102,30 @@ export const PatternDetectionEmptyState = ({
 
         {/* Requirements Progress */}
         <div className="space-y-3">
-          <h4 className="text-sm font-medium">Krav for mønstergjenkjenning:</h4>
-          {requirements.map((req, index) => (
-            <div key={index} className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/50">
+          <h4 className="text-sm font-medium">{String(tAnalytics('patternDetection.requirements.title'))}</h4>
+          {requirements.map((req) => (
+            <div key={req.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/50">
               <span className="text-sm">{req.label}</span>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">
                   {req.current} / {req.target}
                 </span>
-                <div className={`w-3 h-3 rounded-full ${req.met ? 'bg-green-500' : 'bg-muted-foreground/30'}`} />
+                <div className={`w-3 h-3 rounded-full ${req.met ? 'bg-success' : 'bg-muted-foreground/30'}`} />
               </div>
             </div>
           ))}
         </div>
 
         {/* Quick Tips */}
-        <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-          <h4 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
-            Tips for bedre mønstergjenkjenning:
+        <div className="p-4 bg-info/10 rounded-lg">
+          <h4 className="text-sm font-medium text-info-foreground mb-2">
+            {String(tAnalytics('patternDetection.tips.title'))}
           </h4>
-          <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-            <li>• Registrer data på samme tid hver dag</li>
-            <li>• Inkluder både følelser og sensoriske opplevelser</li>
-            <li>• Legg merke til miljøfaktorer (støy, lys, aktivitet)</li>
-            <li>• Vær konsistent i minst 2-3 uker</li>
+          <ul className="text-sm text-info-foreground/80 space-y-1">
+            <li>• {String(tAnalytics('patternDetection.tips.sameTime'))}</li>
+            <li>• {String(tAnalytics('patternDetection.tips.includeAll'))}</li>
+            <li>• {String(tAnalytics('patternDetection.tips.noteEnvironment'))}</li>
+            <li>• {String(tAnalytics('patternDetection.tips.beConsistent'))}</li>
           </ul>
         </div>
 

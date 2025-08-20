@@ -9,6 +9,8 @@ if (!POC_MODE) {
 }
 import { ThemeProvider } from "next-themes";
 import { DevErrorBanner } from "@/components/DevErrorBanner";
+import { AccessibilityWrapper } from "@/components/AccessibilityWrapper";
+import { LoadingFallback } from "@/components/LoadingFallback";
 
 const Dashboard = lazy(() => import("./pages/Dashboard").then(m => ({ default: m.Dashboard })));
 // These pages export default components; import defaults directly to avoid undefined lazy resolutions
@@ -38,14 +40,15 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <ErrorWrapper>
-    {!IS_PROD && <DevErrorBanner />}
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <BrowserRouter>
-            <Suspense fallback={<div>Loading...</div>}>
-              <Routes>
+    <AccessibilityWrapper>
+      {!IS_PROD && <DevErrorBanner />}
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <Toaster />
+            <BrowserRouter>
+              <Suspense fallback={<LoadingFallback />}>
+                <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/add-student" element={<AddStudent />} />
                 <Route path="/student/:studentId" element={<StudentProfile />} />
@@ -67,12 +70,13 @@ const App = () => (
                 )}
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </ThemeProvider>
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </AccessibilityWrapper>
   </ErrorWrapper>
 );
 

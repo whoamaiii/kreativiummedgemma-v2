@@ -90,9 +90,9 @@ export const AlertManager = ({ studentId, showOnlyUnresolved = false }: AlertMan
       case 'high':
         return <AlertTriangle className="h-4 w-4 text-destructive" />;
       case 'medium':
-        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+        return <AlertTriangle className="h-4 w-4 text-warning" />;
       case 'low':
-        return <TrendingUp className="h-4 w-4 text-blue-500" />;
+        return <TrendingUp className="h-4 w-4 text-info" />;
       default:
         return <AlertTriangle className="h-4 w-4" />;
     }
@@ -116,7 +116,7 @@ export const AlertManager = ({ studentId, showOnlyUnresolved = false }: AlertMan
       <Card>
         <CardContent className="pt-6">
           <div className="text-center text-muted-foreground">
-            <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-500" />
+            <CheckCircle className="h-8 w-8 mx-auto mb-2 text-success" />
             <p>{showOnlyUnresolved ? String(tAnalytics('alerts.noneUnresolved')) : String(tAnalytics('alerts.none'))}</p>
           </div>
         </CardContent>
@@ -155,7 +155,7 @@ export const AlertManager = ({ studentId, showOnlyUnresolved = false }: AlertMan
                     <span>{alertEntry.alert.timestamp.toLocaleDateString()}</span>
                     <span>{alertEntry.alert.dataPoints} data points</span>
                     {alertEntry.resolved && (
-                      <Badge variant="outline" className="text-green-600">
+                      <Badge variant="outline" className="text-success-foreground bg-success">
                         Resolved
                       </Badge>
                     )}
@@ -270,12 +270,12 @@ export const AlertManager = ({ studentId, showOnlyUnresolved = false }: AlertMan
               </div>
               
               {alertEntry.resolved && alertEntry.resolvedNotes && (
-                <div className="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
-                  <h5 className="text-sm font-medium text-green-800 mb-1">
+                <div className="mt-3 bg-success/10 border border-success/20 rounded-lg p-3">
+                  <h5 className="text-sm font-medium text-success-foreground mb-1">
                     {String(tAnalytics('alerts.resolutionNotes'))}:
                   </h5>
-                  <p className="text-sm text-green-700">{alertEntry.resolvedNotes}</p>
-                  <p className="text-xs text-green-600 mt-1">
+                  <p className="text-sm text-success-foreground/80">{alertEntry.resolvedNotes}</p>
+                  <p className="text-xs text-success-foreground/60 mt-1">
                     {String(tAnalytics('alerts.resolvedBy'))} {alertEntry.resolvedBy} {String(tCommon('on'))} {alertEntry.resolvedAt?.toLocaleDateString()}
                   </p>
                 </div>

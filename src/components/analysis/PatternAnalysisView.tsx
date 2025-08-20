@@ -58,9 +58,9 @@ export const PatternAnalysisView: React.FC<PatternAnalysisViewProps> = ({
   };
 
   const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.8) return 'text-green-600 bg-green-50 border-green-200';
-    if (confidence >= 0.6) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-    return 'text-red-600 bg-red-50 border-red-200';
+    if (confidence >= 0.8) return 'text-success-foreground bg-success border-success/30';
+    if (confidence >= 0.6) return 'text-warning-foreground bg-warning border-warning/30';
+    return 'text-destructive-foreground bg-destructive border-destructive/30';
   };
 
   if (isAnalyzing) {
@@ -147,11 +147,11 @@ export const PatternAnalysisView: React.FC<PatternAnalysisViewProps> = ({
                   <div className="flex items-start gap-3">
                     <div className="flex-shrink-0">
                       {insight.severity === 'high' ? (
-                        <AlertTriangle className="h-5 w-5 text-red-500" />
+                        <AlertTriangle className="h-5 w-5 text-destructive" />
                       ) : insight.severity === 'medium' ? (
-                        <Clock className="h-5 w-5 text-yellow-500" />
+                        <Clock className="h-5 w-5 text-warning" />
                       ) : (
-                        <CheckCircle className="h-5 w-5 text-green-500" />
+                        <CheckCircle className="h-5 w-5 text-success" />
                       )}
                     </div>
                     <div className="flex-1">
@@ -171,11 +171,11 @@ export const PatternAnalysisView: React.FC<PatternAnalysisViewProps> = ({
                           <p className="text-sm font-medium mb-1">Prediction:</p>
                           <div className="flex items-center gap-2 text-sm">
                             {insight.prediction.trend === 'increasing' ? (
-                              <TrendingUp className="h-4 w-4 text-green-500" />
+                            <TrendingUp className="h-4 w-4 text-success" />
                             ) : insight.prediction.trend === 'decreasing' ? (
-                              <TrendingDown className="h-4 w-4 text-red-500" />
+                              <TrendingDown className="h-4 w-4 text-destructive" />
                             ) : (
-                              <Activity className="h-4 w-4 text-blue-500" />
+                              <Activity className="h-4 w-4 text-info" />
                             )}
                             <span className="capitalize">{insight.prediction.trend}</span>
                             <ConfidenceIndicator

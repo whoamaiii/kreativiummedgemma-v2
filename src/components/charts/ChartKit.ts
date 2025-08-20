@@ -1,3 +1,4 @@
+import { chartColor } from '@/lib/chartColor';
 import type { EChartsOption, SeriesOption } from 'echarts';
 import type { CorrelationMatrix } from '@/lib/enhancedPatternAnalysis';
 
@@ -364,8 +365,12 @@ export function buildCorrelationHeatmapOption(matrix: CorrelationMatrix): EChart
       top: 40,
       text: ['Positiv', 'Negativ'],
       inRange: {
-        // Diverging palette: red (neg) → gray (0) → green (pos)
-        color: ['#ef4444', '#f3f4f6', '#10b981']
+        // Diverging palette from semantic tokens
+        color: [
+          chartColor('--destructive', 1, '0 84% 60%'), 
+          chartColor('--muted-foreground', 1, '240 8% 63%'), 
+          chartColor('--success', 1, '142 71% 45%')
+        ]
       },
       itemWidth: 12,
       itemHeight: 100,
@@ -385,7 +390,7 @@ export function buildCorrelationHeatmapOption(matrix: CorrelationMatrix): EChart
         },
         itemStyle: {
           borderWidth: 1,
-          borderColor: '#374151' // Tailwind gray-700 for better contrast on dark backgrounds
+          borderColor: chartColor('--secondary', 0.5, '247 15% 17%') // Use semantic token with alpha
         },
         emphasis: { disabled: true, focus: 'none' },
         progressive: 0,

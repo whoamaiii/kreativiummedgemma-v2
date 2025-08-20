@@ -185,14 +185,14 @@ export const ProgressDashboard = ({ student, goals }: ProgressDashboardProps) =>
     }).filter(item => item.count > 0);
   }, [goals]);
 
-  const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', '#8884d8', '#82ca9d'];
+  const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--info))', 'hsl(var(--success))'];
 
   const getStatusColor = (status: Goal['status']) => {
     switch (status) {
-      case 'active': return 'text-blue-600';
-      case 'achieved': return 'text-green-600';
-      case 'modified': return 'text-yellow-600';
-      case 'discontinued': return 'text-red-600';
+      case 'active': return 'text-info';
+      case 'achieved': return 'text-success';
+      case 'modified': return 'text-warning';
+      case 'discontinued': return 'text-destructive';
       default: return 'text-gray-600';
     }
   };
@@ -496,12 +496,12 @@ export const ProgressDashboard = ({ student, goals }: ProgressDashboardProps) =>
                       <Progress value={goal.currentProgress} className="h-2" />
                     </div>
                     {goal.daysUntilTarget < 0 && (
-                      <div className="p-2 bg-red-50 border border-red-200 rounded text-sm text-red-700">
+                      <div className="p-2 bg-destructive/10 border border-destructive/20 rounded text-sm text-destructive-foreground">
                         ⚠️ This goal is past its target date and may need review or extension.
                       </div>
                     )}
                     {goal.urgencyScore > 2 && goal.daysUntilTarget > 0 && (
-                      <div className="p-2 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-700">
+                      <div className="p-2 bg-warning/10 border border-warning/20 rounded text-sm text-warning-foreground">
                         📈 Consider increasing intervention intensity to meet target date.
                       </div>
                     )}
@@ -509,8 +509,8 @@ export const ProgressDashboard = ({ student, goals }: ProgressDashboardProps) =>
                 ))}
                 {getPriorityGoals().length === 0 && (
                   <div className="text-center py-8">
-                    <Award className="h-12 w-12 text-green-500 mx-auto mb-2" />
-                    <p className="text-lg font-medium text-green-600">All goals are on track!</p>
+                    <Award className="h-12 w-12 text-success mx-auto mb-2" />
+                    <p className="text-lg font-medium text-success-foreground">All goals are on track!</p>
                     <p className="text-muted-foreground">Great work keeping {student.name}'s progress moving forward.</p>
                   </div>
                 )}

@@ -227,8 +227,15 @@ export async function handleMessage(e: MessageEvent<any>) {
     }
   }
 
-// Early exit if there is no data to analyze.
-  if (filteredData.emotions.length === 0 && filteredData.sensoryInputs.length === 0) {
+// Early exit only when absolutely no data is present.
+// Previously, we exited when emotions and sensoryInputs were empty, which
+// incorrectly skipped correlation analysis based solely on tracking entries.
+// Now we require that all sources are empty before returning.
+  if (
+    (filteredData.emotions?.length ?? 0) === 0 &&
+    (filteredData.sensoryInputs?.length ?? 0) === 0 &&
+    (filteredData.entries?.length ?? 0) === 0
+  ) {
     enqueueMessage({
       type: 'complete',
       cacheKey: filteredData.cacheKey ?? undefined,

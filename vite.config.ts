@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { componentTagger } from "lovable-tagger";
+// import { componentTagger } from "lovable-tagger";
 import browserEcho from "@browser-echo/vite";
 import { visualizer } from "rollup-plugin-visualizer";
 
@@ -23,8 +23,8 @@ export default defineConfig(({ mode }) => ({
       stackMode: 'condensed',
       colors: true,
     }),
-    (mode === 'development' && process.env.COMPONENT_TAGGER !== '0') &&
-    componentTagger(),
+    // (mode === 'development' && process.env.COMPONENT_TAGGER !== '0') &&
+    // componentTagger(),
     // Add bundle analyzer for build analysis
     mode !== 'development' && 
     visualizer({

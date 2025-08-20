@@ -167,6 +167,10 @@
     "goal": "Goal",
     "clearAllFilters": "Clear All Filters"
   },
+  "accessibility": {
+    "skipToContent": "Skip to main content"
+  },
+  "loading": "Loading...",
   "error": {
     "title": "Something went wrong",
     "description": "An unexpected error occurred. You can try again or reload the page."

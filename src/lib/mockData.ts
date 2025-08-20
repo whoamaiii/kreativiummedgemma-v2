@@ -271,5 +271,3 @@ export const seedMinimalDemoData = async (studentId: string, opts?: Partial<Seed
     throw error;
   }
 };
-
-export default seedMinimalDemoData;

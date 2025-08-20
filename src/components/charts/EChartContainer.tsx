@@ -195,42 +195,68 @@ const baseTheme = {
           }
           return (p as TP)?.value; // fallback
         };
-        // Multi-series
+        // Multi-series - use semantic HTML with minimal necessary styles
         if (Array.isArray(params) && params.length > 0) {
           const date = (params[0] as TP)?.axisValueLabel || '';
-          let content = `<div style="font-weight: 600; margin-bottom: 8px; color: hsl(var(--foreground))">${date}</div>`;
+          let content = `<div class="chart-tooltip-header">${date}</div>`;
           params.forEach((p) => {
             const tp = p as TP;
             if (tp && typeof tp === 'object') {
               const val = valueFromParam(tp);
               const icon = getEmotionIcon(tp.seriesName);
+              // Only use color for the series marker, which needs the actual color value
               content += `
-                <div style='display: flex; align-items: center; gap: 8px; margin: 4px 0;'>
-                  <span style='font-size: 16px;'>${icon}</span>
-                  <span style='color: ${tp.color}; font-weight: 500;'>${tp.seriesName ?? ''}:</span>
-                  <span style='font-weight: 600;'>${formatValue(val)}</span>
+                <div class="chart-tooltip-item">
+                  <span class="chart-tooltip-icon">${icon}</span>
+                  <span class="chart-tooltip-label" style="color: ${tp.color};">${tp.seriesName ?? ''}:</span>
+                  <span class="chart-tooltip-value">${formatValue(val)}</span>
                 </div>`;
             }
           });
           return content;
         }
-        // Single-series
+        // Single-series - use semantic HTML with minimal necessary styles
         if (params && typeof params === 'object') {
           const p = params as TP;
           const val = valueFromParam(p);
           const icon = getEmotionIcon(p.seriesName);
           return `
-            <div style="font-weight: 600; margin-bottom: 8px;">${p.name ?? ''}</div>
-            <div style="display: flex; align-items: center; gap: 8px;"> 
-              <span style="font-size: 16px;">${icon}</span>
-              <span style="color: ${p.color}; font-weight: 500;">${p.seriesName ?? ''}:</span>
-              <span style="font-weight: 600;">${formatValue(val)}</span>
+            <div class="chart-tooltip-header">${p.name ?? ''}</div>
+            <div class="chart-tooltip-item"> 
+              <span class="chart-tooltip-icon">${icon}</span>
+              <span class="chart-tooltip-label" style="color: ${p.color};">${p.seriesName ?? ''}:</span>
+              <span class="chart-tooltip-value">${formatValue(val)}</span>
             </div>`;
         }
         return '';
       },
-      // Keep styling simple; heavy backdrop-filter can cause canvas flicker on hover in some browsers
-      extraCssText: "border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);"
+      // Simplified tooltip styling with CSS variables
+      extraCssText: `
+        border-radius: 8px;
+        box-shadow: 0 2px 8px hsla(0, 0%, 0%, 0.1);
+      ` + `
+        .chart-tooltip-header {
+          font-weight: 600;
+          margin-bottom: 8px;
+          color: hsl(var(--foreground));
+        }
+        .chart-tooltip-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin: 4px 0;
+        }
+        .chart-tooltip-icon {
+          font-size: 16px;
+        }
+        .chart-tooltip-label {
+          font-weight: 500;
+        }
+        .chart-tooltip-value {
+          font-weight: 600;
+          color: hsl(var(--foreground));
+        }
+      `
     },
     xAxis: {
       axisLine: { 

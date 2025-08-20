@@ -41,7 +41,7 @@ export const DataRequirementsCalculator = ({
       minDataPoints: 5,
       minDays: 7,
       minRSquared: 0.3,
-      color: 'bg-orange-500',
+      color: 'bg-destructive',
       description: String(tAnalytics('confidence.low'))
     },
     {
@@ -50,7 +50,7 @@ export const DataRequirementsCalculator = ({
       minDataPoints: 15,
       minDays: 21,
       minRSquared: 0.5,
-      color: 'bg-yellow-500',
+      color: 'bg-warning',
       description: String(tAnalytics('confidence.medium'))
     },
     {
@@ -59,7 +59,7 @@ export const DataRequirementsCalculator = ({
       minDataPoints: 30,
       minDays: 42,
       minRSquared: 0.7,
-      color: 'bg-green-500',
+      color: 'bg-success',
       description: String(tAnalytics('confidence.high'))
     }
   ], [tAnalytics]);
@@ -223,12 +223,12 @@ export const DataRequirementsCalculator = ({
             </div>
 
             {/* Timeline prediction */}
-            <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+            <div className="p-4 bg-info/10 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
-                <Calendar className="h-4 w-4 text-blue-600" />
-                <span className="font-medium text-blue-900 dark:text-blue-100">Tidsestimat</span>
+                <Calendar className="h-4 w-4 text-info" />
+                <span className="font-medium text-info-foreground">Tidsestimat</span>
               </div>
-              <p className="text-sm text-blue-800 dark:text-blue-200">
+              <p className="text-sm text-info-foreground/80">
                 Med {getRecommendedRate()} datapunkt(er) per dag vil du nå{' '}
                 <span className="font-medium">{nextTarget.requirement.description}</span> innen{' '}
                 <span className="font-medium">{formatDate(nextTarget.targetDate)}</span>
@@ -251,7 +251,7 @@ export const DataRequirementsCalculator = ({
             >
               <div className="flex items-center gap-3">
                 {calc.isAchieved ? (
-                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <CheckCircle className="h-5 w-5 text-success" />
                 ) : (
                   <div className={`w-5 h-5 rounded-full ${calc.requirement.color} opacity-60`} />
                 )}
@@ -278,12 +278,12 @@ export const DataRequirementsCalculator = ({
 
         {/* Collection recommendations */}
         {nextTarget && (
-          <div className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+        <div className="p-4 bg-primary/10 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="h-4 w-4 text-purple-600" />
-              <span className="font-medium text-purple-900 dark:text-purple-100">Anbefalinger</span>
+              <TrendingUp className="h-4 w-4 text-primary" />
+              <span className="font-medium text-primary-foreground">Anbefalinger</span>
             </div>
-            <ul className="text-sm text-purple-800 dark:text-purple-200 space-y-1">
+            <ul className="text-sm text-primary-foreground/80 space-y-1">
               <li>• Samle {getRecommendedRate()} datapunkt(er) per dag for optimal fremgang</li>
               <li>• Registrer data konsekvent for bedre mønstergjenkjenning</li>
               <li>• Inkluder både følelser og sensoriske opplevelser i hver økt</li>

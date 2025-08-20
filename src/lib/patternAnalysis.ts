@@ -1,5 +1,5 @@
-import { EmotionEntry, SensoryEntry, EnvironmentalEntry, TrackingEntry } from "@/types/student";
-import { isWithinInterval, subDays, startOfDay, endOfDay } from "date-fns";
+import { EmotionEntry, SensoryEntry, TrackingEntry } from "@/types/student";
+import { subDays } from "date-fns";
 import { analyticsConfig, AnalyticsConfiguration } from "@/lib/analyticsConfig";
 
 export interface PatternResult {
@@ -162,12 +162,17 @@ class PatternAnalysisEngine {
       s.response.toLowerCase().includes('covering')
     );
 
-    // Determine dominance threshold based on configured concern frequency
+    // Determine thresholds
     const dominanceThreshold = 1 + this.config.patternAnalysis.concernFrequencyThreshold;
+    const prevalenceThreshold = this.config.patternAnalysis.concernFrequencyThreshold;
     const hasAvoiding = avoidingBehaviors.length > 0;
     const hasSeeking = seekingBehaviors.length > 0;
+    const totalSensory = Math.max(1, recentSensory.length);
+    const seekingRatioOfTotal = seekingBehaviors.length / totalSensory;
+    const avoidingRatioOfTotal = avoidingBehaviors.length / totalSensory;
 
-    if (hasAvoiding && (seekingBehaviors.length / avoidingBehaviors.length) > dominanceThreshold) {
+    // Primary rule: dominance relative to the opposite behavior when both are present
+    if (hasAvoiding && (seekingBehaviors.length / Math.max(1, avoidingBehaviors.length)) > dominanceThreshold) {
       patterns.push({
         type: 'sensory',
         pattern: 'sensory-seeking',
@@ -182,13 +187,44 @@ class PatternAnalysisEngine {
         dataPoints: recentSensory.length,
         timeframe: `${actualTimeframe} days`
       });
-    } else if (hasSeeking && (avoidingBehaviors.length / seekingBehaviors.length) > dominanceThreshold) {
+    } else if (hasSeeking && (avoidingBehaviors.length / Math.max(1, seekingBehaviors.length)) > dominanceThreshold) {
       patterns.push({
         type: 'sensory',
         pattern: 'sensory-avoiding',
         confidence: avoidingBehaviors.length / recentSensory.length,
         frequency: avoidingBehaviors.length,
         description: 'Strong sensory-avoiding pattern identified',
+        recommendations: [
+          'Provide quiet, low-stimulation spaces',
+          'Use noise-canceling headphones when appropriate',
+          'Gradually introduce sensory experiences'
+        ],
+        dataPoints: recentSensory.length,
+        timeframe: `${actualTimeframe} days`
+      });
+    // Fallback rule: prevalence relative to total when the opposite behavior is rare/absent
+    } else if (!hasAvoiding && hasSeeking && seekingRatioOfTotal >= prevalenceThreshold) {
+      patterns.push({
+        type: 'sensory',
+        pattern: 'sensory-seeking',
+        confidence: seekingRatioOfTotal,
+        frequency: seekingBehaviors.length,
+        description: 'Prevalent sensory-seeking behavior observed',
+        recommendations: [
+          'Provide scheduled sensory breaks',
+          'Offer fidget tools and movement opportunities',
+          'Consider sensory-rich learning activities'
+        ],
+        dataPoints: recentSensory.length,
+        timeframe: `${actualTimeframe} days`
+      });
+    } else if (!hasSeeking && hasAvoiding && avoidingRatioOfTotal >= prevalenceThreshold) {
+      patterns.push({
+        type: 'sensory',
+        pattern: 'sensory-avoiding',
+        confidence: avoidingRatioOfTotal,
+        frequency: avoidingBehaviors.length,
+        description: 'Prevalent sensory-avoiding behavior observed',
         recommendations: [
           'Provide quiet, low-stimulation spaces',
           'Use noise-canceling headphones when appropriate',
@@ -216,10 +252,16 @@ class PatternAnalysisEngine {
       }));
 
     if (noiseEmotionData.length >= this.config.patternAnalysis.minDataPoints) {
-      const correlation = this.calculateCorrelation(
-        noiseEmotionData.map(d => d.noise),
-        noiseEmotionData.map(d => d.avgEmotionIntensity)
-      );
+      const noiseArray: number[] = noiseEmotionData
+        .map(d => d.noise)
+        .filter((v): v is number => typeof v === 'number' && !isNaN(v));
+      const intensityArray: number[] = noiseEmotionData
+        .map(d => d.avgEmotionIntensity)
+        .filter((v): v is number => typeof v === 'number' && !isNaN(v));
+      const len = Math.min(noiseArray.length, intensityArray.length);
+      const x = noiseArray.slice(0, len);
+      const y = intensityArray.slice(0, len);
+      const correlation = this.calculateCorrelation(x, y);
 
       if (Math.abs(correlation) > this.config.patternAnalysis.correlationThreshold) {
         correlations.push({
@@ -249,18 +291,20 @@ class PatternAnalysisEngine {
 
     // Group lighting data for analysis
     const lightingGroups = lightingEmotionData.reduce((acc, d) => {
-      if (!acc[d.lighting]) acc[d.lighting] = [];
-      acc[d.lighting].push(d.positiveEmotions);
+      const key = String(d.lighting ?? 'unknown');
+      if (!acc[key]) acc[key] = [] as number[];
+      acc[key]!.push(d.positiveEmotions);
       return acc;
     }, {} as Record<string, number[]>);
 
     // Find best lighting condition
     const lightingAverages = Object.entries(lightingGroups)
-      .map(([lighting, values]) => ({
-        lighting,
-        average: values.reduce((sum, v) => sum + v, 0) / values.length,
-        count: values.length
-      }))
+      .map(([lighting, values]) => {
+        const safeValues = (values || []).filter((v): v is number => typeof v === 'number' && !isNaN(v));
+        const count = safeValues.length;
+        const average = count > 0 ? safeValues.reduce((sum, v) => sum + v, 0) / count : 0;
+        return { lighting, average, count };
+      })
       .filter(l => l.count >= this.config.patternAnalysis.minDataPoints)
       .sort((a, b) => b.average - a.average);
 
@@ -288,7 +332,7 @@ class PatternAnalysisEngine {
 
   generateTriggerAlerts(
     emotions: EmotionEntry[], 
-    sensoryInputs: SensoryEntry[], 
+    _sensoryInputs: SensoryEntry[], 
     trackingEntries: TrackingEntry[],
     studentId: string
   ): TriggerAlert[] {

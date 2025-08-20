@@ -72,11 +72,11 @@ export const CorrelationsPanel = memo(function CorrelationsPanel({ filteredData 
             </div>
             <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
               <span>{String(tAnalytics('correlations.legend.negative'))}</span>
-              <span className="h-3 w-3 rounded bg-red-500" />
+              <span className="h-3 w-3 rounded bg-destructive" />
               <span>{String(tAnalytics('correlations.legend.zero'))}</span>
               <span className="h-3 w-3 rounded border bg-muted" />
               <span>{String(tAnalytics('correlations.legend.positive'))}</span>
-              <span className="h-3 w-3 rounded bg-emerald-500" />
+              <span className="h-3 w-3 rounded bg-emotion-happy" />
             </div>
           </>
         )}
@@ -117,4 +117,3 @@ export const CorrelationsPanel = memo(function CorrelationsPanel({ filteredData 
   );
 });
 
-export default CorrelationsPanel;

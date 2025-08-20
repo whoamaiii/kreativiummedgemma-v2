@@ -355,17 +355,17 @@ export const VisualizationControls: React.FC<VisualizationControlsProps> = ({
           </div>
 
           <div className="flex items-center gap-2 mt-8" aria-label="Data counts">
-            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+            <Badge variant="outline" className="bg-success/10 text-success border-success/20">
               {filteredData.emotions.length} emotions
             </Badge>
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+            <Badge variant="outline" className="bg-info/10 text-info border-info/20">
               {filteredData.sensoryInputs.length} sensory inputs
             </Badge>
-            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
               {filteredData.trackingEntries.length} sessions
             </Badge>
             {filterCriteria.realtime && (
-              <Badge variant="default" className="bg-orange-500">
+              <Badge variant="default" className="bg-warning/80 text-warning-foreground">
                 {realtimeData.newDataCount} new
               </Badge>
             )}

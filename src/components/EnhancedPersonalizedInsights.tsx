@@ -234,8 +234,8 @@ export const EnhancedPersonalizedInsights: React.FC<EnhancedPersonalizedInsights
                   {progressMetrics.intensityTrend > 0 ? '+' : ''}{progressMetrics.intensityTrend.toFixed(1)}
                 </span>
                 {progressMetrics.intensityTrend > 0 ? 
-                  <TrendingUp className="h-4 w-4 text-red-500" /> : 
-                  <TrendingDown className="h-4 w-4 text-green-500" />
+                  <TrendingUp className="h-4 w-4 text-destructive" /> : 
+                  <TrendingDown className="h-4 w-4 text-success" />
                 }
               </div>
               <div className="text-sm text-muted-foreground">Intensity Trend</div>
@@ -263,7 +263,7 @@ export const EnhancedPersonalizedInsights: React.FC<EnhancedPersonalizedInsights
                       <div className="p-2 rounded-full bg-primary/10">
                         {insight.type === 'prediction' ? <Target className="h-4 w-4 text-primary" /> :
                          insight.type === 'trend' ? <TrendingUp className="h-4 w-4 text-primary" /> :
-                         insight.type === 'risk' ? <AlertTriangle className="h-4 w-4 text-orange-500" /> :
+                         insight.type === 'risk' ? <AlertTriangle className="h-4 w-4 text-warning" /> :
                          <Lightbulb className="h-4 w-4 text-primary" />}
                       </div>
                       <div className="flex-1">
@@ -285,7 +285,7 @@ export const EnhancedPersonalizedInsights: React.FC<EnhancedPersonalizedInsights
                             <ul className="text-sm text-muted-foreground space-y-1">
                               {insight.recommendations.map((rec, recIndex) => (
                                 <li key={recIndex} className="flex items-start gap-2">
-                                  <CheckCircle className="h-3 w-3 mt-0.5 text-green-500 flex-shrink-0" />
+                                  <CheckCircle className="h-3 w-3 mt-0.5 text-success flex-shrink-0" />
                                   <span>{rec}</span>
                                 </li>
                               ))}
@@ -297,11 +297,12 @@ export const EnhancedPersonalizedInsights: React.FC<EnhancedPersonalizedInsights
                     <div className="text-right">
                       <Badge 
                         variant={insight.confidence > 0.7 ? 'default' : 'outline'}
-                        className={
-                          insight.confidence > 0.7 ? 'bg-green-100 text-green-800' :
-                          insight.confidence > 0.4 ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }
+                        className={cn(
+                          'transition-colors',
+                          insight.confidence > 0.7 ? 'bg-success/10 text-success' :
+                          insight.confidence > 0.4 ? 'bg-warning/10 text-warning' :
+                          'bg-destructive/10 text-destructive'
+                        )}
                       >
                         {Math.round(insight.confidence * 100)}% confidence
                       </Badge>
@@ -324,11 +325,11 @@ export const EnhancedPersonalizedInsights: React.FC<EnhancedPersonalizedInsights
         <TabsContent value="strengths" className="space-y-4">
           {personalStrengths.length > 0 ? (
             personalStrengths.map((strength, index) => (
-              <Card key={index} className="border-l-4 border-l-green-500">
+              <Card key={index} className="border-l-4 border-l-success">
                 <CardContent className="pt-4">
                   <div className="flex items-start gap-3">
-                    <div className="p-2 rounded-full bg-green-100">
-                      <strength.icon className="h-4 w-4 text-green-600" />
+                    <div className="p-2 rounded-full bg-success/10">
+                      <strength.icon className="h-4 w-4 text-success" />
                     </div>
                     <div className="flex-1">
                       <h4 className="font-semibold text-foreground">{strength.title}</h4>
@@ -356,23 +357,23 @@ export const EnhancedPersonalizedInsights: React.FC<EnhancedPersonalizedInsights
         <TabsContent value="growth" className="space-y-4">
           {growthOpportunities.length > 0 ? (
             growthOpportunities.map((opportunity, index) => (
-              <Card key={index} className={`border-l-4 ${
-                opportunity.priority === 'high' ? 'border-l-orange-500' :
-                opportunity.priority === 'medium' ? 'border-l-yellow-500' :
-                'border-l-blue-500'
-              }`}>
+              <Card key={index} className={cn(`border-l-4`, {
+                'border-l-warning': opportunity.priority === 'high',
+                'border-l-yellow-500': opportunity.priority === 'medium',
+                'border-l-info': opportunity.priority === 'low',
+              })}>
                 <CardContent className="pt-4">
                   <div className="flex items-start gap-3">
-                    <div className={`p-2 rounded-full ${
-                      opportunity.priority === 'high' ? 'bg-orange-100' :
-                      opportunity.priority === 'medium' ? 'bg-yellow-100' :
-                      'bg-blue-100'
-                    }`}>
-                      <Target className={`h-4 w-4 ${
-                        opportunity.priority === 'high' ? 'text-orange-600' :
-                        opportunity.priority === 'medium' ? 'text-yellow-600' :
-                        'text-blue-600'
-                      }`} />
+                    <div className={cn(`p-2 rounded-full`, {
+                      'bg-warning/10': opportunity.priority === 'high',
+                      'bg-yellow-100': opportunity.priority === 'medium', 
+                      'bg-info/10': opportunity.priority === 'low',
+                    })}>
+                      <Target className={cn(`h-4 w-4`, {
+                        'text-warning': opportunity.priority === 'high',
+                        'text-yellow-600': opportunity.priority === 'medium',
+                        'text-info': opportunity.priority === 'low',
+                      })} />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">

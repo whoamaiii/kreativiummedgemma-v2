@@ -402,7 +402,7 @@
     }
   },
   "interface": {
-    "advancedSearchFiltering": "Advanced Search \u0026 Filtering",
+    "advancedSearchFiltering": "Advanced Search & Filtering",
     "totalSessions": "Total Sessions",
     "periodComparison": "Period Comparison",
     "previous": "Previous",
@@ -412,5 +412,52 @@
     "totalEmotions": "Total Emotions",
     "avgIntensity": "Avg Intensity",
     "seekingRatio": "Seeking Ratio"
+  },
+  "patternDetection": {
+    "guidance": {
+      "noData": {
+        "title": "No data recorded yet",
+        "description": "Start by recording emotions and sensory experiences to discover patterns.",
+        "actionText": "Record first entry"
+      },
+      "needMoreData": {
+        "title": "Need more data for pattern recognition",
+        "description": "You have {{current}} data points. Record at least {{needed}} more to start seeing patterns.",
+        "actionText": "Continue recording data"
+      },
+      "needMoreTime": {
+        "title": "Need data over longer time period",
+        "description": "You have {{days}} days with data. Collect data for at least 7 days to identify trends.",
+        "actionText": "Continue daily recording"
+      },
+      "noPatterns": {
+        "title": "No clear patterns detected yet",
+        "description": "Data is available, but no strong patterns found. This could be positive - it may mean stable condition.",
+        "actionText": "Continue monitoring"
+      }
+    },
+    "requirements": {
+      "title": "Requirements for pattern recognition:",
+      "minimumDataPoints": "Minimum data points",
+      "daysWithData": "Days with data",
+      "regularity": "Regularity",
+      "variable": "Variable",
+      "daily": "Daily"
+    },
+    "tips": {
+      "title": "Tips for better pattern recognition:",
+      "sameTime": "Record data at the same time each day",
+      "includeAll": "Include both emotions and sensory experiences",
+      "noteEnvironment": "Note environmental factors (noise, light, activity)",
+      "beConsistent": "Be consistent for at least 2-3 weeks"
+    }
+  },
+  "visualization3d": {
+    "tooltip": {
+      "xAxis": "X",
+      "yAxis": "Y",
+      "zAxis": "Z",
+      "intensity": "Intensity"
+    }
   }
 }

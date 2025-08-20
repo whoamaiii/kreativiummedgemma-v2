@@ -300,7 +300,17 @@
       "default": "Systemet har funnet et gjentakende mønster i dataene for denne perioden.",
       "disclaimer": "Tolk alltid sammen med kontekst og pedagogisk vurdering."
     },
-    "confidencePercent": "{{percentage}}% sikkerhet"
+    "confidencePercent": "{{percentage}}% sikkerhet",
+    "messages": {
+      "noTrackingData": "Ingen sporingsdata tilgjengelig ennå. Start med å registrere en økt for å begynne mønstergjenkjenning.",
+      "limitedData": "Begrenset datagrunnlag ({{sessions}} økter). Analysen blir bedre etter hvert som mer data samles.",
+      "patternDetected": "Mønster oppdaget: {{description}} ({{confidencePct}}% sikkerhet)",
+      "strongCorrelation": "Sterk korrelasjon funnet: {{description}}",
+      "prediction": "Prediksjon: {{description}} ({{confidencePct}}% sikkerhet)",
+      "positiveTrend": "Positiv utvikling: {{percentage}}% av nylige følelser har vært positive.",
+      "negativeTrend": "Vurder tiltak – bare {{percentage}}% av nylige følelser har vært positive.",
+      "analyticsActive": "Analysen er aktiv. Fortsett å samle data for mer detaljerte innsikter."
+    }
   },
   "confidence": {
     "low": "Lav sikkerhet",
@@ -412,5 +422,52 @@
     "totalEmotions": "Totalt følelser",
     "avgIntensity": "Gjennomsnittlig intensitet",
     "seekingRatio": "Søkeforhold"
+  },
+  "patternDetection": {
+    "guidance": {
+      "noData": {
+        "title": "Ingen data registrert ennå",
+        "description": "Start med å registrere følelser og sensoriske opplevelser for å oppdage mønstre.",
+        "actionText": "Registrer første oppføring"
+      },
+      "needMoreData": {
+        "title": "Trenger mer data for mønstergjenkjenning",
+        "description": "Du har {{current}} datapunkter. Registrer minst {{needed}} til for å begynne å se mønstre.",
+        "actionText": "Fortsett å registrere data"
+      },
+      "needMoreTime": {
+        "title": "Trenger data over lengre tid",
+        "description": "Du har {{days}} dager med data. Samle data over minst 7 dager for å identifisere trender.",
+        "actionText": "Fortsett daglig registrering"
+      },
+      "noPatterns": {
+        "title": "Ingen tydelige mønstre oppdaget ennå",
+        "description": "Data er tilgjengelig, men ingen sterke mønstre er funnet. Dette kan være positivt - det kan bety stabil tilstand.",
+        "actionText": "Fortsett å overvåke"
+      }
+    },
+    "requirements": {
+      "title": "Krav for mønstergjenkjenning:",
+      "minimumDataPoints": "Minimum datapunkter",
+      "daysWithData": "Dager med data",
+      "regularity": "Regelmessighet",
+      "variable": "Variabel",
+      "daily": "Daglig"
+    },
+    "tips": {
+      "title": "Tips for bedre mønstergjenkjenning:",
+      "sameTime": "Registrer data på samme tid hver dag",
+      "includeAll": "Inkluder både følelser og sensoriske opplevelser",
+      "noteEnvironment": "Legg merke til miljøfaktorer (støy, lys, aktivitet)",
+      "beConsistent": "Vær konsistent i minst 2-3 uker"
+    }
+  },
+  "visualization3d": {
+    "tooltip": {
+      "xAxis": "X",
+      "yAxis": "Y",
+      "zAxis": "Z",
+      "intensity": "Intensitet"
+    }
   }
 }

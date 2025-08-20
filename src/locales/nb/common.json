@@ -167,6 +167,10 @@
     "goal": "Mål",
     "clearAllFilters": "Fjern alle filtre"
   },
+  "accessibility": {
+    "skipToContent": "Hopp til hovedinnhold"
+  },
+  "loading": "Laster...",
   "error": {
     "title": "Noe gikk galt",
     "description": "En uventet feil oppstod. Du kan prøve igjen eller laste siden på nytt."

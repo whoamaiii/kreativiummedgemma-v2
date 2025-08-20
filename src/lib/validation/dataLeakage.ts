@@ -384,5 +384,3 @@ export class DataLeakageDetector {
   }
 }
 
-export default DataLeakageDetector;
-

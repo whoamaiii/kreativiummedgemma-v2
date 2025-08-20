@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { logger } from '@/lib/logger';
 
 interface CapturedError {
   message: string;
@@ -7,32 +8,57 @@ interface CapturedError {
 }
 
 export const DevErrorBanner = () => {
+  // Only render in development mode
+  if (!import.meta.env.DEV) {
+    return null;
+  }
+
   const [lastError, setLastError] = useState<CapturedError | null>(null);
   const [errorCount, setErrorCount] = useState(0);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isHidden, setIsHidden] = useState(false);
   const originalConsoleError = useRef<typeof console.error | null>(null);
+  const isIntercepting = useRef(false);
 
   useEffect(() => {
+    // Only intercept in development
+    if (!import.meta.env.DEV) return;
+
     // Intercept console.error
     originalConsoleError.current = console.error;
     console.error = (...args: unknown[]) => {
+      // Prevent recursive logging since logger.error may call console.error
+      if (isIntercepting.current) {
+        originalConsoleError.current?.apply(console, args as []);
+        return;
+      }
+      isIntercepting.current = true;
       try {
         const msg = args.map(a => {
           if (a instanceof Error) return `${a.name}: ${a.message}`;
-          if (typeof a === 'object') return JSON.stringify(a);
+          if (typeof a === 'object') {
+            try { return JSON.stringify(a); } catch { return '[object]'; }
+          }
           return String(a);
         }).join(' ');
         setLastError({ message: msg, timestamp: Date.now() });
         setErrorCount(c => c + 1);
+        
+        // Record through central logger; recursion guarded above
+        logger.error('Dev error captured', ...args as []);
       } catch {}
-      // Always forward to the original console
-      originalConsoleError.current?.apply(console, args as []);
+      finally {
+        // Always forward to the original console in dev
+        originalConsoleError.current?.apply(console, args as []);
+        isIntercepting.current = false;
+      }
     };
 
     const onWindowError = (e: ErrorEvent) => {
       setLastError({ message: e.message || 'Unhandled error', details: e.error?.stack, timestamp: Date.now() });
       setErrorCount(c => c + 1);
+      // Log window errors through central logger
+      logger.error('Window error', e.error || new Error(e.message));
     };
     const onUnhandledRejection = (e: PromiseRejectionEvent) => {
       const reason = (e as any).reason;
@@ -40,6 +66,8 @@ export const DevErrorBanner = () => {
       const stack = reason?.stack ? String(reason.stack) : undefined;
       setLastError({ message: msg, details: stack, timestamp: Date.now() });
       setErrorCount(c => c + 1);
+      // Log unhandled rejections through central logger
+      logger.error('Unhandled promise rejection', reason instanceof Error ? reason : new Error(msg));
     };
 
     window.addEventListener('error', onWindowError);
@@ -55,7 +83,8 @@ export const DevErrorBanner = () => {
     };
   }, []);
 
-  if (isHidden || !lastError) return null;
+  // Double check we're in dev mode before rendering
+  if (!import.meta.env.DEV || isHidden || !lastError) return null;
 
   return (
     <div className="fixed top-0 left-0 right-0 z-[1000]">

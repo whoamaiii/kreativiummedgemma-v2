@@ -1,8 +1,8 @@
 # i18n Offenders Report
 
-Generated: 8/15/2025, 6:51:10 PM
+Generated: 8/20/2025, 4:00:22 AM
 
-Found 1074 potential offenders across 121 files.
+Found 1347 potential offenders across 136 files.
 
 Key convention: feature.section.purpose — prefer nouns and verbs in present tense.
 
@@ -55,7 +55,7 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `break; } } catch (error) { logger.error('Export failed:', error); toast.error(String(tAnalytics('export.failur`
 - [316:46] (JSXAttribute) `analytics-dashboard-title` → key: `analytics.analyticsdashboard.analytics_dashboard_title` — Static aria-labelledby attribute
   - context: `tics('skipToContent'))} </a> <section role="region" aria-labelledby="analytics-dashboard-title" className="space-y-6"> {/* Hidden live region`
-- [522:23] (MessageAPI) `Error comparing timestamps in AnalyticsDashboard memo:` → key: `analytics.analyticsdashboard.error_comparing_timestamps_in_analyticsdashboard` — Message API call: error()
+- [525:23] (MessageAPI) `Error comparing timestamps in AnalyticsDashboard memo:` → key: `analytics.analyticsdashboard.error_comparing_timestamps_in_analyticsdashboard` — Message API call: error()
   - context: `return prevTime === nextTime; } catch (error) { logger.error('Error comparing timestamps in AnalyticsDashboard memo:', error); retur`
 
 ### src/components/AnalyticsSettings.tsx
@@ -235,18 +235,14 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `<div className="space-y-2"> <h5 className="text-sm font-medium">Prioriterte forbedringer:</h5> {qualityMetrics .fi`
 
 ### src/components/PatternDetectionEmptyState.tsx
-- [86:47] (JSXText) `Krav for mønstergjenkjenning:` → key: `analytics.patterndetectionemptystate.krav_for_m_nstergjenkjenning` — Static JSX text node
-  - context: `<div className="space-y-3"> <h4 className="text-sm font-medium">Krav for mønstergjenkjenning:</h4> {requirements.map((req, index) => (`
-- [103:13] (JSXText) `Tips for bedre mønstergjenkjenning:` → key: `analytics.patterndetectionemptystate.tips_for_bedre_m_nstergjenkjenning` — Static JSX text node
-  - context: `ssName="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2"> Tips for bedre mønstergjenkjenning: </h4> <ul className="tex`
-- [106:17] (JSXText) `• Registrer data på samme tid hver dag` → key: `analytics.patterndetectionemptystate.registrer_data_p_samme_tid` — Static JSX text node
-  - context: `className="text-sm text-blue-800 dark:text-blue-200 space-y-1"> <li>• Registrer data på samme tid hver dag</li> <li>• Inkluder både føle`
-- [107:17] (JSXText) `• Inkluder både følelser og sensoriske opplevelser` → key: `analytics.patterndetectionemptystate.inkluder_b_de_f_lelser` — Static JSX text node
-  - context: `1"> <li>• Registrer data på samme tid hver dag</li> <li>• Inkluder både følelser og sensoriske opplevelser</li> <li>• Legg m`
-- [108:17] (JSXText) `• Legg merke til miljøfaktorer (støy, lys, aktivitet)` → key: `analytics.patterndetectionemptystate.legg_merke_til_milj_faktorer` — Static JSX text node
-  - context: `<li>• Inkluder både følelser og sensoriske opplevelser</li> <li>• Legg merke til miljøfaktorer (støy, lys, aktivitet)</li> <li>• Vær`
-- [109:17] (JSXText) `• Vær konsistent i minst 2-3 uker` → key: `analytics.patterndetectionemptystate.v_r_konsistent_i_minst` — Static JSX text node
-  - context: `<li>• Legg merke til miljøfaktorer (støy, lys, aktivitet)</li> <li>• Vær konsistent i minst 2-3 uker</li> </ul> </div> {`
+- [125:17] (JSXText) `•` → key: `analytics.patterndetectionemptystate.` — Static JSX text node
+  - context: `<ul className="text-sm text-info-foreground/80 space-y-1"> <li>• {String(tAnalytics('patternDetection.tips.sameTime'))}</li> <li>•`
+- [126:17] (JSXText) `•` → key: `analytics.patterndetectionemptystate.` — Static JSX text node
+  - context: `i>• {String(tAnalytics('patternDetection.tips.sameTime'))}</li> <li>• {String(tAnalytics('patternDetection.tips.includeAll'))}</li> <li>`
+- [127:17] (JSXText) `•` → key: `analytics.patterndetectionemptystate.` — Static JSX text node
+  - context: `• {String(tAnalytics('patternDetection.tips.includeAll'))}</li> <li>• {String(tAnalytics('patternDetection.tips.noteEnvironment'))}</li>`
+- [128:17] (JSXText) `•` → key: `analytics.patterndetectionemptystate.` — Static JSX text node
+  - context: `ring(tAnalytics('patternDetection.tips.noteEnvironment'))}</li> <li>• {String(tAnalytics('patternDetection.tips.beConsistent'))}</li> </ul`
 
 ### src/components/ProgressDashboard.tsx
 - [220:56] (JSXText) `Total Goals` → key: `analytics.progressdashboard.total_goals` — Static JSX text node
@@ -286,11 +282,11 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [474:26] (JSXText) `Priority Goals Requiring Attention` → key: `analytics.progressdashboard.priority_goals_requiring_attention` — Static JSX text node
   - context: `t-card border-0 shadow-soft"> <CardHeader> <CardTitle>Priority Goals Requiring Attention</CardTitle> </CardHeader>`
 - [500:25] (JSXText) `⚠️ This goal is past its target date and may need review or extension.` → key: `analytics.progressdashboard.this_goal_is_past_its` — Static JSX text node
-  - context: `50 border border-red-200 rounded text-sm text-red-700"> ⚠️ This goal is past its target date and may need review or extension.`
+  - context: `uctive/20 rounded text-sm text-destructive-foreground"> ⚠️ This goal is past its target date and may need review or extension.`
 - [505:25] (JSXText) `📈 Consider increasing intervention intensity to meet target date.` → key: `analytics.progressdashboard.consider_increasing_intervention_intensity_to` — Static JSX text node
-  - context: `der border-yellow-200 rounded text-sm text-yellow-700"> 📈 Consider increasing intervention intensity to meet target date.`
-- [513:71] (JSXText) `All goals are on track!` → key: `analytics.progressdashboard.all_goals_are_on_track` — Static JSX text node
-  - context: `mb-2" /> <p className="text-lg font-medium text-green-600">All goals are on track!</p> <p className="text-muted-foregro`
+  - context: `er-warning/20 rounded text-sm text-warning-foreground"> 📈 Consider increasing intervention intensity to meet target date.`
+- [513:80] (JSXText) `All goals are on track!` → key: `analytics.progressdashboard.all_goals_are_on_track` — Static JSX text node
+  - context: `<p className="text-lg font-medium text-success-foreground">All goals are on track!</p> <p className="text-muted-foregro`
 - [514:58] (JSXText) `Great work keeping` → key: `analytics.progressdashboard.great_work_keeping` — Static JSX text node
   - context: `oals are on track!</p> <p className="text-muted-foreground">Great work keeping {student.name}'s progress moving forward.</p>`
 - [514:91] (JSXText) `'s progress moving forward.` → key: `analytics.progressdashboard.s_progress_moving_forward` — Static JSX text node
@@ -309,20 +305,24 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `border-primary"></div> <span className="ml-2 text-muted-foreground">Loading analytics status...</span> </div> </CardContent>`
 - [92:13] (JSXText) `Universal Analytics Status` → key: `analytics.universalanalyticsstatus.universal_analytics_status` — Static JSX text node
   - context: `flex items-center gap-2"> <Users className="h-5 w-5" /> Universal Analytics Status </CardTitle> <Button`
-- [116:15] (JSXText) `System Status` → key: `analytics.universalanalyticsstatus.system_status` — Static JSX text node
-  - context: `500" /> )} <span className="font-medium"> System Status </span> </div> <Badge variant={all`
-- [131:15] (JSXText) `Students with Analytics` → key: `analytics.universalanalyticsstatus.students_with_analytics` — Static JSX text node
+- [97:24] (JSXAttribute) `Refresh analytics status` → key: `analytics.universalanalyticsstatus.refresh_analytics_status` — Static aria-label attribute
+  - context: `tton variant="ghost" size="icon" aria-label="Refresh analytics status" title="Refresh analytics status"`
+- [98:19] (JSXAttribute) `Refresh analytics status` → key: `analytics.universalanalyticsstatus.refresh_analytics_status` — Static title attribute
+  - context: `size="icon" aria-label="Refresh analytics status" title="Refresh analytics status" onClick={handleRefresh} disab`
+- [118:15] (JSXText) `System Status` → key: `analytics.universalanalyticsstatus.system_status` — Static JSX text node
+  - context: `ing" /> )} <span className="font-medium"> System Status </span> </div> <Badge variant={all`
+- [133:15] (JSXText) `Students with Analytics` → key: `analytics.universalanalyticsstatus.students_with_analytics` — Static JSX text node
   - context: `/div> <div className="text-sm text-muted-foreground"> Students with Analytics </div> </div>`
-- [140:15] (JSXText) `Students with Data` → key: `analytics.universalanalyticsstatus.students_with_data` — Static JSX text node
+- [142:15] (JSXText) `Students with Data` → key: `analytics.universalanalyticsstatus.students_with_data` — Static JSX text node
   - context: `/div> <div className="text-sm text-muted-foreground"> Students with Data </div> </div> </div> {`
-- [148:71] (JSXText) `Student Details:` → key: `analytics.universalanalyticsstatus.student_details` — Static JSX text node
+- [150:71] (JSXText) `Student Details:` → key: `analytics.universalanalyticsstatus.student_details` — Static JSX text node
   - context: `ace-y-2"> <h4 className="font-medium text-sm text-muted-foreground">Student Details:</h4> {status.studentStatuses.map(student => (`
-- [164:23] (JSXText) `Pattern Detection Active` → key: `analytics.universalanalyticsstatus.pattern_detection_active` — Static JSX text node
+- [166:23] (JSXText) `Pattern Detection Active` → key: `analytics.universalanalyticsstatus.pattern_detection_active` — Static JSX text node
   - context: `<Badge variant="default" className="text-xs"> Pattern Detection Active </Badge> )}`
-- [179:17] (JSXText) `✨ Universal pattern detection is active for all students!` → key: `analytics.universalanalyticsstatus.universal_pattern_detection_is_active` — Static JSX text node
+- [181:17] (JSXText) `✨ Universal pattern detection is active for all students!` → key: `analytics.universalanalyticsstatus.universal_pattern_detection_is_active` — Static JSX text node
   - context: `-4 w-4" /> <span className="text-sm font-medium"> ✨ Universal pattern detection is active for all students! </span>`
-- [189:15] (JSXText) `Add your first student to see universal analytics in action. Pattern detection will start immediately!` → key: `analytics.universalanalyticsstatus.add_your_first_student_to` — Static JSX text node
-  - context: `rounded-lg"> <div className="text-blue-800 text-sm"> Add your first student to see universal analytics in action. Pattern detection w`
+- [191:15] (JSXText) `Add your first student to see universal analytics in action. Pattern detection will start immediately!` → key: `analytics.universalanalyticsstatus.add_your_first_student_to` — Static JSX text node
+  - context: `d-lg"> <div className="text-info-foreground text-sm"> Add your first student to see universal analytics in action. Pattern detection w`
 
 ### src/components/analytics-panels/CorrelationsPanel.tsx
 - [94:49] (JSXText) `↔` → key: `analytics.correlationspanel.` — Static JSX text node
@@ -333,9 +333,9 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `tart gap-2"> <span className="text-primary">•</span> <span>{rec}</span>`
 
 ### src/components/charts/EChartContainer.tsx
-- [345:22] (MessageAPI) `[EChartContainer] Option normalization failed` → key: `analytics.echartcontainer.echartcontainer_option_normalization_failed` — Message API call: error()
+- [370:22] (MessageAPI) `[EChartContainer] Option normalization failed` → key: `analytics.echartcontainer.echartcontainer_option_normalization_failed` — Message API call: error()
   - context: `tion; } catch (e) { if (import.meta?.env?.DEV) { logger.error("[EChartContainer] Option normalization failed", { error: e }); } re`
-- [416:22] (MessageAPI) `[EChartContainer] Theme merge failed` → key: `analytics.echartcontainer.echartcontainer_theme_merge_failed` — Message API call: error()
+- [441:22] (MessageAPI) `[EChartContainer] Theme merge failed` → key: `analytics.echartcontainer.echartcontainer_theme_merge_failed` — Message API call: error()
   - context: `tion; } catch (e) { if (import.meta?.env?.DEV) { logger.error("[EChartContainer] Theme merge failed", { error: e, optionP`
 
 ### src/components/charts/TrendsChart.tsx
@@ -349,6 +349,22 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `<Activity className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>Could not render chart</p> <p className="text-xs mt-1">An internal err`
 - [87:39] (JSXText) `An internal error occurred while building the chart` → key: `analytics.trendschart.an_internal_error_occurred_while` — Static JSX text node
   - context: `> <p>Could not render chart</p> <p className="text-xs mt-1">An internal error occurred while building the chart</p> </div> </d`
+
+### src/components/optimized/OptimizedAnalyticsDashboard.tsx
+- [145:20] (MessageAPI) `[OptimizedAnalyticsDashboard] Demo seed failed` → key: `analytics.optimizedanalyticsdashboard.optimizedanalyticsdashboard_demo_seed_failed` — Message API call: error()
+  - context: `d); runAnalysis(normalizedData); } catch (error) { logger.error('[OptimizedAnalyticsDashboard] Demo seed failed', { error }); toast.error(`
+- [181:20] (MessageAPI) `[OptimizedAnalyticsDashboard] Export failed` → key: `analytics.optimizedanalyticsdashboard.optimizedanalyticsdashboard_export_failed` — Message API call: error()
+  - context: `String(tAnalytics('export.success'))); } catch (error) { logger.error('[OptimizedAnalyticsDashboard] Export failed', { error }); toast.error(Str`
+- [209:17] (MessageAPI) `[OptimizedAnalyticsDashboard] Tab changed` → key: `analytics.optimizedanalyticsdashboard.optimizedanalyticsdashboard_tab_changed` — Message API call: info()
+  - context: `back((value: string) => { // Track tab change for analytics logger.info('[OptimizedAnalyticsDashboard] Tab changed', { tab: value }); }, []); // Me`
+- [325:44] (JSXText) `No patterns detected yet.` → key: `analytics.optimizedanalyticsdashboard.no_patterns_detected_yet` — Static JSX text node
+  - context: `y-4"> {patterns.length === 0 ? ( <p className="text-muted-foreground">No patterns detected yet.</p> ) : ( patterns.map((pattern, index) => (`
+- [339:44] (JSXText) `No correlations found.` → key: `analytics.optimizedanalyticsdashboard.no_correlations_found` — Static JSX text node
+  - context: `> {correlations.length === 0 ? ( <p className="text-muted-foreground">No correlations found.</p> ) : ( correlations.map((correlation, index)`
+- [353:44] (JSXText) `No insights available.` → key: `analytics.optimizedanalyticsdashboard.no_insights_available` — Static JSX text node
+  - context: `y-4"> {insights.length === 0 ? ( <p className="text-muted-foreground">No insights available.</p> ) : ( insights.map((insight, index) => (`
+- [367:44] (JSXText) `No predictions available.` → key: `analytics.optimizedanalyticsdashboard.no_predictions_available` — Static JSX text node
+  - context: `"> {predictions.length === 0 ? ( <p className="text-muted-foreground">No predictions available.</p> ) : ( predictions.map((prediction, index`
 
 ### src/components/settings/AnalyticsConfig.tsx
 - [129:20] (MessageAPI) `Failed to export analytics config` → key: `analytics.analyticsconfig.failed_to_export_analytics_config` — Message API call: error()
@@ -368,10 +384,6 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 
 ## Namespace: common
 
-### src/components/AccessibilityWrapper.tsx
-- [21:11] (JSXText) `Skip to main content` → key: `common.accessibilitywrapper.skip_to_main_content` — Static JSX text node
-  - context: `primary-foreground px-4 py-2 rounded-md z-50 font-dyslexia" > Skip to main content </a> )} <div id="main-content" c`
-
 ### src/components/AdvancedFilterPanel.tsx
 - [395:47] (JSXAttribute) `Select triggers to include` → key: `common.advancedfilterpanel.select_triggers_to_include` — Static aria-label attribute
   - context: `}} > <SelectTrigger aria-label="Select triggers to include"> <SelectValue placeholder="Se`
@@ -379,6 +391,10 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `el="Select triggers to include"> <SelectValue placeholder="Select triggers to include" /> </SelectTrigger>`
 - [697:30] (JSXAttribute) `Filter name` → key: `common.advancedfilterpanel.filter_name` — Static aria-label attribute
   - context: `eholder={String(tCommon('filterNamePlaceholder'))} aria-label="Filter name" value={filterName} onChange={(`
+- [745:42] (JSXAttribute) `Delete saved filter` → key: `common.advancedfilterpanel.delete_saved_filter` — Static aria-label attribute
+  - context: `variant="ghost" aria-label="Delete saved filter" title="Delete saved filter"`
+- [746:37] (JSXAttribute) `Delete saved filter` → key: `common.advancedfilterpanel.delete_saved_filter` — Static title attribute
+  - context: `aria-label="Delete saved filter" title="Delete saved filter" onClick={() => onDeleteFilte`
 
 ### src/components/AdvancedSearch.tsx
 - [463:93] (JSXText) `students,` → key: `common.advancedsearch.students` — Static JSX text node
@@ -458,7 +474,7 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [219:46] (JSXText) `flere dager trengs` → key: `common.datarequirementscalculator.flere_dager_trengs` — Static JSX text node
   - context: `e="text-xs text-muted-foreground"> {nextTarget.days.needed} flere dager trengs </p> )} </div`
 - [232:44] (JSXText) `datapunkt(er) per dag vil du nå` → key: `common.datarequirementscalculator.datapunkt_er_per_dag_vil` — Static JSX text node
-  - context: `m text-blue-800 dark:text-blue-200"> Med {getRecommendedRate()} datapunkt(er) per dag vil du nå{' '} <span className="font-mediu`
+  - context: `e="text-sm text-info-foreground/80"> Med {getRecommendedRate()} datapunkt(er) per dag vil du nå{' '} <span className="font-mediu`
 - [243:39] (JSXText) `Alle sikkerhetsnivåer` → key: `common.datarequirementscalculator.alle_sikkerhetsniv_er` — Static JSX text node
   - context: `w */} <div className="space-y-3"> <h4 className="font-medium">Alle sikkerhetsnivåer</h4> {progressCalculations.map((calc) => (`
 - [261:54] (JSXText) `datapunkter over` → key: `common.datarequirementscalculator.datapunkter_over` — Static JSX text node
@@ -466,9 +482,9 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [271:42] (JSXText) `dager igjen` → key: `common.datarequirementscalculator.dager_igjen` — Static JSX text node
   - context: `="text-xs text-muted-foreground mt-1"> ~{calc.daysToTarget} dager igjen </p> )} </div>`
 - [287:19] (JSXText) `• Samle` → key: `common.datarequirementscalculator.samle` — Static JSX text node
-  - context: `ame="text-sm text-purple-800 dark:text-purple-200 space-y-1"> <li>• Samle {getRecommendedRate()} datapunkt(er) per dag for optimal fremgang</li>`
+  - context: `<ul className="text-sm text-primary-foreground/80 space-y-1"> <li>• Samle {getRecommendedRate()} datapunkt(er) per dag for optimal fremgang</li>`
 - [287:50] (JSXText) `datapunkt(er) per dag for optimal fremgang` → key: `common.datarequirementscalculator.datapunkt_er_per_dag_for` — Static JSX text node
-  - context: `rk:text-purple-200 space-y-1"> <li>• Samle {getRecommendedRate()} datapunkt(er) per dag for optimal fremgang</li> <li>• Registrer da`
+  - context: `mary-foreground/80 space-y-1"> <li>• Samle {getRecommendedRate()} datapunkt(er) per dag for optimal fremgang</li> <li>• Registrer da`
 - [288:19] (JSXText) `• Registrer data konsekvent for bedre mønstergjenkjenning` → key: `common.datarequirementscalculator.registrer_data_konsekvent_for_bedre` — Static JSX text node
   - context: `mendedRate()} datapunkt(er) per dag for optimal fremgang</li> <li>• Registrer data konsekvent for bedre mønstergjenkjenning</li> <li`
 - [289:19] (JSXText) `• Inkluder både følelser og sensoriske opplevelser i hver økt` → key: `common.datarequirementscalculator.inkluder_b_de_f_lelser` — Static JSX text node
@@ -507,7 +523,13 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `> <div className="text-xs text-muted-foreground"> R² = {rSquared.toFixed(3)} </div> </div> </d`
 
 ### src/components/DevErrorBanner.tsx
-- [65:59] (JSXText) `Dev error captured (` → key: `common.deverrorbanner.dev_error_captured` — Static JSX text node
+- [39:22] (MessageAPI) `Dev error captured` → key: `common.deverrorbanner.dev_error_captured` — Message API call: error()
+  - context: `// Use central logger to record the error logger.error('Dev error captured', ...args); } catch {} // Always forward to the`
+- [49:20] (MessageAPI) `Window error` → key: `common.deverrorbanner.window_error` — Message API call: error()
+  - context: `=> c + 1); // Log window errors through central logger logger.error('Window error', e.error || new Error(e.message)); }; const onUnhandledRe`
+- [58:20] (MessageAPI) `Unhandled promise rejection` → key: `common.deverrorbanner.unhandled_promise_rejection` — Message API call: error()
+  - context: `1); // Log unhandled rejections through central logger logger.error('Unhandled promise rejection', reason instanceof Error ? reason : new Error(msg)`
+- [82:59] (JSXText) `Dev error captured (` → key: `common.deverrorbanner.dev_error_captured` — Static JSX text node
   - context: `className="min-w-0"> <div className="font-medium text-destructive">Dev error captured ({errorCount})</div> <div className="mt-1 truncat`
 
 ### src/components/EnhancedDataVisualization.tsx
@@ -539,39 +561,39 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `st className="grid w-full grid-cols-5"> <TabsTrigger value="insights">AI Insights</TabsTrigger> <TabsTrigger value="strengths">Strengths</Ta`
 - [251:39] (JSXText) `Growth Areas` → key: `common.enhancedpersonalizedinsights.growth_areas` — Static JSX text node
   - context: `value="strengths">Strengths</TabsTrigger> <TabsTrigger value="growth">Growth Areas</TabsTrigger> <TabsTrigger value="patterns">Patterns</Tab`
-- [306:63] (JSXText) `% confidence` → key: `common.enhancedpersonalizedinsights.confidence` — Static JSX text node
+- [307:63] (JSXText) `% confidence` → key: `common.enhancedpersonalizedinsights.confidence` — Static JSX text node
   - context: `> {Math.round(insight.confidence * 100)}% confidence </Badge> <div className`
-- [319:18] (JSXText) `Continue collecting data to generate predictive insights` → key: `common.enhancedpersonalizedinsights.continue_collecting_data_to_generate` — Static JSX text node
+- [320:18] (JSXText) `Continue collecting data to generate predictive insights` → key: `common.enhancedpersonalizedinsights.continue_collecting_data_to_generate` — Static JSX text node
   - context: `<Brain className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>Continue collecting data to generate predictive insights</p> </div>`
-- [338:75] (JSXText) `Strength Level:` → key: `common.enhancedpersonalizedinsights.strength_level` — Static JSX text node
+- [339:75] (JSXText) `Strength Level:` → key: `common.enhancedpersonalizedinsights.strength_level` — Static JSX text node
   - context: `p-2"> <span className="text-xs text-muted-foreground">Strength Level:</span> <Progress value={strength.confi`
-- [351:18] (JSXText) `Strengths will be identified as patterns emerge from data collection` → key: `common.enhancedpersonalizedinsights.strengths_will_be_identified_as` — Static JSX text node
+- [352:18] (JSXText) `Strengths will be identified as patterns emerge from data collection` → key: `common.enhancedpersonalizedinsights.strengths_will_be_identified_as` — Static JSX text node
   - context: `<Heart className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>Strengths will be identified as patterns emerge from data collection</p>`
-- [391:68] (JSXText) `Action Steps:` → key: `common.enhancedpersonalizedinsights.action_steps` — Static JSX text node
+- [392:68] (JSXText) `Action Steps:` → key: `common.enhancedpersonalizedinsights.action_steps` — Static JSX text node
   - context: `Name="mt-3"> <h5 className="text-sm font-medium mb-2">Action Steps:</h5> <ul className="text-sm text-muted-f`
-- [395:64] (JSXText) `•` → key: `common.enhancedpersonalizedinsights.` — Static JSX text node
+- [396:64] (JSXText) `•` → key: `common.enhancedpersonalizedinsights.` — Static JSX text node
   - context: `ms-start gap-2"> <span className="text-primary">•</span> <span>{rec}</span>`
-- [410:18] (JSXText) `Growth opportunities will be identified based on data patterns` → key: `common.enhancedpersonalizedinsights.growth_opportunities_will_be_identified` — Static JSX text node
+- [411:18] (JSXText) `Growth opportunities will be identified based on data patterns` → key: `common.enhancedpersonalizedinsights.growth_opportunities_will_be_identified` — Static JSX text node
   - context: `<Target className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>Growth opportunities will be identified based on data patterns</p> <`
-- [424:55] (JSXText) `Emotional Pattern:` → key: `common.enhancedpersonalizedinsights.emotional_pattern` — Static JSX text node
+- [425:55] (JSXText) `Emotional Pattern:` → key: `common.enhancedpersonalizedinsights.emotional_pattern` — Static JSX text node
   - context: `<div className="flex-1"> <h4 className="font-semibold">Emotional Pattern: {pattern.pattern.replace('-', ' ')}</h4>`
-- [428:67] (JSXText) `% confidence` → key: `common.enhancedpersonalizedinsights.confidence` — Static JSX text node
+- [429:67] (JSXText) `% confidence` → key: `common.enhancedpersonalizedinsights.confidence` — Static JSX text node
   - context: `nt="outline"> {Math.round(pattern.confidence * 100)}% confidence </Badge> <span`
-- [431:50] (JSXText) `data points` → key: `common.enhancedpersonalizedinsights.data_points` — Static JSX text node
+- [432:50] (JSXText) `data points` → key: `common.enhancedpersonalizedinsights.data_points` — Static JSX text node
   - context: `ext-xs text-muted-foreground"> {pattern.dataPoints} data points </span> </div>`
-- [445:55] (JSXText) `Sensory Pattern:` → key: `common.enhancedpersonalizedinsights.sensory_pattern` — Static JSX text node
+- [446:55] (JSXText) `Sensory Pattern:` → key: `common.enhancedpersonalizedinsights.sensory_pattern` — Static JSX text node
   - context: `<div className="flex-1"> <h4 className="font-semibold">Sensory Pattern: {pattern.pattern.replace('-', ' ')}</h4>`
-- [449:67] (JSXText) `% confidence` → key: `common.enhancedpersonalizedinsights.confidence` — Static JSX text node
+- [450:67] (JSXText) `% confidence` → key: `common.enhancedpersonalizedinsights.confidence` — Static JSX text node
   - context: `nt="outline"> {Math.round(pattern.confidence * 100)}% confidence </Badge> <span`
-- [452:50] (JSXText) `data points` → key: `common.enhancedpersonalizedinsights.data_points` — Static JSX text node
+- [453:50] (JSXText) `data points` → key: `common.enhancedpersonalizedinsights.data_points` — Static JSX text node
   - context: `ext-xs text-muted-foreground"> {pattern.dataPoints} data points </span> </div>`
-- [464:18] (JSXText) `Patterns will emerge as more data is collected` → key: `common.enhancedpersonalizedinsights.patterns_will_emerge_as_more` — Static JSX text node
+- [465:18] (JSXText) `Patterns will emerge as more data is collected` → key: `common.enhancedpersonalizedinsights.patterns_will_emerge_as_more` — Static JSX text node
   - context: `<BarChart3 className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>Patterns will emerge as more data is collected</p> </div>`
-- [500:68] (JSXText) `Recommended Actions:` → key: `common.enhancedpersonalizedinsights.recommended_actions` — Static JSX text node
+- [501:68] (JSXText) `Recommended Actions:` → key: `common.enhancedpersonalizedinsights.recommended_actions` — Static JSX text node
   - context: `Name="mt-3"> <h5 className="text-sm font-medium mb-2">Recommended Actions:</h5> <ul className="text-sm text-`
-- [504:64] (JSXText) `•` → key: `common.enhancedpersonalizedinsights.` — Static JSX text node
+- [505:64] (JSXText) `•` → key: `common.enhancedpersonalizedinsights.` — Static JSX text node
   - context: `ms-start gap-2"> <span className="text-primary">•</span> <span>{rec}</span>`
-- [519:18] (JSXText) `No significant anomalies detected in recent data` → key: `common.enhancedpersonalizedinsights.no_significant_anomalies_detected_in` — Static JSX text node
+- [520:18] (JSXText) `No significant anomalies detected in recent data` → key: `common.enhancedpersonalizedinsights.no_significant_anomalies_detected_in` — Static JSX text node
   - context: `<Shield className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>No significant anomalies detected in recent data</p> </div>`
 
 ### src/components/ErrorBoundary.tsx
@@ -691,6 +713,14 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `md"> Start by creating your first IEP goal to track {student.name}'s educational progress. </p> <Button onClick={() => set`
 - [403:15] (JSXText) `Create First Goal` → key: `common.goalmanager.create_first_goal` — Static JSX text node
   - context: `0 font-dyslexia"> <Plus className="h-4 w-4 mr-2" /> Create First Goal </Button> </CardContent> </Card>`
+- [429:68] (JSXAttribute) `Edit goal` → key: `common.goalmanager.edit_goal` — Static aria-label attribute
+  - context: `flex gap-2"> <Button variant="ghost" size="icon" aria-label="Edit goal" title="Edit goal"> <Edit className="h-4 w-4" /`
+- [429:86] (JSXAttribute) `Edit goal` → key: `common.goalmanager.edit_goal` — Static title attribute
+  - context: `<Button variant="ghost" size="icon" aria-label="Edit goal" title="Edit goal"> <Edit className="h-4 w-4" />`
+- [432:68] (JSXAttribute) `Delete goal` → key: `common.goalmanager.delete_goal` — Static aria-label attribute
+  - context: `</Button> <Button variant="ghost" size="icon" aria-label="Delete goal" title="Delete goal" onClick={() => deleteGoal(goal.id)}>`
+- [432:88] (JSXAttribute) `Delete goal` → key: `common.goalmanager.delete_goal` — Static title attribute
+  - context: `<Button variant="ghost" size="icon" aria-label="Delete goal" title="Delete goal" onClick={() => deleteGoal(goal.id)}> <Trash2`
 - [450:52] (JSXText) `Measurable Objective` → key: `common.goalmanager.measurable_objective` — Static JSX text node
   - context: `<div className="mb-4"> <h4 className="font-medium mb-2">Measurable Objective</h4> <p className="text-sm text-muted-for`
 - [476:46] (MessageAPI) `Milestone title:` → key: `common.goalmanager.milestone_title` — Message API call: prompt()
@@ -701,11 +731,11 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `rompt("Milestone description:"); const dateStr = prompt("Target date (YYYY-MM-DD):"); if (title && description &`
 - [489:66] (JSXText) `No milestones yet` → key: `common.goalmanager.no_milestones_yet` — Static JSX text node
   - context: `ngth === 0 ? ( <p className="text-sm text-muted-foreground">No milestones yet</p> ) : ( <div className`
-- [523:44] (MessageAPI) `Enter current progress value:` → key: `common.goalmanager.enter_current_progress_value` — Message API call: prompt()
+- [525:44] (MessageAPI) `Enter current progress value:` → key: `common.goalmanager.enter_current_progress_value` — Message API call: prompt()
   - context: `onClick={() => { const value = prompt("Enter current progress value:"); const notes = prompt("Pr`
-- [524:44] (MessageAPI) `Progress notes (optional):` → key: `common.goalmanager.progress_notes_optional` — Message API call: prompt()
+- [526:44] (MessageAPI) `Progress notes (optional):` → key: `common.goalmanager.progress_notes_optional` — Message API call: prompt()
   - context: `pt("Enter current progress value:"); const notes = prompt("Progress notes (optional):"); if (value) {`
-- [531:21] (JSXText) `Update Progress` → key: `common.goalmanager.update_progress` — Static JSX text node
+- [533:21] (JSXText) `Update Progress` → key: `common.goalmanager.update_progress` — Static JSX text node
   - context: `<TrendingUp className="h-4 w-4 mr-1" /> Update Progress </Button> </div>`
 
 ### src/components/InteractiveDataVisualization.debug.tsx
@@ -837,6 +867,14 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `( <div className="text-center p-8 text-muted-foreground"> Loading sessions... </div> ) : ( <div> {`
 - [114:27] (JSXText) `Environmental data` → key: `common.paginatedsessionslist.environmental_data` — Static JSX text node
   - context: `<Badge variant="outline" className="text-xs"> Environmental data </Badge> )}`
+- [153:32] (JSXAttribute) `First page` → key: `common.paginatedsessionslist.first_page` — Static aria-label attribute
+  - context: `variant="ghost" size="icon" aria-label="First page" onClick={goToFirstPage} dis`
+- [163:32] (JSXAttribute) `Previous page` → key: `common.paginatedsessionslist.previous_page` — Static aria-label attribute
+  - context: `variant="ghost" size="icon" aria-label="Previous page" onClick={goToPreviousPage}`
+- [196:32] (JSXAttribute) `Next page` → key: `common.paginatedsessionslist.next_page` — Static aria-label attribute
+  - context: `variant="ghost" size="icon" aria-label="Next page" onClick={goToNextPage} disab`
+- [206:32] (JSXAttribute) `Last page` → key: `common.paginatedsessionslist.last_page` — Static aria-label attribute
+  - context: `variant="ghost" size="icon" aria-label="Last page" onClick={goToLastPage} disab`
 
 ### src/components/PeriodComparison.tsx
 - [211:19] (JSXText) `Most common changed from` → key: `common.periodcomparison.most_common_changed_from` — Static JSX text node
@@ -923,33 +961,45 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `="flex items-center gap-2"> <Bug className="h-5 w-5" /> System Testing & Debug Panel </CardTitle> </CardHeader>`
 - [262:15] (JSXText) `Test current system functionality and data integrity` → key: `common.testingdebugpanel.test_current_system_functionality_and` — Static JSX text node
   - context: `tween"> <p className="text-sm text-muted-foreground"> Test current system functionality and data integrity </p>`
-- [273:19] (JSXText) `Running Tests...` → key: `common.testingdebugpanel.running_tests` — Static JSX text node
-  - context: `<RefreshCw className="h-4 w-4 mr-2 animate-spin" /> Running Tests... </> ) : ( <>`
-- [278:19] (JSXText) `Run System Tests` → key: `common.testingdebugpanel.run_system_tests` — Static JSX text node
-  - context: `<> <TestTube className="h-4 w-4 mr-2" /> Run System Tests </> )} </Button>`
-- [286:51] (JSXText) `Test Results:` → key: `common.testingdebugpanel.test_results` — Static JSX text node
+- [269:26] (JSXAttribute) `Run system tests` → key: `common.testingdebugpanel.run_system_tests` — Static aria-label attribute
+  - context: `size="sm" variant="outline" aria-label="Run system tests" title="Run system tests" >`
+- [270:21] (JSXAttribute) `Run system tests` → key: `common.testingdebugpanel.run_system_tests` — Static title attribute
+  - context: `riant="outline" aria-label="Run system tests" title="Run system tests" > {isRunningTests ? (`
+- [275:54] (JSXText) `Running Tests...` → key: `common.testingdebugpanel.running_tests` — Static JSX text node
+  - context: `w-4 mr-2 animate-spin" /> <span className="hidden sm:inline">Running Tests...</span> </> ) : (`
+- [280:54] (JSXText) `Run System Tests` → key: `common.testingdebugpanel.run_system_tests` — Static JSX text node
+  - context: `lassName="h-4 w-4 mr-2" /> <span className="hidden sm:inline">Run System Tests</span> </> )} </Butto`
+- [288:51] (JSXText) `Test Results:` → key: `common.testingdebugpanel.test_results` — Static JSX text node
   - context: `<div className="space-y-3"> <h4 className="text-sm font-medium">Test Results:</h4> {testResults.map((result) => (`
-- [305:54] (JSXText) `Quick Stats:` → key: `common.testingdebugpanel.quick_stats` — Static JSX text node
+- [307:54] (JSXText) `Quick Stats:` → key: `common.testingdebugpanel.quick_stats` — Static JSX text node
   - context: `4 border-t border-border"> <h4 className="text-sm font-medium mb-2">Quick Stats:</h4> <div className="grid grid-cols-3 gap-3 text-center`
-- [329:13] (JSXText) `Analytics Cache Management` → key: `common.testingdebugpanel.analytics_cache_management` — Static JSX text node
+- [331:13] (JSXText) `Analytics Cache Management` → key: `common.testingdebugpanel.analytics_cache_management` — Static JSX text node
   - context: `ex items-center gap-2"> <Archive className="h-5 w-5" /> Analytics Cache Management </CardTitle> </CardHeader>`
-- [338:57] (JSXText) `Cache Hit Rate` → key: `common.testingdebugpanel.cache_hit_rate` — Static JSX text node
+- [340:57] (JSXText) `Cache Hit Rate` → key: `common.testingdebugpanel.cache_hit_rate` — Static JSX text node
   - context: `enter justify-between"> <span className="text-sm font-medium">Cache Hit Rate</span> <div className="flex items-center gap-2"`
-- [347:69] (JSXText) `Cache Size` → key: `common.testingdebugpanel.cache_size` — Static JSX text node
+- [349:69] (JSXText) `Cache Size` → key: `common.testingdebugpanel.cache_size` — Static JSX text node
   - context: `flex-col"> <span className="text-xs text-muted-foreground">Cache Size</span> <span className="text-lg font-semibold">{c`
-- [351:69] (JSXText) `Memory Usage` → key: `common.testingdebugpanel.memory_usage` — Static JSX text node
+- [353:69] (JSXText) `Memory Usage` → key: `common.testingdebugpanel.memory_usage` — Static JSX text node
   - context: `flex-col"> <span className="text-xs text-muted-foreground">Memory Usage</span> <span className="text-lg font-semibold">`
-- [379:53] (JSXText) `Cache Actions` → key: `common.testingdebugpanel.cache_actions` — Static JSX text node
+- [381:53] (JSXText) `Cache Actions` → key: `common.testingdebugpanel.cache_actions` — Static JSX text node
   - context: `t border-border space-y-3"> <h4 className="text-sm font-medium">Cache Actions</h4> <div className="flex gap-2">`
-- [388:21] (JSXText) `Clear All Cache` → key: `common.testingdebugpanel.clear_all_cache` — Static JSX text node
-  - context: `> <Trash2 className="h-4 w-4 mr-2" /> Clear All Cache </Button> <Button`
-- [397:21] (JSXText) `Clean Expired` → key: `common.testingdebugpanel.clean_expired` — Static JSX text node
-  - context: `<RefreshCw className="h-4 w-4 mr-2" /> Clean Expired </Button> </div>`
-- [402:22] (JSXText) `• Cache TTL: 5 minutes` → key: `common.testingdebugpanel.cache_ttl_5_minutes` — Static JSX text node
+- [388:30] (JSXAttribute) `Clear all analytics cache` → key: `common.testingdebugpanel.clear_all_analytics_cache` — Static aria-label attribute
+  - context: `leClearCache} className="flex-1" aria-label="Clear all analytics cache" title="Clear all analytics cache"`
+- [389:25] (JSXAttribute) `Clear all analytics cache` → key: `common.testingdebugpanel.clear_all_analytics_cache` — Static title attribute
+  - context: `aria-label="Clear all analytics cache" title="Clear all analytics cache" > <Trash2 classNam`
+- [392:54] (JSXText) `Clear All Cache` → key: `common.testingdebugpanel.clear_all_cache` — Static JSX text node
+  - context: `lassName="h-4 w-4 mr-2" /> <span className="hidden sm:inline">Clear All Cache</span> </Button> <Button`
+- [399:30] (JSXAttribute) `Clean expired cache entries` → key: `common.testingdebugpanel.clean_expired_cache_entries` — Static aria-label attribute
+  - context: `he.cleanup()} className="flex-1" aria-label="Clean expired cache entries" title="Clean expired cache entri`
+- [400:25] (JSXAttribute) `Clean expired cache entries` → key: `common.testingdebugpanel.clean_expired_cache_entries` — Static title attribute
+  - context: `aria-label="Clean expired cache entries" title="Clean expired cache entries" > <RefreshCw cla`
+- [403:54] (JSXText) `Clean Expired` → key: `common.testingdebugpanel.clean_expired` — Static JSX text node
+  - context: `lassName="h-4 w-4 mr-2" /> <span className="hidden sm:inline">Clean Expired</span> </Button> </div>`
+- [408:22] (JSXText) `• Cache TTL: 5 minutes` → key: `common.testingdebugpanel.cache_ttl_5_minutes` — Static JSX text node
   - context: `<div className="text-xs text-muted-foreground"> <p>• Cache TTL: 5 minutes</p> <p>• Eviction: LRU (Least Recently`
-- [403:22] (JSXText) `• Eviction: LRU (Least Recently Used)` → key: `common.testingdebugpanel.eviction_lru_least_recently_used` — Static JSX text node
+- [409:22] (JSXText) `• Eviction: LRU (Least Recently Used)` → key: `common.testingdebugpanel.eviction_lru_least_recently_used` — Static JSX text node
   - context: `reground"> <p>• Cache TTL: 5 minutes</p> <p>• Eviction: LRU (Least Recently Used)</p> <p>• Invalidations:`
-- [404:22] (JSXText) `• Invalidations:` → key: `common.testingdebugpanel.invalidations` — Static JSX text node
+- [410:22] (JSXText) `• Invalidations:` → key: `common.testingdebugpanel.invalidations` — Static JSX text node
   - context: `<p>• Eviction: LRU (Least Recently Used)</p> <p>• Invalidations: {cacheStats.invalidations || 0}</p> </div>`
 
 ### src/components/TestingToolsSection.tsx
@@ -1003,25 +1053,35 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `<li>• Environmental impact patterns</li> <li>• Anomaly detection alerts</li> </ul> </div>`
 
 ### src/components/Visualization3D.tsx
-- [55:13] (JSXText) `×` → key: `common.visualization3d.` — Static JSX text node
-  - context: `ted-foreground hover:text-foreground transition-colors" > × </button> </div> <p className="font-medium">{point.l`
-- [334:11] (JSXText) `3D Correlation Visualization` → key: `common.visualization3d.3d_correlation_visualization` — Static JSX text node
+- [57:13] (JSXText) `×` → key: `common.visualization3d.` — Static JSX text node
+  - context: `ground transition-colors motion-reduce:transition-none" > × </button> </div> <p className="font-medium">{point.l`
+- [346:11] (JSXText) `3D Correlation Visualization` → key: `common.visualization3d.3d_correlation_visualization` — Static JSX text node
   - context: `Name="flex items-center gap-2"> <Eye className="h-5 w-5" /> 3D Correlation Visualization </CardTitle> </CardHeader> <Car`
-- [342:65] (JSXText) `X Axis` → key: `common.visualization3d.x_axis` — Static JSX text node
+- [354:65] (JSXText) `X Axis` → key: `common.visualization3d.x_axis` — Static JSX text node
   - context: `<div> <label className="text-sm font-medium mb-1 block">X Axis</label> <Select value={xAxis} onValueChange={setXAxis}>`
-- [358:65] (JSXText) `Y Axis` → key: `common.visualization3d.y_axis` — Static JSX text node
+- [370:65] (JSXText) `Y Axis` → key: `common.visualization3d.y_axis` — Static JSX text node
   - context: `<div> <label className="text-sm font-medium mb-1 block">Y Axis</label> <Select value={yAxis} onValueChange={setYAxis}>`
-- [374:65] (JSXText) `Z Axis` → key: `common.visualization3d.z_axis` — Static JSX text node
+- [386:65] (JSXText) `Z Axis` → key: `common.visualization3d.z_axis` — Static JSX text node
   - context: `<div> <label className="text-sm font-medium mb-1 block">Z Axis</label> <Select value={zAxis} onValueChange={setZAxis}>`
-- [392:65] (JSXText) `Color By` → key: `common.visualization3d.color_by` — Static JSX text node
+- [404:65] (JSXText) `Color By` → key: `common.visualization3d.color_by` — Static JSX text node
   - context: `<div> <label className="text-sm font-medium mb-1 block">Color By</label> <Select value={colorBy} onValueChange={setColorBy`
-- [405:65] (JSXText) `Filter Category` → key: `common.visualization3d.filter_category` — Static JSX text node
+- [417:65] (JSXText) `Filter Category` → key: `common.visualization3d.filter_category` — Static JSX text node
   - context: `<div> <label className="text-sm font-medium mb-1 block">Filter Category</label> <Select value={filterCategory} onValueChan`
-- [421:17] (JSXText) `Point Size:` → key: `common.visualization3d.point_size` — Static JSX text node
+- [433:17] (JSXText) `Point Size:` → key: `common.visualization3d.point_size` — Static JSX text node
   - context: `<label className="text-sm font-medium mb-1 block"> Point Size: {pointSize.toFixed(2)} </label> <Slider`
-- [524:45] (JSXText) `Low → High` → key: `common.visualization3d.low_high` — Static JSX text node
+- [451:15] (JSXText) `Reduced motion enabled` → key: `common.visualization3d.reduced_motion_enabled` — Static JSX text node
+  - context: `text-amber-800 dark:text-amber-200 px-3 py-1 rounded-md text-sm"> Reduced motion enabled </div> )} cCanvas`
+- [454:11] (JSXText) `cCanvas
+            camera=` → key: `common.visualization3d.ccanvas_camera` — Static JSX text node
+  - context: `Reduced motion enabled </div> )} cCanvas camera={{ position: [10, 10, 10], fov: 50 }} cl`
+- [456:13] (JSXText) `className="w-full h-full"
+            onCreated=` → key: `common.visualization3d.classname_w_full_h_full` — Static JSX text node
+  - context: `cCanvas camera={{ position: [10, 10, 10], fov: 50 }} className="w-full h-full" onCreated={({ gl }) => { con`
+- [468:11] (JSXText) `e` → key: `common.visualization3d.e` — Static JSX text node
+  - context: `.addEventListener('webglcontextrestored', onRestored); }} e <ambientLight intensity={0.5} /> <pointLight position`
+- [553:45] (JSXText) `Low → High` → key: `common.visualization3d.low_high` — Static JSX text node
   - context: `a-yellow-500 to-red-500 rounded" /> <span className="text-xs">Low → High</span> </div> )} </div>`
-- [533:18] (JSXText) `Total Sessions:` → key: `common.visualization3d.total_sessions` — Static JSX text node
+- [562:18] (JSXText) `Total Sessions:` → key: `common.visualization3d.total_sessions` — Static JSX text node
   - context: `ace-y-1"> <p>Points: {filteredPoints.length}</p> <p>Total Sessions: {trackingEntries.length}</p> </div> </div>`
 
 ### src/components/VisualizationControls.tsx
@@ -1088,9 +1148,9 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [352:41] (JSXText) `All time` → key: `common.visualizationcontrols.all_time` — Static JSX text node
   - context: `m value="90d">Last 90 days</SelectItem> <SelectItem value="all">All time</SelectItem> </SelectContent> </Select>`
 - [357:68] (JSXAttribute) `Data counts` → key: `common.visualizationcontrols.data_counts` — Static aria-label attribute
-  - context: `</div> <div className="flex items-center gap-2 mt-8" aria-label="Data counts"> <Badge variant="outline" className="bg-green-50 text-`
+  - context: `</div> <div className="flex items-center gap-2 mt-8" aria-label="Data counts"> <Badge variant="outline" className="bg-success/10 tex`
 - [362:51] (JSXText) `sensory inputs` → key: `common.visualizationcontrols.sensory_inputs` — Static JSX text node
-  - context: `xt-blue-700 border-blue-200"> {filteredData.sensoryInputs.length} sensory inputs </Badge> <Badge variant="outline" classNa`
+  - context: `10 text-info border-info/20"> {filteredData.sensoryInputs.length} sensory inputs </Badge> <Badge variant="outline" classNa`
 
 ### src/components/analysis/CorrelationHeatmap.tsx
 - [25:14] (JSXText) `Insufficient data for correlation analysis` → key: `common.correlationheatmap.insufficient_data_for_correlation_analysis` — Static JSX text node
@@ -1110,7 +1170,7 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 
 ### src/components/analysis/PatternAnalysisView.tsx
 - [68:23] (JSXAttribute) `Loading chart data` → key: `common.patternanalysisview.loading_chart_data` — Static aria-label attribute
-  - context: `border-red-200'; }; if (isAnalyzing) { return ( <div aria-label="Loading chart data" className="h-[400px] w-full"> <div className="h-ful`
+  - context: `-destructive/30'; }; if (isAnalyzing) { return ( <div aria-label="Loading chart data" className="h-[400px] w-full"> <div className="h-ful`
 - [79:14] (JSXText) `No patterns detected yet` → key: `common.patternanalysisview.no_patterns_detected_yet` — Static JSX text node
   - context: `"> <Zap className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>No patterns detected yet</p> <p className="text-sm">Need more data for`
 - [80:34] (JSXText) `Need more data for pattern analysis` → key: `common.patternanalysisview.need_more_data_for_pattern` — Static JSX text node
@@ -1207,6 +1267,36 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [52:58] (JSXText) `Loading 3D visualization...` → key: `common.lazyvisualization3d.loading_3d_visualization` — Static JSX text node
   - context: `d-full mx-auto"></div> <p className="text-sm text-muted-foreground">Loading 3D visualization...</p> </div> </div> </div>`
 
+### src/components/optimized/OptimizedCorrelationHeatmap.tsx
+- [110:46] (JSXText) `No correlation data available` → key: `common.optimizedcorrelationheatmap.no_correlation_data_available` — Static JSX text node
+  - context: `flex items-center justify-center"> <p className="text-muted-foreground">No correlation data available</p> </div> ); } return ( <div c`
+
+### src/components/optimized/OptimizedDataRequirementsCalculator.tsx
+- [235:13] (JSXText) `Datakrav for sikkerhetsnivå` → key: `common.optimizeddatarequirementscalculator.datakrav_for_sikkerhetsniv` — Static JSX text node
+  - context: `lex items-center gap-2"> <Target className="h-5 w-5" /> Datakrav for sikkerhetsnivå </CardTitle> </CardHeader>`
+- [241:13] (JSXText) `Ingen data registrert ennå. Start med å samle data for å se fremgang mot sikkerhetsnivåer.` → key: `common.optimizeddatarequirementscalculator.ingen_data_registrert_enn_start` — Static JSX text node
+  - context: `foreground" /> <p className="text-muted-foreground mb-4"> Ingen data registrert ennå. Start med å samle data for å se fremgang mot sikkerh`
+- [244:13] (JSXText) `Start datainnsamling` → key: `common.optimizeddatarequirementscalculator.start_datainnsamling` — Static JSX text node
+  - context: `kkerhetsnivåer. </p> <Button variant="outline"> Start datainnsamling </Button> </CardContent> </Card>`
+- [256:11] (JSXText) `Datakrav for sikkerhetsnivå` → key: `common.optimizeddatarequirementscalculator.datakrav_for_sikkerhetsniv` — Static JSX text node
+  - context: `e="flex items-center gap-2"> <Target className="h-5 w-5" /> Datakrav for sikkerhetsnivå </CardTitle> <div className="flex it`
+- [259:44] (JSXText) `datapunkter samlet` → key: `common.optimizeddatarequirementscalculator.datapunkter_samlet` — Static JSX text node
+  - context: `ap-4 text-sm text-muted-foreground"> <span>{currentStatus.dataPoints} datapunkter samlet</span> <span>{currentStatus.daysSpan} dager med dat`
+- [260:42] (JSXText) `dager med data` → key: `common.optimizeddatarequirementscalculator.dager_med_data` — Static JSX text node
+  - context: `.dataPoints} datapunkter samlet</span> <span>{currentStatus.daysSpan} dager med data</span> </div> </CardHeader> <CardContent clas`
+- [267:40] (JSXText) `Nåværende sikkerhetsnivå` → key: `common.optimizeddatarequirementscalculator.n_v_rende_sikkerhetsniv` — Static JSX text node
+  - context: `bg-muted/50 rounded-lg"> <div> <p className="font-medium">Nåværende sikkerhetsnivå</p> <p className="text-sm text-muted-foregr`
+- [281:43] (JSXText) `Fremgang mot` → key: `common.optimizeddatarequirementscalculator.fremgang_mot` — Static JSX text node
+  - context: `="flex items-center justify-between"> <h4 className="font-medium">Fremgang mot {nextTarget.requirement.description}</h4> <span class`
+- [283:50] (JSXText) `% fullført` → key: `common.optimizeddatarequirementscalculator.fullf_rt` — Static JSX text node
+  - context: `ext-sm text-muted-foreground"> {Math.round(nextTarget.progress)}% fullført </span> </div> <Pr`
+- [307:19] (JSXText) `Anbefalt: Samle` → key: `common.optimizeddatarequirementscalculator.anbefalt_samle` — Static JSX text node
+  - context: `nded-lg"> <p className="text-sm font-medium"> Anbefalt: Samle {recommendedRate} datapunkt{recommendedRate > 1 ? 'er' : ''} per`
+- [307:96] (JSXText) `per dag` → key: `common.optimizeddatarequirementscalculator.per_dag` — Static JSX text node
+  - context: `Anbefalt: Samle {recommendedRate} datapunkt{recommendedRate > 1 ? 'er' : ''} per dag </p> <p className="text-xs text-muted-fo`
+- [310:19] (JSXText) `Måloppnåelse:` → key: `common.optimizeddatarequirementscalculator.m_loppn_else` — Static JSX text node
+  - context: `<p className="text-xs text-muted-foreground mt-1"> Måloppnåelse: {formatDate(nextTarget.targetDate)} </p>`
+
 ### src/components/optimized/OptimizedDataVisualization.tsx
 - [53:36] (JSXText) `No data to display yet` → key: `common.optimizeddatavisualization.no_data_to_display_yet` — Static JSX text node
   - context: `sName="h-16 w-16 mx-auto mb-4 opacity-50" /> <p className="text-lg">No data to display yet</p> <p className="text-sm">Start tracking emo`
@@ -1293,6 +1383,148 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [501:18] (JSXText) `No significant anomalies detected in recent data` → key: `common.optimizedenhancedpersonalizedinsights.no_significant_anomalies_detected_in` — Static JSX text node
   - context: `<Shield className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>No significant anomalies detected in recent data</p> </div>`
 
+### src/components/optimized/OptimizedGoalManager.tsx
+- [129:19] (MessageAPI) `Please fill in all required fields` → key: `common.optimizedgoalmanager.please_fill_in_all_required` — Message API call: error()
+  - context: `.description.trim() || !newGoal.measurableObjective.trim()) { toast.error("Please fill in all required fields"); return; } if (!newGoal.tar`
+- [129:19] (MessageAPI) `Please fill in all required fields` → key: `common.optimizedgoalmanager.please_fill_in_all_required` — sonner toast.error()
+  - context: `.description.trim() || !newGoal.measurableObjective.trim()) { toast.error("Please fill in all required fields"); return; } if (!newGoal.tar`
+- [134:19] (MessageAPI) `Please select a target date` → key: `common.optimizedgoalmanager.please_select_a_target_date` — Message API call: error()
+  - context: `fields"); return; } if (!newGoal.targetDate) { toast.error("Please select a target date"); return; } const targetDate = new`
+- [134:19] (MessageAPI) `Please select a target date` → key: `common.optimizedgoalmanager.please_select_a_target_date` — sonner toast.error()
+  - context: `fields"); return; } if (!newGoal.targetDate) { toast.error("Please select a target date"); return; } const targetDate = new`
+- [140:19] (MessageAPI) `Invalid target date` → key: `common.optimizedgoalmanager.invalid_target_date` — Message API call: error()
+  - context: `e(newGoal.targetDate); if (isNaN(targetDate.getTime())) { toast.error("Invalid target date"); return; } const today = new Date(); t`
+- [140:19] (MessageAPI) `Invalid target date` → key: `common.optimizedgoalmanager.invalid_target_date` — sonner toast.error()
+  - context: `e(newGoal.targetDate); if (isNaN(targetDate.getTime())) { toast.error("Invalid target date"); return; } const today = new Date(); t`
+- [147:19] (MessageAPI) `Target date must be in the future` → key: `common.optimizedgoalmanager.target_date_must_be_in` — Message API call: error()
+  - context: `today.setHours(0, 0, 0, 0); if (targetDate < today) { toast.error("Target date must be in the future"); return; } if (newGoal.targe`
+- [147:19] (MessageAPI) `Target date must be in the future` → key: `common.optimizedgoalmanager.target_date_must_be_in` — sonner toast.error()
+  - context: `today.setHours(0, 0, 0, 0); if (targetDate < today) { toast.error("Target date must be in the future"); return; } if (newGoal.targe`
+- [152:19] (MessageAPI) `Target value must be greater than baseline value` → key: `common.optimizedgoalmanager.target_value_must_be_greater` — Message API call: error()
+  - context: `} if (newGoal.targetValue <= newGoal.baselineValue) { toast.error("Target value must be greater than baseline value"); return; } co`
+- [152:19] (MessageAPI) `Target value must be greater than baseline value` → key: `common.optimizedgoalmanager.target_value_must_be_greater` — sonner toast.error()
+  - context: `} if (newGoal.targetValue <= newGoal.baselineValue) { toast.error("Target value must be greater than baseline value"); return; } co`
+- [184:19] (MessageAPI) `Goal created successfully!` → key: `common.optimizedgoalmanager.goal_created_successfully` — Message API call: success()
+  - context: `loadGoals(); resetForm(); setShowCreateDialog(false); toast.success("Goal created successfully!"); onGoalUpdate?.(); }, [newGoal, student.id,`
+- [184:19] (MessageAPI) `Goal created successfully!` → key: `common.optimizedgoalmanager.goal_created_successfully` — sonner toast.success()
+  - context: `loadGoals(); resetForm(); setShowCreateDialog(false); toast.success("Goal created successfully!"); onGoalUpdate?.(); }, [newGoal, student.id,`
+- [207:21] (MessageAPI) `Goal deleted successfully` → key: `common.optimizedgoalmanager.goal_deleted_successfully` — Message API call: success()
+  - context: `{ dataStorage.deleteGoal(goalId); loadGoals(); toast.success("Goal deleted successfully"); onGoalUpdate?.(); } }, [goals, loadGoa`
+- [207:21] (MessageAPI) `Goal deleted successfully` → key: `common.optimizedgoalmanager.goal_deleted_successfully` — sonner toast.success()
+  - context: `{ dataStorage.deleteGoal(goalId); loadGoals(); toast.success("Goal deleted successfully"); onGoalUpdate?.(); } }, [goals, loadGoa`
+- [235:19] (MessageAPI) `Progress updated!` → key: `common.optimizedgoalmanager.progress_updated` — Message API call: success()
+  - context: `urrentProgress: Math.max(0, Math.min(100, progress)) }); toast.success("Progress updated!"); }, [goals, updateGoal]); // Memoized milestone additi`
+- [235:19] (MessageAPI) `Progress updated!` → key: `common.optimizedgoalmanager.progress_updated` — sonner toast.success()
+  - context: `urrentProgress: Math.max(0, Math.min(100, progress)) }); toast.success("Progress updated!"); }, [goals, updateGoal]); // Memoized milestone additi`
+- [255:19] (MessageAPI) `Milestone added!` → key: `common.optimizedgoalmanager.milestone_added` — Message API call: success()
+  - context: `milestones: [...goal.milestones, newMilestone] }); toast.success("Milestone added!"); }, [goals, updateGoal]); // Memoized milestone complet`
+- [255:19] (MessageAPI) `Milestone added!` → key: `common.optimizedgoalmanager.milestone_added` — sonner toast.success()
+  - context: `milestones: [...goal.milestones, newMilestone] }); toast.success("Milestone added!"); }, [goals, updateGoal]); // Memoized milestone complet`
+- [270:19] (MessageAPI) `Milestone completed!` → key: `common.optimizedgoalmanager.milestone_completed` — Message API call: success()
+  - context: `; updateGoal(goalId, { milestones: updatedMilestones }); toast.success("Milestone completed!"); }, [goals, updateGoal]); // Handler for milestone`
+- [270:19] (MessageAPI) `Milestone completed!` → key: `common.optimizedgoalmanager.milestone_completed` — sonner toast.success()
+  - context: `; updateGoal(goalId, { milestones: updatedMilestones }); toast.success("Milestone completed!"); }, [goals, updateGoal]); // Handler for milestone`
+- [275:26] (MessageAPI) `Milestone title:` → key: `common.optimizedgoalmanager.milestone_title` — Message API call: prompt()
+  - context: `eAddMilestoneClick = useCallback((goalId: string) => { const title = prompt("Milestone title:"); const description = prompt("Milestone description:");`
+- [276:32] (MessageAPI) `Milestone description:` → key: `common.optimizedgoalmanager.milestone_description` — Message API call: prompt()
+  - context: `{ const title = prompt("Milestone title:"); const description = prompt("Milestone description:"); const dateStr = prompt("Target date (YYYY-MM-DD):`
+- [277:28] (MessageAPI) `Target date (YYYY-MM-DD):` → key: `common.optimizedgoalmanager.target_date_yyyy_mm_dd` — Message API call: prompt()
+  - context: `onst description = prompt("Milestone description:"); const dateStr = prompt("Target date (YYYY-MM-DD):"); if (title && description && dateStr) { a`
+- [285:26] (MessageAPI) `Enter current progress value:` → key: `common.optimizedgoalmanager.enter_current_progress_value` — Message API call: prompt()
+  - context: `pdateProgressClick = useCallback((goalId: string) => { const value = prompt("Enter current progress value:"); const notes = prompt("Progress notes (opti`
+- [286:26] (MessageAPI) `Progress notes (optional):` → key: `common.optimizedgoalmanager.progress_notes_optional` — Message API call: prompt()
+  - context: `const value = prompt("Enter current progress value:"); const notes = prompt("Progress notes (optional):"); if (value) { addDataPoint(goalId, Numbe`
+- [344:46] (JSXText) `IEP Goals & Tracking` → key: `common.optimizedgoalmanager.iep_goals_tracking` — Static JSX text node
+  - context: `lassName="h-6 w-6 text-primary" /> <h2 className="text-2xl font-bold">IEP Goals & Tracking</h2> </div> <Dialog open={showCrea`
+- [351:15] (JSXText) `Create New Goal` → key: `common.optimizedgoalmanager.create_new_goal` — Static JSX text node
+  - context: `over:opacity-90"> <Plus className="h-4 w-4 mr-2" /> Create New Goal </Button> </DialogTrigger> <Dial`
+- [356:28] (JSXText) `Create New IEP Goal` → key: `common.optimizedgoalmanager.create_new_iep_goal` — Static JSX text node
+  - context: `-[90vh] overflow-y-auto"> <DialogHeader> <DialogTitle>Create New IEP Goal</DialogTitle> <DialogDescription>`
+- [358:17] (JSXText) `Define a specific, measurable goal for` → key: `common.optimizedgoalmanager.define_a_specific_measurable_goal` — Static JSX text node
+  - context: `te New IEP Goal</DialogTitle> <DialogDescription> Define a specific, measurable goal for {student.name}'s educational progress.`
+- [358:70] (JSXText) `'s educational progress.` → key: `common.optimizedgoalmanager.s_educational_progress` — Static JSX text node
+  - context: `scription> Define a specific, measurable goal for {student.name}'s educational progress. </DialogDescription> </Dialog`
+- [364:45] (JSXText) `Goal Title *` → key: `common.optimizedgoalmanager.goal_title` — Static JSX text node
+  - context: `pace-y-4 mt-4"> <div> <Label htmlFor="goal-title">Goal Title *</Label> <Input id="goal-title"`
+- [367:31] (JSXAttribute) `e.g., Improve Reading Comprehension` → key: `common.optimizedgoalmanager.e_g_improve_reading_comprehension` — Static placeholder attribute
+  - context: `<Input id="goal-title" placeholder="e.g., Improve Reading Comprehension" value={newGoal.title}`
+- [374:51] (JSXText) `Description *` → key: `common.optimizedgoalmanager.description` — Static JSX text node
+  - context: `<div> <Label htmlFor="goal-description">Description *</Label> <Textarea id="goal-descr`
+- [377:31] (JSXAttribute) `Describe the goal in detail...` → key: `common.optimizedgoalmanager.describe_the_goal_in_detail` — Static placeholder attribute
+  - context: `<Textarea id="goal-description" placeholder="Describe the goal in detail..." value={newGoal.description}`
+- [385:48] (JSXText) `Category *` → key: `common.optimizedgoalmanager.category` — Static JSX text node
+  - context: `<div> <Label htmlFor="goal-category">Category *</Label> <Select value={newGoal.category} onValueChang`
+- [395:47] (JSXText) `Motor Skills` → key: `common.optimizedgoalmanager.motor_skills` — Static JSX text node
+  - context: `ation">Communication</SelectItem> <SelectItem value="motor">Motor Skills</SelectItem> <SelectItem value="sensory">Sensor`
+- [406:49] (JSXText) `Measurable Objective *` → key: `common.optimizedgoalmanager.measurable_objective` — Static JSX text node
+  - context: `<div> <Label htmlFor="goal-objective">Measurable Objective *</Label> <Textarea id="g`
+- [409:31] (JSXAttribute) `e.g., Student will read grade-level text with 80% comprehension...` → key: `common.optimizedgoalmanager.e_g_student_will_read` — Static placeholder attribute
+  - context: `<Textarea id="goal-objective" placeholder="e.g., Student will read grade-level text with 80% comprehension..."`
+- [418:50] (JSXText) `Baseline Value` → key: `common.optimizedgoalmanager.baseline_value` — Static JSX text node
+  - context: `gap-4"> <div> <Label htmlFor="goal-baseline">Baseline Value</Label> <Input id="goal-bas`
+- [427:48] (JSXText) `Target Value` → key: `common.optimizedgoalmanager.target_value` — Static JSX text node
+  - context: `</div> <div> <Label htmlFor="goal-target">Target Value</Label> <Input id="goal-targe`
+- [438:44] (JSXText) `Target Date *` → key: `common.optimizedgoalmanager.target_date` — Static JSX text node
+  - context: `> <div> <Label htmlFor="goal-date">Target Date *</Label> <Input id="goal-date"`
+- [451:46] (JSXText) `Create Goal` → key: `common.optimizedgoalmanager.create_goal` — Static JSX text node
+  - context: `Cancel </Button> <Button onClick={createGoal}>Create Goal</Button> </div> </div> </DialogC`
+- [492:66] (JSXText) `No IEP Goals Yet` → key: `common.optimizedgoalmanager.no_iep_goals_yet` — Static JSX text node
+  - context: `round mb-4" /> <h3 className="text-xl font-semibold text-foreground mb-2">No IEP Goals Yet</h3> <p className="text-muted-foreground text-center mb-6`
+- [494:9] (JSXText) `Start by creating your first IEP goal to track` → key: `common.optimizedgoalmanager.start_by_creating_your_first` — Static JSX text node
+  - context: `> <p className="text-muted-foreground text-center mb-6 max-w-md"> Start by creating your first IEP goal to track {studentName}'s educational progr`
+- [494:69] (JSXText) `'s educational progress.` → key: `common.optimizedgoalmanager.s_educational_progress` — Static JSX text node
+  - context: `max-w-md"> Start by creating your first IEP goal to track {studentName}'s educational progress. </p> <Button onClick={onCreateClick} classN`
+- [498:9] (JSXText) `Create First Goal` → key: `common.optimizedgoalmanager.create_first_goal` — Static JSX text node
+  - context: `er:opacity-90 font-dyslexia"> <Plus className="h-4 w-4 mr-2" /> Create First Goal </Button> </CardContent> </Card> )); EmptyState.d`
+- [543:60] (JSXAttribute) `Edit goal` → key: `common.optimizedgoalmanager.edit_goal` — Static aria-label attribute
+  - context: `ssName="flex gap-2"> <Button variant="ghost" size="icon" aria-label="Edit goal" title="Edit goal"> <Edit className="h-4 w-4" />`
+- [543:78] (JSXAttribute) `Edit goal` → key: `common.optimizedgoalmanager.edit_goal` — Static title attribute
+  - context: `"> <Button variant="ghost" size="icon" aria-label="Edit goal" title="Edit goal"> <Edit className="h-4 w-4" /> </Button>`
+- [546:60] (JSXAttribute) `Delete goal` → key: `common.optimizedgoalmanager.delete_goal` — Static aria-label attribute
+  - context: `</Button> <Button variant="ghost" size="icon" aria-label="Delete goal" title="Delete goal" onClick={handleDelete}> <Trash2`
+- [546:80] (JSXAttribute) `Delete goal` → key: `common.optimizedgoalmanager.delete_goal` — Static title attribute
+  - context: `<Button variant="ghost" size="icon" aria-label="Delete goal" title="Delete goal" onClick={handleDelete}> <Trash2 className="h-4 w-4"`
+- [563:11] (JSXText) `Update Progress` → key: `common.optimizedgoalmanager.update_progress` — Static JSX text node
+  - context: `dleUpdateProgress}> <TrendingUp className="h-4 w-4 mr-1" /> Update Progress </Button> </CardContent> </Card> ); }); Goa`
+- [586:38] (JSXText) `Measurable Objective` → key: `common.optimizedgoalmanager.measurable_objective` — Static JSX text node
+  - context: `e: string }) => ( <div className="mb-4"> <h4 className="font-medium mb-2">Measurable Objective</h4> <p className="text-sm text-muted-foreground bg-mut`
+- [633:54] (JSXText) `No milestones yet` → key: `common.optimizedgoalmanager.no_milestones_yet` — Static JSX text node
+  - context: `ilestones.length === 0 ? ( <p className="text-sm text-muted-foreground">No milestones yet</p> ) : ( <div className="space-y-2">`
+
+### src/components/optimized/OptimizedVisualization3D.tsx
+- [68:11] (JSXText) `×` → key: `common.optimizedvisualization3d.` — Static JSX text node
+  - context: `foreground transition-colors motion-reduce:transition-none" > × </button> </div> <p className="font-medium">{point.label}<`
+- [400:11] (JSXText) `3D Data Visualization` → key: `common.optimizedvisualization3d.3d_data_visualization` — Static JSX text node
+  - context: `e="flex items-center gap-2"> <Move3d className="h-5 w-5" /> 3D Data Visualization </CardTitle> </CardHeader> <CardConten`
+- [407:63] (JSXText) `X Axis` → key: `common.optimizedvisualization3d.x_axis` — Static JSX text node
+  - context: `> <div> <label className="text-sm font-medium mb-1 block">X Axis</label> <Select value={xAxis} onValueChange={handleXAxisChang`
+- [413:54] (JSXText) `Emotion Intensity` → key: `common.optimizedvisualization3d.emotion_intensity` — Static JSX text node
+  - context: `<SelectContent> <SelectItem value="emotionIntensity">Emotion Intensity</SelectItem> <SelectItem value="sensoryRespons`
+- [414:53] (JSXText) `Sensory Response` → key: `common.optimizedvisualization3d.sensory_response` — Static JSX text node
+  - context: `tion Intensity</SelectItem> <SelectItem value="sensoryResponse">Sensory Response</SelectItem> <SelectItem value="time">Time</Sel`
+- [421:63] (JSXText) `Y Axis` → key: `common.optimizedvisualization3d.y_axis` — Static JSX text node
+  - context: `<div> <label className="text-sm font-medium mb-1 block">Y Axis</label> <Select value={yAxis} onValueChange={handleYAxisChang`
+- [427:54] (JSXText) `Emotion Intensity` → key: `common.optimizedvisualization3d.emotion_intensity` — Static JSX text node
+  - context: `<SelectContent> <SelectItem value="emotionIntensity">Emotion Intensity</SelectItem> <SelectItem value="sensoryRespons`
+- [428:53] (JSXText) `Sensory Response` → key: `common.optimizedvisualization3d.sensory_response` — Static JSX text node
+  - context: `tion Intensity</SelectItem> <SelectItem value="sensoryResponse">Sensory Response</SelectItem> <SelectItem value="time">Time</Sel`
+- [435:63] (JSXText) `Z Axis` → key: `common.optimizedvisualization3d.z_axis` — Static JSX text node
+  - context: `<div> <label className="text-sm font-medium mb-1 block">Z Axis</label> <Select value={zAxis} onValueChange={handleZAxisChang`
+- [441:54] (JSXText) `Emotion Intensity` → key: `common.optimizedvisualization3d.emotion_intensity` — Static JSX text node
+  - context: `<SelectContent> <SelectItem value="emotionIntensity">Emotion Intensity</SelectItem> <SelectItem value="sensoryRespons`
+- [442:53] (JSXText) `Sensory Response` → key: `common.optimizedvisualization3d.sensory_response` — Static JSX text node
+  - context: `tion Intensity</SelectItem> <SelectItem value="sensoryResponse">Sensory Response</SelectItem> <SelectItem value="time">Time</Sel`
+- [449:63] (JSXText) `Color By` → key: `common.optimizedvisualization3d.color_by` — Static JSX text node
+  - context: `<div> <label className="text-sm font-medium mb-1 block">Color By</label> <Select value={colorBy} onValueChange={handleColorB`
+- [464:63] (JSXText) `Point Size` → key: `common.optimizedvisualization3d.point_size` — Static JSX text node
+  - context: `assName="flex-1"> <label className="text-sm font-medium mb-1 block">Point Size</label> <Slider value={[pointSize]}`
+- [482:41] (JSXText) `All Categories` → key: `common.optimizedvisualization3d.all_categories` — Static JSX text node
+  - context: `tTrigger> <SelectContent> <SelectItem value="all">All Categories</SelectItem> <SelectItem value="emotion">Emotions`
+- [495:52] (JSXText) `Loading 3D visualization...` → key: `common.optimizedvisualization3d.loading_3d_visualization` — Static JSX text node
+  - context: `nter justify-center h-full"> <p className="text-muted-foreground">Loading 3D visualization...</p> </div> }> <Can`
+- [545:41] (JSXText) `data points` → key: `common.optimizedvisualization3d.data_points` — Static JSX text node
+  - context: `en mt-4 text-sm text-muted-foreground"> <span>{filteredPoints.length} data points</span> {hoveredPoint && ( <span>Hovering: {hov`
+
 ### src/components/ui/PremiumStatsCard.tsx
 - [100:38] (JSXText) `% fra forrige uke` → key: `common.premiumstatscard.fra_forrige_uke` — Static JSX text node
   - context: `border-t-destructive" )} /> {Math.abs(trend.value)}% fra forrige uke </motion.div> )} <p`
@@ -1322,32 +1554,8 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `(); setStudents(students); } catch (error) { logger.error('Dashboard: Error loading students', { error }); setStudents([]);`
 - [116:20] (MessageAPI) `Dashboard: Error calculating statistics` → key: `common.dashboard.dashboard_error_calculating_statistics` — Message API call: error()
   - context: `tries: entriesTrend } }; } catch (error) { logger.error('Dashboard: Error calculating statistics', { error }); return { todayEntri`
-- [195:19] (JSXText) `Ny Registrering` → key: `common.dashboard.ny_registrering` — Static JSX text node
-  - context: `<Plus className="mr-2 h-4 w-4 group-hover:animate-bounce" /> Ny Registrering </Button> </div> </div`
-- [220:64] (JSXText) `from last week` → key: `common.dashboard.from_last_week` — Static JSX text node
-  - context: `ixed(0)}%</span> <span className="ml-1 text-muted-foreground">from last week</span> </div> </Card>`
-- [242:64] (JSXText) `from last week` → key: `common.dashboard.from_last_week` — Static JSX text node
-  - context: `ixed(0)}%</span> <span className="ml-1 text-muted-foreground">from last week</span> </div> </Card>`
-- [264:64] (JSXText) `from last week` → key: `common.dashboard.from_last_week` — Static JSX text node
-  - context: `d-400">5%</span> <span className="ml-1 text-muted-foreground">from last week</span> </div> </Card> <`
-- [283:19] (JSXText) `Legg til elev` → key: `common.dashboard.legg_til_elev` — Static JSX text node
-  - context: `2 h-4 w-4 group-hover:animate-bounce transition-transform" /> Legg til elev </Button> </div> {/*`
-- [347:25] (JSXText) `Welcome to Sensory Tracker` → key: `common.dashboard.welcome_to_sensory_tracker` — Static JSX text node
-  - context: `<h3 className="text-2xl font-semibold text-foreground"> Welcome to Sensory Tracker </h3> <p`
-- [350:25] (JSXText) `It looks like you don't have any students yet. Get started by adding your first student and start tracking their sensory data.` → key: `common.dashboard.it_looks_like_you_don` — Static JSX text node
-  - context: `ssName="mt-3 max-w-md text-base text-muted-foreground"> It looks like you don't have any students yet. Get started by adding your first`
-- [359:25] (JSXText) `Add Your First Student` → key: `common.dashboard.add_your_first_student` — Static JSX text node
-  - context: `w-4 group-hover:animate-bounce transition-transform" /> Add Your First Student </Button> </div`
-- [372:81] (JSXText) `Want to explore with sample data?` → key: `common.dashboard.want_to_explore_with_sample` — Static JSX text node
-  - context: `<h4 className="text-lg font-semibold text-foreground">Want to explore with sample data?</h4> <p className="t`
-- [374:29] (JSXText) `Load mock data to test features and see how the app works` → key: `common.dashboard.load_mock_data_to_test` — Static JSX text node
-  - context: `<p className="text-sm text-muted-foreground mt-1"> Load mock data to test features and see how the app works`
-- [381:31] (JSXText) `Load Sample Data` → key: `common.dashboard.load_sample_data` — Static JSX text node
-  - context: `<FlaskConical className="h-4 w-4 mr-2" /> Load Sample Data </Button>`
-- [386:44] (JSXText) `Mock Data Loader` → key: `common.dashboard.mock_data_loader` — Static JSX text node
-  - context: `<DialogHeader> <DialogTitle>Mock Data Loader</DialogTitle> <DialogDescription>`
-- [388:33] (JSXText) `Quickly populate the app with demo students and tracking data for exploration.` → key: `common.dashboard.quickly_populate_the_app_with` — Static JSX text node
-  - context: `<DialogDescription> Quickly populate the app with demo students and tracking data for exploration.`
+- [310:66] (JSXText) `from last week` → key: `common.dashboard.from_last_week` — Static JSX text node
+  - context: `ive">5%</span> <span className="ml-1 text-muted-foreground">from last week</span> </div> </Card>`
 
 ### src/pages/DevTools.tsx
 - [25:24] (JSXText) `Developer Tools` → key: `common.devtools.developer_tools` — Static JSX text node
@@ -1560,6 +1768,24 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [347:29] (JSXAttribute) `Add any additional observations, environmental factors, or context about this session...` → key: `student.enhancedtrackstudent.add_any_additional_observations_environmental` — Static placeholder attribute
   - context: `onChange={(e) => setGeneralNotes(e.target.value)} placeholder="Add any additional observations, environmental factors, or context about this s`
 
+### src/pages/StudentProfile.original.tsx
+- [178:21] (MessageAPI) `Auto-seeding minimal demo data for mock route` → key: `student.studentprofile_original.auto_seeding_minimal_demo_data` — Message API call: info()
+  - context: `.current = true; setIsSeedingData(true); try { logger.info('Auto-seeding minimal demo data for mock route', { studentId });`
+- [194:22] (MessageAPI) `Failed to auto-seed mock data` → key: `student.studentprofile_original.failed_to_auto_seed_mock` — Message API call: error()
+  - context: `reloadData(); } } catch (error) { logger.error('Failed to auto-seed mock data', { error, studentId }); toast.error(Stri`
+- [243:24] (MessageAPI) `Error generating insights` → key: `student.studentprofile_original.error_generating_insights` — Message API call: error()
+  - context: `} } catch (error) { if (!signal.aborted) { logger.error('Error generating insights', { error }); setInsights(null);`
+- [273:26] (MessageAPI) `[SAFE] analyticsManager.triggerAnalyticsForStudent failed` → key: `student.studentprofile_original.safe_analyticsmanager_triggeranalyticsforstudent_failed` — Message API call: error()
+  - context: `} }) .catch((err) => { logger.error('[SAFE] analyticsManager.triggerAnalyticsForStudent failed', { error: err, stude`
+- [285:24] (MessageAPI) `[SAFE] analyticsManager.initializeStudentAnalytics failed` → key: `student.studentprofile_original.safe_analyticsmanager_initializestudentanalytics_failed` — Message API call: error()
+  - context: `entAnalytics done'); } } catch (err) { logger.error('[SAFE] analyticsManager.initializeStudentAnalytics failed', { error: err, stude`
+- [290:20] (MessageAPI) `[SAFE] analyticsManager outer try/catch caught error` → key: `student.studentprofile_original.safe_analyticsmanager_outer_try_catch` — Message API call: error()
+  - context: `/ Extra safety net; never rethrow from analytics side-effect logger.error('[SAFE] analyticsManager outer try/catch caught error', { error: err }); }`
+- [357:20] (MessageAPI) `Export error` → key: `student.studentprofile_original.export_error` — Message API call: error()
+  - context: `(tCommon('status.success'))); } catch (error: unknown) { logger.error('Export error', { error }); const errorMessage = error instanceof Error ?`
+- [381:20] (MessageAPI) `Backup error` → key: `student.studentprofile_original.backup_error` — Message API call: error()
+  - context: `ss(String(tCommon('status.success'))); } catch (error) { logger.error('Backup error', { error }); toast.error(String(tCommon('error.title')));`
+
 ### src/pages/StudentProfile.tsx
 - [178:21] (MessageAPI) `Auto-seeding minimal demo data for mock route` → key: `student.studentprofile.auto_seeding_minimal_demo_data` — Message API call: info()
   - context: `.current = true; setIsSeedingData(true); try { logger.info('Auto-seeding minimal demo data for mock route', { studentId });`
@@ -1597,6 +1823,22 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `atch (error) { logger.error('Backup error', { error }); toast.error('Backup failed. Please try again.'); } }, [student, trackingEntries, allEm`
 - [386:19] (MessageAPI) `Backup failed. Please try again.` → key: `student.studentprofile.backup_failed_please_try_again` — sonner toast.error()
   - context: `atch (error) { logger.error('Backup error', { error }); toast.error('Backup failed. Please try again.'); } }, [student, trackingEntries, allEm`
+
+### src/pages/StudentProfileOptimized.tsx
+- [123:23] (MessageAPI) `Demo data created successfully` → key: `student.studentprofileoptimized.demo_data_created_successfully` — Message API call: success()
+  - context: `window.dispatchEvent(new CustomEvent('mockDataLoaded')); toast.success('Demo data created successfully'); if (reloadData) reloadData(); }`
+- [123:23] (MessageAPI) `Demo data created successfully` → key: `student.studentprofileoptimized.demo_data_created_successfully` — sonner toast.success()
+  - context: `window.dispatchEvent(new CustomEvent('mockDataLoaded')); toast.success('Demo data created successfully'); if (reloadData) reloadData(); }`
+- [126:22] (MessageAPI) `Failed to auto-seed mock data` → key: `student.studentprofileoptimized.failed_to_auto_seed_mock` — Message API call: error()
+  - context: `if (reloadData) reloadData(); } catch (error) { logger.error('Failed to auto-seed mock data', { error, studentId }); toast.error('Fai`
+- [127:21] (MessageAPI) `Failed to create demo data` → key: `student.studentprofileoptimized.failed_to_create_demo_data` — Message API call: error()
+  - context: `ror('Failed to auto-seed mock data', { error, studentId }); toast.error('Failed to create demo data'); } finally { setIsSeedingData(false)`
+- [127:21] (MessageAPI) `Failed to create demo data` → key: `student.studentprofileoptimized.failed_to_create_demo_data` — sonner toast.error()
+  - context: `ror('Failed to auto-seed mock data', { error, studentId }); toast.error('Failed to create demo data'); } finally { setIsSeedingData(false)`
+- [154:26] (MessageAPI) `Failed to get insights` → key: `student.studentprofileoptimized.failed_to_get_insights` — Message API call: error()
+  - context: `ewInsights); } } catch (error) { logger.error('Failed to get insights', { error }); } finally { setIsLoa`
+- [212:20] (MessageAPI) `Export error` → key: `student.studentprofileoptimized.export_error` — Message API call: error()
+  - context: `essfully as ${format.toUpperCase()}\`); } catch (error) { logger.error('Export error', { error }); toast.error(\`Export failed: ${error instanceof`
 
 ### src/pages/TrackStudent.tsx
 - [48:19] (MessageAPI) `Emotion recorded!` → key: `student.trackstudent.emotion_recorded` — Message API call: success()
@@ -1675,8 +1917,12 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `false, usageCount: 0 }); setIsCreating(false); toast.success("Template created successfully"); }; const getCategoryColor = (category: st`
 - [298:13] (JSXText) `Quick Entry Templates` → key: `tracking.quickentrytemplates.quick_entry_templates` — Static JSX text node
   - context: `center gap-2"> <Zap className="h-5 w-5 text-primary" /> Quick Entry Templates </CardTitle> <Dialog open={isCreating}`
-- [304:17] (JSXText) `New Template` → key: `tracking.quickentrytemplates.new_template` — Static JSX text node
-  - context: `nt="outline"> <Plus className="h-4 w-4 mr-2" /> New Template </Button> </DialogTrigger> <D`
+- [302:62] (JSXAttribute) `Create new template` → key: `tracking.quickentrytemplates.create_new_template` — Static aria-label attribute
+  - context: `ogTrigger asChild> <Button size="sm" variant="outline" aria-label="Create new template" title="Create new template"> <Plus classNa`
+- [302:90] (JSXAttribute) `Create new template` → key: `tracking.quickentrytemplates.create_new_template` — Static title attribute
+  - context: `<Button size="sm" variant="outline" aria-label="Create new template" title="Create new template"> <Plus className="h-4 w-4 mr-2" />`
+- [304:52] (JSXText) `New Template` → key: `tracking.quickentrytemplates.new_template` — Static JSX text node
+  - context: `className="h-4 w-4 mr-2" /> <span className="hidden sm:inline">New Template</span> </Button> </DialogTrigger>`
 - [309:30] (JSXText) `Create Quick Entry Template` → key: `tracking.quickentrytemplates.create_quick_entry_template` — Static JSX text node
   - context: `className="max-w-md"> <DialogHeader> <DialogTitle>Create Quick Entry Template</DialogTitle> <DialogDescription>`
 - [311:19] (JSXText) `Define a name, optional description, category, and default values.` → key: `tracking.quickentrytemplates.define_a_name_optional_description` — Static JSX text node
@@ -1691,9 +1937,17 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `Button> <Button onClick={createTemplate}> Create Template </Button> </div>`
 - [414:23] (JSXText) `Apply Template` → key: `tracking.quickentrytemplates.apply_template` — Static JSX text node
   - context: `className="flex-1 mr-2" > Apply Template </Button>`
-- [445:16] (JSXText) `No quick entry templates yet` → key: `tracking.quickentrytemplates.no_quick_entry_templates_yet` — Static JSX text node
+- [422:38] (JSXAttribute) `Edit template` → key: `tracking.quickentrytemplates.edit_template` — Static aria-label attribute
+  - context: `variant="ghost" aria-label="Edit template" title="Edit template"`
+- [423:33] (JSXAttribute) `Edit template` → key: `tracking.quickentrytemplates.edit_template` — Static title attribute
+  - context: `aria-label="Edit template" title="Edit template" onClick={() => setEditingTemplate(temp`
+- [431:38] (JSXAttribute) `Delete template` → key: `tracking.quickentrytemplates.delete_template` — Static aria-label attribute
+  - context: `variant="ghost" aria-label="Delete template" title="Delete template"`
+- [432:33] (JSXAttribute) `Delete template` → key: `tracking.quickentrytemplates.delete_template` — Static title attribute
+  - context: `aria-label="Delete template" title="Delete template" onClick={() => deleteTemplate(templa`
+- [449:16] (JSXText) `No quick entry templates yet` → key: `tracking.quickentrytemplates.no_quick_entry_templates_yet` — Static JSX text node
   - context: `<Zap className="h-12 w-12 mx-auto mb-3 opacity-50" /> <p>No quick entry templates yet</p> <p className="text-sm">Create templ`
-- [446:36] (JSXText) `Create templates for common tracking scenarios` → key: `tracking.quickentrytemplates.create_templates_for_common_tracking` — Static JSX text node
+- [450:36] (JSXText) `Create templates for common tracking scenarios` → key: `tracking.quickentrytemplates.create_templates_for_common_tracking` — Static JSX text node
   - context: `<p>No quick entry templates yet</p> <p className="text-sm">Create templates for common tracking scenarios</p> </div> )}`
 
 ### src/components/SensoryTracker.tsx
@@ -1717,12 +1971,95 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 ### src/components/TimelineVisualization.tsx
 - [536:13] (JSXText) `Timeline Visualization` → key: `tracking.timelinevisualization.timeline_visualization` — Static JSX text node
   - context: `flex items-center gap-2"> <Clock className="h-5 w-5" /> Timeline Visualization </CardTitle> <div className="flex ite`
-- [744:54] (JSXText) `Data Streams` → key: `tracking.timelinevisualization.data_streams` — Static JSX text node
+- [547:26] (JSXAttribute) `Reset view` → key: `tracking.timelinevisualization.reset_view` — Static aria-label attribute
+  - context: `size="icon" variant="ghost" aria-label="Reset view" title="Reset view" onClick={() => {`
+- [548:21] (JSXAttribute) `Reset view` → key: `tracking.timelinevisualization.reset_view` — Static title attribute
+  - context: `variant="ghost" aria-label="Reset view" title="Reset view" onClick={() => { setZoomLevel(1);`
+- [569:28] (JSXAttribute) `Zoom out` → key: `tracking.timelinevisualization.zoom_out` — Static aria-label attribute
+  - context: `size="icon" variant="ghost" aria-label="Zoom out" title="Zoom out" onClick={() => handl`
+- [570:23] (JSXAttribute) `Zoom out` → key: `tracking.timelinevisualization.zoom_out` — Static title attribute
+  - context: `variant="ghost" aria-label="Zoom out" title="Zoom out" onClick={() => handleZoom(-0.5)} disa`
+- [582:28] (JSXAttribute) `Zoom in` → key: `tracking.timelinevisualization.zoom_in` — Static aria-label attribute
+  - context: `size="icon" variant="ghost" aria-label="Zoom in" title="Zoom in" onClick={() => handleZ`
+- [583:23] (JSXAttribute) `Zoom in` → key: `tracking.timelinevisualization.zoom_in` — Static title attribute
+  - context: `variant="ghost" aria-label="Zoom in" title="Zoom in" onClick={() => handleZoom(0.5)} disabl`
+- [596:28] (JSXAttribute) `Pan left` → key: `tracking.timelinevisualization.pan_left` — Static aria-label attribute
+  - context: `size="icon" variant="ghost" aria-label="Pan left" title="Pan left" onClick={() => handl`
+- [597:23] (JSXAttribute) `Pan left` → key: `tracking.timelinevisualization.pan_left` — Static title attribute
+  - context: `variant="ghost" aria-label="Pan left" title="Pan left" onClick={() => handlePan(50)} >`
+- [605:28] (JSXAttribute) `Pan right` → key: `tracking.timelinevisualization.pan_right` — Static aria-label attribute
+  - context: `size="icon" variant="ghost" aria-label="Pan right" title="Pan right" onClick={() => han`
+- [606:23] (JSXAttribute) `Pan right` → key: `tracking.timelinevisualization.pan_right` — Static title attribute
+  - context: `variant="ghost" aria-label="Pan right" title="Pan right" onClick={() => handlePan(-50)} >`
+- [756:54] (JSXText) `Data Streams` → key: `tracking.timelinevisualization.data_streams` — Static JSX text node
   - context: `rounded-lg p-3 shadow-lg"> <h4 className="font-medium text-sm mb-2">Data Streams</h4> <div className="space-y-1"> {dataStr`
+
+### src/components/tracking/DataCollectionMonitor.tsx
+- [281:48] (JSXText) `No data collection history yet` → key: `tracking.datacollectionmonitor.no_data_collection_history_yet` — Static JSX text node
+  - context: `o mb-4 text-muted-foreground" /> <p className="text-muted-foreground">No data collection history yet</p> <p className="text-sm text-muted-fo`
+- [283:13] (JSXText) `Start your first session to see monitoring insights` → key: `tracking.datacollectionmonitor.start_your_first_session_to` — Static JSX text node
+  - context: `et</p> <p className="text-sm text-muted-foreground mt-2"> Start your first session to see monitoring insights </p> </Car`
+- [298:15] (JSXText) `Collection Overview` → key: `tracking.datacollectionmonitor.collection_overview` — Static JSX text node
+  - context: `ems-center gap-2"> <Activity className="h-5 w-5" /> Collection Overview </CardTitle> </CardHeader> <`
+- [305:62] (JSXText) `Total Sessions` → key: `tracking.datacollectionmonitor.total_sessions` — Static JSX text node
+  - context: `totalSessions}</p> <p className="text-xs text-muted-foreground">Total Sessions</p> </div> <div className="text-cente`
+- [313:62] (JSXText) `Completion Rate` → key: `tracking.datacollectionmonitor.completion_rate` — Static JSX text node
+  - context: `</p> <p className="text-xs text-muted-foreground">Completion Rate</p> </div> <div className="text-cent`
+- [319:62] (JSXText) `Avg Quality` → key: `tracking.datacollectionmonitor.avg_quality` — Static JSX text node
+  - context: `</p> <p className="text-xs text-muted-foreground">Avg Quality</p> </div> <div className="text-center p`
+- [325:62] (JSXText) `Avg Duration` → key: `tracking.datacollectionmonitor.avg_duration` — Static JSX text node
+  - context: `</p> <p className="text-xs text-muted-foreground">Avg Duration</p> </div> </div> {/* Common`
+- [334:19] (JSXText) `Common Issues` → key: `tracking.datacollectionmonitor.common_issues` — Static JSX text node
+  - context: `<AlertCircle className="h-4 w-4 text-yellow-500" /> Common Issues </h4> <div className="space-y-1">`
+- [357:13] (JSXText) `Collection Goals` → key: `tracking.datacollectionmonitor.collection_goals` — Static JSX text node
+  - context: `lex items-center gap-2"> <Target className="h-5 w-5" /> Collection Goals </CardTitle> </CardHeader> <CardConte`
+- [398:23] (JSXText) `Target by` → key: `tracking.datacollectionmonitor.target_by` — Static JSX text node
+  - context: `"> <Calendar className="h-3 w-3" /> Target by {format(goal.deadline, 'MMM d')} </p>`
+- [414:15] (JSXText) `Recommended Strategies` → key: `tracking.datacollectionmonitor.recommended_strategies` — Static JSX text node
+  - context: `"> <Sparkles className="h-5 w-5 text-yellow-500" /> Recommended Strategies </CardTitle> </CardHeader>`
+- [496:66] (JSXText) `How to implement:` → key: `tracking.datacollectionmonitor.how_to_implement` — Static JSX text node
+  - context: `<div> <h5 className="text-xs font-medium mb-1">How to implement:</h5> <ul className="text-xs text-muted`
+- [532:13] (JSXText) `You have` → key: `tracking.datacollectionmonitor.you_have` — Static JSX text node
+  - context: `<Info className="h-4 w-4" /> <AlertDescription> You have {activeStrategies.length} active {activeStrategies.length === 1 ? 'stra`
+- [532:114] (JSXText) `.
+            Remember to apply` → key: `tracking.datacollectionmonitor.remember_to_apply` — Static JSX text node
+  - context: `egies.length} active {activeStrategies.length === 1 ? 'strategy' : 'strategies'}. Remember to apply {activeStrategies.length === 1 ? 'it' : 'them'}`
+- [533:79] (JSXText) `in your next session!` → key: `tracking.datacollectionmonitor.in_your_next_session` — Static JSX text node
+  - context: `. Remember to apply {activeStrategies.length === 1 ? 'it' : 'them'} in your next session! </AlertDescription> </Alert> )}`
+
+### src/components/tracking/SessionIndicator.tsx
+- [111:53] (JSXText) `Active Session` → key: `tracking.sessionindicator.active_session` — Static JSX text node
+  - context: `or())} /> <div> <h3 className="font-semibold text-sm">Active Session</h3> <p className="text-xs text-muted-foreground">`
+- [127:63] (JSXText) `Data Quality` → key: `tracking.sessionindicator.data_quality` — Static JSX text node
+  - context: `fy-between mb-1"> <span className="text-xs text-muted-foreground">Data Quality</span> <div className="flex items-center gap-1">`
+- [159:15] (JSXText) `Last saved` → key: `tracking.sessionindicator.last_saved` — Static JSX text node
+  - context: `ckCircle className="h-3 w-3 text-green-500" /> <span> Last saved {new Date(quality.lastSaved).toLocaleTimeString()} </span`
+- [215:15] (JSXText) `Add more data to improve session quality` → key: `tracking.sessionindicator.add_more_data_to_improve` — Static JSX text node
+  - context: `der-warning/20"> <p className="text-xs text-warning"> Add more data to improve session quality </p> </div>`
+
+### src/components/tracking/SessionRecovery.tsx
+- [52:21] (MessageAPI) `Failed to recover session:` → key: `tracking.sessionrecovery.failed_to_recover_session` — Message API call: error()
+  - context: `> s.sessionId !== sessionId) ); } catch (error) { console.error('Failed to recover session:', error); } finally { setIsRecovering(fals`
+- [103:21] (JSXText) `Unsaved Session Found` → key: `tracking.sessionrecovery.unsaved_session_found` — Static JSX text node
+  - context: `className)}> <AlertTriangle className="h-4 w-4" /> <AlertTitle>Unsaved Session Found</AlertTitle> <AlertDescription className="mt-2">`
+- [106:13] (JSXText) `You have an incomplete session from` → key: `tracking.sessionrecovery.you_have_an_incomplete_session` — Static JSX text node
+  - context: `escription className="mt-2"> <p className="text-sm mb-3"> You have an incomplete session from {age} with {session.metadata.dataPoints} dat`
+- [106:90] (JSXText) `data points.` → key: `tracking.sessionrecovery.data_points` — Static JSX text node
+  - context: `You have an incomplete session from {age} with {session.metadata.dataPoints} data points. </p> <div className="flex gap-2"> <`
+- [123:19] (JSXText) `Resume Session` → key: `tracking.sessionrecovery.resume_session` — Static JSX text node
+  - context: `<> <RefreshCw className="h-4 w-4 mr-2" /> Resume Session </> )} </Button>`
+- [148:19] (JSXText) `Recoverable Sessions` → key: `tracking.sessionrecovery.recoverable_sessions` — Static JSX text node
+  - context: `<AlertTriangle className="h-5 w-5 text-yellow-500" /> <span>Recoverable Sessions</span> </div> <Badge variant="outline">`
+- [155:46] (JSXText) `incomplete session(s) that can be recovered.` → key: `tracking.sessionrecovery.incomplete_session_s_that_can` — Static JSX text node
+  - context: `xt-sm text-muted-foreground mb-4"> Found {recoverableSessions.length} incomplete session(s) that can be recovered. </p> <div classNam`
+- [189:57] (JSXText) `data points` → key: `tracking.sessionrecovery.data_points` — Static JSX text node
+  - context: `xt-muted-foreground" /> <span>{session.metadata.dataPoints} data points</span> </div> <div className="fl`
+- [261:13] (JSXText) `Discard All` → key: `tracking.sessionrecovery.discard_all` — Static JSX text node
+  - context: `uctive" > <Trash2 className="h-4 w-4 mr-2" /> Discard All </Button> </div> </CardContent> </Card>`
 
 ## False positives
 
-- src/App.tsx [47:38] (JSXText) `Loading...` — Looks like an identifier or existing key
+- src/App.tsx [51:19] (JSXText) `Loading...` — Looks like an identifier or existing key
 - src/components/AdvancedSearch.tsx [463:233] (JSXText) `goals` — Looks like an identifier or existing key
 - src/components/AlertManager.tsx [159:25] (JSXText) `Resolved` — Looks like an identifier or existing key
 - src/components/analysis/CorrelationHeatmap.tsx [35:15] (JSXText) `Retry` — Looks like an identifier or existing key
@@ -1776,14 +2113,14 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - src/components/DataRequirementsCalculator.tsx [200:25] (JSXText) `Datapunkter` — Looks like an identifier or existing key
 - src/components/DataRequirementsCalculator.tsx [213:25] (JSXText) `Tidsperiode` — Looks like an identifier or existing key
 - src/components/DataRequirementsCalculator.tsx [214:86] (JSXText) `dager` — Looks like an identifier or existing key
-- src/components/DataRequirementsCalculator.tsx [229:80] (JSXText) `Tidsestimat` — Looks like an identifier or existing key
+- src/components/DataRequirementsCalculator.tsx [229:68] (JSXText) `Tidsestimat` — Looks like an identifier or existing key
 - src/components/DataRequirementsCalculator.tsx [232:17] (JSXText) `Med` — Looks like an identifier or existing key
 - src/components/DataRequirementsCalculator.tsx [233:91] (JSXText) `innen` — Looks like an identifier or existing key
 - src/components/DataRequirementsCalculator.tsx [261:98] (JSXText) `dager` — Looks like an identifier or existing key
-- src/components/DataRequirementsCalculator.tsx [284:82] (JSXText) `Anbefalinger` — Looks like an identifier or existing key
+- src/components/DataRequirementsCalculator.tsx [284:69] (JSXText) `Anbefalinger` — Looks like an identifier or existing key
 - src/components/DateRangeSelector.tsx [174:44] (JSXText) `Selected:` — Looks like an identifier or existing key
 - src/components/DebugVisualization.tsx [174:54] (JSXText) `Emotions` — Looks like an identifier or existing key
-- src/components/DevErrorBanner.tsx [84:15] (JSXText) `Dismiss` — Looks like an identifier or existing key
+- src/components/DevErrorBanner.tsx [101:15] (JSXText) `Dismiss` — Looks like an identifier or existing key
 - src/components/EmotionTracker.tsx [210:34] (JSXAttribute) `duration-help` — Looks like an identifier or existing key
 - src/components/EmotionTracker.tsx [240:17] (JSXText) `Sudden` — Looks like an identifier or existing key
 - src/components/EmotionTracker.tsx [248:17] (JSXText) `Gradual` — Looks like an identifier or existing key
@@ -1796,8 +2133,8 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - src/components/EnhancedPersonalizedInsights.tsx [253:42] (JSXText) `Alerts` — Looks like an identifier or existing key
 - src/components/EnhancedPersonalizedInsights.tsx [275:31] (JSXText) `Forecast:` — Looks like an identifier or existing key
 - src/components/EnhancedPersonalizedInsights.tsx [284:70] (JSXText) `Recommendations:` — Looks like an identifier or existing key
-- src/components/EnhancedPersonalizedInsights.tsx [385:50] (JSXText) `priority` — Looks like an identifier or existing key
-- src/components/EnhancedPersonalizedInsights.tsx [492:46] (JSXText) `severity` — Looks like an identifier or existing key
+- src/components/EnhancedPersonalizedInsights.tsx [386:50] (JSXText) `priority` — Looks like an identifier or existing key
+- src/components/EnhancedPersonalizedInsights.tsx [493:46] (JSXText) `severity` — Looks like an identifier or existing key
 - src/components/GoalManager.tsx [320:43] (JSXText) `Category` — Looks like an identifier or existing key
 - src/components/GoalManager.tsx [326:52] (JSXText) `Behavioral` — Looks like an identifier or existing key
 - src/components/GoalManager.tsx [327:50] (JSXText) `Academic` — Looks like an identifier or existing key
@@ -1827,6 +2164,8 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - src/components/MockDataLoader.tsx [166:51] (JSXText) `students` — Looks like an identifier or existing key
 - src/components/MockDataLoader.tsx [176:50] (JSXText) `Scenario` — Looks like an identifier or existing key
 - src/components/MockDataLoader.tsx [234:38] (JSXText) `Cancel` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedDataRequirementsCalculator.tsx [273:25] (JSXText) `sikkerhet` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedDataRequirementsCalculator.tsx [307:53] (JSXText) `datapunkt` — Looks like an identifier or existing key
 - src/components/optimized/OptimizedDataVisualization.tsx [69:11] (JSXText) `Tracking` — Looks like an identifier or existing key
 - src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx [232:42] (JSXText) `Strengths` — Looks like an identifier or existing key
 - src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx [234:41] (JSXText) `Patterns` — Looks like an identifier or existing key
@@ -1835,8 +2174,37 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx [266:70] (JSXText) `Recommendations:` — Looks like an identifier or existing key
 - src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx [367:50] (JSXText) `priority` — Looks like an identifier or existing key
 - src/components/optimized/OptimizedEnhancedPersonalizedInsights.tsx [474:46] (JSXText) `severity` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [391:52] (JSXText) `Behavioral` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [392:50] (JSXText) `Academic` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [393:48] (JSXText) `Social` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [394:55] (JSXText) `Communication` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [396:49] (JSXText) `Sensory` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [397:51] (JSXText) `Cognitive` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [398:51] (JSXText) `Emotional` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [399:50] (JSXText) `Self-Care` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [400:52] (JSXText) `Vocational` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [449:19] (JSXText) `Cancel` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [575:45] (JSXText) `Progress` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [599:13] (JSXText) `Created:` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [603:13] (JSXText) `Target:` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [626:37] (JSXText) `Milestones` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedGoalManager.tsx [629:11] (JSXText) `Add` — Looks like an identifier or existing key
 - src/components/optimized/OptimizedStudentCard.tsx [36:60] (JSXText) `Grade` — Looks like an identifier or existing key
 - src/components/optimized/OptimizedStudentCard.tsx [58:13] (JSXText) `Track` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedVisualization3D.tsx [73:12] (JSXText) `X:` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedVisualization3D.tsx [74:12] (JSXText) `Y:` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedVisualization3D.tsx [75:12] (JSXText) `Z:` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedVisualization3D.tsx [76:32] (JSXText) `Intensity:` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedVisualization3D.tsx [415:42] (JSXText) `Time` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedVisualization3D.tsx [429:42] (JSXText) `Time` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedVisualization3D.tsx [443:42] (JSXText) `Time` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedVisualization3D.tsx [455:46] (JSXText) `Category` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedVisualization3D.tsx [456:47] (JSXText) `Intensity` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedVisualization3D.tsx [476:63] (JSXText) `Filter` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedVisualization3D.tsx [483:45] (JSXText) `Emotions` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedVisualization3D.tsx [484:45] (JSXText) `Sensory` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedVisualization3D.tsx [485:51] (JSXText) `Environmental` — Looks like an identifier or existing key
+- src/components/optimized/OptimizedVisualization3D.tsx [547:19] (JSXText) `Hovering:` — Looks like an identifier or existing key
 - src/components/PaginatedSessionsList.tsx [72:19] (JSXText) `Showing` — Looks like an identifier or existing key
 - src/components/PaginatedSessionsList.tsx [72:51] (JSXText) `of` — Looks like an identifier or existing key
 - src/components/PaginatedSessionsList.tsx [103:62] (JSXText) `at` — Looks like an identifier or existing key
@@ -1885,22 +2253,47 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - src/components/StorageManager.tsx [125:18] (JSXText) `Goals:` — Looks like an identifier or existing key
 - src/components/StorageManager.tsx [126:18] (JSXText) `Alerts:` — Looks like an identifier or existing key
 - src/components/StudentProfileSidebar.tsx [110:13] (JSXText) `Hovedseksjoner` — Looks like an identifier or existing key
-- src/components/TestingDebugPanel.tsx [309:62] (JSXText) `Students` — Looks like an identifier or existing key
-- src/components/TestingDebugPanel.tsx [313:62] (JSXText) `Entries` — Looks like an identifier or existing key
-- src/components/TestingDebugPanel.tsx [317:62] (JSXText) `Analytics` — Looks like an identifier or existing key
-- src/components/TestingDebugPanel.tsx [362:66] (JSXText) `Hits` — Looks like an identifier or existing key
-- src/components/TestingDebugPanel.tsx [367:66] (JSXText) `Misses` — Looks like an identifier or existing key
-- src/components/TestingDebugPanel.tsx [372:66] (JSXText) `Sets` — Looks like an identifier or existing key
+- src/components/TestingDebugPanel.tsx [311:62] (JSXText) `Students` — Looks like an identifier or existing key
+- src/components/TestingDebugPanel.tsx [315:62] (JSXText) `Entries` — Looks like an identifier or existing key
+- src/components/TestingDebugPanel.tsx [319:62] (JSXText) `Analytics` — Looks like an identifier or existing key
+- src/components/TestingDebugPanel.tsx [364:66] (JSXText) `Hits` — Looks like an identifier or existing key
+- src/components/TestingDebugPanel.tsx [369:66] (JSXText) `Misses` — Looks like an identifier or existing key
+- src/components/TestingDebugPanel.tsx [374:66] (JSXText) `Sets` — Looks like an identifier or existing key
 - src/components/TimelineVisualization.tsx [541:17] (JSXText) `Live` — Looks like an identifier or existing key
-- src/components/TimelineVisualization.tsx [621:32] (JSXText) `x` — Looks like an identifier or existing key
-- src/components/TimelineVisualization.tsx [635:17] (JSXText) `Emotions` — Looks like an identifier or existing key
-- src/components/TimelineVisualization.tsx [645:17] (JSXText) `Sensory` — Looks like an identifier or existing key
-- src/components/TimelineVisualization.tsx [655:17] (JSXText) `Anomalies` — Looks like an identifier or existing key
-- src/components/TimelineVisualization.tsx [664:65] (JSXText) `minutes` — Looks like an identifier or existing key
-- src/components/TimelineVisualization.tsx [761:18] (JSXText) `Events:` — Looks like an identifier or existing key
-- src/components/TimelineVisualization.tsx [762:18] (JSXText) `Zoom:` — Looks like an identifier or existing key
-- src/components/TimelineVisualization.tsx [764:20] (JSXText) `Selection:` — Looks like an identifier or existing key
-- src/components/TimelineVisualization.tsx [764:91] (JSXText) `min` — Looks like an identifier or existing key
+- src/components/TimelineVisualization.tsx [633:32] (JSXText) `x` — Looks like an identifier or existing key
+- src/components/TimelineVisualization.tsx [647:17] (JSXText) `Emotions` — Looks like an identifier or existing key
+- src/components/TimelineVisualization.tsx [657:17] (JSXText) `Sensory` — Looks like an identifier or existing key
+- src/components/TimelineVisualization.tsx [667:17] (JSXText) `Anomalies` — Looks like an identifier or existing key
+- src/components/TimelineVisualization.tsx [676:65] (JSXText) `minutes` — Looks like an identifier or existing key
+- src/components/TimelineVisualization.tsx [773:18] (JSXText) `Events:` — Looks like an identifier or existing key
+- src/components/TimelineVisualization.tsx [774:18] (JSXText) `Zoom:` — Looks like an identifier or existing key
+- src/components/TimelineVisualization.tsx [776:20] (JSXText) `Selection:` — Looks like an identifier or existing key
+- src/components/TimelineVisualization.tsx [776:91] (JSXText) `min` — Looks like an identifier or existing key
+- src/components/tracking/DataCollectionMonitor.tsx [323:67] (JSXText) `m` — Looks like an identifier or existing key
+- src/components/tracking/DataCollectionMonitor.tsx [341:39] (JSXText) `times` — Looks like an identifier or existing key
+- src/components/tracking/DataCollectionMonitor.tsx [463:27] (JSXText) `Effectiveness:` — Looks like an identifier or existing key
+- src/components/tracking/DataCollectionMonitor.tsx [484:66] (JSXText) `Benefits:` — Looks like an identifier or existing key
+- src/components/tracking/DataCollectionMonitor.tsx [532:48] (JSXText) `active` — Looks like an identifier or existing key
+- src/components/tracking/SessionIndicator.tsx [78:34] (JSXText) `emotions` — Looks like an identifier or existing key
+- src/components/tracking/SessionIndicator.tsx [81:34] (JSXText) `sensory` — Looks like an identifier or existing key
+- src/components/tracking/SessionIndicator.tsx [139:60] (JSXText) `Emotions` — Looks like an identifier or existing key
+- src/components/tracking/SessionIndicator.tsx [143:60] (JSXText) `Sensory` — Looks like an identifier or existing key
+- src/components/tracking/SessionIndicator.tsx [149:60] (JSXText) `Environment` — Looks like an identifier or existing key
+- src/components/tracking/SessionIndicator.tsx [175:17] (JSXText) `Resume` — Looks like an identifier or existing key
+- src/components/tracking/SessionIndicator.tsx [185:17] (JSXText) `Pause` — Looks like an identifier or existing key
+- src/components/tracking/SessionIndicator.tsx [197:15] (JSXText) `Save` — Looks like an identifier or existing key
+- src/components/tracking/SessionRecovery.tsx [106:55] (JSXText) `with` — Looks like an identifier or existing key
+- src/components/tracking/SessionRecovery.tsx [118:19] (JSXText) `Recovering...` — Looks like an identifier or existing key
+- src/components/tracking/SessionRecovery.tsx [133:15] (JSXText) `Discard` — Looks like an identifier or existing key
+- src/components/tracking/SessionRecovery.tsx [155:11] (JSXText) `Found` — Looks like an identifier or existing key
+- src/components/tracking/SessionRecovery.tsx [176:59] (JSXText) `Started` — Looks like an identifier or existing key
+- src/components/tracking/SessionRecovery.tsx [193:74] (JSXText) `m` — Looks like an identifier or existing key
+- src/components/tracking/SessionRecovery.tsx [196:61] (JSXText) `Quality:` — Looks like an identifier or existing key
+- src/components/tracking/SessionRecovery.tsx [205:54] (JSXText) `emotions` — Looks like an identifier or existing key
+- src/components/tracking/SessionRecovery.tsx [210:59] (JSXText) `sensory` — Looks like an identifier or existing key
+- src/components/tracking/SessionRecovery.tsx [215:23] (JSXText) `Environmental` — Looks like an identifier or existing key
+- src/components/tracking/SessionRecovery.tsx [231:25] (JSXText) `Recovering...` — Looks like an identifier or existing key
+- src/components/tracking/SessionRecovery.tsx [236:25] (JSXText) `Resume` — Looks like an identifier or existing key
 - src/components/ui/Breadcrumbs.tsx [19:21] (JSXAttribute) `Breadcrumb` — Looks like an identifier or existing key
 - src/components/ui/dialog.tsx [47:35] (JSXText) `Close` — Looks like an identifier or existing key
 - src/components/ui/PremiumStudentCard.tsx [169:63] (JSXText) `Datainnsamling` — Looks like an identifier or existing key
@@ -1908,22 +2301,22 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - src/components/ui/sheet.tsx [68:35] (JSXText) `Close` — Looks like an identifier or existing key
 - src/components/ui/StudentCard.tsx [31:17] (JSXText) `Grade` — Looks like an identifier or existing key
 - src/components/ui/StudentCard.tsx [41:17] (JSXText) `Added` — Looks like an identifier or existing key
-- src/components/UniversalAnalyticsStatus.tsx [160:21] (JSXText) `Health:` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [60:14] (JSXText) `X:` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [61:14] (JSXText) `Y:` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [62:14] (JSXText) `Z:` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [63:34] (JSXText) `Intensity:` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [398:48] (JSXText) `Category` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [399:49] (JSXText) `Intensity` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [411:43] (JSXText) `All` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [412:47] (JSXText) `Emotions` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [413:47] (JSXText) `Sensory` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [414:53] (JSXText) `Environmental` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [503:54] (JSXText) `Legend` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [509:47] (JSXText) `Emotions` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [513:47] (JSXText) `Sensory` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [517:47] (JSXText) `Environmental` — Looks like an identifier or existing key
-- src/components/Visualization3D.tsx [532:18] (JSXText) `Points:` — Looks like an identifier or existing key
+- src/components/UniversalAnalyticsStatus.tsx [162:21] (JSXText) `Health:` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [62:14] (JSXText) `X:` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [63:14] (JSXText) `Y:` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [64:14] (JSXText) `Z:` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [65:34] (JSXText) `Intensity:` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [410:48] (JSXText) `Category` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [411:49] (JSXText) `Intensity` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [423:43] (JSXText) `All` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [424:47] (JSXText) `Emotions` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [425:47] (JSXText) `Sensory` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [426:53] (JSXText) `Environmental` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [532:54] (JSXText) `Legend` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [538:47] (JSXText) `Emotions` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [542:47] (JSXText) `Sensory` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [546:47] (JSXText) `Environmental` — Looks like an identifier or existing key
+- src/components/Visualization3D.tsx [561:18] (JSXText) `Points:` — Looks like an identifier or existing key
 - src/components/VisualizationControls.tsx [106:15] (JSXText) `Live` — Looks like an identifier or existing key
 - src/components/VisualizationControls.tsx [149:17] (JSXText) `Filters` — Looks like an identifier or existing key
 - src/components/VisualizationControls.tsx [168:21] (JSXText) `Active` — Looks like an identifier or existing key
@@ -1936,10 +2329,7 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - src/components/VisualizationControls.tsx [359:46] (JSXText) `emotions` — Looks like an identifier or existing key
 - src/components/VisualizationControls.tsx [365:53] (JSXText) `sessions` — Looks like an identifier or existing key
 - src/components/VisualizationControls.tsx [369:45] (JSXText) `new` — Looks like an identifier or existing key
-- src/pages/Dashboard.tsx [155:17] (JSXText) `Sensory` — Looks like an identifier or existing key
-- src/pages/Dashboard.tsx [155:55] (JSXText) `Tracker` — Looks like an identifier or existing key
-- src/pages/Dashboard.tsx [176:81] (JSXText) `Oversikt` — Looks like an identifier or existing key
-- src/pages/Dashboard.tsx [275:67] (JSXText) `Elever` — Looks like an identifier or existing key
+- src/pages/Dashboard.tsx [168:116] (JSXText) `K` — Looks like an identifier or existing key
 - src/pages/EnhancedTrackStudent.tsx [196:53] (JSXText) `minutes` — Looks like an identifier or existing key
 - src/pages/EnhancedTrackStudent.tsx [203:15] (JSXText) `Cancel` — Looks like an identifier or existing key
 - src/pages/EnhancedTrackStudent.tsx [236:83] (JSXText) `m` — Looks like an identifier or existing key
@@ -1949,6 +2339,30 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 
 ## Out of scope (non-UI / developer-only)
 
+- src/contexts/TrackingContext.tsx [190:23] (MessageAPI) `Session timed out due to inactivity` — Non-UI layer
+- src/contexts/TrackingContext.tsx [190:23] (MessageAPI) `Session timed out due to inactivity` — Non-UI layer
+- src/contexts/TrackingContext.tsx [195:17] (MessageAPI) `[TrackingContext] Started new session` — Non-UI layer
+- src/contexts/TrackingContext.tsx [222:17] (MessageAPI) `[TrackingContext] Ended session` — Non-UI layer
+- src/contexts/TrackingContext.tsx [243:17] (MessageAPI) `[TrackingContext] Paused session` — Non-UI layer
+- src/contexts/TrackingContext.tsx [268:17] (MessageAPI) `[TrackingContext] Resumed session` — Non-UI layer
+- src/contexts/TrackingContext.tsx [299:23] (MessageAPI) `Session timed out due to inactivity` — Non-UI layer
+- src/contexts/TrackingContext.tsx [299:23] (MessageAPI) `Session timed out due to inactivity` — Non-UI layer
+- src/contexts/TrackingContext.tsx [351:23] (MessageAPI) `Session timed out due to inactivity` — Non-UI layer
+- src/contexts/TrackingContext.tsx [351:23] (MessageAPI) `Session timed out due to inactivity` — Non-UI layer
+- src/contexts/TrackingContext.tsx [478:21] (MessageAPI) `Session saved successfully` — Non-UI layer
+- src/contexts/TrackingContext.tsx [478:21] (MessageAPI) `Session saved successfully` — Non-UI layer
+- src/contexts/TrackingContext.tsx [479:19] (MessageAPI) `[TrackingContext] Session saved` — Non-UI layer
+- src/contexts/TrackingContext.tsx [486:20] (MessageAPI) `[TrackingContext] Failed to save session` — Non-UI layer
+- src/contexts/TrackingContext.tsx [487:19] (MessageAPI) `Failed to save session` — Non-UI layer
+- src/contexts/TrackingContext.tsx [487:19] (MessageAPI) `Failed to save session` — Non-UI layer
+- src/contexts/TrackingContext.tsx [530:16] (MessageAPI) `Session discarded` — Non-UI layer
+- src/contexts/TrackingContext.tsx [530:16] (MessageAPI) `Session discarded` — Non-UI layer
+- src/contexts/TrackingContext.tsx [531:17] (MessageAPI) `[TrackingContext] Session discarded` — Non-UI layer
+- src/contexts/TrackingContext.tsx [540:19] (MessageAPI) `Session not found` — Non-UI layer
+- src/contexts/TrackingContext.tsx [540:19] (MessageAPI) `Session not found` — Non-UI layer
+- src/contexts/TrackingContext.tsx [545:19] (MessageAPI) `Session recovered` — Non-UI layer
+- src/contexts/TrackingContext.tsx [545:19] (MessageAPI) `Session recovered` — Non-UI layer
+- src/contexts/TrackingContext.tsx [546:17] (MessageAPI) `[TrackingContext] Session recovered` — Non-UI layer
 - src/hooks/useAnalyticsStatus.ts [63:20] (MessageAPI) `Error loading analytics status:` — Non-UI layer
 - src/hooks/useAnalyticsStatus.ts [93:20] (MessageAPI) `Error triggering analytics:` — Non-UI layer
 - src/hooks/useAnalyticsWorker.ts [96:20] (MessageAPI) `[useAnalyticsWorker] Worker runtime error, switching to fallback` — Non-UI layer
@@ -1966,11 +2380,36 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - src/hooks/useFilteredData.ts [124:20] (MessageAPI) `useFilteredData failed` — Non-UI layer
 - src/hooks/useMLTrainingWorker.ts [74:24] (MessageAPI) `Failed to save trained model:` — Non-UI layer
 - src/hooks/useMLTrainingWorker.ts [89:20] (MessageAPI) `ML training worker error:` — Non-UI layer
+- src/hooks/useMockDataSeeding.ts [48:19] (MessageAPI) `Manually seeding mock data` — Non-UI layer
+- src/hooks/useMockDataSeeding.ts [55:21] (MessageAPI) `Demo data created successfully` — Non-UI layer
+- src/hooks/useMockDataSeeding.ts [55:21] (MessageAPI) `Demo data created successfully` — Non-UI layer
+- src/hooks/useMockDataSeeding.ts [64:20] (MessageAPI) `Failed to seed mock data` — Non-UI layer
+- src/hooks/useMockDataSeeding.ts [66:19] (MessageAPI) `Failed to create demo data` — Non-UI layer
+- src/hooks/useMockDataSeeding.ts [66:19] (MessageAPI) `Failed to create demo data` — Non-UI layer
+- src/hooks/useMockDataSeeding.ts [112:21] (MessageAPI) `Auto-seeding minimal demo data for mock route` — Non-UI layer
+- src/hooks/useMockDataSeeding.ts [120:23] (MessageAPI) `Demo data created successfully` — Non-UI layer
+- src/hooks/useMockDataSeeding.ts [120:23] (MessageAPI) `Demo data created successfully` — Non-UI layer
+- src/hooks/useMockDataSeeding.ts [129:22] (MessageAPI) `Failed to auto-seed mock data` — Non-UI layer
+- src/hooks/useMockDataSeeding.ts [131:21] (MessageAPI) `Failed to create demo data` — Non-UI layer
+- src/hooks/useMockDataSeeding.ts [131:21] (MessageAPI) `Failed to create demo data` — Non-UI layer
+- src/hooks/usePerformanceMonitor.ts [371:17] (MessageAPI) `[Performance Report]` — Non-UI layer
 - src/hooks/useProgressiveChartData.ts [103:22] (MessageAPI) `[useProgressiveChartData] Failed computing emotion distribution` — Non-UI layer
 - src/hooks/useProgressiveChartData.ts [125:24] (MessageAPI) `[useProgressiveChartData] Failed computing sensory responses` — Non-UI layer
 - src/hooks/useProgressiveChartData.ts [163:24] (MessageAPI) `[useProgressiveChartData] Failed computing emotion trends` — Non-UI layer
 - src/hooks/useRealtimeData.ts [255:21] (MessageAPI) `Real-time data connection would be established here` — Non-UI layer
 - src/hooks/useStudentData.ts [79:20] (MessageAPI) `Failed to load student data:` — Non-UI layer
+- src/hooks/useStudentExport.ts [38:19] (MessageAPI) `No student data available to export` — Non-UI layer
+- src/hooks/useStudentExport.ts [38:19] (MessageAPI) `No student data available to export` — Non-UI layer
+- src/hooks/useStudentExport.ts [88:19] (MessageAPI) `Data exported` — Non-UI layer
+- src/hooks/useStudentExport.ts [90:20] (MessageAPI) `Export error` — Non-UI layer
+- src/hooks/useStudentExport.ts [101:19] (MessageAPI) `No student data available to backup` — Non-UI layer
+- src/hooks/useStudentExport.ts [101:19] (MessageAPI) `No student data available to backup` — Non-UI layer
+- src/hooks/useStudentExport.ts [120:21] (MessageAPI) `Backup created successfully` — Non-UI layer
+- src/hooks/useStudentExport.ts [120:21] (MessageAPI) `Backup created successfully` — Non-UI layer
+- src/hooks/useStudentExport.ts [121:19] (MessageAPI) `Backup created` — Non-UI layer
+- src/hooks/useStudentExport.ts [123:20] (MessageAPI) `Backup error` — Non-UI layer
+- src/hooks/useStudentExport.ts [124:19] (MessageAPI) `Backup failed. Please try again.` — Non-UI layer
+- src/hooks/useStudentExport.ts [124:19] (MessageAPI) `Backup failed. Please try again.` — Non-UI layer
 - src/lib/alertSystem.ts [160:20] (MessageAPI) `Error saving alerts:` — Developer-only log or non-UI message in lib/
 - src/lib/alertSystem.ts [177:22] (MessageAPI) `Failed to save alerts even after cleanup:` — Developer-only log or non-UI message in lib/
 - src/lib/alertSystem.ts [205:20] (MessageAPI) `Error loading alerts:` — Developer-only log or non-UI message in lib/
@@ -1995,6 +2434,7 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - src/lib/analyticsManager.ts [466:20] (MessageAPI) `[analyticsManager] triggerAnalyticsForStudent failed` — Developer-only log or non-UI message in lib/
 - src/lib/analyticsManager.ts [533:58] (MessageAPI) `Error saving analytics profiles:` — Developer-only log or non-UI message in lib/
 - src/lib/analyticsManager.ts [613:18] (MessageAPI) `[analyticsManager.orchestrator] getInsights failed` — Developer-only log or non-UI message in lib/
+- src/lib/analyticsManagerLite.ts [26:20] (MessageAPI) `[analyticsManagerLite] Failed to initialize student` — Developer-only log or non-UI message in lib/
 - src/lib/analyticsProfiles.ts [40:18] (MessageAPI) `[analyticsProfiles] Failed to load profiles` — Developer-only log or non-UI message in lib/
 - src/lib/analyticsProfiles.ts [62:18] (MessageAPI) `[analyticsProfiles] Failed to save profiles` — Developer-only log or non-UI message in lib/
 - src/lib/analyticsWorkerFallback.ts [51:24] (MessageAPI) `Fallback: Error analyzing emotion patterns` — Developer-only log or non-UI message in lib/
@@ -2030,6 +2470,18 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - src/lib/mockDataGenerator.ts [376:18] (MessageAPI) `Failed to load mock data:` — Developer-only log or non-UI message in lib/
 - src/lib/mockDataGenerator.ts [397:18] (MessageAPI) `Failed to clear mock data:` — Developer-only log or non-UI message in lib/
 - src/lib/modelEvaluation.ts [164:24] (MessageAPI) `[modelEvaluation] onupgradeneeded failed` — Developer-only log or non-UI message in lib/
+- src/lib/sessionManager.ts [146:17] (MessageAPI) `[SessionManager] Created new session` — Developer-only log or non-UI message in lib/
+- src/lib/sessionManager.ts [256:17] (MessageAPI) `[SessionManager] Completed session` — Developer-only log or non-UI message in lib/
+- src/lib/sessionManager.ts [279:17] (MessageAPI) `[SessionManager] Abandoned session` — Developer-only log or non-UI message in lib/
+- src/lib/sessionManager.ts [292:17] (MessageAPI) `[SessionManager] Paused session` — Developer-only log or non-UI message in lib/
+- src/lib/sessionManager.ts [306:17] (MessageAPI) `[SessionManager] Resumed session` — Developer-only log or non-UI message in lib/
+- src/lib/sessionManager.ts [344:22] (MessageAPI) `[SessionManager] Failed to recover session` — Developer-only log or non-UI message in lib/
+- src/lib/sessionManager.ts [351:19] (MessageAPI) `[SessionManager] Recovered sessions` — Developer-only log or non-UI message in lib/
+- src/lib/sessionManager.ts [574:20] (MessageAPI) `[SessionManager] Failed to persist session` — Developer-only log or non-UI message in lib/
+- src/lib/sessionManager.ts [603:20] (MessageAPI) `[SessionManager] Failed to load session history` — Developer-only log or non-UI message in lib/
+- src/lib/sessionManager.ts [615:20] (MessageAPI) `[SessionManager] Failed to save session history` — Developer-only log or non-UI message in lib/
+- src/lib/sessionManager.ts [640:17] (MessageAPI) `[SessionManager] Updated validation rules` — Developer-only log or non-UI message in lib/
+- src/lib/sessionManager.ts [664:17] (MessageAPI) `[SessionManager] Cleared all sessions` — Developer-only log or non-UI message in lib/
 - src/lib/storageUtils.ts [55:20] (MessageAPI) `Error clearing old data:` — Developer-only log or non-UI message in lib/
 - src/lib/universalAnalyticsInitializer.ts [45:20] (MessageAPI) `Error initializing universal analytics:` — Developer-only log or non-UI message in lib/
 - src/lib/universalAnalyticsInitializer.ts [101:92] (MessageAPI) `Auto-initialization failed:` — Developer-only log or non-UI message in lib/
@@ -2042,13 +2494,8 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 
 ### src/App.tsx
 
-- [47:38] (JSXText) Static JSX text node: `Loading...`
-  - context: `<Toaster /> <BrowserRouter> <Suspense fallback={<div>Loading...</div>}> <Routes> <Route path="/" elemen`
-
-### src/components/AccessibilityWrapper.tsx
-
-- [21:11] (JSXText) Static JSX text node: `Skip to main content`
-  - context: `primary-foreground px-4 py-2 rounded-md z-50 font-dyslexia" > Skip to main content </a> )} <div id="main-content" c`
+- [51:19] (JSXText) Static JSX text node: `Loading...`
+  - context: `<div role="status" aria-live="polite" className="p-4"> Loading... </div> }> <Routes>`
 
 ### src/components/AdvancedFilterPanel.tsx
 
@@ -2058,6 +2505,10 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `el="Select triggers to include"> <SelectValue placeholder="Select triggers to include" /> </SelectTrigger>`
 - [697:30] (JSXAttribute) Static aria-label attribute: `Filter name`
   - context: `eholder={String(tCommon('filterNamePlaceholder'))} aria-label="Filter name" value={filterName} onChange={(`
+- [745:42] (JSXAttribute) Static aria-label attribute: `Delete saved filter`
+  - context: `variant="ghost" aria-label="Delete saved filter" title="Delete saved filter"`
+- [746:37] (JSXAttribute) Static title attribute: `Delete saved filter`
+  - context: `aria-label="Delete saved filter" title="Delete saved filter" onClick={() => onDeleteFilte`
 
 ### src/components/AdvancedSearch.tsx
 
@@ -2089,7 +2540,7 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [156:57] (JSXText) Static JSX text node: `data points`
   - context: `aleDateString()}</span> <span>{alertEntry.alert.dataPoints} data points</span> {alertEntry.resolved && (`
 - [159:25] (JSXText) Static JSX text node: `Resolved`
-  - context: `<Badge variant="outline" className="text-green-600"> Resolved </Badge> )}`
+  - context: `utline" className="text-success-foreground bg-success"> Resolved </Badge> )}`
 - [199:27] (JSXText) Static JSX text node: `Review details and add resolution notes before confirming.`
   - context: `logTitle> <DialogDescription> Review details and add resolution notes before confirming.`
 - [215:68] (JSXText) Static JSX text node: `•`
@@ -2149,7 +2600,7 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `break; } } catch (error) { logger.error('Export failed:', error); toast.error(String(tAnalytics('export.failur`
 - [316:46] (JSXAttribute) Static aria-labelledby attribute: `analytics-dashboard-title`
   - context: `tics('skipToContent'))} </a> <section role="region" aria-labelledby="analytics-dashboard-title" className="space-y-6"> {/* Hidden live region`
-- [522:23] (MessageAPI) Message API call: error(): `Error comparing timestamps in AnalyticsDashboard memo:`
+- [525:23] (MessageAPI) Message API call: error(): `Error comparing timestamps in AnalyticsDashboard memo:`
   - context: `return prevTime === nextTime; } catch (error) { logger.error('Error comparing timestamps in AnalyticsDashboard memo:', error); retur`
 
 ### src/components/AnalyticsSettings.tsx
@@ -2453,12 +2904,12 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `<span>{nextTarget.days.current} / {nextTarget.requirement.minDays} dager</span> </div> <Progress value={nextTarget.`
 - [219:46] (JSXText) Static JSX text node: `flere dager trengs`
   - context: `e="text-xs text-muted-foreground"> {nextTarget.days.needed} flere dager trengs </p> )} </div`
-- [229:80] (JSXText) Static JSX text node: `Tidsestimat`
-  - context: `<span className="font-medium text-blue-900 dark:text-blue-100">Tidsestimat</span> </div> <p className="text-sm text`
+- [229:68] (JSXText) Static JSX text node: `Tidsestimat`
+  - context: `ext-info" /> <span className="font-medium text-info-foreground">Tidsestimat</span> </div> <p className="text-sm text`
 - [232:17] (JSXText) Static JSX text node: `Med`
-  - context: `<p className="text-sm text-blue-800 dark:text-blue-200"> Med {getRecommendedRate()} datapunkt(er) per dag vil du nå{' '}`
+  - context: `> <p className="text-sm text-info-foreground/80"> Med {getRecommendedRate()} datapunkt(er) per dag vil du nå{' '}`
 - [232:44] (JSXText) Static JSX text node: `datapunkt(er) per dag vil du nå`
-  - context: `m text-blue-800 dark:text-blue-200"> Med {getRecommendedRate()} datapunkt(er) per dag vil du nå{' '} <span className="font-mediu`
+  - context: `e="text-sm text-info-foreground/80"> Med {getRecommendedRate()} datapunkt(er) per dag vil du nå{' '} <span className="font-mediu`
 - [233:91] (JSXText) Static JSX text node: `innen`
   - context: `<span className="font-medium">{nextTarget.requirement.description}</span> innen{' '} <span className="font-medium">{formatDate(nextTarget.`
 - [243:39] (JSXText) Static JSX text node: `Alle sikkerhetsnivåer`
@@ -2469,12 +2920,12 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `{calc.requirement.minDataPoints} datapunkter over {calc.requirement.minDays} dager </p> </div> </div>`
 - [271:42] (JSXText) Static JSX text node: `dager igjen`
   - context: `="text-xs text-muted-foreground mt-1"> ~{calc.daysToTarget} dager igjen </p> )} </div>`
-- [284:82] (JSXText) Static JSX text node: `Anbefalinger`
-  - context: `<span className="font-medium text-purple-900 dark:text-purple-100">Anbefalinger</span> </div> <ul className="text-sm text-p`
+- [284:69] (JSXText) Static JSX text node: `Anbefalinger`
+  - context: `primary" /> <span className="font-medium text-primary-foreground">Anbefalinger</span> </div> <ul className="text-sm text-p`
 - [287:19] (JSXText) Static JSX text node: `• Samle`
-  - context: `ame="text-sm text-purple-800 dark:text-purple-200 space-y-1"> <li>• Samle {getRecommendedRate()} datapunkt(er) per dag for optimal fremgang</li>`
+  - context: `<ul className="text-sm text-primary-foreground/80 space-y-1"> <li>• Samle {getRecommendedRate()} datapunkt(er) per dag for optimal fremgang</li>`
 - [287:50] (JSXText) Static JSX text node: `datapunkt(er) per dag for optimal fremgang`
-  - context: `rk:text-purple-200 space-y-1"> <li>• Samle {getRecommendedRate()} datapunkt(er) per dag for optimal fremgang</li> <li>• Registrer da`
+  - context: `mary-foreground/80 space-y-1"> <li>• Samle {getRecommendedRate()} datapunkt(er) per dag for optimal fremgang</li> <li>• Registrer da`
 - [288:19] (JSXText) Static JSX text node: `• Registrer data konsekvent for bedre mønstergjenkjenning`
   - context: `mendedRate()} datapunkt(er) per dag for optimal fremgang</li> <li>• Registrer data konsekvent for bedre mønstergjenkjenning</li> <li`
 - [289:19] (JSXText) Static JSX text node: `• Inkluder både følelser og sensoriske opplevelser i hver økt`
@@ -2521,9 +2972,15 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 
 ### src/components/DevErrorBanner.tsx
 
-- [65:59] (JSXText) Static JSX text node: `Dev error captured (`
+- [39:22] (MessageAPI) Message API call: error(): `Dev error captured`
+  - context: `// Use central logger to record the error logger.error('Dev error captured', ...args); } catch {} // Always forward to the`
+- [49:20] (MessageAPI) Message API call: error(): `Window error`
+  - context: `=> c + 1); // Log window errors through central logger logger.error('Window error', e.error || new Error(e.message)); }; const onUnhandledRe`
+- [58:20] (MessageAPI) Message API call: error(): `Unhandled promise rejection`
+  - context: `1); // Log unhandled rejections through central logger logger.error('Unhandled promise rejection', reason instanceof Error ? reason : new Error(msg)`
+- [82:59] (JSXText) Static JSX text node: `Dev error captured (`
   - context: `className="min-w-0"> <div className="font-medium text-destructive">Dev error captured ({errorCount})</div> <div className="mt-1 truncat`
-- [84:15] (JSXText) Static JSX text node: `Dismiss`
+- [101:15] (JSXText) Static JSX text node: `Dismiss`
   - context: `nt" onClick={() => setIsHidden(true)} > Dismiss </button> </div> </div> </div> <`
 
 ### src/components/EmotionTracker.tsx
@@ -2602,43 +3059,43 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `<div className="text-sm font-medium"> Forecast: {insight.prediction.value.toFixed(1)} <`
 - [284:70] (JSXText) Static JSX text node: `Recommendations:`
   - context: `me="mt-3"> <h5 className="text-sm font-medium mb-2">Recommendations:</h5> <ul className="text-sm text-mu`
-- [306:63] (JSXText) Static JSX text node: `% confidence`
+- [307:63] (JSXText) Static JSX text node: `% confidence`
   - context: `> {Math.round(insight.confidence * 100)}% confidence </Badge> <div className`
-- [319:18] (JSXText) Static JSX text node: `Continue collecting data to generate predictive insights`
+- [320:18] (JSXText) Static JSX text node: `Continue collecting data to generate predictive insights`
   - context: `<Brain className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>Continue collecting data to generate predictive insights</p> </div>`
-- [338:75] (JSXText) Static JSX text node: `Strength Level:`
+- [339:75] (JSXText) Static JSX text node: `Strength Level:`
   - context: `p-2"> <span className="text-xs text-muted-foreground">Strength Level:</span> <Progress value={strength.confi`
-- [351:18] (JSXText) Static JSX text node: `Strengths will be identified as patterns emerge from data collection`
+- [352:18] (JSXText) Static JSX text node: `Strengths will be identified as patterns emerge from data collection`
   - context: `<Heart className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>Strengths will be identified as patterns emerge from data collection</p>`
-- [385:50] (JSXText) Static JSX text node: `priority`
+- [386:50] (JSXText) Static JSX text node: `priority`
   - context: `ry' }> {opportunity.priority} priority </Badge> </div>`
-- [391:68] (JSXText) Static JSX text node: `Action Steps:`
+- [392:68] (JSXText) Static JSX text node: `Action Steps:`
   - context: `Name="mt-3"> <h5 className="text-sm font-medium mb-2">Action Steps:</h5> <ul className="text-sm text-muted-f`
-- [395:64] (JSXText) Static JSX text node: `•`
+- [396:64] (JSXText) Static JSX text node: `•`
   - context: `ms-start gap-2"> <span className="text-primary">•</span> <span>{rec}</span>`
-- [410:18] (JSXText) Static JSX text node: `Growth opportunities will be identified based on data patterns`
+- [411:18] (JSXText) Static JSX text node: `Growth opportunities will be identified based on data patterns`
   - context: `<Target className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>Growth opportunities will be identified based on data patterns</p> <`
-- [424:55] (JSXText) Static JSX text node: `Emotional Pattern:`
+- [425:55] (JSXText) Static JSX text node: `Emotional Pattern:`
   - context: `<div className="flex-1"> <h4 className="font-semibold">Emotional Pattern: {pattern.pattern.replace('-', ' ')}</h4>`
-- [428:67] (JSXText) Static JSX text node: `% confidence`
+- [429:67] (JSXText) Static JSX text node: `% confidence`
   - context: `nt="outline"> {Math.round(pattern.confidence * 100)}% confidence </Badge> <span`
-- [431:50] (JSXText) Static JSX text node: `data points`
+- [432:50] (JSXText) Static JSX text node: `data points`
   - context: `ext-xs text-muted-foreground"> {pattern.dataPoints} data points </span> </div>`
-- [445:55] (JSXText) Static JSX text node: `Sensory Pattern:`
+- [446:55] (JSXText) Static JSX text node: `Sensory Pattern:`
   - context: `<div className="flex-1"> <h4 className="font-semibold">Sensory Pattern: {pattern.pattern.replace('-', ' ')}</h4>`
-- [449:67] (JSXText) Static JSX text node: `% confidence`
+- [450:67] (JSXText) Static JSX text node: `% confidence`
   - context: `nt="outline"> {Math.round(pattern.confidence * 100)}% confidence </Badge> <span`
-- [452:50] (JSXText) Static JSX text node: `data points`
+- [453:50] (JSXText) Static JSX text node: `data points`
   - context: `ext-xs text-muted-foreground"> {pattern.dataPoints} data points </span> </div>`
-- [464:18] (JSXText) Static JSX text node: `Patterns will emerge as more data is collected`
+- [465:18] (JSXText) Static JSX text node: `Patterns will emerge as more data is collected`
   - context: `<BarChart3 className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>Patterns will emerge as more data is collected</p> </div>`
-- [492:46] (JSXText) Static JSX text node: `severity`
+- [493:46] (JSXText) Static JSX text node: `severity`
   - context: `ondary' }> {anomaly.severity} severity </Badge> </div>`
-- [500:68] (JSXText) Static JSX text node: `Recommended Actions:`
+- [501:68] (JSXText) Static JSX text node: `Recommended Actions:`
   - context: `Name="mt-3"> <h5 className="text-sm font-medium mb-2">Recommended Actions:</h5> <ul className="text-sm text-`
-- [504:64] (JSXText) Static JSX text node: `•`
+- [505:64] (JSXText) Static JSX text node: `•`
   - context: `ms-start gap-2"> <span className="text-primary">•</span> <span>{rec}</span>`
-- [519:18] (JSXText) Static JSX text node: `No significant anomalies detected in recent data`
+- [520:18] (JSXText) Static JSX text node: `No significant anomalies detected in recent data`
   - context: `<Shield className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>No significant anomalies detected in recent data</p> </div>`
 
 ### src/components/EnvironmentalTracker.tsx
@@ -2786,6 +3243,14 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `md"> Start by creating your first IEP goal to track {student.name}'s educational progress. </p> <Button onClick={() => set`
 - [403:15] (JSXText) Static JSX text node: `Create First Goal`
   - context: `0 font-dyslexia"> <Plus className="h-4 w-4 mr-2" /> Create First Goal </Button> </CardContent> </Card>`
+- [429:68] (JSXAttribute) Static aria-label attribute: `Edit goal`
+  - context: `flex gap-2"> <Button variant="ghost" size="icon" aria-label="Edit goal" title="Edit goal"> <Edit className="h-4 w-4" /`
+- [429:86] (JSXAttribute) Static title attribute: `Edit goal`
+  - context: `<Button variant="ghost" size="icon" aria-label="Edit goal" title="Edit goal"> <Edit className="h-4 w-4" />`
+- [432:68] (JSXAttribute) Static aria-label attribute: `Delete goal`
+  - context: `</Button> <Button variant="ghost" size="icon" aria-label="Delete goal" title="Delete goal" onClick={() => deleteGoal(goal.id)}>`
+- [432:88] (JSXAttribute) Static title attribute: `Delete goal`
+  - context: `<Button variant="ghost" size="icon" aria-label="Delete goal" title="Delete goal" onClick={() => deleteGoal(goal.id)}> <Trash2`
 - [442:59] (JSXText) Static JSX text node: `Progress`
   - context: `ustify-between mb-2"> <span className="text-sm font-medium">Progress</span> <span className="text-sm text-muted-foregrou`
 - [450:52] (JSXText) Static JSX text node: `Measurable Objective`
@@ -2806,11 +3271,11 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `> <Plus className="h-3 w-3 mr-1" /> Add </Button> </div> {go`
 - [489:66] (JSXText) Static JSX text node: `No milestones yet`
   - context: `ngth === 0 ? ( <p className="text-sm text-muted-foreground">No milestones yet</p> ) : ( <div className`
-- [523:44] (MessageAPI) Message API call: prompt(): `Enter current progress value:`
+- [525:44] (MessageAPI) Message API call: prompt(): `Enter current progress value:`
   - context: `onClick={() => { const value = prompt("Enter current progress value:"); const notes = prompt("Pr`
-- [524:44] (MessageAPI) Message API call: prompt(): `Progress notes (optional):`
+- [526:44] (MessageAPI) Message API call: prompt(): `Progress notes (optional):`
   - context: `pt("Enter current progress value:"); const notes = prompt("Progress notes (optional):"); if (value) {`
-- [531:21] (JSXText) Static JSX text node: `Update Progress`
+- [533:21] (JSXText) Static JSX text node: `Update Progress`
   - context: `<TrendingUp className="h-4 w-4 mr-1" /> Update Progress </Button> </div>`
 
 ### src/components/InteractiveDataVisualization.debug.tsx
@@ -2992,21 +3457,25 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `<div className="text-sm text-muted-foreground"> Page {currentPage} of {totalPages} </div>`
 - [146:38] (JSXText) Static JSX text node: `of`
   - context: `className="text-sm text-muted-foreground"> Page {currentPage} of {totalPages} </div> <div cla`
+- [153:32] (JSXAttribute) Static aria-label attribute: `First page`
+  - context: `variant="ghost" size="icon" aria-label="First page" onClick={goToFirstPage} dis`
+- [163:32] (JSXAttribute) Static aria-label attribute: `Previous page`
+  - context: `variant="ghost" size="icon" aria-label="Previous page" onClick={goToPreviousPage}`
+- [196:32] (JSXAttribute) Static aria-label attribute: `Next page`
+  - context: `variant="ghost" size="icon" aria-label="Next page" onClick={goToNextPage} disab`
+- [206:32] (JSXAttribute) Static aria-label attribute: `Last page`
+  - context: `variant="ghost" size="icon" aria-label="Last page" onClick={goToLastPage} disab`
 
 ### src/components/PatternDetectionEmptyState.tsx
 
-- [86:47] (JSXText) Static JSX text node: `Krav for mønstergjenkjenning:`
-  - context: `<div className="space-y-3"> <h4 className="text-sm font-medium">Krav for mønstergjenkjenning:</h4> {requirements.map((req, index) => (`
-- [103:13] (JSXText) Static JSX text node: `Tips for bedre mønstergjenkjenning:`
-  - context: `ssName="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2"> Tips for bedre mønstergjenkjenning: </h4> <ul className="tex`
-- [106:17] (JSXText) Static JSX text node: `• Registrer data på samme tid hver dag`
-  - context: `className="text-sm text-blue-800 dark:text-blue-200 space-y-1"> <li>• Registrer data på samme tid hver dag</li> <li>• Inkluder både føle`
-- [107:17] (JSXText) Static JSX text node: `• Inkluder både følelser og sensoriske opplevelser`
-  - context: `1"> <li>• Registrer data på samme tid hver dag</li> <li>• Inkluder både følelser og sensoriske opplevelser</li> <li>• Legg m`
-- [108:17] (JSXText) Static JSX text node: `• Legg merke til miljøfaktorer (støy, lys, aktivitet)`
-  - context: `<li>• Inkluder både følelser og sensoriske opplevelser</li> <li>• Legg merke til miljøfaktorer (støy, lys, aktivitet)</li> <li>• Vær`
-- [109:17] (JSXText) Static JSX text node: `• Vær konsistent i minst 2-3 uker`
-  - context: `<li>• Legg merke til miljøfaktorer (støy, lys, aktivitet)</li> <li>• Vær konsistent i minst 2-3 uker</li> </ul> </div> {`
+- [125:17] (JSXText) Static JSX text node: `•`
+  - context: `<ul className="text-sm text-info-foreground/80 space-y-1"> <li>• {String(tAnalytics('patternDetection.tips.sameTime'))}</li> <li>•`
+- [126:17] (JSXText) Static JSX text node: `•`
+  - context: `i>• {String(tAnalytics('patternDetection.tips.sameTime'))}</li> <li>• {String(tAnalytics('patternDetection.tips.includeAll'))}</li> <li>`
+- [127:17] (JSXText) Static JSX text node: `•`
+  - context: `• {String(tAnalytics('patternDetection.tips.includeAll'))}</li> <li>• {String(tAnalytics('patternDetection.tips.noteEnvironment'))}</li>`
+- [128:17] (JSXText) Static JSX text node: `•`
+  - context: `ring(tAnalytics('patternDetection.tips.noteEnvironment'))}</li> <li>• {String(tAnalytics('patternDetection.tips.beConsistent'))}</li> </ul`
 
 ### src/components/PeriodComparison.tsx
 
@@ -3092,11 +3561,11 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [493:31] (JSXText) Static JSX text node: `Progress`
   - context: `<div className="flex justify-between text-sm"> <span>Progress</span> <span>{Math.round(goal.currentProgress)}`
 - [500:25] (JSXText) Static JSX text node: `⚠️ This goal is past its target date and may need review or extension.`
-  - context: `50 border border-red-200 rounded text-sm text-red-700"> ⚠️ This goal is past its target date and may need review or extension.`
+  - context: `uctive/20 rounded text-sm text-destructive-foreground"> ⚠️ This goal is past its target date and may need review or extension.`
 - [505:25] (JSXText) Static JSX text node: `📈 Consider increasing intervention intensity to meet target date.`
-  - context: `der border-yellow-200 rounded text-sm text-yellow-700"> 📈 Consider increasing intervention intensity to meet target date.`
-- [513:71] (JSXText) Static JSX text node: `All goals are on track!`
-  - context: `mb-2" /> <p className="text-lg font-medium text-green-600">All goals are on track!</p> <p className="text-muted-foregro`
+  - context: `er-warning/20 rounded text-sm text-warning-foreground"> 📈 Consider increasing intervention intensity to meet target date.`
+- [513:80] (JSXText) Static JSX text node: `All goals are on track!`
+  - context: `<p className="text-lg font-medium text-success-foreground">All goals are on track!</p> <p className="text-muted-foregro`
 - [514:58] (JSXText) Static JSX text node: `Great work keeping`
   - context: `oals are on track!</p> <p className="text-muted-foreground">Great work keeping {student.name}'s progress moving forward.</p>`
 - [514:91] (JSXText) Static JSX text node: `'s progress moving forward.`
@@ -3130,8 +3599,12 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `false, usageCount: 0 }); setIsCreating(false); toast.success("Template created successfully"); }; const getCategoryColor = (category: st`
 - [298:13] (JSXText) Static JSX text node: `Quick Entry Templates`
   - context: `center gap-2"> <Zap className="h-5 w-5 text-primary" /> Quick Entry Templates </CardTitle> <Dialog open={isCreating}`
-- [304:17] (JSXText) Static JSX text node: `New Template`
-  - context: `nt="outline"> <Plus className="h-4 w-4 mr-2" /> New Template </Button> </DialogTrigger> <D`
+- [302:62] (JSXAttribute) Static aria-label attribute: `Create new template`
+  - context: `ogTrigger asChild> <Button size="sm" variant="outline" aria-label="Create new template" title="Create new template"> <Plus classNa`
+- [302:90] (JSXAttribute) Static title attribute: `Create new template`
+  - context: `<Button size="sm" variant="outline" aria-label="Create new template" title="Create new template"> <Plus className="h-4 w-4 mr-2" />`
+- [304:52] (JSXText) Static JSX text node: `New Template`
+  - context: `className="h-4 w-4 mr-2" /> <span className="hidden sm:inline">New Template</span> </Button> </DialogTrigger>`
 - [309:30] (JSXText) Static JSX text node: `Create Quick Entry Template`
   - context: `className="max-w-md"> <DialogHeader> <DialogTitle>Create Quick Entry Template</DialogTitle> <DialogDescription>`
 - [311:19] (JSXText) Static JSX text node: `Define a name, optional description, category, and default values.`
@@ -3166,9 +3639,17 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `className="text-xs"> +{template.emotions.length - 2} more </Badge> )}`
 - [414:23] (JSXText) Static JSX text node: `Apply Template`
   - context: `className="flex-1 mr-2" > Apply Template </Button>`
-- [445:16] (JSXText) Static JSX text node: `No quick entry templates yet`
+- [422:38] (JSXAttribute) Static aria-label attribute: `Edit template`
+  - context: `variant="ghost" aria-label="Edit template" title="Edit template"`
+- [423:33] (JSXAttribute) Static title attribute: `Edit template`
+  - context: `aria-label="Edit template" title="Edit template" onClick={() => setEditingTemplate(temp`
+- [431:38] (JSXAttribute) Static aria-label attribute: `Delete template`
+  - context: `variant="ghost" aria-label="Delete template" title="Delete template"`
+- [432:33] (JSXAttribute) Static title attribute: `Delete template`
+  - context: `aria-label="Delete template" title="Delete template" onClick={() => deleteTemplate(templa`
+- [449:16] (JSXText) Static JSX text node: `No quick entry templates yet`
   - context: `<Zap className="h-12 w-12 mx-auto mb-3 opacity-50" /> <p>No quick entry templates yet</p> <p className="text-sm">Create templ`
-- [446:36] (JSXText) Static JSX text node: `Create templates for common tracking scenarios`
+- [450:36] (JSXText) Static JSX text node: `Create templates for common tracking scenarios`
   - context: `<p>No quick entry templates yet</p> <p className="text-sm">Create templates for common tracking scenarios</p> </div> )}`
 
 ### src/components/ReportBuilder.tsx
@@ -3291,45 +3772,57 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `="flex items-center gap-2"> <Bug className="h-5 w-5" /> System Testing & Debug Panel </CardTitle> </CardHeader>`
 - [262:15] (JSXText) Static JSX text node: `Test current system functionality and data integrity`
   - context: `tween"> <p className="text-sm text-muted-foreground"> Test current system functionality and data integrity </p>`
-- [273:19] (JSXText) Static JSX text node: `Running Tests...`
-  - context: `<RefreshCw className="h-4 w-4 mr-2 animate-spin" /> Running Tests... </> ) : ( <>`
-- [278:19] (JSXText) Static JSX text node: `Run System Tests`
-  - context: `<> <TestTube className="h-4 w-4 mr-2" /> Run System Tests </> )} </Button>`
-- [286:51] (JSXText) Static JSX text node: `Test Results:`
+- [269:26] (JSXAttribute) Static aria-label attribute: `Run system tests`
+  - context: `size="sm" variant="outline" aria-label="Run system tests" title="Run system tests" >`
+- [270:21] (JSXAttribute) Static title attribute: `Run system tests`
+  - context: `riant="outline" aria-label="Run system tests" title="Run system tests" > {isRunningTests ? (`
+- [275:54] (JSXText) Static JSX text node: `Running Tests...`
+  - context: `w-4 mr-2 animate-spin" /> <span className="hidden sm:inline">Running Tests...</span> </> ) : (`
+- [280:54] (JSXText) Static JSX text node: `Run System Tests`
+  - context: `lassName="h-4 w-4 mr-2" /> <span className="hidden sm:inline">Run System Tests</span> </> )} </Butto`
+- [288:51] (JSXText) Static JSX text node: `Test Results:`
   - context: `<div className="space-y-3"> <h4 className="text-sm font-medium">Test Results:</h4> {testResults.map((result) => (`
-- [305:54] (JSXText) Static JSX text node: `Quick Stats:`
+- [307:54] (JSXText) Static JSX text node: `Quick Stats:`
   - context: `4 border-t border-border"> <h4 className="text-sm font-medium mb-2">Quick Stats:</h4> <div className="grid grid-cols-3 gap-3 text-center`
-- [309:62] (JSXText) Static JSX text node: `Students`
+- [311:62] (JSXText) Static JSX text node: `Students`
   - context: `ted-foreground" /> <p className="text-xs text-muted-foreground">Students</p> </div> <div> <Database`
-- [313:62] (JSXText) Static JSX text node: `Entries`
+- [315:62] (JSXText) Static JSX text node: `Entries`
   - context: `ted-foreground" /> <p className="text-xs text-muted-foreground">Entries</p> </div> <div> <BarChart3`
-- [317:62] (JSXText) Static JSX text node: `Analytics`
+- [319:62] (JSXText) Static JSX text node: `Analytics`
   - context: `ted-foreground" /> <p className="text-xs text-muted-foreground">Analytics</p> </div> </div> </div> <`
-- [329:13] (JSXText) Static JSX text node: `Analytics Cache Management`
+- [331:13] (JSXText) Static JSX text node: `Analytics Cache Management`
   - context: `ex items-center gap-2"> <Archive className="h-5 w-5" /> Analytics Cache Management </CardTitle> </CardHeader>`
-- [338:57] (JSXText) Static JSX text node: `Cache Hit Rate`
+- [340:57] (JSXText) Static JSX text node: `Cache Hit Rate`
   - context: `enter justify-between"> <span className="text-sm font-medium">Cache Hit Rate</span> <div className="flex items-center gap-2"`
-- [347:69] (JSXText) Static JSX text node: `Cache Size`
+- [349:69] (JSXText) Static JSX text node: `Cache Size`
   - context: `flex-col"> <span className="text-xs text-muted-foreground">Cache Size</span> <span className="text-lg font-semibold">{c`
-- [351:69] (JSXText) Static JSX text node: `Memory Usage`
+- [353:69] (JSXText) Static JSX text node: `Memory Usage`
   - context: `flex-col"> <span className="text-xs text-muted-foreground">Memory Usage</span> <span className="text-lg font-semibold">`
-- [362:66] (JSXText) Static JSX text node: `Hits`
+- [364:66] (JSXText) Static JSX text node: `Hits`
   - context: `tats.hits}</p> <p className="text-xs text-muted-foreground">Hits</p> </div> <div className="text-center`
-- [367:66] (JSXText) Static JSX text node: `Misses`
+- [369:66] (JSXText) Static JSX text node: `Misses`
   - context: `ts.misses}</p> <p className="text-xs text-muted-foreground">Misses</p> </div> <div className="text-cente`
-- [372:66] (JSXText) Static JSX text node: `Sets`
+- [374:66] (JSXText) Static JSX text node: `Sets`
   - context: `tats.sets}</p> <p className="text-xs text-muted-foreground">Sets</p> </div> </div> </div>`
-- [379:53] (JSXText) Static JSX text node: `Cache Actions`
+- [381:53] (JSXText) Static JSX text node: `Cache Actions`
   - context: `t border-border space-y-3"> <h4 className="text-sm font-medium">Cache Actions</h4> <div className="flex gap-2">`
-- [388:21] (JSXText) Static JSX text node: `Clear All Cache`
-  - context: `> <Trash2 className="h-4 w-4 mr-2" /> Clear All Cache </Button> <Button`
-- [397:21] (JSXText) Static JSX text node: `Clean Expired`
-  - context: `<RefreshCw className="h-4 w-4 mr-2" /> Clean Expired </Button> </div>`
-- [402:22] (JSXText) Static JSX text node: `• Cache TTL: 5 minutes`
+- [388:30] (JSXAttribute) Static aria-label attribute: `Clear all analytics cache`
+  - context: `leClearCache} className="flex-1" aria-label="Clear all analytics cache" title="Clear all analytics cache"`
+- [389:25] (JSXAttribute) Static title attribute: `Clear all analytics cache`
+  - context: `aria-label="Clear all analytics cache" title="Clear all analytics cache" > <Trash2 classNam`
+- [392:54] (JSXText) Static JSX text node: `Clear All Cache`
+  - context: `lassName="h-4 w-4 mr-2" /> <span className="hidden sm:inline">Clear All Cache</span> </Button> <Button`
+- [399:30] (JSXAttribute) Static aria-label attribute: `Clean expired cache entries`
+  - context: `he.cleanup()} className="flex-1" aria-label="Clean expired cache entries" title="Clean expired cache entri`
+- [400:25] (JSXAttribute) Static title attribute: `Clean expired cache entries`
+  - context: `aria-label="Clean expired cache entries" title="Clean expired cache entries" > <RefreshCw cla`
+- [403:54] (JSXText) Static JSX text node: `Clean Expired`
+  - context: `lassName="h-4 w-4 mr-2" /> <span className="hidden sm:inline">Clean Expired</span> </Button> </div>`
+- [408:22] (JSXText) Static JSX text node: `• Cache TTL: 5 minutes`
   - context: `<div className="text-xs text-muted-foreground"> <p>• Cache TTL: 5 minutes</p> <p>• Eviction: LRU (Least Recently`
-- [403:22] (JSXText) Static JSX text node: `• Eviction: LRU (Least Recently Used)`
+- [409:22] (JSXText) Static JSX text node: `• Eviction: LRU (Least Recently Used)`
   - context: `reground"> <p>• Cache TTL: 5 minutes</p> <p>• Eviction: LRU (Least Recently Used)</p> <p>• Invalidations:`
-- [404:22] (JSXText) Static JSX text node: `• Invalidations:`
+- [410:22] (JSXText) Static JSX text node: `• Invalidations:`
   - context: `<p>• Eviction: LRU (Least Recently Used)</p> <p>• Invalidations: {cacheStats.invalidations || 0}</p> </div>`
 
 ### src/components/TestingToolsSection.tsx
@@ -3389,25 +3882,45 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `flex items-center gap-2"> <Clock className="h-5 w-5" /> Timeline Visualization </CardTitle> <div className="flex ite`
 - [541:17] (JSXText) Static JSX text node: `Live`
   - context: `<Badge variant="default" className="animate-pulse"> Live </Badge> )} <Button siz`
-- [621:32] (JSXText) Static JSX text node: `x`
+- [547:26] (JSXAttribute) Static aria-label attribute: `Reset view`
+  - context: `size="icon" variant="ghost" aria-label="Reset view" title="Reset view" onClick={() => {`
+- [548:21] (JSXAttribute) Static title attribute: `Reset view`
+  - context: `variant="ghost" aria-label="Reset view" title="Reset view" onClick={() => { setZoomLevel(1);`
+- [569:28] (JSXAttribute) Static aria-label attribute: `Zoom out`
+  - context: `size="icon" variant="ghost" aria-label="Zoom out" title="Zoom out" onClick={() => handl`
+- [570:23] (JSXAttribute) Static title attribute: `Zoom out`
+  - context: `variant="ghost" aria-label="Zoom out" title="Zoom out" onClick={() => handleZoom(-0.5)} disa`
+- [582:28] (JSXAttribute) Static aria-label attribute: `Zoom in`
+  - context: `size="icon" variant="ghost" aria-label="Zoom in" title="Zoom in" onClick={() => handleZ`
+- [583:23] (JSXAttribute) Static title attribute: `Zoom in`
+  - context: `variant="ghost" aria-label="Zoom in" title="Zoom in" onClick={() => handleZoom(0.5)} disabl`
+- [596:28] (JSXAttribute) Static aria-label attribute: `Pan left`
+  - context: `size="icon" variant="ghost" aria-label="Pan left" title="Pan left" onClick={() => handl`
+- [597:23] (JSXAttribute) Static title attribute: `Pan left`
+  - context: `variant="ghost" aria-label="Pan left" title="Pan left" onClick={() => handlePan(50)} >`
+- [605:28] (JSXAttribute) Static aria-label attribute: `Pan right`
+  - context: `size="icon" variant="ghost" aria-label="Pan right" title="Pan right" onClick={() => han`
+- [606:23] (JSXAttribute) Static title attribute: `Pan right`
+  - context: `variant="ghost" aria-label="Pan right" title="Pan right" onClick={() => handlePan(-50)} >`
+- [633:32] (JSXText) Static JSX text node: `x`
   - context: `<span className="text-sm text-muted-foreground"> {playbackSpeed}x </span> </div> {/* Stream visibility to`
-- [635:17] (JSXText) Static JSX text node: `Emotions`
+- [647:17] (JSXText) Static JSX text node: `Emotions`
   - context: `> <Brain className="h-4 w-4 mr-1" /> Emotions </Toggle> <Toggle size="sm"`
-- [645:17] (JSXText) Static JSX text node: `Sensory`
+- [657:17] (JSXText) Static JSX text node: `Sensory`
   - context: `> <Eye className="h-4 w-4 mr-1" /> Sensory </Toggle> <Toggle size="sm"`
-- [655:17] (JSXText) Static JSX text node: `Anomalies`
+- [667:17] (JSXText) Static JSX text node: `Anomalies`
   - context: `> <AlertCircle className="h-4 w-4 mr-1" /> Anomalies </Toggle> </div> </div>`
-- [664:65] (JSXText) Static JSX text node: `minutes`
+- [676:65] (JSXText) Static JSX text node: `minutes`
   - context: `="font-medium"> {differenceInMinutes(timeRange[1], timeRange[0])} minutes </span> <span>{format(timeRange[1], 'MMM dd, yyy`
-- [744:54] (JSXText) Static JSX text node: `Data Streams`
+- [756:54] (JSXText) Static JSX text node: `Data Streams`
   - context: `rounded-lg p-3 shadow-lg"> <h4 className="font-medium text-sm mb-2">Data Streams</h4> <div className="space-y-1"> {dataStr`
-- [761:18] (JSXText) Static JSX text node: `Events:`
+- [773:18] (JSXText) Static JSX text node: `Events:`
   - context: `-3 shadow-lg"> <div className="text-xs space-y-1"> <p>Events: {timelineEvents.length}</p> <p>Zoom: {Math.round(zoomLevel`
-- [762:18] (JSXText) Static JSX text node: `Zoom:`
+- [774:18] (JSXText) Static JSX text node: `Zoom:`
   - context: `ace-y-1"> <p>Events: {timelineEvents.length}</p> <p>Zoom: {Math.round(zoomLevel * 100)}%</p> {brushSelection && (`
-- [764:20] (JSXText) Static JSX text node: `Selection:`
+- [776:20] (JSXText) Static JSX text node: `Selection:`
   - context: `nd(zoomLevel * 100)}%</p> {brushSelection && ( <p>Selection: {differenceInMinutes(brushSelection[1], brushSelection[0])} min</p>`
-- [764:91] (JSXText) Static JSX text node: `min`
+- [776:91] (JSXText) Static JSX text node: `min`
   - context: `<p>Selection: {differenceInMinutes(brushSelection[1], brushSelection[0])} min</p> )} </div> </div> </div>`
 
 ### src/components/UniversalAnalyticsStatus.tsx
@@ -3420,74 +3933,88 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `border-primary"></div> <span className="ml-2 text-muted-foreground">Loading analytics status...</span> </div> </CardContent>`
 - [92:13] (JSXText) Static JSX text node: `Universal Analytics Status`
   - context: `flex items-center gap-2"> <Users className="h-5 w-5" /> Universal Analytics Status </CardTitle> <Button`
-- [116:15] (JSXText) Static JSX text node: `System Status`
-  - context: `500" /> )} <span className="font-medium"> System Status </span> </div> <Badge variant={all`
-- [131:15] (JSXText) Static JSX text node: `Students with Analytics`
+- [97:24] (JSXAttribute) Static aria-label attribute: `Refresh analytics status`
+  - context: `tton variant="ghost" size="icon" aria-label="Refresh analytics status" title="Refresh analytics status"`
+- [98:19] (JSXAttribute) Static title attribute: `Refresh analytics status`
+  - context: `size="icon" aria-label="Refresh analytics status" title="Refresh analytics status" onClick={handleRefresh} disab`
+- [118:15] (JSXText) Static JSX text node: `System Status`
+  - context: `ing" /> )} <span className="font-medium"> System Status </span> </div> <Badge variant={all`
+- [133:15] (JSXText) Static JSX text node: `Students with Analytics`
   - context: `/div> <div className="text-sm text-muted-foreground"> Students with Analytics </div> </div>`
-- [140:15] (JSXText) Static JSX text node: `Students with Data`
+- [142:15] (JSXText) Static JSX text node: `Students with Data`
   - context: `/div> <div className="text-sm text-muted-foreground"> Students with Data </div> </div> </div> {`
-- [148:71] (JSXText) Static JSX text node: `Student Details:`
+- [150:71] (JSXText) Static JSX text node: `Student Details:`
   - context: `ace-y-2"> <h4 className="font-medium text-sm text-muted-foreground">Student Details:</h4> {status.studentStatuses.map(student => (`
-- [160:21] (JSXText) Static JSX text node: `Health:`
+- [162:21] (JSXText) Static JSX text node: `Health:`
   - context: `<Badge variant="outline" className="text-xs"> Health: {student.healthScore}% </Badge> {stu`
-- [164:23] (JSXText) Static JSX text node: `Pattern Detection Active`
+- [166:23] (JSXText) Static JSX text node: `Pattern Detection Active`
   - context: `<Badge variant="default" className="text-xs"> Pattern Detection Active </Badge> )}`
-- [179:17] (JSXText) Static JSX text node: `✨ Universal pattern detection is active for all students!`
+- [181:17] (JSXText) Static JSX text node: `✨ Universal pattern detection is active for all students!`
   - context: `-4 w-4" /> <span className="text-sm font-medium"> ✨ Universal pattern detection is active for all students! </span>`
-- [189:15] (JSXText) Static JSX text node: `Add your first student to see universal analytics in action. Pattern detection will start immediately!`
-  - context: `rounded-lg"> <div className="text-blue-800 text-sm"> Add your first student to see universal analytics in action. Pattern detection w`
+- [191:15] (JSXText) Static JSX text node: `Add your first student to see universal analytics in action. Pattern detection will start immediately!`
+  - context: `d-lg"> <div className="text-info-foreground text-sm"> Add your first student to see universal analytics in action. Pattern detection w`
 
 ### src/components/Visualization3D.tsx
 
-- [55:13] (JSXText) Static JSX text node: `×`
-  - context: `ted-foreground hover:text-foreground transition-colors" > × </button> </div> <p className="font-medium">{point.l`
-- [60:14] (JSXText) Static JSX text node: `X:`
+- [57:13] (JSXText) Static JSX text node: `×`
+  - context: `ground transition-colors motion-reduce:transition-none" > × </button> </div> <p className="font-medium">{point.l`
+- [62:14] (JSXText) Static JSX text node: `X:`
   - context: `<div className="text-sm text-muted-foreground mt-1 space-y-1"> <p>X: {point.x.toFixed(2)}</p> <p>Y: {point.y.toFixed(2)}</p> <`
-- [61:14] (JSXText) Static JSX text node: `Y:`
+- [63:14] (JSXText) Static JSX text node: `Y:`
   - context: `reground mt-1 space-y-1"> <p>X: {point.x.toFixed(2)}</p> <p>Y: {point.y.toFixed(2)}</p> <p>Z: {point.z.toFixed(2)}</p> {`
-- [62:14] (JSXText) Static JSX text node: `Z:`
+- [64:14] (JSXText) Static JSX text node: `Z:`
   - context: `{point.x.toFixed(2)}</p> <p>Y: {point.y.toFixed(2)}</p> <p>Z: {point.z.toFixed(2)}</p> {point.intensity && <p>Intensity: {point.i`
-- [63:34] (JSXText) Static JSX text node: `Intensity:`
+- [65:34] (JSXText) Static JSX text node: `Intensity:`
   - context: `}</p> <p>Z: {point.z.toFixed(2)}</p> {point.intensity && <p>Intensity: {point.intensity}</p>} </div> </div> </Html> ); }`
-- [334:11] (JSXText) Static JSX text node: `3D Correlation Visualization`
+- [346:11] (JSXText) Static JSX text node: `3D Correlation Visualization`
   - context: `Name="flex items-center gap-2"> <Eye className="h-5 w-5" /> 3D Correlation Visualization </CardTitle> </CardHeader> <Car`
-- [342:65] (JSXText) Static JSX text node: `X Axis`
+- [354:65] (JSXText) Static JSX text node: `X Axis`
   - context: `<div> <label className="text-sm font-medium mb-1 block">X Axis</label> <Select value={xAxis} onValueChange={setXAxis}>`
-- [358:65] (JSXText) Static JSX text node: `Y Axis`
+- [370:65] (JSXText) Static JSX text node: `Y Axis`
   - context: `<div> <label className="text-sm font-medium mb-1 block">Y Axis</label> <Select value={yAxis} onValueChange={setYAxis}>`
-- [374:65] (JSXText) Static JSX text node: `Z Axis`
+- [386:65] (JSXText) Static JSX text node: `Z Axis`
   - context: `<div> <label className="text-sm font-medium mb-1 block">Z Axis</label> <Select value={zAxis} onValueChange={setZAxis}>`
-- [392:65] (JSXText) Static JSX text node: `Color By`
+- [404:65] (JSXText) Static JSX text node: `Color By`
   - context: `<div> <label className="text-sm font-medium mb-1 block">Color By</label> <Select value={colorBy} onValueChange={setColorBy`
-- [398:48] (JSXText) Static JSX text node: `Category`
+- [410:48] (JSXText) Static JSX text node: `Category`
   - context: `<SelectContent> <SelectItem value="category">Category</SelectItem> <SelectItem value="intensity">Intensity<`
-- [399:49] (JSXText) Static JSX text node: `Intensity`
+- [411:49] (JSXText) Static JSX text node: `Intensity`
   - context: `category">Category</SelectItem> <SelectItem value="intensity">Intensity</SelectItem> </SelectContent> </Select>`
-- [405:65] (JSXText) Static JSX text node: `Filter Category`
+- [417:65] (JSXText) Static JSX text node: `Filter Category`
   - context: `<div> <label className="text-sm font-medium mb-1 block">Filter Category</label> <Select value={filterCategory} onValueChan`
-- [411:43] (JSXText) Static JSX text node: `All`
+- [423:43] (JSXText) Static JSX text node: `All`
   - context: `gger> <SelectContent> <SelectItem value="all">All</SelectItem> <SelectItem value="emotion">Emotions</SelectI`
-- [412:47] (JSXText) Static JSX text node: `Emotions`
+- [424:47] (JSXText) Static JSX text node: `Emotions`
   - context: `Item value="all">All</SelectItem> <SelectItem value="emotion">Emotions</SelectItem> <SelectItem value="sensory">Sensory</Sel`
-- [413:47] (JSXText) Static JSX text node: `Sensory`
+- [425:47] (JSXText) Static JSX text node: `Sensory`
   - context: `e="emotion">Emotions</SelectItem> <SelectItem value="sensory">Sensory</SelectItem> <SelectItem value="environmental">Environ`
-- [414:53] (JSXText) Static JSX text node: `Environmental`
+- [426:53] (JSXText) Static JSX text node: `Environmental`
   - context: `nsory">Sensory</SelectItem> <SelectItem value="environmental">Environmental</SelectItem> </SelectContent> </Sele`
-- [421:17] (JSXText) Static JSX text node: `Point Size:`
+- [433:17] (JSXText) Static JSX text node: `Point Size:`
   - context: `<label className="text-sm font-medium mb-1 block"> Point Size: {pointSize.toFixed(2)} </label> <Slider`
-- [503:54] (JSXText) Static JSX text node: `Legend`
+- [451:15] (JSXText) Static JSX text node: `Reduced motion enabled`
+  - context: `text-amber-800 dark:text-amber-200 px-3 py-1 rounded-md text-sm"> Reduced motion enabled </div> )} cCanvas`
+- [454:11] (JSXText) Static JSX text node: `cCanvas
+            camera=`
+  - context: `Reduced motion enabled </div> )} cCanvas camera={{ position: [10, 10, 10], fov: 50 }} cl`
+- [456:13] (JSXText) Static JSX text node: `className="w-full h-full"
+            onCreated=`
+  - context: `cCanvas camera={{ position: [10, 10, 10], fov: 50 }} className="w-full h-full" onCreated={({ gl }) => { con`
+- [468:11] (JSXText) Static JSX text node: `e`
+  - context: `.addEventListener('webglcontextrestored', onRestored); }} e <ambientLight intensity={0.5} /> <pointLight position`
+- [532:54] (JSXText) Static JSX text node: `Legend`
   - context: `rounded-lg p-3 shadow-lg"> <h4 className="font-medium text-sm mb-2">Legend</h4> <div className="space-y-1"> {colorBy === '`
-- [509:47] (JSXText) Static JSX text node: `Emotions`
+- [538:47] (JSXText) Static JSX text node: `Emotions`
   - context: `h-3 rounded-full bg-[#10B981]" /> <span className="text-xs">Emotions</span> </div> <div className="flex`
-- [513:47] (JSXText) Static JSX text node: `Sensory`
+- [542:47] (JSXText) Static JSX text node: `Sensory`
   - context: `h-3 rounded-full bg-[#3B82F6]" /> <span className="text-xs">Sensory</span> </div> <div className="flex i`
-- [517:47] (JSXText) Static JSX text node: `Environmental`
+- [546:47] (JSXText) Static JSX text node: `Environmental`
   - context: `h-3 rounded-full bg-[#F59E0B]" /> <span className="text-xs">Environmental</span> </div> </>`
-- [524:45] (JSXText) Static JSX text node: `Low → High`
+- [553:45] (JSXText) Static JSX text node: `Low → High`
   - context: `a-yellow-500 to-red-500 rounded" /> <span className="text-xs">Low → High</span> </div> )} </div>`
-- [532:18] (JSXText) Static JSX text node: `Points:`
+- [561:18] (JSXText) Static JSX text node: `Points:`
   - context: `-3 shadow-lg"> <div className="text-xs space-y-1"> <p>Points: {filteredPoints.length}</p> <p>Total Sessions: {trackingEn`
-- [533:18] (JSXText) Static JSX text node: `Total Sessions:`
+- [562:18] (JSXText) Static JSX text node: `Total Sessions:`
   - context: `ace-y-1"> <p>Points: {filteredPoints.length}</p> <p>Total Sessions: {trackingEntries.length}</p> </div> </div>`
 
 ### src/components/VisualizationControls.tsx
@@ -3573,15 +4100,15 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [352:41] (JSXText) Static JSX text node: `All time`
   - context: `m value="90d">Last 90 days</SelectItem> <SelectItem value="all">All time</SelectItem> </SelectContent> </Select>`
 - [357:68] (JSXAttribute) Static aria-label attribute: `Data counts`
-  - context: `</div> <div className="flex items-center gap-2 mt-8" aria-label="Data counts"> <Badge variant="outline" className="bg-green-50 text-`
+  - context: `</div> <div className="flex items-center gap-2 mt-8" aria-label="Data counts"> <Badge variant="outline" className="bg-success/10 tex`
 - [359:46] (JSXText) Static JSX text node: `emotions`
-  - context: `text-green-700 border-green-200"> {filteredData.emotions.length} emotions </Badge> <Badge variant="outline" className="bg`
+  - context: `0 text-success border-success/20"> {filteredData.emotions.length} emotions </Badge> <Badge variant="outline" className="bg`
 - [362:51] (JSXText) Static JSX text node: `sensory inputs`
-  - context: `xt-blue-700 border-blue-200"> {filteredData.sensoryInputs.length} sensory inputs </Badge> <Badge variant="outline" classNa`
+  - context: `10 text-info border-info/20"> {filteredData.sensoryInputs.length} sensory inputs </Badge> <Badge variant="outline" classNa`
 - [365:53] (JSXText) Static JSX text node: `sessions`
-  - context: `ple-700 border-purple-200"> {filteredData.trackingEntries.length} sessions </Badge> {filterCriteria.realtime && (`
+  - context: `primary border-primary/20"> {filteredData.trackingEntries.length} sessions </Badge> {filterCriteria.realtime && (`
 - [369:45] (JSXText) Static JSX text node: `new`
-  - context: `default" className="bg-orange-500"> {realtimeData.newDataCount} new </Badge> )} </div> </div>`
+  - context: `arning/80 text-warning-foreground"> {realtimeData.newDataCount} new </Badge> )} </div> </div>`
 
 ### src/components/analysis/CorrelationHeatmap.tsx
 
@@ -3605,7 +4132,7 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 ### src/components/analysis/PatternAnalysisView.tsx
 
 - [68:23] (JSXAttribute) Static aria-label attribute: `Loading chart data`
-  - context: `border-red-200'; }; if (isAnalyzing) { return ( <div aria-label="Loading chart data" className="h-[400px] w-full"> <div className="h-ful`
+  - context: `-destructive/30'; }; if (isAnalyzing) { return ( <div aria-label="Loading chart data" className="h-[400px] w-full"> <div className="h-ful`
 - [79:14] (JSXText) Static JSX text node: `No patterns detected yet`
   - context: `"> <Zap className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>No patterns detected yet</p> <p className="text-sm">Need more data for`
 - [80:34] (JSXText) Static JSX text node: `Need more data for pattern analysis`
@@ -3686,9 +4213,9 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 
 ### src/components/charts/EChartContainer.tsx
 
-- [345:22] (MessageAPI) Message API call: error(): `[EChartContainer] Option normalization failed`
+- [370:22] (MessageAPI) Message API call: error(): `[EChartContainer] Option normalization failed`
   - context: `tion; } catch (e) { if (import.meta?.env?.DEV) { logger.error("[EChartContainer] Option normalization failed", { error: e }); } re`
-- [416:22] (MessageAPI) Message API call: error(): `[EChartContainer] Theme merge failed`
+- [441:22] (MessageAPI) Message API call: error(): `[EChartContainer] Theme merge failed`
   - context: `tion; } catch (e) { if (import.meta?.env?.DEV) { logger.error("[EChartContainer] Theme merge failed", { error: e, optionP`
 
 ### src/components/charts/TrendsChart.tsx
@@ -3789,6 +4316,59 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `lassName="flex items-center gap-2"> <Eye className="h-5 w-5" /> 3D Correlation Visualization </CardTitle> </CardHeader> <CardConte`
 - [52:58] (JSXText) Static JSX text node: `Loading 3D visualization...`
   - context: `d-full mx-auto"></div> <p className="text-sm text-muted-foreground">Loading 3D visualization...</p> </div> </div> </div>`
+
+### src/components/optimized/OptimizedAnalyticsDashboard.tsx
+
+- [145:20] (MessageAPI) Message API call: error(): `[OptimizedAnalyticsDashboard] Demo seed failed`
+  - context: `d); runAnalysis(normalizedData); } catch (error) { logger.error('[OptimizedAnalyticsDashboard] Demo seed failed', { error }); toast.error(`
+- [181:20] (MessageAPI) Message API call: error(): `[OptimizedAnalyticsDashboard] Export failed`
+  - context: `String(tAnalytics('export.success'))); } catch (error) { logger.error('[OptimizedAnalyticsDashboard] Export failed', { error }); toast.error(Str`
+- [209:17] (MessageAPI) Message API call: info(): `[OptimizedAnalyticsDashboard] Tab changed`
+  - context: `back((value: string) => { // Track tab change for analytics logger.info('[OptimizedAnalyticsDashboard] Tab changed', { tab: value }); }, []); // Me`
+- [325:44] (JSXText) Static JSX text node: `No patterns detected yet.`
+  - context: `y-4"> {patterns.length === 0 ? ( <p className="text-muted-foreground">No patterns detected yet.</p> ) : ( patterns.map((pattern, index) => (`
+- [339:44] (JSXText) Static JSX text node: `No correlations found.`
+  - context: `> {correlations.length === 0 ? ( <p className="text-muted-foreground">No correlations found.</p> ) : ( correlations.map((correlation, index)`
+- [353:44] (JSXText) Static JSX text node: `No insights available.`
+  - context: `y-4"> {insights.length === 0 ? ( <p className="text-muted-foreground">No insights available.</p> ) : ( insights.map((insight, index) => (`
+- [367:44] (JSXText) Static JSX text node: `No predictions available.`
+  - context: `"> {predictions.length === 0 ? ( <p className="text-muted-foreground">No predictions available.</p> ) : ( predictions.map((prediction, index`
+
+### src/components/optimized/OptimizedCorrelationHeatmap.tsx
+
+- [110:46] (JSXText) Static JSX text node: `No correlation data available`
+  - context: `flex items-center justify-center"> <p className="text-muted-foreground">No correlation data available</p> </div> ); } return ( <div c`
+
+### src/components/optimized/OptimizedDataRequirementsCalculator.tsx
+
+- [235:13] (JSXText) Static JSX text node: `Datakrav for sikkerhetsnivå`
+  - context: `lex items-center gap-2"> <Target className="h-5 w-5" /> Datakrav for sikkerhetsnivå </CardTitle> </CardHeader>`
+- [241:13] (JSXText) Static JSX text node: `Ingen data registrert ennå. Start med å samle data for å se fremgang mot sikkerhetsnivåer.`
+  - context: `foreground" /> <p className="text-muted-foreground mb-4"> Ingen data registrert ennå. Start med å samle data for å se fremgang mot sikkerh`
+- [244:13] (JSXText) Static JSX text node: `Start datainnsamling`
+  - context: `kkerhetsnivåer. </p> <Button variant="outline"> Start datainnsamling </Button> </CardContent> </Card>`
+- [256:11] (JSXText) Static JSX text node: `Datakrav for sikkerhetsnivå`
+  - context: `e="flex items-center gap-2"> <Target className="h-5 w-5" /> Datakrav for sikkerhetsnivå </CardTitle> <div className="flex it`
+- [259:44] (JSXText) Static JSX text node: `datapunkter samlet`
+  - context: `ap-4 text-sm text-muted-foreground"> <span>{currentStatus.dataPoints} datapunkter samlet</span> <span>{currentStatus.daysSpan} dager med dat`
+- [260:42] (JSXText) Static JSX text node: `dager med data`
+  - context: `.dataPoints} datapunkter samlet</span> <span>{currentStatus.daysSpan} dager med data</span> </div> </CardHeader> <CardContent clas`
+- [267:40] (JSXText) Static JSX text node: `Nåværende sikkerhetsnivå`
+  - context: `bg-muted/50 rounded-lg"> <div> <p className="font-medium">Nåværende sikkerhetsnivå</p> <p className="text-sm text-muted-foregr`
+- [273:25] (JSXText) Static JSX text node: `sikkerhet`
+  - context: `</div> <Badge variant={badgeVariant as any}> {badgeText} sikkerhet </Badge> </div> {/* Progress toward next le`
+- [281:43] (JSXText) Static JSX text node: `Fremgang mot`
+  - context: `="flex items-center justify-between"> <h4 className="font-medium">Fremgang mot {nextTarget.requirement.description}</h4> <span class`
+- [283:50] (JSXText) Static JSX text node: `% fullført`
+  - context: `ext-sm text-muted-foreground"> {Math.round(nextTarget.progress)}% fullført </span> </div> <Pr`
+- [307:19] (JSXText) Static JSX text node: `Anbefalt: Samle`
+  - context: `nded-lg"> <p className="text-sm font-medium"> Anbefalt: Samle {recommendedRate} datapunkt{recommendedRate > 1 ? 'er' : ''} per`
+- [307:53] (JSXText) Static JSX text node: `datapunkt`
+  - context: `Name="text-sm font-medium"> Anbefalt: Samle {recommendedRate} datapunkt{recommendedRate > 1 ? 'er' : ''} per dag </p>`
+- [307:96] (JSXText) Static JSX text node: `per dag`
+  - context: `Anbefalt: Samle {recommendedRate} datapunkt{recommendedRate > 1 ? 'er' : ''} per dag </p> <p className="text-xs text-muted-fo`
+- [310:19] (JSXText) Static JSX text node: `Måloppnåelse:`
+  - context: `<p className="text-xs text-muted-foreground mt-1"> Måloppnåelse: {formatDate(nextTarget.targetDate)} </p>`
 
 ### src/components/optimized/OptimizedDataVisualization.tsx
 
@@ -3894,6 +4474,145 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [501:18] (JSXText) Static JSX text node: `No significant anomalies detected in recent data`
   - context: `<Shield className="h-16 w-16 mx-auto mb-4 opacity-50" /> <p>No significant anomalies detected in recent data</p> </div>`
 
+### src/components/optimized/OptimizedGoalManager.tsx
+
+- [129:19] (MessageAPI) Message API call: error(): `Please fill in all required fields`
+  - context: `.description.trim() || !newGoal.measurableObjective.trim()) { toast.error("Please fill in all required fields"); return; } if (!newGoal.tar`
+- [129:19] (MessageAPI) sonner toast.error(): `Please fill in all required fields`
+  - context: `.description.trim() || !newGoal.measurableObjective.trim()) { toast.error("Please fill in all required fields"); return; } if (!newGoal.tar`
+- [134:19] (MessageAPI) Message API call: error(): `Please select a target date`
+  - context: `fields"); return; } if (!newGoal.targetDate) { toast.error("Please select a target date"); return; } const targetDate = new`
+- [134:19] (MessageAPI) sonner toast.error(): `Please select a target date`
+  - context: `fields"); return; } if (!newGoal.targetDate) { toast.error("Please select a target date"); return; } const targetDate = new`
+- [140:19] (MessageAPI) Message API call: error(): `Invalid target date`
+  - context: `e(newGoal.targetDate); if (isNaN(targetDate.getTime())) { toast.error("Invalid target date"); return; } const today = new Date(); t`
+- [140:19] (MessageAPI) sonner toast.error(): `Invalid target date`
+  - context: `e(newGoal.targetDate); if (isNaN(targetDate.getTime())) { toast.error("Invalid target date"); return; } const today = new Date(); t`
+- [147:19] (MessageAPI) Message API call: error(): `Target date must be in the future`
+  - context: `today.setHours(0, 0, 0, 0); if (targetDate < today) { toast.error("Target date must be in the future"); return; } if (newGoal.targe`
+- [147:19] (MessageAPI) sonner toast.error(): `Target date must be in the future`
+  - context: `today.setHours(0, 0, 0, 0); if (targetDate < today) { toast.error("Target date must be in the future"); return; } if (newGoal.targe`
+- [152:19] (MessageAPI) Message API call: error(): `Target value must be greater than baseline value`
+  - context: `} if (newGoal.targetValue <= newGoal.baselineValue) { toast.error("Target value must be greater than baseline value"); return; } co`
+- [152:19] (MessageAPI) sonner toast.error(): `Target value must be greater than baseline value`
+  - context: `} if (newGoal.targetValue <= newGoal.baselineValue) { toast.error("Target value must be greater than baseline value"); return; } co`
+- [184:19] (MessageAPI) Message API call: success(): `Goal created successfully!`
+  - context: `loadGoals(); resetForm(); setShowCreateDialog(false); toast.success("Goal created successfully!"); onGoalUpdate?.(); }, [newGoal, student.id,`
+- [184:19] (MessageAPI) sonner toast.success(): `Goal created successfully!`
+  - context: `loadGoals(); resetForm(); setShowCreateDialog(false); toast.success("Goal created successfully!"); onGoalUpdate?.(); }, [newGoal, student.id,`
+- [207:21] (MessageAPI) Message API call: success(): `Goal deleted successfully`
+  - context: `{ dataStorage.deleteGoal(goalId); loadGoals(); toast.success("Goal deleted successfully"); onGoalUpdate?.(); } }, [goals, loadGoa`
+- [207:21] (MessageAPI) sonner toast.success(): `Goal deleted successfully`
+  - context: `{ dataStorage.deleteGoal(goalId); loadGoals(); toast.success("Goal deleted successfully"); onGoalUpdate?.(); } }, [goals, loadGoa`
+- [235:19] (MessageAPI) Message API call: success(): `Progress updated!`
+  - context: `urrentProgress: Math.max(0, Math.min(100, progress)) }); toast.success("Progress updated!"); }, [goals, updateGoal]); // Memoized milestone additi`
+- [235:19] (MessageAPI) sonner toast.success(): `Progress updated!`
+  - context: `urrentProgress: Math.max(0, Math.min(100, progress)) }); toast.success("Progress updated!"); }, [goals, updateGoal]); // Memoized milestone additi`
+- [255:19] (MessageAPI) Message API call: success(): `Milestone added!`
+  - context: `milestones: [...goal.milestones, newMilestone] }); toast.success("Milestone added!"); }, [goals, updateGoal]); // Memoized milestone complet`
+- [255:19] (MessageAPI) sonner toast.success(): `Milestone added!`
+  - context: `milestones: [...goal.milestones, newMilestone] }); toast.success("Milestone added!"); }, [goals, updateGoal]); // Memoized milestone complet`
+- [270:19] (MessageAPI) Message API call: success(): `Milestone completed!`
+  - context: `; updateGoal(goalId, { milestones: updatedMilestones }); toast.success("Milestone completed!"); }, [goals, updateGoal]); // Handler for milestone`
+- [270:19] (MessageAPI) sonner toast.success(): `Milestone completed!`
+  - context: `; updateGoal(goalId, { milestones: updatedMilestones }); toast.success("Milestone completed!"); }, [goals, updateGoal]); // Handler for milestone`
+- [275:26] (MessageAPI) Message API call: prompt(): `Milestone title:`
+  - context: `eAddMilestoneClick = useCallback((goalId: string) => { const title = prompt("Milestone title:"); const description = prompt("Milestone description:");`
+- [276:32] (MessageAPI) Message API call: prompt(): `Milestone description:`
+  - context: `{ const title = prompt("Milestone title:"); const description = prompt("Milestone description:"); const dateStr = prompt("Target date (YYYY-MM-DD):`
+- [277:28] (MessageAPI) Message API call: prompt(): `Target date (YYYY-MM-DD):`
+  - context: `onst description = prompt("Milestone description:"); const dateStr = prompt("Target date (YYYY-MM-DD):"); if (title && description && dateStr) { a`
+- [285:26] (MessageAPI) Message API call: prompt(): `Enter current progress value:`
+  - context: `pdateProgressClick = useCallback((goalId: string) => { const value = prompt("Enter current progress value:"); const notes = prompt("Progress notes (opti`
+- [286:26] (MessageAPI) Message API call: prompt(): `Progress notes (optional):`
+  - context: `const value = prompt("Enter current progress value:"); const notes = prompt("Progress notes (optional):"); if (value) { addDataPoint(goalId, Numbe`
+- [344:46] (JSXText) Static JSX text node: `IEP Goals & Tracking`
+  - context: `lassName="h-6 w-6 text-primary" /> <h2 className="text-2xl font-bold">IEP Goals & Tracking</h2> </div> <Dialog open={showCrea`
+- [351:15] (JSXText) Static JSX text node: `Create New Goal`
+  - context: `over:opacity-90"> <Plus className="h-4 w-4 mr-2" /> Create New Goal </Button> </DialogTrigger> <Dial`
+- [356:28] (JSXText) Static JSX text node: `Create New IEP Goal`
+  - context: `-[90vh] overflow-y-auto"> <DialogHeader> <DialogTitle>Create New IEP Goal</DialogTitle> <DialogDescription>`
+- [358:17] (JSXText) Static JSX text node: `Define a specific, measurable goal for`
+  - context: `te New IEP Goal</DialogTitle> <DialogDescription> Define a specific, measurable goal for {student.name}'s educational progress.`
+- [358:70] (JSXText) Static JSX text node: `'s educational progress.`
+  - context: `scription> Define a specific, measurable goal for {student.name}'s educational progress. </DialogDescription> </Dialog`
+- [364:45] (JSXText) Static JSX text node: `Goal Title *`
+  - context: `pace-y-4 mt-4"> <div> <Label htmlFor="goal-title">Goal Title *</Label> <Input id="goal-title"`
+- [367:31] (JSXAttribute) Static placeholder attribute: `e.g., Improve Reading Comprehension`
+  - context: `<Input id="goal-title" placeholder="e.g., Improve Reading Comprehension" value={newGoal.title}`
+- [374:51] (JSXText) Static JSX text node: `Description *`
+  - context: `<div> <Label htmlFor="goal-description">Description *</Label> <Textarea id="goal-descr`
+- [377:31] (JSXAttribute) Static placeholder attribute: `Describe the goal in detail...`
+  - context: `<Textarea id="goal-description" placeholder="Describe the goal in detail..." value={newGoal.description}`
+- [385:48] (JSXText) Static JSX text node: `Category *`
+  - context: `<div> <Label htmlFor="goal-category">Category *</Label> <Select value={newGoal.category} onValueChang`
+- [391:52] (JSXText) Static JSX text node: `Behavioral`
+  - context: `<SelectContent> <SelectItem value="behavioral">Behavioral</SelectItem> <SelectItem value="academic">Academi`
+- [392:50] (JSXText) Static JSX text node: `Academic`
+  - context: `ioral">Behavioral</SelectItem> <SelectItem value="academic">Academic</SelectItem> <SelectItem value="social">Social</Sel`
+- [393:48] (JSXText) Static JSX text node: `Social`
+  - context: `"academic">Academic</SelectItem> <SelectItem value="social">Social</SelectItem> <SelectItem value="communication">Commun`
+- [394:55] (JSXText) Static JSX text node: `Communication`
+  - context: `cial">Social</SelectItem> <SelectItem value="communication">Communication</SelectItem> <SelectItem value="motor">Motor S`
+- [395:47] (JSXText) Static JSX text node: `Motor Skills`
+  - context: `ation">Communication</SelectItem> <SelectItem value="motor">Motor Skills</SelectItem> <SelectItem value="sensory">Sensor`
+- [396:49] (JSXText) Static JSX text node: `Sensory`
+  - context: `otor">Motor Skills</SelectItem> <SelectItem value="sensory">Sensory</SelectItem> <SelectItem value="cognitive">Cognitive`
+- [397:51] (JSXText) Static JSX text node: `Cognitive`
+  - context: `sensory">Sensory</SelectItem> <SelectItem value="cognitive">Cognitive</SelectItem> <SelectItem value="emotional">Emotion`
+- [398:51] (JSXText) Static JSX text node: `Emotional`
+  - context: `itive">Cognitive</SelectItem> <SelectItem value="emotional">Emotional</SelectItem> <SelectItem value="selfCare">Self-Car`
+- [399:50] (JSXText) Static JSX text node: `Self-Care`
+  - context: `tional">Emotional</SelectItem> <SelectItem value="selfCare">Self-Care</SelectItem> <SelectItem value="vocational">Vocati`
+- [400:52] (JSXText) Static JSX text node: `Vocational`
+  - context: `Care">Self-Care</SelectItem> <SelectItem value="vocational">Vocational</SelectItem> </SelectContent> </Sel`
+- [406:49] (JSXText) Static JSX text node: `Measurable Objective *`
+  - context: `<div> <Label htmlFor="goal-objective">Measurable Objective *</Label> <Textarea id="g`
+- [409:31] (JSXAttribute) Static placeholder attribute: `e.g., Student will read grade-level text with 80% comprehension...`
+  - context: `<Textarea id="goal-objective" placeholder="e.g., Student will read grade-level text with 80% comprehension..."`
+- [418:50] (JSXText) Static JSX text node: `Baseline Value`
+  - context: `gap-4"> <div> <Label htmlFor="goal-baseline">Baseline Value</Label> <Input id="goal-bas`
+- [427:48] (JSXText) Static JSX text node: `Target Value`
+  - context: `</div> <div> <Label htmlFor="goal-target">Target Value</Label> <Input id="goal-targe`
+- [438:44] (JSXText) Static JSX text node: `Target Date *`
+  - context: `> <div> <Label htmlFor="goal-date">Target Date *</Label> <Input id="goal-date"`
+- [449:19] (JSXText) Static JSX text node: `Cancel`
+  - context: `<Button variant="outline" onClick={handleDialogCancel}> Cancel </Button> <Button onClick={createGoal}>Cr`
+- [451:46] (JSXText) Static JSX text node: `Create Goal`
+  - context: `Cancel </Button> <Button onClick={createGoal}>Create Goal</Button> </div> </div> </DialogC`
+- [492:66] (JSXText) Static JSX text node: `No IEP Goals Yet`
+  - context: `round mb-4" /> <h3 className="text-xl font-semibold text-foreground mb-2">No IEP Goals Yet</h3> <p className="text-muted-foreground text-center mb-6`
+- [494:9] (JSXText) Static JSX text node: `Start by creating your first IEP goal to track`
+  - context: `> <p className="text-muted-foreground text-center mb-6 max-w-md"> Start by creating your first IEP goal to track {studentName}'s educational progr`
+- [494:69] (JSXText) Static JSX text node: `'s educational progress.`
+  - context: `max-w-md"> Start by creating your first IEP goal to track {studentName}'s educational progress. </p> <Button onClick={onCreateClick} classN`
+- [498:9] (JSXText) Static JSX text node: `Create First Goal`
+  - context: `er:opacity-90 font-dyslexia"> <Plus className="h-4 w-4 mr-2" /> Create First Goal </Button> </CardContent> </Card> )); EmptyState.d`
+- [543:60] (JSXAttribute) Static aria-label attribute: `Edit goal`
+  - context: `ssName="flex gap-2"> <Button variant="ghost" size="icon" aria-label="Edit goal" title="Edit goal"> <Edit className="h-4 w-4" />`
+- [543:78] (JSXAttribute) Static title attribute: `Edit goal`
+  - context: `"> <Button variant="ghost" size="icon" aria-label="Edit goal" title="Edit goal"> <Edit className="h-4 w-4" /> </Button>`
+- [546:60] (JSXAttribute) Static aria-label attribute: `Delete goal`
+  - context: `</Button> <Button variant="ghost" size="icon" aria-label="Delete goal" title="Delete goal" onClick={handleDelete}> <Trash2`
+- [546:80] (JSXAttribute) Static title attribute: `Delete goal`
+  - context: `<Button variant="ghost" size="icon" aria-label="Delete goal" title="Delete goal" onClick={handleDelete}> <Trash2 className="h-4 w-4"`
+- [563:11] (JSXText) Static JSX text node: `Update Progress`
+  - context: `dleUpdateProgress}> <TrendingUp className="h-4 w-4 mr-1" /> Update Progress </Button> </CardContent> </Card> ); }); Goa`
+- [575:45] (JSXText) Static JSX text node: `Progress`
+  - context: `items-center justify-between mb-2"> <span className="text-sm font-medium">Progress</span> <span className="text-sm text-muted-foreground">{Math.roun`
+- [586:38] (JSXText) Static JSX text node: `Measurable Objective`
+  - context: `e: string }) => ( <div className="mb-4"> <h4 className="font-medium mb-2">Measurable Objective</h4> <p className="text-sm text-muted-foreground bg-mut`
+- [599:13] (JSXText) Static JSX text node: `Created:`
+  - context: `"> <CalendarIcon className="h-4 w-4 text-muted-foreground" /> <span>Created: {format(goal.createdDate, 'MMM dd, yyyy')}</span> </div> <div c`
+- [603:13] (JSXText) Static JSX text node: `Target:`
+  - context: `-sm"> <Crosshair className="h-4 w-4 text-muted-foreground" /> <span>Target: {format(goal.targetDate, 'MMM dd, yyyy')}</span> </div> </div> ));`
+- [626:37] (JSXText) Static JSX text node: `Milestones`
+  - context: `e="flex items-center justify-between mb-2"> <h4 className="font-medium">Milestones</h4> <Button variant="outline" size="sm" onClick={onAdd}>`
+- [629:11] (JSXText) Static JSX text node: `Add`
+  - context: `ize="sm" onClick={onAdd}> <Plus className="h-3 w-3 mr-1" /> Add </Button> </div> {goal.milestones.length === 0 ? (`
+- [633:54] (JSXText) Static JSX text node: `No milestones yet`
+  - context: `ilestones.length === 0 ? ( <p className="text-sm text-muted-foreground">No milestones yet</p> ) : ( <div className="space-y-2">`
+
 ### src/components/optimized/OptimizedStudentCard.tsx
 
 - [36:60] (JSXText) Static JSX text node: `Grade`
@@ -3907,6 +4626,69 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 
 - [41:46] (JSXText) Static JSX text node: `No students found`
   - context: `div className="text-center py-12"> <p className="text-muted-foreground">No students found</p> </div> ); } // Use virtual scrolling for la`
+
+### src/components/optimized/OptimizedVisualization3D.tsx
+
+- [68:11] (JSXText) Static JSX text node: `×`
+  - context: `foreground transition-colors motion-reduce:transition-none" > × </button> </div> <p className="font-medium">{point.label}<`
+- [73:12] (JSXText) Static JSX text node: `X:`
+  - context: `<div className="text-sm text-muted-foreground mt-1 space-y-1"> <p>X: {point.x.toFixed(2)}</p> <p>Y: {point.y.toFixed(2)}</p> <p>Z:`
+- [74:12] (JSXText) Static JSX text node: `Y:`
+  - context: `d-foreground mt-1 space-y-1"> <p>X: {point.x.toFixed(2)}</p> <p>Y: {point.y.toFixed(2)}</p> <p>Z: {point.z.toFixed(2)}</p> {poin`
+- [75:12] (JSXText) Static JSX text node: `Z:`
+  - context: `p>X: {point.x.toFixed(2)}</p> <p>Y: {point.y.toFixed(2)}</p> <p>Z: {point.z.toFixed(2)}</p> {point.intensity && <p>Intensity: {point.int`
+- [76:32] (JSXText) Static JSX text node: `Intensity:`
+  - context: `d(2)}</p> <p>Z: {point.z.toFixed(2)}</p> {point.intensity && <p>Intensity: {point.intensity}</p>} </div> </div> </Html> )); Tooltip`
+- [400:11] (JSXText) Static JSX text node: `3D Data Visualization`
+  - context: `e="flex items-center gap-2"> <Move3d className="h-5 w-5" /> 3D Data Visualization </CardTitle> </CardHeader> <CardConten`
+- [407:63] (JSXText) Static JSX text node: `X Axis`
+  - context: `> <div> <label className="text-sm font-medium mb-1 block">X Axis</label> <Select value={xAxis} onValueChange={handleXAxisChang`
+- [413:54] (JSXText) Static JSX text node: `Emotion Intensity`
+  - context: `<SelectContent> <SelectItem value="emotionIntensity">Emotion Intensity</SelectItem> <SelectItem value="sensoryRespons`
+- [414:53] (JSXText) Static JSX text node: `Sensory Response`
+  - context: `tion Intensity</SelectItem> <SelectItem value="sensoryResponse">Sensory Response</SelectItem> <SelectItem value="time">Time</Sel`
+- [415:42] (JSXText) Static JSX text node: `Time`
+  - context: `esponse">Sensory Response</SelectItem> <SelectItem value="time">Time</SelectItem> </SelectContent> </Select>`
+- [421:63] (JSXText) Static JSX text node: `Y Axis`
+  - context: `<div> <label className="text-sm font-medium mb-1 block">Y Axis</label> <Select value={yAxis} onValueChange={handleYAxisChang`
+- [427:54] (JSXText) Static JSX text node: `Emotion Intensity`
+  - context: `<SelectContent> <SelectItem value="emotionIntensity">Emotion Intensity</SelectItem> <SelectItem value="sensoryRespons`
+- [428:53] (JSXText) Static JSX text node: `Sensory Response`
+  - context: `tion Intensity</SelectItem> <SelectItem value="sensoryResponse">Sensory Response</SelectItem> <SelectItem value="time">Time</Sel`
+- [429:42] (JSXText) Static JSX text node: `Time`
+  - context: `esponse">Sensory Response</SelectItem> <SelectItem value="time">Time</SelectItem> </SelectContent> </Select>`
+- [435:63] (JSXText) Static JSX text node: `Z Axis`
+  - context: `<div> <label className="text-sm font-medium mb-1 block">Z Axis</label> <Select value={zAxis} onValueChange={handleZAxisChang`
+- [441:54] (JSXText) Static JSX text node: `Emotion Intensity`
+  - context: `<SelectContent> <SelectItem value="emotionIntensity">Emotion Intensity</SelectItem> <SelectItem value="sensoryRespons`
+- [442:53] (JSXText) Static JSX text node: `Sensory Response`
+  - context: `tion Intensity</SelectItem> <SelectItem value="sensoryResponse">Sensory Response</SelectItem> <SelectItem value="time">Time</Sel`
+- [443:42] (JSXText) Static JSX text node: `Time`
+  - context: `esponse">Sensory Response</SelectItem> <SelectItem value="time">Time</SelectItem> </SelectContent> </Select>`
+- [449:63] (JSXText) Static JSX text node: `Color By`
+  - context: `<div> <label className="text-sm font-medium mb-1 block">Color By</label> <Select value={colorBy} onValueChange={handleColorB`
+- [455:46] (JSXText) Static JSX text node: `Category`
+  - context: `ger> <SelectContent> <SelectItem value="category">Category</SelectItem> <SelectItem value="intensity">Intensity</S`
+- [456:47] (JSXText) Static JSX text node: `Intensity`
+  - context: `="category">Category</SelectItem> <SelectItem value="intensity">Intensity</SelectItem> </SelectContent> </Select>`
+- [464:63] (JSXText) Static JSX text node: `Point Size`
+  - context: `assName="flex-1"> <label className="text-sm font-medium mb-1 block">Point Size</label> <Slider value={[pointSize]}`
+- [476:63] (JSXText) Static JSX text node: `Filter`
+  - context: `assName="flex-1"> <label className="text-sm font-medium mb-1 block">Filter</label> <Select value={filterCategory} onValueChange={handleF`
+- [482:41] (JSXText) Static JSX text node: `All Categories`
+  - context: `tTrigger> <SelectContent> <SelectItem value="all">All Categories</SelectItem> <SelectItem value="emotion">Emotions`
+- [483:45] (JSXText) Static JSX text node: `Emotions`
+  - context: `e="all">All Categories</SelectItem> <SelectItem value="emotion">Emotions</SelectItem> <SelectItem value="sensory">Sensory</Selec`
+- [484:45] (JSXText) Static JSX text node: `Sensory`
+  - context: `lue="emotion">Emotions</SelectItem> <SelectItem value="sensory">Sensory</SelectItem> <SelectItem value="environmental">Environme`
+- [485:51] (JSXText) Static JSX text node: `Environmental`
+  - context: `sensory">Sensory</SelectItem> <SelectItem value="environmental">Environmental</SelectItem> </SelectContent> </Select>`
+- [495:52] (JSXText) Static JSX text node: `Loading 3D visualization...`
+  - context: `nter justify-center h-full"> <p className="text-muted-foreground">Loading 3D visualization...</p> </div> }> <Can`
+- [545:41] (JSXText) Static JSX text node: `data points`
+  - context: `en mt-4 text-sm text-muted-foreground"> <span>{filteredPoints.length} data points</span> {hoveredPoint && ( <span>Hovering: {hov`
+- [547:19] (JSXText) Static JSX text node: `Hovering:`
+  - context: `oints.length} data points</span> {hoveredPoint && ( <span>Hovering: {hoveredPoint.label}</span> )} </div> </CardCo`
 
 ### src/components/profile-sections/DashboardSection.tsx
 
@@ -3958,6 +4740,122 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `r" inputMode="numeric" aria-describedby="help-cache-ttl" aria-invalid={Boolean(errorFor('cache-ttl')`
 - [337:38] (JSXAttribute) Static aria-describedby attribute: `help-cache-maxSize`
   - context: `r" inputMode="numeric" aria-describedby="help-cache-maxSize" className="w-full"`
+
+### src/components/tracking/DataCollectionMonitor.tsx
+
+- [281:48] (JSXText) Static JSX text node: `No data collection history yet`
+  - context: `o mb-4 text-muted-foreground" /> <p className="text-muted-foreground">No data collection history yet</p> <p className="text-sm text-muted-fo`
+- [283:13] (JSXText) Static JSX text node: `Start your first session to see monitoring insights`
+  - context: `et</p> <p className="text-sm text-muted-foreground mt-2"> Start your first session to see monitoring insights </p> </Car`
+- [298:15] (JSXText) Static JSX text node: `Collection Overview`
+  - context: `ems-center gap-2"> <Activity className="h-5 w-5" /> Collection Overview </CardTitle> </CardHeader> <`
+- [305:62] (JSXText) Static JSX text node: `Total Sessions`
+  - context: `totalSessions}</p> <p className="text-xs text-muted-foreground">Total Sessions</p> </div> <div className="text-cente`
+- [313:62] (JSXText) Static JSX text node: `Completion Rate`
+  - context: `</p> <p className="text-xs text-muted-foreground">Completion Rate</p> </div> <div className="text-cent`
+- [319:62] (JSXText) Static JSX text node: `Avg Quality`
+  - context: `</p> <p className="text-xs text-muted-foreground">Avg Quality</p> </div> <div className="text-center p`
+- [323:67] (JSXText) Static JSX text node: `m`
+  - context: `l font-bold"> {Math.round(statistics.averageDuration / 60000)}m </p> <p className="text-xs text-muted-foregrou`
+- [325:62] (JSXText) Static JSX text node: `Avg Duration`
+  - context: `</p> <p className="text-xs text-muted-foreground">Avg Duration</p> </div> </div> {/* Common`
+- [334:19] (JSXText) Static JSX text node: `Common Issues`
+  - context: `<AlertCircle className="h-4 w-4 text-yellow-500" /> Common Issues </h4> <div className="space-y-1">`
+- [341:39] (JSXText) Static JSX text node: `times`
+  - context: `ge variant="outline" className="text-xs"> {issue.count} times </Badge> </div>`
+- [357:13] (JSXText) Static JSX text node: `Collection Goals`
+  - context: `lex items-center gap-2"> <Target className="h-5 w-5" /> Collection Goals </CardTitle> </CardHeader> <CardConte`
+- [398:23] (JSXText) Static JSX text node: `Target by`
+  - context: `"> <Calendar className="h-3 w-3" /> Target by {format(goal.deadline, 'MMM d')} </p>`
+- [414:15] (JSXText) Static JSX text node: `Recommended Strategies`
+  - context: `"> <Sparkles className="h-5 w-5 text-yellow-500" /> Recommended Strategies </CardTitle> </CardHeader>`
+- [463:27] (JSXText) Static JSX text node: `Effectiveness:`
+  - context: `<span className="flex items-center gap-1"> Effectiveness: {'★'.repeat(strategy.effectiveness)}`
+- [484:66] (JSXText) Static JSX text node: `Benefits:`
+  - context: `<div> <h5 className="text-xs font-medium mb-1">Benefits:</h5> <ul className="text-xs text-muted-foregro`
+- [496:66] (JSXText) Static JSX text node: `How to implement:`
+  - context: `<div> <h5 className="text-xs font-medium mb-1">How to implement:</h5> <ul className="text-xs text-muted`
+- [532:13] (JSXText) Static JSX text node: `You have`
+  - context: `<Info className="h-4 w-4" /> <AlertDescription> You have {activeStrategies.length} active {activeStrategies.length === 1 ? 'stra`
+- [532:48] (JSXText) Static JSX text node: `active`
+  - context: `/> <AlertDescription> You have {activeStrategies.length} active {activeStrategies.length === 1 ? 'strategy' : 'strategies'}.`
+- [532:114] (JSXText) Static JSX text node: `.
+            Remember to apply`
+  - context: `egies.length} active {activeStrategies.length === 1 ? 'strategy' : 'strategies'}. Remember to apply {activeStrategies.length === 1 ? 'it' : 'them'}`
+- [533:79] (JSXText) Static JSX text node: `in your next session!`
+  - context: `. Remember to apply {activeStrategies.length === 1 ? 'it' : 'them'} in your next session! </AlertDescription> </Alert> )}`
+
+### src/components/tracking/SessionIndicator.tsx
+
+- [78:34] (JSXText) Static JSX text node: `emotions`
+  - context: `<Badge variant="outline" className="text-xs"> {quality.emotionCount} emotions </Badge> <Badge variant="outline" className="text-xs">`
+- [81:34] (JSXText) Static JSX text node: `sensory`
+  - context: `<Badge variant="outline" className="text-xs"> {quality.sensoryCount} sensory </Badge> {showControls && ( <div className="fl`
+- [111:53] (JSXText) Static JSX text node: `Active Session`
+  - context: `or())} /> <div> <h3 className="font-semibold text-sm">Active Session</h3> <p className="text-xs text-muted-foreground">`
+- [127:63] (JSXText) Static JSX text node: `Data Quality`
+  - context: `fy-between mb-1"> <span className="text-xs text-muted-foreground">Data Quality</span> <div className="flex items-center gap-1">`
+- [139:60] (JSXText) Static JSX text node: `Emotions`
+  - context: `ty.emotionCount}</p> <p className="text-xs text-muted-foreground">Emotions</p> </div> <div className="p-2 rounded bg-muted`
+- [143:60] (JSXText) Static JSX text node: `Sensory`
+  - context: `ty.sensoryCount}</p> <p className="text-xs text-muted-foreground">Sensory</p> </div> <div className="p-2 rounded bg-muted/`
+- [149:60] (JSXText) Static JSX text node: `Environment`
+  - context: `} </p> <p className="text-xs text-muted-foreground">Environment</p> </div> </div> </div> {/*`
+- [159:15] (JSXText) Static JSX text node: `Last saved`
+  - context: `ckCircle className="h-3 w-3 text-green-500" /> <span> Last saved {new Date(quality.lastSaved).toLocaleTimeString()} </span`
+- [175:17] (JSXText) Static JSX text node: `Resume`
+  - context: `> <Play className="h-4 w-4 mr-2" /> Resume </Button> ) : ( <Button`
+- [185:17] (JSXText) Static JSX text node: `Pause`
+  - context: `> <Pause className="h-4 w-4 mr-2" /> Pause </Button> )} <Button`
+- [197:15] (JSXText) Static JSX text node: `Save`
+  - context: `20} > <Save className="h-4 w-4 mr-2" /> Save </Button> <Button size="sm"`
+- [215:15] (JSXText) Static JSX text node: `Add more data to improve session quality`
+  - context: `der-warning/20"> <p className="text-xs text-warning"> Add more data to improve session quality </p> </div>`
+
+### src/components/tracking/SessionRecovery.tsx
+
+- [52:21] (MessageAPI) Message API call: error(): `Failed to recover session:`
+  - context: `> s.sessionId !== sessionId) ); } catch (error) { console.error('Failed to recover session:', error); } finally { setIsRecovering(fals`
+- [103:21] (JSXText) Static JSX text node: `Unsaved Session Found`
+  - context: `className)}> <AlertTriangle className="h-4 w-4" /> <AlertTitle>Unsaved Session Found</AlertTitle> <AlertDescription className="mt-2">`
+- [106:13] (JSXText) Static JSX text node: `You have an incomplete session from`
+  - context: `escription className="mt-2"> <p className="text-sm mb-3"> You have an incomplete session from {age} with {session.metadata.dataPoints} dat`
+- [106:55] (JSXText) Static JSX text node: `with`
+  - context: `className="text-sm mb-3"> You have an incomplete session from {age} with {session.metadata.dataPoints} data points. </p> <div cl`
+- [106:90] (JSXText) Static JSX text node: `data points.`
+  - context: `You have an incomplete session from {age} with {session.metadata.dataPoints} data points. </p> <div className="flex gap-2"> <`
+- [118:19] (JSXText) Static JSX text node: `Recovering...`
+  - context: `<RefreshCw className="h-4 w-4 mr-2 animate-spin" /> Recovering... </> ) : ( <>`
+- [123:19] (JSXText) Static JSX text node: `Resume Session`
+  - context: `<> <RefreshCw className="h-4 w-4 mr-2" /> Resume Session </> )} </Button>`
+- [133:15] (JSXText) Static JSX text node: `Discard`
+  - context: `} > <Trash2 className="h-4 w-4 mr-2" /> Discard </Button> </div> </AlertDescription>`
+- [148:19] (JSXText) Static JSX text node: `Recoverable Sessions`
+  - context: `<AlertTriangle className="h-5 w-5 text-yellow-500" /> <span>Recoverable Sessions</span> </div> <Badge variant="outline">`
+- [155:11] (JSXText) Static JSX text node: `Found`
+  - context: `rdContent> <p className="text-sm text-muted-foreground mb-4"> Found {recoverableSessions.length} incomplete session(s) that can be recovered.`
+- [155:46] (JSXText) Static JSX text node: `incomplete session(s) that can be recovered.`
+  - context: `xt-sm text-muted-foreground mb-4"> Found {recoverableSessions.length} incomplete session(s) that can be recovered. </p> <div classNam`
+- [176:59] (JSXText) Static JSX text node: `Started`
+  - context: `-muted-foreground" /> <span className="text-sm font-medium">Started {age}</span> </div> <Badge`
+- [189:57] (JSXText) Static JSX text node: `data points`
+  - context: `xt-muted-foreground" /> <span>{session.metadata.dataPoints} data points</span> </div> <div className="fl`
+- [193:74] (JSXText) Static JSX text node: `m`
+  - context: `nd" /> <span>{Math.floor(session.metadata.duration / 60000)}m</span> </div> <div className="flex items-c`
+- [196:61] (JSXText) Static JSX text node: `Quality:`
+  - context: `tems-center gap-1"> <span className="text-muted-foreground">Quality:</span> <span className="font-medium">{quality.score`
+- [205:54] (JSXText) Static JSX text node: `emotions`
+  - context: `line" className="text-xs"> {session.data.emotions.length} emotions </Badge> )} {se`
+- [210:59] (JSXText) Static JSX text node: `sensory`
+  - context: `className="text-xs"> {session.data.sensoryInputs.length} sensory </Badge> )} {ses`
+- [215:23] (JSXText) Static JSX text node: `Environmental`
+  - context: `<Badge variant="outline" className="text-xs"> Environmental </Badge> )}`
+- [231:25] (JSXText) Static JSX text node: `Recovering...`
+  - context: `<RefreshCw className="h-3 w-3 mr-1 animate-spin" /> Recovering... </> ) : (`
+- [236:25] (JSXText) Static JSX text node: `Resume`
+  - context: `<RefreshCw className="h-3 w-3 mr-1" /> Resume </> )} </Butt`
+- [261:13] (JSXText) Static JSX text node: `Discard All`
+  - context: `uctive" > <Trash2 className="h-4 w-4 mr-2" /> Discard All </Button> </div> </CardContent> </Card>`
 
 ### src/components/ui/Breadcrumbs.tsx
 
@@ -4037,6 +4935,57 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [37:18] (MessageAPI) Message API call: error(): `analytics.config validation failed; using fallback defaults`
   - context: `sult.error); // Log once with normalized diagnostics try { logger.error('analytics.config validation failed; using fallback defaults', { errors,`
 
+### src/contexts/TrackingContext.tsx
+
+- [190:23] (MessageAPI) Message API call: warning(): `Session timed out due to inactivity`
+  - context: `ntax sessionTimeoutRef.current = setTimeout(() => { toast.warning('Session timed out due to inactivity'); endSession(true); }, newCo`
+- [190:23] (MessageAPI) sonner toast.warning(): `Session timed out due to inactivity`
+  - context: `ntax sessionTimeoutRef.current = setTimeout(() => { toast.warning('Session timed out due to inactivity'); endSession(true); }, newCo`
+- [195:17] (MessageAPI) Message API call: info(): `[TrackingContext] Started new session`
+  - context: `endSession(true); }, newConfig.sessionTimeout); } logger.info('[TrackingContext] Started new session', { sessionId, studentId }); }, [curren`
+- [222:17] (MessageAPI) Message API call: info(): `[TrackingContext] Ended session`
+  - context: `on_${currentSession.studentId}\`); setCurrentSession(null); logger.info('[TrackingContext] Ended session', { sessionId: currentSession.id }); }, [curr`
+- [243:17] (MessageAPI) Message API call: info(): `[TrackingContext] Paused session`
+  - context: `imerRef.current); autoSaveTimerRef.current = null; } logger.info('[TrackingContext] Paused session', { sessionId: currentSession.id }); }, [cur`
+- [268:17] (MessageAPI) Message API call: info(): `[TrackingContext] Resumed session`
+  - context: `n(); } }, sessionConfig.autoSaveInterval); } logger.info('[TrackingContext] Resumed session', { sessionId: currentSession.id }); }, [cu`
+- [299:23] (MessageAPI) Message API call: warning(): `Session timed out due to inactivity`
+  - context: `ntax sessionTimeoutRef.current = setTimeout(() => { toast.warning('Session timed out due to inactivity'); endSession(true); }, sessi`
+- [299:23] (MessageAPI) sonner toast.warning(): `Session timed out due to inactivity`
+  - context: `ntax sessionTimeoutRef.current = setTimeout(() => { toast.warning('Session timed out due to inactivity'); endSession(true); }, sessi`
+- [351:23] (MessageAPI) Message API call: warning(): `Session timed out due to inactivity`
+  - context: `ntax sessionTimeoutRef.current = setTimeout(() => { toast.warning('Session timed out due to inactivity'); endSession(true); }, sessi`
+- [351:23] (MessageAPI) sonner toast.warning(): `Session timed out due to inactivity`
+  - context: `ntax sessionTimeoutRef.current = setTimeout(() => { toast.warning('Session timed out due to inactivity'); endSession(true); }, sessi`
+- [478:21] (MessageAPI) Message API call: success(): `Session saved successfully`
+  - context: `lyticsManager.triggerAnalyticsForStudent(student); } toast.success('Session saved successfully'); logger.info('[TrackingContext] Session save`
+- [478:21] (MessageAPI) sonner toast.success(): `Session saved successfully`
+  - context: `lyticsManager.triggerAnalyticsForStudent(student); } toast.success('Session saved successfully'); logger.info('[TrackingContext] Session save`
+- [479:19] (MessageAPI) Message API call: info(): `[TrackingContext] Session saved`
+  - context: `; } toast.success('Session saved successfully'); logger.info('[TrackingContext] Session saved', { sessionId: currentSession.id,`
+- [486:20] (MessageAPI) Message API call: error(): `[TrackingContext] Failed to save session`
+  - context: `}); return trackingEntry; } catch (error) { logger.error('[TrackingContext] Failed to save session', { error }); toast.error('Faile`
+- [487:19] (MessageAPI) Message API call: error(): `Failed to save session`
+  - context: `error('[TrackingContext] Failed to save session', { error }); toast.error('Failed to save session'); return null; } }, [currentSession, valida`
+- [487:19] (MessageAPI) sonner toast.error(): `Failed to save session`
+  - context: `error('[TrackingContext] Failed to save session', { error }); toast.error('Failed to save session'); return null; } }, [currentSession, valida`
+- [530:16] (MessageAPI) Message API call: info(): `Session discarded`
+  - context: `ion_${currentSession.studentId}\`); setCurrentSession(null); toast.info('Session discarded'); logger.info('[TrackingContext] Session discarded', { s`
+- [530:16] (MessageAPI) sonner toast.info(): `Session discarded`
+  - context: `ion_${currentSession.studentId}\`); setCurrentSession(null); toast.info('Session discarded'); logger.info('[TrackingContext] Session discarded', { s`
+- [531:17] (MessageAPI) Message API call: info(): `[TrackingContext] Session discarded`
+  - context: `setCurrentSession(null); toast.info('Session discarded'); logger.info('[TrackingContext] Session discarded', { sessionId: currentSession.id }); }, [`
+- [540:19] (MessageAPI) Message API call: error(): `Session not found`
+  - context: `= sessions.find(s => s.id === sessionId); if (!session) { toast.error('Session not found'); return; } setCurrentSession(session); t`
+- [540:19] (MessageAPI) sonner toast.error(): `Session not found`
+  - context: `= sessions.find(s => s.id === sessionId); if (!session) { toast.error('Session not found'); return; } setCurrentSession(session); t`
+- [545:19] (MessageAPI) Message API call: success(): `Session recovered`
+  - context: `found'); return; } setCurrentSession(session); toast.success('Session recovered'); logger.info('[TrackingContext] Session recovered', { s`
+- [545:19] (MessageAPI) sonner toast.success(): `Session recovered`
+  - context: `found'); return; } setCurrentSession(session); toast.success('Session recovered'); logger.info('[TrackingContext] Session recovered', { s`
+- [546:17] (MessageAPI) Message API call: info(): `[TrackingContext] Session recovered`
+  - context: `urrentSession(session); toast.success('Session recovered'); logger.info('[TrackingContext] Session recovered', { sessionId }); }, [sessions]); /**`
+
 ### src/hooks/useAnalyticsStatus.ts
 
 - [63:20] (MessageAPI) Message API call: error(): `Error loading analytics status:`
@@ -4089,6 +5038,38 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [89:20] (MessageAPI) Message API call: error(): `ML training worker error:`
   - context: `}); } }; worker.onerror = (error) => { logger.error('ML training worker error:', error); setTrainingStatus({ isTrainin`
 
+### src/hooks/useMockDataSeeding.ts
+
+- [48:19] (MessageAPI) Message API call: info(): `Manually seeding mock data`
+  - context: `setIsSeeding(true); setSeedingError(null); try { logger.info('Manually seeding mock data', { studentId }); await seedMinimalDemo`
+- [55:21] (MessageAPI) Message API call: success(): `Demo data created successfully`
+  - context: `ow.dispatchEvent(new CustomEvent('mockDataLoaded')); toast.success('Demo data created successfully', { description: 'Sample data has been g`
+- [55:21] (MessageAPI) sonner toast.success(): `Demo data created successfully`
+  - context: `ow.dispatchEvent(new CustomEvent('mockDataLoaded')); toast.success('Demo data created successfully', { description: 'Sample data has been g`
+- [64:20] (MessageAPI) Message API call: error(): `Failed to seed mock data`
+  - context: `stanceof Error ? error.message : 'Failed to seed mock data'; logger.error('Failed to seed mock data', { error, studentId }); setSeedingError(errorMe`
+- [66:19] (MessageAPI) Message API call: error(): `Failed to create demo data`
+  - context: `, { error, studentId }); setSeedingError(errorMessage); toast.error('Failed to create demo data', { description: 'Please try loading mock da`
+- [66:19] (MessageAPI) sonner toast.error(): `Failed to create demo data`
+  - context: `, { error, studentId }); setSeedingError(errorMessage); toast.error('Failed to create demo data', { description: 'Please try loading mock da`
+- [112:21] (MessageAPI) Message API call: info(): `Auto-seeding minimal demo data for mock route`
+  - context: `tIsSeeding(true); setSeedingError(null); try { logger.info('Auto-seeding minimal demo data for mock route', { studentId });`
+- [120:23] (MessageAPI) Message API call: success(): `Demo data created successfully`
+  - context: `); // Show non-intrusive success message toast.success('Demo data created successfully', { description: 'Sample data has been`
+- [120:23] (MessageAPI) sonner toast.success(): `Demo data created successfully`
+  - context: `); // Show non-intrusive success message toast.success('Demo data created successfully', { description: 'Sample data has been`
+- [129:22] (MessageAPI) Message API call: error(): `Failed to auto-seed mock data`
+  - context: `f Error ? error.message : 'Failed to auto-seed mock data'; logger.error('Failed to auto-seed mock data', { error, studentId }); setSeedingError(`
+- [131:21] (MessageAPI) Message API call: error(): `Failed to create demo data`
+  - context: `error, studentId }); setSeedingError(errorMessage); toast.error('Failed to create demo data', { description: 'Please try loading mock`
+- [131:21] (MessageAPI) sonner toast.error(): `Failed to create demo data`
+  - context: `error, studentId }); setSeedingError(errorMessage); toast.error('Failed to create demo data', { description: 'Please try loading mock`
+
+### src/hooks/usePerformanceMonitor.ts
+
+- [371:17] (MessageAPI) Message API call: info(): `[Performance Report]`
+  - context: `logReport = useCallback(() => { const report = getReport(); logger.info('[Performance Report]', report); }, [getReport]); return { trackCompone`
+
 ### src/hooks/useProgressiveChartData.ts
 
 - [103:22] (MessageAPI) Message API call: error(): `[useProgressiveChartData] Failed computing emotion distribution`
@@ -4107,6 +5088,33 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 
 - [79:20] (MessageAPI) Message API call: error(): `Failed to load student data:`
   - context: `catch (e) { setError('Failed to load student data.'); logger.error('Failed to load student data:', e); } finally { setIsLoading(false);`
+
+### src/hooks/useStudentExport.ts
+
+- [38:19] (MessageAPI) Message API call: error(): `No student data available to export`
+  - context: `ync (format: 'pdf' | 'csv' | 'json') => { if (!student) { toast.error('No student data available to export'); return; } try { con`
+- [38:19] (MessageAPI) sonner toast.error(): `No student data available to export`
+  - context: `ync (format: 'pdf' | 'csv' | 'json') => { if (!student) { toast.error('No student data available to export'); return; } try { con`
+- [88:19] (MessageAPI) Message API call: info(): `Data exported`
+  - context: `ta exported successfully as ${format.toUpperCase()}\`); logger.info('Data exported', { format, studentId: student.id }); } catch (error: unknown`
+- [90:20] (MessageAPI) Message API call: error(): `Export error`
+  - context: `at, studentId: student.id }); } catch (error: unknown) { logger.error('Export error', { error, format }); const errorMessage = error instanceof`
+- [101:19] (MessageAPI) Message API call: error(): `No student data available to backup`
+  - context: `dleBackupData = useCallback(async () => { if (!student) { toast.error('No student data available to backup'); return; } try { con`
+- [101:19] (MessageAPI) sonner toast.error(): `No student data available to backup`
+  - context: `dleBackupData = useCallback(async () => { if (!student) { toast.error('No student data available to backup'); return; } try { con`
+- [120:21] (MessageAPI) Message API call: success(): `Backup created successfully`
+  - context: `')}.json\`; downloadBlob(backupBlob, filename); toast.success('Backup created successfully'); logger.info('Backup created', { studentId:`
+- [120:21] (MessageAPI) sonner toast.success(): `Backup created successfully`
+  - context: `')}.json\`; downloadBlob(backupBlob, filename); toast.success('Backup created successfully'); logger.info('Backup created', { studentId:`
+- [121:19] (MessageAPI) Message API call: info(): `Backup created`
+  - context: `); toast.success('Backup created successfully'); logger.info('Backup created', { studentId: student.id }); } catch (error) { logger`
+- [123:20] (MessageAPI) Message API call: error(): `Backup error`
+  - context: `created', { studentId: student.id }); } catch (error) { logger.error('Backup error', { error }); toast.error('Backup failed. Please try again.'`
+- [124:19] (MessageAPI) Message API call: error(): `Backup failed. Please try again.`
+  - context: `atch (error) { logger.error('Backup error', { error }); toast.error('Backup failed. Please try again.'); } }, [student, options]); return {`
+- [124:19] (MessageAPI) sonner toast.error(): `Backup failed. Please try again.`
+  - context: `atch (error) { logger.error('Backup error', { error }); toast.error('Backup failed. Please try again.'); } }, [student, options]); return {`
 
 ### src/lib/alertSystem.ts
 
@@ -4173,6 +5181,11 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `rofiles.saveProfiles() try { saveProfiles(); } catch (error) { logger.error('Error saving analytics profiles:', error); } } } /** * Singleton instance o`
 - [613:18] (MessageAPI) Message API call: error(): `[analyticsManager.orchestrator] getInsights failed`
   - context: `inputs.goals?.length ?? 0, }, }; } catch (error) { logger.error('[analyticsManager.orchestrator] getInsights failed', { error }); const cach`
+
+### src/lib/analyticsManagerLite.ts
+
+- [26:20] (MessageAPI) Message API call: error(): `[analyticsManagerLite] Failed to initialize student`
+  - context: `Student initialized', { studentId }); } catch (error) { logger.error('[analyticsManagerLite] Failed to initialize student', { error, studentId });`
 
 ### src/lib/analyticsProfiles.ts
 
@@ -4280,6 +5293,33 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [164:24] (MessageAPI) Message API call: error(): `[modelEvaluation] onupgradeneeded failed`
   - context: `{ keyPath: 'id' }); } } catch (err) { logger.error('[modelEvaluation] onupgradeneeded failed', err); } }; requ`
 
+### src/lib/sessionManager.ts
+
+- [146:17] (MessageAPI) Message API call: info(): `[SessionManager] Created new session`
+  - context: `sessionId, sessionData); this.persistSession(sessionData); logger.info('[SessionManager] Created new session', { sessionId, studentId }); return se`
+- [256:17] (MessageAPI) Message API call: info(): `[SessionManager] Completed session`
+  - context: `it analyticsManager.triggerAnalyticsForStudent(student); } logger.info('[SessionManager] Completed session', { sessionId, entryId: tracki`
+- [279:17] (MessageAPI) Message API call: info(): `[SessionManager] Abandoned session`
+  - context: `.delete(sessionId); this.clearPersistedSession(sessionId); logger.info('[SessionManager] Abandoned session', { sessionId }); } /** * Pause a se`
+- [292:17] (MessageAPI) Message API call: info(): `[SessionManager] Paused session`
+  - context: `.metadata.status = 'paused'; this.persistSession(session); logger.info('[SessionManager] Paused session', { sessionId }); return true; } /**`
+- [306:17] (MessageAPI) Message API call: info(): `[SessionManager] Resumed session`
+  - context: `.metadata.status = 'active'; this.persistSession(session); logger.info('[SessionManager] Resumed session', { sessionId }); return true; } /**`
+- [344:22] (MessageAPI) Message API call: error(): `[SessionManager] Failed to recover session`
+  - context: `veItem(key); } } } catch (error) { logger.error('[SessionManager] Failed to recover session', { key, error }); localStor`
+- [351:19] (MessageAPI) Message API call: info(): `[SessionManager] Recovered sessions`
+  - context: `if (recovered.length > 0) { this.saveSessionHistory(); logger.info('[SessionManager] Recovered sessions', { count: recovered.length }); }`
+- [574:20] (MessageAPI) Message API call: error(): `[SessionManager] Failed to persist session`
+  - context: `setItem(key, JSON.stringify(session)); } catch (error) { logger.error('[SessionManager] Failed to persist session', { sessionId: session.sess`
+- [603:20] (MessageAPI) Message API call: error(): `[SessionManager] Failed to load session history`
+  - context: `ime) : undefined, })); } } catch (error) { logger.error('[SessionManager] Failed to load session history', { error }); this.sessio`
+- [615:20] (MessageAPI) Message API call: error(): `[SessionManager] Failed to save session history`
+  - context: `JSON.stringify(this.sessionHistory)); } catch (error) { logger.error('[SessionManager] Failed to save session history', { error }); } } /**`
+- [640:17] (MessageAPI) Message API call: info(): `[SessionManager] Updated validation rules`
+  - context: `this.validationRules = { ...this.validationRules, ...rules }; logger.info('[SessionManager] Updated validation rules', { rules }); } /** * Get val`
+- [664:17] (MessageAPI) Message API call: info(): `[SessionManager] Cleared all sessions`
+  - context: `); keys.forEach(key => localStorage.removeItem(key)); logger.info('[SessionManager] Cleared all sessions'); } } // Export singleton instance ex`
+
 ### src/lib/storageUtils.ts
 
 - [55:20] (MessageAPI) Message API call: error(): `Error clearing old data:`
@@ -4317,40 +5357,10 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `(); setStudents(students); } catch (error) { logger.error('Dashboard: Error loading students', { error }); setStudents([]);`
 - [116:20] (MessageAPI) Message API call: error(): `Dashboard: Error calculating statistics`
   - context: `tries: entriesTrend } }; } catch (error) { logger.error('Dashboard: Error calculating statistics', { error }); return { todayEntri`
-- [155:17] (JSXText) Static JSX text node: `Sensory`
-  - context: `className="text-4xl font-bold tracking-tight text-foreground"> Sensory<span className="text-primary">Tracker</span> - {String(tDashboard('title`
-- [155:55] (JSXText) Static JSX text node: `Tracker`
-  - context: `g-tight text-foreground"> Sensory<span className="text-primary">Tracker</span> - {String(tDashboard('title')).split(' - ')[1]} </h`
-- [176:81] (JSXText) Static JSX text node: `Oversikt`
-  - context: `<h2 className="text-3xl font-bold tracking-tight text-foreground">Oversikt</h2> <div className="flex items-center space-x-4">`
-- [195:19] (JSXText) Static JSX text node: `Ny Registrering`
-  - context: `<Plus className="mr-2 h-4 w-4 group-hover:animate-bounce" /> Ny Registrering </Button> </div> </div`
-- [220:64] (JSXText) Static JSX text node: `from last week`
-  - context: `ixed(0)}%</span> <span className="ml-1 text-muted-foreground">from last week</span> </div> </Card>`
-- [242:64] (JSXText) Static JSX text node: `from last week`
-  - context: `ixed(0)}%</span> <span className="ml-1 text-muted-foreground">from last week</span> </div> </Card>`
-- [264:64] (JSXText) Static JSX text node: `from last week`
-  - context: `d-400">5%</span> <span className="ml-1 text-muted-foreground">from last week</span> </div> </Card> <`
-- [275:67] (JSXText) Static JSX text node: `Elever`
-  - context: `> <h2 className="text-3xl font-bold tracking-tight">Elever</h2> <Button variant="default"`
-- [283:19] (JSXText) Static JSX text node: `Legg til elev`
-  - context: `2 h-4 w-4 group-hover:animate-bounce transition-transform" /> Legg til elev </Button> </div> {/*`
-- [347:25] (JSXText) Static JSX text node: `Welcome to Sensory Tracker`
-  - context: `<h3 className="text-2xl font-semibold text-foreground"> Welcome to Sensory Tracker </h3> <p`
-- [350:25] (JSXText) Static JSX text node: `It looks like you don't have any students yet. Get started by adding your first student and start tracking their sensory data.`
-  - context: `ssName="mt-3 max-w-md text-base text-muted-foreground"> It looks like you don't have any students yet. Get started by adding your first`
-- [359:25] (JSXText) Static JSX text node: `Add Your First Student`
-  - context: `w-4 group-hover:animate-bounce transition-transform" /> Add Your First Student </Button> </div`
-- [372:81] (JSXText) Static JSX text node: `Want to explore with sample data?`
-  - context: `<h4 className="text-lg font-semibold text-foreground">Want to explore with sample data?</h4> <p className="t`
-- [374:29] (JSXText) Static JSX text node: `Load mock data to test features and see how the app works`
-  - context: `<p className="text-sm text-muted-foreground mt-1"> Load mock data to test features and see how the app works`
-- [381:31] (JSXText) Static JSX text node: `Load Sample Data`
-  - context: `<FlaskConical className="h-4 w-4 mr-2" /> Load Sample Data </Button>`
-- [386:44] (JSXText) Static JSX text node: `Mock Data Loader`
-  - context: `<DialogHeader> <DialogTitle>Mock Data Loader</DialogTitle> <DialogDescription>`
-- [388:33] (JSXText) Static JSX text node: `Quickly populate the app with demo students and tracking data for exploration.`
-  - context: `<DialogDescription> Quickly populate the app with demo students and tracking data for exploration.`
+- [168:116] (JSXText) Static JSX text node: `K`
+  - context: `ame="text-3xl font-bold text-white motion-safe:group-hover:animate-bounce-slow">K</div> </div> </div>`
+- [310:66] (JSXText) Static JSX text node: `from last week`
+  - context: `ive">5%</span> <span className="ml-1 text-muted-foreground">from last week</span> </div> </Card>`
 
 ### src/pages/DevTools.tsx
 
@@ -4483,6 +5493,25 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
 - [26:65] (JSXAttribute) Static aria-label attribute: `Settings navigation`
   - context: `-cols-4 gap-6"> <aside className="md:col-span-1 space-y-2" aria-label="Settings navigation"> <ul className="text-sm"> <li> <`
 
+### src/pages/StudentProfile.original.tsx
+
+- [178:21] (MessageAPI) Message API call: info(): `Auto-seeding minimal demo data for mock route`
+  - context: `.current = true; setIsSeedingData(true); try { logger.info('Auto-seeding minimal demo data for mock route', { studentId });`
+- [194:22] (MessageAPI) Message API call: error(): `Failed to auto-seed mock data`
+  - context: `reloadData(); } } catch (error) { logger.error('Failed to auto-seed mock data', { error, studentId }); toast.error(Stri`
+- [243:24] (MessageAPI) Message API call: error(): `Error generating insights`
+  - context: `} } catch (error) { if (!signal.aborted) { logger.error('Error generating insights', { error }); setInsights(null);`
+- [273:26] (MessageAPI) Message API call: error(): `[SAFE] analyticsManager.triggerAnalyticsForStudent failed`
+  - context: `} }) .catch((err) => { logger.error('[SAFE] analyticsManager.triggerAnalyticsForStudent failed', { error: err, stude`
+- [285:24] (MessageAPI) Message API call: error(): `[SAFE] analyticsManager.initializeStudentAnalytics failed`
+  - context: `entAnalytics done'); } } catch (err) { logger.error('[SAFE] analyticsManager.initializeStudentAnalytics failed', { error: err, stude`
+- [290:20] (MessageAPI) Message API call: error(): `[SAFE] analyticsManager outer try/catch caught error`
+  - context: `/ Extra safety net; never rethrow from analytics side-effect logger.error('[SAFE] analyticsManager outer try/catch caught error', { error: err }); }`
+- [357:20] (MessageAPI) Message API call: error(): `Export error`
+  - context: `(tCommon('status.success'))); } catch (error: unknown) { logger.error('Export error', { error }); const errorMessage = error instanceof Error ?`
+- [381:20] (MessageAPI) Message API call: error(): `Backup error`
+  - context: `ss(String(tCommon('status.success'))); } catch (error) { logger.error('Backup error', { error }); toast.error(String(tCommon('error.title')));`
+
 ### src/pages/StudentProfile.tsx
 
 - [178:21] (MessageAPI) Message API call: info(): `Auto-seeding minimal demo data for mock route`
@@ -4521,6 +5550,23 @@ Key convention: feature.section.purpose — prefer nouns and verbs in present te
   - context: `atch (error) { logger.error('Backup error', { error }); toast.error('Backup failed. Please try again.'); } }, [student, trackingEntries, allEm`
 - [386:19] (MessageAPI) sonner toast.error(): `Backup failed. Please try again.`
   - context: `atch (error) { logger.error('Backup error', { error }); toast.error('Backup failed. Please try again.'); } }, [student, trackingEntries, allEm`
+
+### src/pages/StudentProfileOptimized.tsx
+
+- [123:23] (MessageAPI) Message API call: success(): `Demo data created successfully`
+  - context: `window.dispatchEvent(new CustomEvent('mockDataLoaded')); toast.success('Demo data created successfully'); if (reloadData) reloadData(); }`
+- [123:23] (MessageAPI) sonner toast.success(): `Demo data created successfully`
+  - context: `window.dispatchEvent(new CustomEvent('mockDataLoaded')); toast.success('Demo data created successfully'); if (reloadData) reloadData(); }`
+- [126:22] (MessageAPI) Message API call: error(): `Failed to auto-seed mock data`
+  - context: `if (reloadData) reloadData(); } catch (error) { logger.error('Failed to auto-seed mock data', { error, studentId }); toast.error('Fai`
+- [127:21] (MessageAPI) Message API call: error(): `Failed to create demo data`
+  - context: `ror('Failed to auto-seed mock data', { error, studentId }); toast.error('Failed to create demo data'); } finally { setIsSeedingData(false)`
+- [127:21] (MessageAPI) sonner toast.error(): `Failed to create demo data`
+  - context: `ror('Failed to auto-seed mock data', { error, studentId }); toast.error('Failed to create demo data'); } finally { setIsSeedingData(false)`
+- [154:26] (MessageAPI) Message API call: error(): `Failed to get insights`
+  - context: `ewInsights); } } catch (error) { logger.error('Failed to get insights', { error }); } finally { setIsLoa`
+- [212:20] (MessageAPI) Message API call: error(): `Export error`
+  - context: `essfully as ${format.toUpperCase()}\`); } catch (error) { logger.error('Export error', { error }); toast.error(\`Export failed: ${error instanceof`
 
 ### src/pages/TrackStudent.tsx
 
