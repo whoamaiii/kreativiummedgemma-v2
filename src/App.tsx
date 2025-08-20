@@ -8,6 +8,7 @@ if (!POC_MODE) {
   await import("@/lib/analyticsConfigOverride");
 }
 import { ThemeProvider } from "next-themes";
+import { TegnXPProvider } from "@/contexts/TegnXPContext";
 import { DevErrorBanner } from "@/components/DevErrorBanner";
 import { AccessibilityWrapper } from "@/components/AccessibilityWrapper";
 import { LoadingFallback } from "@/components/LoadingFallback";
@@ -18,6 +19,12 @@ const AddStudent = lazy(() => import("./pages/AddStudent"));
 const StudentProfile = lazy(() => import("./pages/StudentProfile").then(m => ({ default: m.StudentProfile })));
 const TrackStudent = lazy(() => import("./pages/TrackStudent"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const TegnLayout = lazy(() => import("./pages/TegnLayout"));
+const TegnTilTaleMenu = lazy(() => import("./pages/TegnTilTaleMenu"));
+const SignLearnPage = lazy(() => import("./pages/SignLearnPage"));
+const SignIndexPage = lazy(() => import("./pages/SignIndexPage"));
+const SignMemoryPage = lazy(() => import("./pages/SignMemoryPage"));
+const SignProgressPage = lazy(() => import("./pages/SignProgressPage"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Reports = lazy(() => import("./pages/Reports"));
 const InteractiveVizTest = (!IS_PROD || POC_MODE)
@@ -47,8 +54,9 @@ const App = () => (
           <TooltipProvider>
             <Toaster />
             <BrowserRouter>
-              <Suspense fallback={<LoadingFallback />}>
-                <Routes>
+              <TegnXPProvider>
+                <Suspense fallback={<LoadingFallback />}>
+                  <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/add-student" element={<AddStudent />} />
                 <Route path="/student/:studentId" element={<StudentProfile />} />
@@ -59,6 +67,13 @@ const App = () => (
                 <Route path="/reports/export" element={<Reports />} />
                 {/* Report Builder route */}
                 <Route path="/reports/builder" element={<ReportBuilderPage />} />
+                <Route path="/tegn" element={<TegnLayout />}>
+                  <Route index element={<TegnTilTaleMenu />} />
+                  <Route path="learn" element={<SignLearnPage />} />
+                  <Route path="tegnbase" element={<SignIndexPage />} />
+                  <Route path="memory" element={<SignMemoryPage />} />
+                  <Route path="progress" element={<SignProgressPage />} />
+                </Route>
                 {!IS_PROD && EnvironmentalCorrelationsTest && (
                   <Route path="/environmental-correlations-test" element={<EnvironmentalCorrelationsTest />} />
                 )}
@@ -70,8 +85,9 @@ const App = () => (
                 )}
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
+                  </Routes>
+                </Suspense>
+              </TegnXPProvider>
             </BrowserRouter>
           </TooltipProvider>
         </QueryClientProvider>

@@ -13,7 +13,7 @@ import { POC_MODE, IS_PROD } from "@/lib/env";
 import { PremiumStudentCard } from "@/components/ui/PremiumStudentCard";
 import { MockDataLoader } from "@/components/MockDataLoader";
 import { dataStorage } from "@/lib/dataStorage";
-import { FlaskConical, HelpCircle, Download, Plus, Users, CalendarDays, BarChart3, TrendingUp, TrendingDown } from "lucide-react";
+import { FlaskConical, HelpCircle, Download, Plus, Users, CalendarDays, BarChart3, TrendingUp, TrendingDown, Hand } from "lucide-react";
 import { HelpAndSupport } from "@/components/HelpAndSupport";
 import { GlobalMenu } from "@/components/GlobalMenu";
 import { subWeeks, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
@@ -231,6 +231,17 @@ window.addEventListener('storage', handleStorageChange);
                   >
                     <Download className="mr-2 h-4 w-4" />
                     {String(tSettings('data.export'))}
+                  </Button>
+                  <Button
+                    variant="glass"
+                    size="lg"
+                    onClick={() => navigate('/tegn')}
+                    className="flex items-center justify-center group"
+                    aria-label={tCommon('navigation.tegnTilTale')}
+                    data-testid="dashboard-tegn-button"
+                  >
+                    <Hand className="mr-2 h-4 w-4" />
+                    {String(tCommon('navigation.tegnTilTale'))}
                   </Button>
                   <Button 
                     variant="default" 

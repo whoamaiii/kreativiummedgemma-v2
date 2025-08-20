@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { buttonVariants } from '@/components/ui/button-variants';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Wrench, FileText } from 'lucide-react';
+import { MoreHorizontal, Wrench, FileText, Hand } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '@/hooks/useTranslation';
 import { IS_PROD, POC_MODE } from '@/lib/env';
@@ -14,6 +14,7 @@ export const GlobalMenu = (): JSX.Element => {
   const goReports = useCallback(() => navigate('/reports'), [navigate]);
   const goDevTools = useCallback(() => navigate('/dev-tools'), [navigate]);
   const goSettings = useCallback(() => navigate('/settings'), [navigate]);
+  const goTegn = useCallback(() => navigate('/tegn'), [navigate]);
 
   return (
     <DropdownMenu>
@@ -26,6 +27,9 @@ export const GlobalMenu = (): JSX.Element => {
         <MoreHorizontal className="h-4 w-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="backdrop-blur-md bg-popover/90 border border-border/40 shadow-lg">
+        <DropdownMenuItem onClick={goTegn} className="cursor-pointer" data-testid="menu-tegn">
+          <Hand className="h-4 w-4 mr-2" /> {String(tCommon('navigation.tegnTilTale'))}
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={goReports} className="cursor-pointer" data-testid="menu-reports">
           <FileText className="h-4 w-4 mr-2" /> {String(tCommon('navigation.reports'))}
         </DropdownMenuItem>
