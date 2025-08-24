@@ -222,9 +222,13 @@
   "create_backup": "Create Backup",
   "enhanced_tracking_title": "Enhanced Tracking Tools",
   "enhanced_tracking_description": "Advanced data collection and smart entry tools for {{name}}",
-  "enhanced_tracking_coming_soon": "Enhanced tracking tools coming soon"
-
-,
+  "enhanced_tracking_coming_soon": "Enhanced tracking tools coming soon",
+  "devErrorBanner": {
+    "title": "Dev error captured ({{count}})",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "dismiss": "Dismiss"
+  },
   "export": "Export",
   "exporting": "Exporting",
   "exportAsPdf": "Export as PDF",

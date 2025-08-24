@@ -222,9 +222,13 @@
   "create_backup": "Opprett sikkerhetskopi",
   "enhanced_tracking_title": "Forbedrede sporingsverktøy",
   "enhanced_tracking_description": "Avansert datainnsamling og smarte inntastingsverktøy for {{name}}",
-  "enhanced_tracking_coming_soon": "Forbedrede sporingsverktøy kommer snart"
-
-,
+  "enhanced_tracking_coming_soon": "Forbedrede sporingsverktøy kommer snart",
+  "devErrorBanner": {
+    "title": "Utviklerfeil fanget ({{count}})",
+    "expand": "Utvid",
+    "collapse": "Skjul",
+    "dismiss": "Avvis"
+  },
   "export": "Eksporter",
   "exporting": "Eksporterer",
   "exportAsPdf": "Eksporter som PDF",
