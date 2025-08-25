@@ -20,6 +20,7 @@ import { subWeeks, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
 import { logger } from "@/lib/logger";
 import { cn } from "@/lib/utils";
 import { useGemma } from "@/hooks/useGemma";
+import { ENABLE_BIGSTIAN_AI } from "@/lib/env";
 
 /**
  * Dashboard component - Main landing page with modern glassmorphism design
@@ -325,8 +326,15 @@ window.addEventListener('storage', handleStorageChange);
                 </Card>
               </div>
 
-              {/* Optional: Gemma Assistant panel (dev-only) */}
-              {!IS_PROD && <GemmaAssistantPanel />}
+              {/* BigstianAI Assistant panel */}
+              {(ENABLE_BIGSTIAN_AI || !IS_PROD) && <GemmaAssistantPanel />}
+              
+              {/* Debug info for BigstianAI */}
+              {!IS_PROD && (
+                <div className="mb-4 p-2 bg-muted/20 rounded text-xs text-muted-foreground">
+                  Debug: ENABLE_BIGSTIAN_AI={String(ENABLE_BIGSTIAN_AI)}, IS_PROD={String(IS_PROD)}
+                </div>
+              )}
 
               {/* Students section */}
               <div>

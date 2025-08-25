@@ -15,6 +15,11 @@ class GenerateRequest(BaseModel):
 	temperature: Optional[float] = 0.3
 	top_p: Optional[float] = 0.95
 	repetition_penalty: Optional[float] = 1.05
+	# Optional: stop sequences (ignored by some models; we can soft-trim on server)
+	# Using Optional[List[str]] would require import; keep simple and permissive
+	# Accept but unused by mlx generate; used for soft post-trim
+	# mypy off for simplicity
+	stop: Optional[list] = None
 
 
 app = FastAPI(title="Kreativium MLX Backend", version="1.0.0")
@@ -70,6 +75,19 @@ def generate_text(req: GenerateRequest):
 		logits_processors=logits_processors,
 		verbose=False,
 	)
+
+	# Soft post-processing: if output contains <JSON>...</JSON>, extract inner
+	try:
+		start_tag = "<JSON>"
+		end_tag = "</JSON>"
+		start = text.find(start_tag)
+		end = text.find(end_tag)
+		if start >= 0 and end > start:
+			inner = text[start + len(start_tag):end].strip()
+			text = inner
+	except Exception:
+		pass
+
 	return {"text": text}
 
 

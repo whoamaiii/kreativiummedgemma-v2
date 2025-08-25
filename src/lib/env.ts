@@ -34,3 +34,17 @@ export const DISABLE_ANALYTICS_WORKER: boolean = (() => {
   }
 })();
 
+/**
+ * BigstianAI feature flag for enabling AI sections in reports and explainability.
+ * Set VITE_ENABLE_BIGSTIAN_AI to '1' | 'true' | 'yes'.
+ */
+export const ENABLE_BIGSTIAN_AI: boolean = (() => {
+  try {
+    const v = ((import.meta as any)?.env?.VITE_ENABLE_BIGSTIAN_AI ?? '').toString().toLowerCase();
+    // Enable by default in development for testing
+    return v === '1' || v === 'true' || v === 'yes' || (!IS_PROD && v !== 'false' && v !== '0');
+  } catch {
+    return !IS_PROD; // Default to enabled in dev
+  }
+})();
+
