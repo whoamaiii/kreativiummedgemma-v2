@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import * as tf from '@tensorflow/tfjs';
 import { TrackingEntry } from '../types/student';
 import { ValidationResults } from '../types/ml';
@@ -159,7 +160,7 @@ class ModelStorage {
 async init(): Promise<void> {
     // Check if IndexedDB is available
     if (typeof indexedDB === 'undefined') {
-      console.warn('IndexedDB not available, ML models will not persist');
+      try { logger.warn('[mlModels] IndexedDB not available, ML models will not persist'); } catch {}
       return;
     }
     
@@ -168,7 +169,7 @@ async init(): Promise<void> {
         const request = indexedDB.open(this.dbName, 1);
         
         request.onerror = () => {
-          console.warn('Failed to open IndexedDB:', request.error);
+          try { logger.warn('[mlModels] Failed to open IndexedDB', request.error as any); } catch {}
           resolve(); // Don't reject, just continue without persistence
         };
         
@@ -184,7 +185,7 @@ async init(): Promise<void> {
           }
         };
       } catch (error) {
-        console.warn('IndexedDB initialization failed:', error);
+        try { logger.warn('[mlModels] IndexedDB initialization failed', error as Error); } catch {}
         resolve(); // Don't reject, just continue without persistence
       }
     });
@@ -201,7 +202,7 @@ async init(): Promise<void> {
 async saveModel(name: ModelType, model: tf.LayersModel, metadata: ModelMetadata): Promise<void> {
     if (!this.db) await this.init();
     if (!this.db) {
-      console.warn('Cannot save model - IndexedDB not available');
+      try { logger.warn('[mlModels] Cannot save model - IndexedDB not available'); } catch {}
       return;
     }
     
@@ -235,7 +236,7 @@ async saveModel(name: ModelType, model: tf.LayersModel, metadata: ModelMetadata)
 async loadModel(name: ModelType): Promise<StoredModel | null> {
     if (!this.db) await this.init();
     if (!this.db) {
-      console.warn('Cannot load model - IndexedDB not available');
+      try { logger.warn('[mlModels] Cannot load model - IndexedDB not available'); } catch {}
       return null;
     }
     
@@ -271,7 +272,7 @@ async loadModel(name: ModelType): Promise<StoredModel | null> {
 async deleteModel(name: ModelType): Promise<void> {
     if (!this.db) await this.init();
     if (!this.db) {
-      console.warn('Cannot delete model - IndexedDB not available');
+      try { logger.warn('[mlModels] Cannot delete model - IndexedDB not available'); } catch {}
       return;
     }
     
@@ -293,7 +294,7 @@ async deleteModel(name: ModelType): Promise<void> {
 async listModels(): Promise<ModelMetadata[]> {
     if (!this.db) await this.init();
     if (!this.db) {
-      console.warn('Cannot list models - IndexedDB not available');
+      try { logger.warn('[mlModels] Cannot list models - IndexedDB not available'); } catch {}
       return [];
     }
     
@@ -418,10 +419,15 @@ export class MLModels {
     const model = this.createEmotionModel();
     const { inputs, outputs, meta } = prepareEmotionDataset(sessions);
 
+    // Pull defaults from analytics runtime config; fall back to sane defaults
+    const cfgRuntime = analyticsConfig.getConfig();
+    const defaultBatch = 32; // keep as fallback; UI/runtime overrides can replace
+    const defaultValSplit = 0.2;
+
     const history = await model.fit(inputs, outputs, {
       epochs,
-      batchSize: 32,
-      validationSplit: 0.2,
+      batchSize: defaultBatch,
+      validationSplit: defaultValSplit,
       callbacks,
       shuffle: true
     });
@@ -552,10 +558,13 @@ export class MLModels {
     const model = this.createSensoryModel();
     const { inputs, outputs, meta } = prepareSensoryDataset(sessions);
 
+    const cfgRuntime = analyticsConfig.getConfig();
+    const defaultBatch = 32;
+    const defaultValSplit = 0.2;
     const history = await model.fit(inputs, outputs, {
       epochs,
-      batchSize: 32,
-      validationSplit: 0.2,
+      batchSize: defaultBatch,
+      validationSplit: defaultValSplit,
       callbacks,
       shuffle: true
     });

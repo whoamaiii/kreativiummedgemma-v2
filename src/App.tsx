@@ -27,6 +27,7 @@ const SignMemoryPage = lazy(() => import("./pages/SignMemoryPage"));
 const SignProgressPage = lazy(() => import("./pages/SignProgressPage"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Reports = lazy(() => import("./pages/Reports"));
+const KreativiumAI = lazy(() => import("./pages/KreativiumAI"));
 const InteractiveVizTest = (!IS_PROD || POC_MODE)
   ? lazy(() => import('./pages/InteractiveVizTest').then(m => ({ default: m.default })))
   : null as unknown as React.LazyExoticComponent<() => JSX.Element>;
@@ -63,6 +64,7 @@ const App = () => (
                 <Route path="/track/:studentId" element={<TrackStudent />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/reports" element={<Reports />} />
+                <Route path="/kreativium-ai" element={<KreativiumAI />} />
                 {/* Export tools (previous /reports) */}
                 <Route path="/reports/export" element={<Reports />} />
                 {/* Report Builder route */}

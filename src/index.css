@@ -191,6 +191,10 @@ All colors MUST be HSL.
   /* Ensure no decorative overlay blocks interactions over tab bars or controls */
   .overlay-safe { pointer-events: none; }
 
+  /* Overlay z-index tokens to avoid magic numbers in components */
+  .z-overlay { z-index: 70; }
+  .z-overlay-elevated { z-index: 80; }
+
   @keyframes pulse-glow {
     from { opacity: 0.8; transform: translateX(-50%) scale(1); }
     to { opacity: 1; transform: translateX(-50%) scale(1.05); }

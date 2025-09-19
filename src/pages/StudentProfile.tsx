@@ -7,7 +7,8 @@ import { DashboardSection } from "@/components/profile-sections/DashboardSection
 import { AnalyticsSection } from "@/components/profile-sections/AnalyticsSection";
 import { ToolsSection } from "@/components/profile-sections/ToolsSection";
 import { GoalManager } from "@/components/GoalManager";
-import { ProgressDashboard } from "@/components/ProgressDashboard";
+import React, { memo, lazy } from 'react';
+const ProgressDashboard = lazy(() => import("@/components/ProgressDashboard").then(m => ({ default: m.ProgressDashboard })));
 import { LazyReportBuilder } from "@/components/lazy/LazyReportBuilder";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useDataFiltering } from "@/hooks/useDataFiltering";
@@ -15,6 +16,7 @@ import { useOptimizedInsights } from "@/hooks/useOptimizedInsights";
 import { useStudentData } from "@/hooks/useStudentData";
 import { Insights } from "@/types/student";
 import { exportSystem } from "@/lib/exportSystem";
+import { analyticsExport, type AnalyticsExportData } from "@/lib/analyticsExport";
 import { downloadBlob } from "@/lib/utils";
 import { ArrowLeft, Download, Save, FileText, Calendar, Loader } from "lucide-react";
 import { toast } from "sonner";
@@ -325,15 +327,35 @@ const StudentProfile = () => {
 
       switch (format) {
         case 'pdf': {
-          blob = await exportSystem.generatePDFReport(student, exportOptions, {
-            format: 'pdf',
-            includeFields: ['all'],
-            includeCharts: true,
-          });
-          // Note: generatePDFReport currently returns an HTML document for printing.
-          // Use .html extension to avoid browsers trying to open it as a PDF.
-          filename = `${baseFilename}_report.html`;
-          break;
+          // Consolidated PDF: build AnalyticsExportData and delegate to analyticsExport
+          const allDates: Date[] = [
+            ...filteredData.entries.map(t => t.timestamp as unknown as Date),
+            ...filteredData.emotions.map(e => (e as unknown as { timestamp: Date }).timestamp),
+            ...filteredData.sensoryInputs.map(s => (s as unknown as { timestamp: Date }).timestamp),
+          ];
+          const start = allDates.length ? new Date(Math.min(...allDates.map(d => d.getTime()))) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+          const end = allDates.length ? new Date(Math.max(...allDates.map(d => d.getTime()))) : new Date();
+
+          const exportData: AnalyticsExportData = {
+            student,
+            dateRange: { start, end },
+            data: {
+              entries: filteredData.entries as unknown as any[],
+              emotions: filteredData.emotions as unknown as any[],
+              sensoryInputs: filteredData.sensoryInputs as unknown as any[],
+            },
+            analytics: {
+              patterns: [],
+              correlations: [],
+              insights: [],
+              predictiveInsights: [],
+              anomalies: [],
+            },
+          } as unknown as AnalyticsExportData;
+
+          await analyticsExport.exportTo('pdf' as any, exportData);
+          toast.success('Report exported as PDF');
+          return;
         }
         case 'csv': {
           const csvContent = exportSystem.generateCSVExport([student], exportOptions, {

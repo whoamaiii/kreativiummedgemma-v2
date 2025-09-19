@@ -27,6 +27,10 @@ export type EChartExportRegistration = {
   title?: string;
   /** Optional student id for scoping */
   studentId?: string;
+  /** Optional filters used to build the chart (for export metadata) */
+  filters?: Record<string, unknown>;
+  /** Optional date range used by the chart */
+  dateRange?: { start: Date; end: Date };
 };
 
 export type EChartContainerProps = {
@@ -525,12 +529,21 @@ function EChartContainerWithExport(props: EChartContainerProps & { exportRegistr
         type: reg.type ?? 'custom',
         title: reg.title ?? 'Chart',
         studentId: reg.studentId,
+        filters: reg.filters,
+        dateRange: reg.dateRange,
         getMethods: () => exportMethods,
+      });
+      // keep metadata up to date when inputs change
+      chartRegistry.updateMetadata(reg.id, {
+        type: reg.type ?? 'custom',
+        title: reg.title ?? 'Chart',
+        ...(reg.filters ? { filters: reg.filters } : {}),
+        ...(reg.dateRange ? { dateRange: reg.dateRange } : {}),
       });
       return () => chartRegistry.unregister(reg.id!);
     }
     return;
-  }, [props.exportRegistration?.id, props.exportRegistration?.title, props.exportRegistration?.studentId, props.exportRegistration?.type, exportMethods]);
+  }, [props.exportRegistration?.id, props.exportRegistration?.title, props.exportRegistration?.studentId, props.exportRegistration?.type, props.exportRegistration?.filters, props.exportRegistration?.dateRange, exportMethods]);
 
   return (
     <EChartContainerBase {...props} __innerChartRef__={innerRef} />

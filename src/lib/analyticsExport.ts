@@ -1,13 +1,28 @@
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+// Dynamic imports to keep initial bundle smaller
+let __jsPDF: any | null = null;
+let __html2canvas: any | null = null;
+async function getJsPDF() {
+  if (!__jsPDF) {
+    const mod = await import('jspdf');
+    __jsPDF = (mod as any).default || mod;
+  }
+  return __jsPDF;
+}
+async function getHtml2Canvas() {
+  if (!__html2canvas) {
+    const mod = await import('html2canvas');
+    __html2canvas = (mod as any).default || mod;
+  }
+  return __html2canvas;
+}
 import { format } from 'date-fns';
 import { Student, TrackingEntry, EmotionEntry, SensoryEntry } from '@/types/student';
+import type { ExportFormat } from '@/types/analytics';
 import { PatternResult, CorrelationResult } from '@/lib/patternAnalysis';
 import { PredictiveInsight, AnomalyDetection } from '@/lib/enhancedPatternAnalysis';
 import { logger } from '@/lib/logger';
 import { downloadBlob } from '@/lib/utils';
 
-export type ExportFormat = 'pdf' | 'csv' | 'json';
 
 export interface AnalyticsExportData {
   student: Student;
@@ -41,14 +56,44 @@ export interface AnalyticsExportData {
 
 class AnalyticsExport {
   /**
+   * Unified export entrypoint used by dashboards; delegates to format-specific methods.
+   */
+  async exportTo(format: ExportFormat, exportData: AnalyticsExportData, options?: { pdf?: { chartQuality?: 'standard' | 'high' | 'print' } }): Promise<void> {
+    switch (format) {
+      case 'pdf':
+        await this.exportToPDF(exportData, options?.pdf);
+        return;
+      case 'csv':
+        this.exportToCSV(exportData);
+        return;
+      case 'json':
+        this.exportToJSON(exportData);
+        return;
+      default:
+        throw new Error(`Unsupported export format: ${String(format)}`);
+    }
+  }
+
+  /**
    * Export analytics data to PDF format
    */
-  async exportToPDF(exportData: AnalyticsExportData): Promise<void> {
+  async exportToPDF(exportData: AnalyticsExportData, opts?: { chartQuality?: 'standard' | 'high' | 'print' }): Promise<void> {
+    const jsPDF = await getJsPDF();
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pageWidth = pdf.internal.pageSize.width;
     const pageHeight = pdf.internal.pageSize.height;
     const margin = 20;
     let currentY = margin;
+
+    const pixelRatio = (() => {
+      switch (opts?.chartQuality) {
+        case 'standard': return 2;
+        case 'print': return 4;
+        case 'high':
+        default:
+          return 3;
+      }
+    })();
 
     // Header
     pdf.setFontSize(20);
@@ -238,50 +283,70 @@ class AnalyticsExport {
       });
     }
 
-    // Add Charts (preferred path: provided chartExports)
+    // Charts (two-column layout when using chartExports; fallback to element capture)
     if (exportData.chartExports && exportData.chartExports.length > 0) {
-      for (const chart of exportData.chartExports) {
-        try {
-          pdf.addPage();
-          currentY = margin;
-          pdf.setFontSize(16);
-          pdf.text(chart.title, margin, currentY);
-          currentY += 10;
+      const gutter = 8; // mm
+      const colWidth = (pageWidth - margin * 2 - gutter) / 2;
+      let colIndex = 0;
+      let rowMaxHeight = 0;
 
-          if (chart.svgString) {
-            // jsPDF can render SVG via addSvgAsImage (plugin) or convert to image. Use image fallback for compatibility.
-            // Convert SVG to image via canvas for broad compatibility
-            const svgBlob = new Blob([chart.svgString], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(svgBlob);
+      const getImage = async (chart: NonNullable<AnalyticsExportData['chartExports']>[number]): Promise<{ dataURL: string; width: number; height: number }> => {
+        if (chart.svgString) {
+          const svgBlob = new Blob([chart.svgString], { type: 'image/svg+xml;charset=utf-8' });
+          const url = URL.createObjectURL(svgBlob);
+          try {
             const img = await new Promise<HTMLImageElement>((resolve, reject) => {
               const i = new Image();
               i.onload = () => resolve(i);
               i.onerror = reject;
               i.src = url;
             });
-            const imgWidth = pageWidth - margin * 2;
-            const scale = imgWidth / img.width;
-            const imgHeight = img.height * scale;
-            const canvas = document.createElement('canvas');
-            canvas.width = imgWidth * 2;
-            canvas.height = imgHeight * 2;
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-              ctx.fillStyle = '#ffffff';
-              ctx.fillRect(0, 0, canvas.width, canvas.height);
-              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              const dataUrl = canvas.toDataURL('image/png');
-              pdf.addImage(dataUrl, 'PNG', margin, currentY, imgWidth, imgHeight);
-            }
+            const aspect = img.height / img.width;
+            return { dataURL: chart.svgString as unknown as string, width: colWidth, height: colWidth * aspect };
+          } finally {
             URL.revokeObjectURL(url);
-          } else if (chart.dataURL) {
-            const imgWidth = pageWidth - margin * 2;
-            // We don't know original size; maintain aspect ratio by assuming typical 16:9 chart if needed
-            const imgHeight = (imgWidth * 9) / 16;
-            pdf.addImage(chart.dataURL, 'PNG', margin, currentY, imgWidth, imgHeight);
           }
-        } catch (error) {
-          logger.error('Error adding chart export to PDF:', error);
+        }
+        if (chart.dataURL) {
+          const natural = await new Promise<{ w: number; h: number }>((resolve) => {
+            const i = new Image();
+            i.onload = () => resolve({ w: i.width, h: i.height });
+            i.src = chart.dataURL!;
+          });
+          const aspect = natural.h / natural.w;
+          return { dataURL: chart.dataURL, width: colWidth, height: colWidth * aspect };
+        }
+        throw new Error('Missing chart image data');
+      };
+
+      for (const c of exportData.chartExports) {
+        try {
+          if (currentY > pageHeight - 50) {
+            pdf.addPage();
+            currentY = margin;
+            colIndex = 0;
+            rowMaxHeight = 0;
+          }
+
+          const img = await getImage(c);
+          const x = margin + (colIndex === 0 ? 0 : colWidth + gutter);
+          const titleHeight = 6;
+          pdf.setFontSize(12);
+          pdf.text(c.title, x, currentY);
+          const yImage = currentY + titleHeight;
+
+          pdf.addImage(img.dataURL, 'PNG', x, yImage, img.width, img.height);
+
+          rowMaxHeight = Math.max(rowMaxHeight, titleHeight + img.height + 6);
+          if (colIndex === 1) {
+            currentY += rowMaxHeight;
+            rowMaxHeight = 0;
+            colIndex = 0;
+          } else {
+            colIndex = 1;
+          }
+        } catch (e) {
+          logger.error('Error adding chart export to PDF:', e);
         }
       }
     } else if (exportData.charts && exportData.charts.length > 0) {
@@ -289,23 +354,19 @@ class AnalyticsExport {
         try {
           pdf.addPage();
           currentY = margin;
-
           pdf.setFontSize(16);
           pdf.text(chart.title, margin, currentY);
           currentY += 10;
 
-          // Convert chart element to canvas
+          const html2canvas = await getHtml2Canvas();
           const canvas = await html2canvas(chart.element, {
-            scale: 2,
+            scale: pixelRatio,
             backgroundColor: '#ffffff',
             logging: false
           });
 
-          // Calculate dimensions to fit on page
           const imgWidth = pageWidth - margin * 2;
           const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-          // Add image to PDF
           const imgData = canvas.toDataURL('image/png');
           pdf.addImage(imgData, 'PNG', margin, currentY, imgWidth, imgHeight);
         } catch (error) {

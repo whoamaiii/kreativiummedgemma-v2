@@ -65,7 +65,7 @@ flowchart TD
 - `src/components/AnalyticsDashboard.tsx` (line 137)
 - `src/lib/mockDataGenerator.ts` (lines 324, 345)
 
-### 2. Mock Data Generator Issues
+### 2. Mock Data Generator Issues (Resolved)
 
 ```mermaid
 flowchart LR
@@ -89,7 +89,7 @@ flowchart LR
     A4 --> B4
 ```
 
-### 3. Component State Management Issues
+### 3. Component State Management Issues (In Progress)
 
 ```mermaid
 stateDiagram-v2
@@ -233,7 +233,7 @@ graph LR
 
 ## Implementation Tasks
 
-### Task 1: Remove Console Statements and Implement Logging System
+### Task 1: Remove Console Statements and Implement Logging System (Completed)
 
 **Subtasks:**
 
@@ -249,7 +249,7 @@ graph LR
 - Update `src/lib/mockDataGenerator.ts`
 - Add logging configuration to environment variables
 
-### Task 2: Fix Mock Data Generator
+### Task 2: Fix Mock Data Generator (Completed)
 
 **Subtasks:**
 
@@ -296,6 +296,23 @@ graph LR
 - Update all try-catch blocks to use standardized handling
 
 ### Task 5: Performance Optimizations
+### Task 6: PDF Export Pipeline Enhancements (In Progress)
+
+**Subtasks:**
+
+1. Implement `ChartRegistry` with metadata (type, filters, dateRange) [done]
+2. Collect chart exports from registry in `AnalyticsDashboard` with relevance filtering [done]
+3. Add export progress and cancellation UX in `ExportDialog` and dashboard [done]
+4. Unify exporter entrypoint with `analyticsExport.exportTo(...)` [done]
+5. Next: PDF layout engine (multi-page/columns), SVG-to-PDF path with image fallback
+
+**Files touched:**
+
+- `src/lib/chartRegistry.ts`
+- `src/components/charts/EChartContainer.tsx`
+- `src/components/AnalyticsDashboard.tsx`
+- `src/components/ExportDialog.tsx`
+- `src/lib/analyticsExport.ts`
 
 **Subtasks:**
 

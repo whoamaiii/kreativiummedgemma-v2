@@ -93,7 +93,41 @@
     },
     "failure": "Failed to export analytics data",
     "chartTitle": "Emotion & Sensory Trends",
-    "noCharts": "No charts available to export"
+    "noCharts": "No charts available to export",
+    "button": "Export",
+    "confirmLabel": "Export analytics as {{format}}",
+    "dialog": {
+      "title": "Export Options",
+      "description": "Configure the export format and quality settings"
+    },
+    "options": {
+      "format": "Format",
+      "formatHelp": "Choose the file format for export",
+      "selectFormat": "Select format",
+      "template": "Template",
+      "selectTemplate": "Select template",
+      "quality": "Chart Quality",
+      "selectQuality": "Select quality",
+      "colorScheme": "Color Scheme",
+      "colorSchemeHelp": "Choose an accessible color scheme",
+      "selectScheme": "Select scheme",
+      "includeRawData": "Include raw data appendix"
+    },
+    "templates": {
+      "summary": "Summary (concise)",
+      "detailed": "Detailed (comprehensive)",
+      "presentation": "Presentation (large visuals)"
+    },
+    "quality": {
+      "standard": "Standard (96 DPI)",
+      "high": "High (150 DPI)",
+      "print": "Print (300 DPI)"
+    },
+    "schemes": {
+      "default": "Default",
+      "highContrast": "High Contrast",
+      "colorblindFriendly": "Colorblind-Friendly"
+    }
   },
   "settings": {
     "title": "Analytics Settings",
@@ -184,7 +218,8 @@
     },
     "common": {
       "enabled": "Enabled",
-      "disabled": "Disabled"
+      "disabled": "Disabled",
+      "cancel": "Cancel"
     },
     "toasts": {
       "loadModelsFailed": "Failed to load ML models: Could not retrieve model status. Some features may be unavailable.",
@@ -300,6 +335,15 @@
       "default": "A recurring pattern has been detected in data for this period.",
       "disclaimer": "Always interpret together with context and professional judgment."
     },
+    "chat": {
+      "title": "Chat about this explanation",
+      "placeholder": "Ask a question about the explanation or the data…",
+      "send": "Send",
+      "aiTyping": "AI is replying…",
+      "disabled": "AI is not available (missing API key)",
+      "copyOk": "Copied to clipboard",
+      "copyFail": "Could not copy"
+    },
     "confidencePercent": "{{percentage}}% confidence"
   },
   "confidence": {
@@ -408,10 +452,70 @@
     "previous": "Previous",
     "lastMonth": "Last Month",
     "lastYear": "Last Year",
+    "comparePeriods": "Compare periods",
+    "comparisonMode": "Comparison mode",
+    "previousPeriod": "Previous period",
+    "sameLastMonth": "Same period last month",
+    "sameLastYear": "Same period last year",
+    "noBaselineData": "No data in comparison period",
+    "identicalResults": "No significant changes",
     "keyChanges": "Key Changes",
     "totalEmotions": "Total Emotions",
     "avgIntensity": "Avg Intensity",
-    "seekingRatio": "Seeking Ratio"
+    "seekingRatio": "Seeking Ratio",
+    "newPattern": "New pattern",
+    "removedPattern": "Removed pattern",
+    "changedPattern": "Changed pattern",
+    "newIntervention": "New intervention",
+    "removedIntervention": "Removed intervention",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "comparisonSummary": "Summary of changes",
+    "fromCache": "from cache",
+    "fromUiCache": "from UI cache",
+    "limitedDataBaseline": "Limited baseline data",
+    "correlationChanges": "Correlation changes",
+    "newInterventions": "New interventions",
+    "removedInterventions": "Removed interventions",
+    "keyFindings": "Key findings",
+    "analysisTimestamp": "Analysis timestamp",
+    "timestampDifference": "Difference in analysis timestamp",
+    "none": "None",
+    "patterns": "Patterns",
+    "correlations": "Correlations",
+    "insights": "Insights",
+    "anomalies": "Anomalies",
+    "predictive": "Predictive",
+    "balance": "Balance",
+    "avgIntensityShort": "Avg intensity",
+    "versus": "vs",
+    "impactChange": "Impact change:",
+    "significanceChanged": "Significance changed",
+    "deltaRPrefix": "Δ r:",
+    "exportCsv": "Export CSV",
+    "copyJson": "Copy JSON",
+    "exportCsvTooltip": "Export changes as CSV files",
+    "copyJsonTooltip": "Copy changes as JSON to clipboard",
+    "exportCsvAria": "Export CSV (changes)",
+    "copyJsonAria": "Copy JSON (changes)",
+    "lastExportShort": "Last",
+    "resetView": "Reset views",
+    "resetViewAria": "Reset view limits and last export",
+    "resetViewAnnounce": "Views reset",
+    "selectDifferentComparisonPeriod": "Select a different comparison period or rerun the analysis.",
+    "noDataInComparisonPeriod": "No data in the comparison period",
+    "toolbarCopy": "Copy",
+    "toolbarCopyTooltip": "Copy the AI report to clipboard",
+    "toolbarCopyAria": "Copy AI report",
+    "copyReportAnnounce": "Report copied to clipboard",
+    "toolbarPdf": "Download PDF",
+    "toolbarPdfTooltip": "Download AI report as PDF",
+    "toolbarPdfAria": "Download AI report as PDF",
+    "downloadPdfAnnounce": "PDF downloaded",
+    "toolbarShare": "Share",
+    "toolbarShareTooltip": "Share the AI report via system share",
+    "toolbarShareAria": "Share AI report",
+    "shareAnnounce": "Report shared or copied"
   },
   "patternDetection": {
     "guidance": {

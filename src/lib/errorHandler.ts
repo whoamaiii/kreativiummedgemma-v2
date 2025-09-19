@@ -15,6 +15,7 @@ export interface ErrorHandlerOptions {
   logError?: boolean;
   throwError?: boolean;
   onError?: (error: AppError) => void;
+  onRetry?: () => void | Promise<void>;
 }
 
 class ErrorHandler {
@@ -82,7 +83,7 @@ class ErrorHandler {
 
     // Show toast notification
     if (showToast) {
-      this.showErrorToast(appError);
+      this.showErrorToast(appError, options);
     }
 
     // Call custom error handler
@@ -176,7 +177,7 @@ class ErrorHandler {
   /**
    * Show user-friendly error toast
    */
-  private showErrorToast(error: AppError) {
+  private showErrorToast(error: AppError, options?: ErrorHandlerOptions) {
     const { userMessage, recoverable } = error;
 
     toast.error(userMessage || 'An error occurred', {
@@ -187,7 +188,17 @@ class ErrorHandler {
       action: recoverable
         ? {
             label: 'Retry',
-            onClick: () => this.attemptRecovery(error),
+            onClick: async () => {
+              try {
+                if (options?.onRetry) {
+                  await options.onRetry();
+                } else {
+                  await this.attemptRecovery(error);
+                }
+              } catch (e) {
+                logger.error('Retry handler failed', e as Error);
+              }
+            },
           }
         : {
             label: 'Refresh',

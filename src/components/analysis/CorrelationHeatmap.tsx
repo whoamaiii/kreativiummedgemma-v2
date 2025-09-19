@@ -1,5 +1,6 @@
 import React from 'react';
-import { EChartContainer } from '@/components/charts/EChartContainer';
+import React from 'react';
+const EChartContainer = React.lazy(() => import('@/components/charts/EChartContainer').then(m => ({ default: m.EChartContainer })));
 import { buildCorrelationHeatmapOption } from '@/components/charts/ChartKit';
 import { Button } from '@/components/ui/button';
 import { BarChart3 } from 'lucide-react';
@@ -50,5 +51,9 @@ export const CorrelationHeatmap: React.FC<CorrelationHeatmapProps> = ({
   }
 
   const option: EChartsOption = buildCorrelationHeatmapOption(correlationMatrix);
-  return <EChartContainer option={option} height={420} />;
+  return (
+    <React.Suspense fallback={<div className="h-[420px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label="Loading heatmap" />}> 
+      <EChartContainer option={option} height={420} />
+    </React.Suspense>
+  );
 };

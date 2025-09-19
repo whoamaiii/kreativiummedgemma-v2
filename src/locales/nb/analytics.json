@@ -93,7 +93,41 @@
     },
     "failure": "Kunne ikke eksportere analysedata",
     "chartTitle": "Følelses- og sensoriske trender",
-    "noCharts": "Ingen diagrammer tilgjengelig for eksport"
+    "noCharts": "Ingen diagrammer tilgjengelig for eksport",
+    "button": "Eksporter",
+    "confirmLabel": "Eksporter analyse som {{format}}",
+    "dialog": {
+      "title": "Eksportvalg",
+      "description": "Konfigurer eksportformat og kvalitetsinnstillinger"
+    },
+    "options": {
+      "format": "Format",
+      "formatHelp": "Velg filformat for eksport",
+      "selectFormat": "Velg format",
+      "template": "Mal",
+      "selectTemplate": "Velg mal",
+      "quality": "Diagramkvalitet",
+      "selectQuality": "Velg kvalitet",
+      "colorScheme": "Fargeskjema",
+      "colorSchemeHelp": "Velg et tilgjengelig fargeskjema",
+      "selectScheme": "Velg skjema",
+      "includeRawData": "Inkluder rådata-vedlegg"
+    },
+    "templates": {
+      "summary": "Sammendrag (kortfattet)",
+      "detailed": "Detaljert (omfattende)",
+      "presentation": "Presentasjon (store visuelle elementer)"
+    },
+    "quality": {
+      "standard": "Standard (96 DPI)",
+      "high": "Høy (150 DPI)",
+      "print": "Utskrift (300 DPI)"
+    },
+    "schemes": {
+      "default": "Standard",
+      "highContrast": "Høy kontrast",
+      "colorblindFriendly": "Fargeblindvennlig"
+    }
   },
   "settings": {
     "title": "Analyseinnstillinger",
@@ -184,7 +218,8 @@
     },
     "common": {
       "enabled": "Aktivert",
-      "disabled": "Deaktivert"
+      "disabled": "Deaktivert",
+      "cancel": "Avbryt"
     },
     "toasts": {
       "loadModelsFailed": "Kunne ikke laste ML-modeller: Klarte ikke å hente modellstatus. Noen funksjoner kan være utilgjengelige.",
@@ -299,6 +334,15 @@
       "title": "Hva betyr dette mønsteret?",
       "default": "Systemet har funnet et gjentakende mønster i dataene for denne perioden.",
       "disclaimer": "Tolk alltid sammen med kontekst og pedagogisk vurdering."
+    },
+    "chat": {
+      "title": "Chat om denne forklaringen",
+      "placeholder": "Still et spørsmål om forklaringen eller dataene…",
+      "send": "Send",
+      "aiTyping": "AI svarer…",
+      "disabled": "AI er ikke tilgjengelig (mangler API-nøkkel)",
+      "copyOk": "Kopiert til utklippstavlen",
+      "copyFail": "Kunne ikke kopiere"
     },
     "confidencePercent": "{{percentage}}% sikkerhet",
     "messages": {
@@ -418,10 +462,70 @@
     "previous": "Forrige",
     "lastMonth": "Forrige måned",
     "lastYear": "Forrige år",
+    "comparePeriods": "Sammenlign perioder",
+    "comparisonMode": "Sammenligningstype",
+    "previousPeriod": "Forrige periode",
+    "sameLastMonth": "Samme periode forrige måned",
+    "sameLastYear": "Samme periode i fjor",
+    "noBaselineData": "Ingen data i sammenligningsperioden",
+    "identicalResults": "Ingen signifikante endringer",
     "keyChanges": "Viktige endringer",
+    "newPattern": "Nytt mønster",
+    "removedPattern": "Fjernet mønster",
+    "changedPattern": "Endret mønster",
+    "newIntervention": "Nytt tiltak",
+    "removedIntervention": "Fjernet tiltak",
+    "showMore": "Vis mer",
+    "showLess": "Vis mindre",
+    "comparisonSummary": "Sammendrag av endringer",
+    "fromCache": "fra cache",
+    "fromUiCache": "fra UI-cache",
     "totalEmotions": "Totalt følelser",
     "avgIntensity": "Gjennomsnittlig intensitet",
-    "seekingRatio": "Søkeforhold"
+    "seekingRatio": "Søkeforhold",
+    "limitedDataBaseline": "Begrenset datagrunnlag",
+    "correlationChanges": "Korrelasjonsendringer",
+    "newInterventions": "Nye tiltak",
+    "removedInterventions": "Fjernede tiltak",
+    "keyFindings": "Nøkkelfunn",
+    "analysisTimestamp": "Analyse-tidspunkt",
+    "timestampDifference": "Forskjell i analysetidspunkt",
+    "none": "Ingen",
+    "patterns": "Mønstre",
+    "correlations": "Korrelasjoner",
+    "insights": "Innsikter",
+    "anomalies": "Avvik",
+    "predictive": "Prediktiv",
+    "balance": "Balanse",
+    "avgIntensityShort": "Gj.snitt intensitet",
+    "versus": "vs",
+    "impactChange": "Endring i påvirkning:",
+    "significanceChanged": "Signifikans endret",
+    "deltaRPrefix": "Δ r:",
+    "exportCsv": "Eksporter CSV",
+    "copyJson": "Kopier JSON",
+    "exportCsvTooltip": "Eksporter endringer som CSV‑filer",
+    "copyJsonTooltip": "Kopier endringer som JSON til utklippstavlen",
+    "exportCsvAria": "Eksporter CSV (endringer)",
+    "copyJsonAria": "Kopier JSON (endringer)",
+    "lastExportShort": "Sist",
+    "resetView": "Nullstill visninger",
+    "resetViewAria": "Nullstill visningsgrenser og siste eksport",
+    "resetViewAnnounce": "Visninger nullstilt",
+    "selectDifferentComparisonPeriod": "Velg en annen sammenligningsperiode eller kjør analysen på nytt.",
+    "noDataInComparisonPeriod": "Ingen data i sammenligningsperioden",
+    "toolbarCopy": "Kopier",
+    "toolbarCopyTooltip": "Kopier AI‑rapporten til utklippstavlen",
+    "toolbarCopyAria": "Kopier AI‑rapport",
+    "copyReportAnnounce": "Rapport kopiert til utklippstavlen",
+    "toolbarPdf": "Last ned PDF",
+    "toolbarPdfTooltip": "Last ned AI‑rapport som PDF",
+    "toolbarPdfAria": "Last ned AI‑rapport som PDF",
+    "downloadPdfAnnounce": "PDF lastet ned",
+    "toolbarShare": "Del",
+    "toolbarShareTooltip": "Del AI‑rapporten via systemdeling",
+    "toolbarShareAria": "Del AI‑rapport",
+    "shareAnnounce": "Rapport delt eller kopiert"
   },
   "patternDetection": {
     "guidance": {

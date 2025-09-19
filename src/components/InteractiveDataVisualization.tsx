@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useCallback, memo } from "react";
+import React, { useMemo, useRef, useCallback, memo, Suspense, lazy } from "react";
 // Unused Card components removed after refactoring
 import { EmotionEntry, SensoryEntry, TrackingEntry, Student } from "@/types/student";
 import { ErrorBoundary } from "./ErrorBoundary";
@@ -13,10 +13,10 @@ import { useDataAnalysis } from '@/hooks/useDataAnalysis';
 import { VisualizationControls } from './VisualizationControls';
 import { DashboardLayout } from './layouts/DashboardLayout';
 import { GridLayout, FocusLayout, ComparisonLayout } from './layouts/VisualizationLayouts';
-import { TrendsChart } from './charts/TrendsChart';
-import { CorrelationHeatmap } from './analysis/CorrelationHeatmap';
-import { PatternAnalysisView } from './analysis/PatternAnalysisView';
-import { EChartContainer } from '@/components/charts/EChartContainer';
+const TrendsChartLazy = lazy(() => import('./charts/TrendsChart').then(m => ({ default: m.TrendsChart })));
+const CorrelationHeatmapLazy = lazy(() => import('./analysis/CorrelationHeatmap').then(m => ({ default: m.CorrelationHeatmap })));
+const PatternAnalysisViewLazy = lazy(() => import('./analysis/PatternAnalysisView').then(m => ({ default: m.PatternAnalysisView })));
+const EChartContainerLazy = lazy(() => import('@/components/charts/EChartContainer').then(m => ({ default: m.EChartContainer })));
 import { analyticsExport, ExportFormat } from "@/lib/analyticsExport";
 import { toast } from "sonner";
 import { logger } from "@/lib/logger";
@@ -194,13 +194,29 @@ export const InteractiveDataVisualization = memo<InteractiveDataVisualizationPro
             series: [{ type: 'scatter', data, symbolSize: 8 }],
             animation: !visualizationState.motionSafe,
           } as any;
-          return <EChartContainer option={option} height={360} />;
+          return (
+            <Suspense fallback={<div className="h-[360px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label="Loading chart" />}> 
+              <EChartContainerLazy option={option} height={360} />
+            </Suspense>
+          );
         }
-        return <TrendsChart chartData={chartData} selectedChartType={selectedChartType} />;
+        return (
+          <Suspense fallback={<div className="h-[360px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label="Loading chart" />}> 
+            <TrendsChartLazy chartData={chartData} selectedChartType={selectedChartType} />
+          </Suspense>
+        );
       case 'correlations':
-        return <CorrelationHeatmap correlationMatrix={analysisData.correlationMatrix} onRetry={() => {}} onShowAllTime={() => visualizationState.setSelectedTimeRange('all')} />;
+        return (
+          <Suspense fallback={<div className="h-[420px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label="Loading heatmap" />}> 
+            <CorrelationHeatmapLazy correlationMatrix={analysisData.correlationMatrix} onRetry={() => {}} onShowAllTime={() => visualizationState.setSelectedTimeRange('all')} />
+          </Suspense>
+        );
       case 'patterns':
-        return <PatternAnalysisView {...analysisData} highlightState={highlightState} handleHighlight={() => {}} filteredData={filteredData} />;
+        return (
+          <Suspense fallback={<div className="h-[360px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label="Loading patterns" />}> 
+            <PatternAnalysisViewLazy {...analysisData} highlightState={highlightState} handleHighlight={() => {}} filteredData={filteredData} />
+          </Suspense>
+        );
       case '3d':
         if (POC_MODE) return null;
         return <LazyVisualization3D emotions={filteredData.emotions} sensoryInputs={filteredData.sensoryInputs} trackingEntries={filteredData.trackingEntries} />;

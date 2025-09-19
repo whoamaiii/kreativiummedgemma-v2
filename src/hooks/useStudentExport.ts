@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { Student, Goal, TrackingEntry, Emotion, SensoryInput } from '@/types/student';
 import { exportSystem } from '@/lib/exportSystem';
+import { analyticsExport, type AnalyticsExportData } from '@/lib/analyticsExport';
 import { downloadBlob } from '@/lib/utils';
 import { logger } from '@/lib/logger';
 import { toast } from 'sonner';
@@ -53,14 +54,36 @@ export function useStudentExport(
 
       switch (format) {
         case 'pdf': {
-          blob = await exportSystem.generatePDFReport(student, exportOptions, {
-            format: 'pdf',
-            includeFields: ['all'],
-            includeCharts: true,
-          });
-          // Note: generatePDFReport currently returns an HTML document for printing
-          filename = `${baseFilename}_report.html`;
-          break;
+          // Consolidated PDF path: delegate to analyticsExport
+          const allDates: Date[] = [
+            ...options.trackingEntries.map(t => t.timestamp as unknown as Date),
+            ...options.emotions.map(e => (e as unknown as { timestamp: Date }).timestamp),
+            ...options.sensoryInputs.map(s => (s as unknown as { timestamp: Date }).timestamp),
+          ];
+          const start = allDates.length ? new Date(Math.min(...allDates.map(d => d.getTime()))) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+          const end = allDates.length ? new Date(Math.max(...allDates.map(d => d.getTime()))) : new Date();
+
+          const exportData: AnalyticsExportData = {
+            student,
+            dateRange: { start, end },
+            data: {
+              entries: options.trackingEntries as unknown as any[],
+              emotions: options.emotions as unknown as any[],
+              sensoryInputs: options.sensoryInputs as unknown as any[],
+            },
+            analytics: {
+              patterns: [],
+              correlations: [],
+              insights: [],
+              predictiveInsights: [],
+              anomalies: [],
+            },
+          } as unknown as AnalyticsExportData;
+
+          await analyticsExport.exportTo('pdf' as any, exportData);
+          toast.success('Report exported as PDF');
+          logger.info('Data exported', { format, studentId: student.id });
+          return;
         }
         case 'csv': {
           const csvContent = exportSystem.generateCSVExport([student], exportOptions, {

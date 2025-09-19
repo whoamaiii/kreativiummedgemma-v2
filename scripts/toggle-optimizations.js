@@ -11,11 +11,7 @@ const path = require('path');
 const mode = process.argv[2] || 'enable';
 
 const replacements = [
-  {
-    file: 'src/components/InteractiveDataVisualization.tsx',
-    original: '@/lib/analyticsExport',
-    optimized: '@/lib/analyticsExportOptimized'
-  },
+  // Exporter switching deprecated; single exporter path is '@/lib/analyticsExport'
   {
     file: 'src/pages/StudentProfile.tsx',
     backup: 'src/pages/StudentProfile.original.tsx',

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { LazyAnalyticsDashboard } from '@/components/lazy/LazyAnalyticsDashboard';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -6,6 +6,10 @@ import { Student, TrackingEntry, EmotionEntry, SensoryEntry, Insights } from '@/
 import { useTranslation } from '@/hooks/useTranslation';
 import { AlertCircle } from 'lucide-react';
 import { logger } from '@/lib/logger';
+import { Switch } from '@/components/ui/switch';
+import { analyticsConfig } from '@/lib/analyticsConfig';
+import { loadAiConfig } from '@/lib/aiConfig';
+import { getRuntimeEnv } from '@/lib/runtimeEnv';
 
 /**
  * @interface AnalyticsSectionProps
@@ -15,7 +19,9 @@ import { logger } from '@/lib/logger';
  * @property {TrackingEntry[]} trackingEntries - All tracking entries for the student.
  * @property {object} filteredData - Data filtered by the selected date range.
  * @property {Insights | null} insights - The AI-generated insights for the student.
+ *   @deprecated Retained for backward compatibility. Analytics are now computed internally via useAnalyticsWorker.
  * @property {boolean} isLoadingInsights - Flag indicating if insights are currently being loaded.
+ *   @deprecated Retained for backward compatibility. Loading state is now managed internally via useAnalyticsWorker.
  */
 interface AnalyticsSectionProps {
   student: Student;
@@ -25,7 +31,9 @@ interface AnalyticsSectionProps {
     emotions: EmotionEntry[];
     sensoryInputs: SensoryEntry[];
   };
+  /** @deprecated Retained for backward compatibility. Analytics are now computed internally. */
   insights: Insights | null;
+  /** @deprecated Retained for backward compatibility. Loading state is now managed internally. */
   isLoadingInsights: boolean;
 }
 
@@ -37,6 +45,31 @@ export function AnalyticsSection({
   isLoadingInsights,
 }: AnalyticsSectionProps) {
 const { tAnalytics } = useTranslation();
+  // Resolve defaults and availability for AI analysis
+  const defaults = useMemo(() => {
+    const cfg = (() => { try { return analyticsConfig.getConfig(); } catch { return null; } })();
+    // Prefer live env to avoid stale module-level defaults
+    const env = getRuntimeEnv();
+    const toBool = (v: unknown) => {
+      const s = (v ?? '').toString().toLowerCase();
+      return s === '1' || s === 'true' || s === 'yes';
+    };
+    const enabledByConfig = cfg?.features?.aiAnalysisEnabled === true || toBool(env.VITE_AI_ANALYSIS_ENABLED);
+    const getLS = (k: string) => {
+      try { return typeof localStorage !== 'undefined' ? (localStorage.getItem(k) || '') : ''; } catch { return ''; }
+    };
+    const model = typeof env.VITE_AI_MODEL_NAME === 'string' && (env.VITE_AI_MODEL_NAME as string).trim().length > 0
+      ? (env.VITE_AI_MODEL_NAME as string)
+      : (getLS('VITE_AI_MODEL_NAME') || loadAiConfig().modelName);
+    const apiKey = typeof env.VITE_OPENROUTER_API_KEY === 'string' && (env.VITE_OPENROUTER_API_KEY as string).trim().length > 0
+      ? (env.VITE_OPENROUTER_API_KEY as string)
+      : (getLS('OPENROUTER_API_KEY') || getLS('VITE_OPENROUTER_API_KEY') || (loadAiConfig().apiKey || ''));
+    const available = !!apiKey && !!model; // availability only depends on key + model
+    try { logger.debug('[AnalyticsSection.defaults]', { envAi: env.VITE_AI_ANALYSIS_ENABLED, envModel: env.VITE_AI_MODEL_NAME, hasKey: !!apiKey, enabledByConfig, available }); } catch {}
+    return { enabledByConfig, available };
+  }, []);
+
+  const [useAI, setUseAI] = useState<boolean>(() => defaults.enabledByConfig && defaults.available);
 
   useEffect(() => {
     logger.debug('[AnalyticsSection] Props received', {
@@ -45,8 +78,9 @@ const { tAnalytics } = useTranslation();
       filteredDataEntriesCount: filteredData?.entries?.length,
       hasInsights: !!insights,
       isLoadingInsights,
+      ai: { enabledByConfig: defaults.enabledByConfig, available: defaults.available, useAI }
     });
-  }, [student, trackingEntries, filteredData, insights, isLoadingInsights]);
+  }, [student, trackingEntries, filteredData, insights, isLoadingInsights, defaults.enabledByConfig, defaults.available, useAI]);
 
   if (!student || !filteredData || !trackingEntries) {
     return (
@@ -81,6 +115,36 @@ const { tAnalytics } = useTranslation();
         <p className="text-muted-foreground">
           {tAnalytics('section.subtitle', { name: student.name })}
         </p>
+        {/* AI Analysis Toggle */}
+        <div className="mt-4 flex items-center gap-3">
+          <Switch
+            id="ai-analysis-toggle"
+            checked={useAI}
+            onCheckedChange={(val) => setUseAI(Boolean(val))}
+            disabled={!defaults.available}
+            aria-checked={useAI}
+            aria-labelledby="ai-analysis-toggle-label"
+            aria-describedby="ai-analysis-toggle-desc"
+            data-testid="ai-toggle"
+          />
+          <div>
+            <label id="ai-analysis-toggle-label" htmlFor="ai-analysis-toggle" className="text-sm font-medium">
+              {String(tAnalytics('ai.toggle.label', { defaultValue: 'AI Analysis' }))}
+            </label>
+            <p id="ai-analysis-toggle-desc" className="text-xs text-muted-foreground" data-testid="ai-toggle-status">
+              {defaults.available
+                ? (useAI
+                    ? String(tAnalytics('ai.toggle.enabled', { defaultValue: 'Enabled' }))
+                    : String(tAnalytics('ai.toggle.disabled', { defaultValue: 'Disabled' })))
+                : String(tAnalytics('ai.toggle.unavailable', { defaultValue: 'Unavailable (missing key or model)' }))}
+              {!defaults.enabledByConfig && useAI && (
+                <span className="block text-yellow-600 dark:text-yellow-400 text-xs mt-1">
+                  {String(tAnalytics('ai.toggle.configWarning', { defaultValue: 'Warning: AI disabled in config, using runtime override' }))}
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Main Analytics Dashboard */}
@@ -88,6 +152,7 @@ const { tAnalytics } = useTranslation();
         <LazyAnalyticsDashboard
           student={student}
           filteredData={safeFilteredData}
+          useAI={useAI}
         />
       </ErrorBoundary>
     </div>

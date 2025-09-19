@@ -1,6 +1,81 @@
 # Kreativium Beta v2
 
-A comprehensive sensory tracking and analytics platform for special education professionals.
+Modern Vite + React + TypeScript app with an accessible, analytics-driven UI and strong testing, i18n, and performance practices.
+
+---
+
+## Quickstart
+
+1) Install dependencies
+
+```bash
+npm install
+```
+
+2) Start the dev server (Vite on port 5173)
+
+```bash
+npm run dev
+```
+
+3) Build and preview locally
+
+```bash
+npm run build
+npm run preview
+```
+
+## Tech Stack
+
+- React 18 + TypeScript
+- Vite 7 + SWC
+- Tailwind CSS + shadcn/ui patterns
+- Testing: Vitest + Testing Library + Playwright
+- i18n: i18next + resource bundles in `src/locales`
+
+## Scripts
+
+- `npm run dev`: Start Vite dev server
+- `npm run build`: Production build to `dist/`
+- `npm run preview`: Serve the built app locally
+- `npm run lint` / `npm run typecheck`: ESLint 9 + TS type checks
+- `npm run test`: Unit/integration tests (Vitest)
+- `npm run e2e`: Playwright end-to-end tests
+- `npm run docs:check`: Prettier + markdownlint on docs
+- `npm run seed:demo`: Seed demo content
+
+## Project Structure
+
+```
+src/
+  components/     # Reusable UI components
+  pages/          # Routed views
+  lib/, utils/    # Shared logic and helpers
+  config/         # Analytics and app config
+  locales/        # i18n bundles
+tests/
+  e2e, unit, integration, performance
+docs/             # Contributor and user docs
+dist/             # Production build output
+```
+
+## Quality & CI Hints
+
+- Keep functions small and focused; follow single-responsibility
+- Prefer composition, hooks, and dependency injection for testability
+- Run `npm run lint` and `npm run typecheck` before commits/PRs
+- For analytics changes, run tests with coverage and update thresholds if needed
+
+## Contributing
+
+1) Create a topic branch from `main`
+2) Commit using conventional style (e.g., `feat:`, `fix:`, `chore:`)
+3) Open a PR and include screenshots/accessibility notes as relevant
+
+## License
+
+This project is licensed under the MIT License.
+<!-- Detailed historical notes retained below for context. -->
 
 ## About
 

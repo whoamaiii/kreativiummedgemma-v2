@@ -9,7 +9,8 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { hashOfString } from '@/lib/key';
 
 // Keep charting dependencies inside this chunk to align with manualChunks strategy
-import { EChartContainer } from '@/components/charts/EChartContainer';
+import React from 'react';
+const EChartContainer = React.lazy(() => import('@/components/charts/EChartContainer').then(m => ({ default: m.EChartContainer })));
 import type { EChartsOption } from 'echarts';
 import { buildCorrelationHeatmapOption } from '@/components/charts/ChartKit';
 import { enhancedPatternAnalysis } from '@/lib/enhancedPatternAnalysis';
@@ -68,7 +69,9 @@ export const CorrelationsPanel = memo(function CorrelationsPanel({ filteredData 
         {hasEnoughData && option && (
           <>
             <div className="rounded-xl border bg-card">
-              <EChartContainer option={option} height={420} />
+              <React.Suspense fallback={<div className="h-[420px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label="Loading correlations" />}> 
+                <EChartContainer option={option} height={420} />
+              </React.Suspense>
             </div>
             <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
               <span>{String(tAnalytics('correlations.legend.negative'))}</span>

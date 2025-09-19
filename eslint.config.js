@@ -38,24 +38,11 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      // Ban imports from deprecated shim path. Migrate to '@/lib/analytics/cache-key'.
+      // Remove deprecated shim allowlist now that migration is complete
       'no-restricted-imports': [
         'error',
         {
-          paths: [
-            {
-              name: '@/lib/analyticsCacheKey',
-              message: "Deprecated shim. Import from '@/lib/analytics/cache-key' instead.",
-            },
-            {
-              name: './src/lib/analyticsCacheKey',
-              message: "Deprecated shim. Import from '@/lib/analytics/cache-key' instead.",
-            },
-            {
-              name: 'src/lib/analyticsCacheKey',
-              message: "Deprecated shim. Import from '@/lib/analytics/cache-key' instead.",
-            }
-          ],
+          paths: [],
           patterns: []
         }
       ],

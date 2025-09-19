@@ -173,8 +173,8 @@ export const OptimizedAnalyticsDashboard = memo(({
       };
 
       // Dynamic import for export functionality
-      const { exportAnalytics } = await import('@/lib/analyticsExportOptimized');
-      await exportAnalytics(exportData, format);
+      const mod = await import('@/lib/analyticsExport');
+      await mod.analyticsExport.exportTo(format, exportData);
       
       toast.success(String(tAnalytics('export.success')));
     } catch (error) {

@@ -18,7 +18,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Goal, Student } from "@/types/student";
 import type { EChartsOption } from "echarts";
-import { EChartContainer } from "@/components/charts/EChartContainer";
+import React from 'react';
+const EChartContainer = React.lazy(() => import("@/components/charts/EChartContainer").then(m => ({ default: m.EChartContainer })));
 import { TrendingUp, Crosshair, Award, Clock, CheckCircle } from "lucide-react";
 import { format, differenceInDays, startOfWeek, endOfWeek, eachWeekOfInterval, startOfMonth, endOfMonth } from "date-fns";
 import { OptimizedAnimatedCounter } from "@/components/optimized";
@@ -317,12 +318,16 @@ export const ProgressDashboard = ({ student, goals }: ProgressDashboardProps) =>
                     },
                   ],
                 };
-                return <EChartContainer 
-                  option={option} 
-                  height={300} 
-                  aria-label="Progress trends line chart"
-                  exportRegistration={{ id: 'progress-trends', type: 'progress', title: 'Progress Trends (Last 3 Months)' }}
-                />;
+                return (
+                  <React.Suspense fallback={<div className="h-[300px] rounded-md border bg-card motion-safe:animate-pulse" aria-label="Loading progress trends" />}> 
+                    <EChartContainer 
+                      option={option} 
+                      height={300} 
+                      aria-label="Progress trends line chart"
+                      exportRegistration={{ id: 'progress-trends', type: 'progress', title: 'Progress Trends (Last 3 Months)' }}
+                    />
+                  </React.Suspense>
+                );
               })()}
             </CardContent>
           </Card>
@@ -392,12 +397,16 @@ export const ProgressDashboard = ({ student, goals }: ProgressDashboardProps) =>
                     },
                   ],
                 };
-                  return <EChartContainer 
-                    option={option} 
-                    height={300} 
-                    aria-label="Goal completion by category bar chart"
-                    exportRegistration={{ id: 'goal-completion-by-category', type: 'progress', title: 'Goal Completion by Category' }}
-                  />;
+                  return (
+                    <React.Suspense fallback={<div className="h-[300px] rounded-md border bg-card motion-safe:animate-pulse" aria-label="Loading category chart" />}> 
+                      <EChartContainer 
+                        option={option} 
+                        height={300} 
+                        aria-label="Goal completion by category bar chart"
+                        exportRegistration={{ id: 'goal-completion-by-category', type: 'progress', title: 'Goal Completion by Category' }}
+                      />
+                    </React.Suspense>
+                  );
               })()}
             </CardContent>
           </Card>
@@ -433,12 +442,16 @@ export const ProgressDashboard = ({ student, goals }: ProgressDashboardProps) =>
                       },
                     ],
                   };
-                  return <EChartContainer 
-                    option={option} 
-                    height={250} 
-                    aria-label="Progress by category donut chart"
-                    exportRegistration={{ id: 'progress-by-category', type: 'progress', title: 'Progress by Category' }}
-                  />;
+                  return (
+                    <React.Suspense fallback={<div className="h-[250px] rounded-md border bg-card motion-safe:animate-pulse" aria-label="Loading donut chart" />}> 
+                      <EChartContainer 
+                        option={option} 
+                        height={250} 
+                        aria-label="Progress by category donut chart"
+                        exportRegistration={{ id: 'progress-by-category', type: 'progress', title: 'Progress by Category' }}
+                      />
+                    </React.Suspense>
+                  );
                 })()}
               </CardContent>
             </Card>

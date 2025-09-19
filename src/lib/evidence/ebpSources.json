@@ -1,0 +1,119 @@
+[
+  {
+    "id": "UDL-GUIDELINES-CAST",
+    "title": "UDL Guidelines",
+    "url": "https://udlguidelines.cast.org/",
+    "shortExcerpt": "The Universal Design for Learning (UDL) Guidelines provide a flexible framework for designing goals, methods, materials, and assessments that proactively reduce barriers and support variability in learners. Organized by Engagement, Representation, and Action/Expression, checkpoints help educators plan multiple means for motivation, comprehension, and demonstration. The guidance emphasizes anticipating learner needs, building expert learning, and offering options that increase access, sustain effort, and support strategic, goal-directed behavior.",
+    "tags": ["udl"],
+    "publisher": "CAST",
+    "evidenceLevel": "emerging",
+    "gradeBands": ["k-3", "4-6", "7-9", "10-12"]
+  },
+  {
+    "id": "CEC-HLP-OVERVIEW-2017",
+    "title": "High-Leverage Practices in Special Education",
+    "url": "https://highleveragepractices.org/",
+    "shortExcerpt": "High-Leverage Practices (HLPs) are evidence-informed instructional practices that improve outcomes for students with disabilities and benefit all learners. Organized across collaboration, assessment, social/emotional/behavioral, and instruction, HLPs provide clear guidance on planning, explicit teaching, feedback, and flexible grouping. These practices promote access to the general curriculum, responsive instruction, and data-driven decision-making within multi-tiered systems of support.",
+    "tags": ["hlp", "behavior", "reading", "writing", "math"],
+    "publisher": "CEC/CEEDAR",
+    "year": 2017,
+    "evidenceLevel": "moderate",
+    "gradeBands": ["k-3", "4-6", "7-9", "10-12"]
+  },
+  {
+    "id": "WWC-READ-PHONICS-2016",
+    "title": "Foundational Skills to Support Reading for Understanding in Kindergarten Through 3rd Grade",
+    "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+    "shortExcerpt": "This What Works Clearinghouse practice guide highlights systematic instruction in phonological awareness, phonics, fluency, and vocabulary as foundations for reading comprehension. Recommendations include explicit, sequenced lessons, ample practice with feedback, and differentiated small-group instruction. The guidance emphasizes data use to target skill gaps and integrate decoding and language-rich activities to build automaticity and understanding.",
+    "tags": ["reading"],
+    "publisher": "IES/WWC",
+    "year": 2016,
+    "evidenceLevel": "strong",
+    "gradeBands": ["k-3"]
+  },
+  {
+    "id": "WWC-READ-COMPREHENSION-2010",
+    "title": "Improving Reading Comprehension in Kindergarten Through 3rd Grade",
+    "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+    "shortExcerpt": "The guide recommends teaching reading comprehension through explicit strategies (e.g., summarizing, questioning, monitoring), building coherent text discussions, and expanding vocabulary and language knowledge. It emphasizes purposeful text selection, modeling, and scaffolded practice to develop metacognitive skills and engagement. Frequent assessment and responsive instruction help address diverse learner needs.",
+    "tags": ["reading"],
+    "publisher": "IES/WWC",
+    "year": 2010,
+    "evidenceLevel": "moderate",
+    "gradeBands": ["k-3", "4-6"]
+  },
+  {
+    "id": "WWC-WRITING-2018",
+    "title": "Teaching Elementary School Students to Be Effective Writers",
+    "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/3",
+    "shortExcerpt": "This guide recommends daily time for writing, explicit instruction in the writing process, teaching foundational skills (handwriting, spelling, sentence construction), and using assessment to inform feedback and revision. Structured routines such as planning, drafting, and revising, along with mentor texts and rubrics, support development of composition quality and independence.",
+    "tags": ["writing"],
+    "publisher": "IES/WWC",
+    "year": 2018,
+    "evidenceLevel": "moderate",
+    "gradeBands": ["k-3", "4-6"]
+  },
+  {
+    "id": "WWC-EARLY-MATH-2013",
+    "title": "Teaching Math to Young Children",
+    "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/18",
+    "shortExcerpt": "Recommendations stress building number sense and operations through intentional learning progressions, use of manipulatives and representations, and integrating math talk during play and routines. Small-group activities, explicit vocabulary, and games that encourage counting, comparison, and problem solving help children internalize concepts and communicate mathematical thinking.",
+    "tags": ["math"],
+    "publisher": "IES/WWC",
+    "year": 2013,
+    "evidenceLevel": "moderate",
+    "gradeBands": ["k-3"]
+  },
+  {
+    "id": "PBIS-OVERVIEW",
+    "title": "Positive Behavioral Interventions and Supports (PBIS) Overview",
+    "url": "https://www.pbis.org/topics/pbis",
+    "shortExcerpt": "PBIS is a framework for organizing evidence-based practices to improve social, emotional, and academic outcomes. It emphasizes prevention, consistent expectations, teaching appropriate behaviors, and data-driven problem solving across three tiers of support. Core practices include acknowledging positive behavior, proactive classroom management, and team-based decision-making.",
+    "tags": ["pbis", "behavior"],
+    "publisher": "Center on PBIS",
+    "evidenceLevel": "moderate",
+    "gradeBands": ["k-3", "4-6", "7-9", "10-12"]
+  },
+  {
+    "id": "IRIS-FBA-INTRO",
+    "title": "IRIS Center: Functional Behavioral Assessment (FBA)",
+    "url": "https://iris.peabody.vanderbilt.edu/module/fba/",
+    "shortExcerpt": "The IRIS module introduces FBA as a process for identifying the function of student behavior to inform effective interventions. It covers direct and indirect data collection, hypothesis development, and linking function-based strategies to replacement behaviors. Emphasis is placed on environmental analysis, team collaboration, and progress monitoring.",
+    "tags": ["fba", "behavior"],
+    "publisher": "IRIS Center",
+    "evidenceLevel": "emerging",
+    "gradeBands": ["k-3", "4-6", "7-9", "10-12"]
+  },
+  {
+    "id": "NCAEP-AUTISM-EBP-2020",
+    "title": "Evidence-Based Practices for Children, Youth, and Young Adults with Autism",
+    "url": "https://ncaep.fpg.unc.edu/",
+    "shortExcerpt": "NCAEP identifies evidence-based practices for individuals with autism across age ranges. Practices include modeling, reinforcement, social narratives, video modeling, and visual supports. The review synthesizes high-quality research to guide selection and implementation matched to learner characteristics, settings, and goals, with attention to fidelity and generalization.",
+    "tags": ["autism", "behavior", "sensory"],
+    "publisher": "NCAEP",
+    "year": 2020,
+    "evidenceLevel": "strong",
+    "gradeBands": ["k-3", "4-6", "7-9", "10-12"]
+  },
+  {
+    "id": "ASHA-AAC-OVERVIEW",
+    "title": "Augmentative and Alternative Communication (AAC)",
+    "url": "https://www.asha.org/public/speech/disorders/aac/",
+    "shortExcerpt": "AAC encompasses a range of tools and strategies to support communication for individuals with complex needs. Interventions include low- and high-tech systems, aided language input, and partner training. Emphasis is on matching systems to individual abilities and contexts, ensuring access, and integrating communication opportunities across environments.",
+    "tags": ["aac"],
+    "publisher": "ASHA",
+    "evidenceLevel": "emerging",
+    "gradeBands": ["k-3", "4-6", "7-9", "10-12"]
+  },
+  {
+    "id": "IDA-STRUCTURED-LITERACY",
+    "title": "Structured Literacy: Effective Instruction for Students with Dyslexia and Related Reading Difficulties",
+    "url": "https://dyslexiaida.org/structured-literacy/",
+    "shortExcerpt": "Structured Literacy refers to systematic, explicit instruction in phonology, sound–symbol association, syllable types, morphology, syntax, and semantics. Instruction is cumulative, diagnostic, and responsive, with intensive practice and immediate feedback. The approach supports students with word-level reading difficulties and benefits all learners developing proficient literacy skills.",
+    "tags": ["reading"],
+    "publisher": "International Dyslexia Association",
+    "evidenceLevel": "moderate",
+    "gradeBands": ["k-3", "4-6"]
+  }
+]
+

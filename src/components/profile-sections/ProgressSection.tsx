@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { ProgressDashboard } from '@/components/ProgressDashboard';
+import React, { lazy, Suspense } from 'react';
+const ProgressDashboard = lazy(() => import('@/components/ProgressDashboard').then(m => ({ default: m.ProgressDashboard })));
 import { Student, Goal } from '@/types/student';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -28,7 +29,9 @@ const ProgressSection = memo(({ student, goals }: ProgressSectionProps) => {
           {t('progress_description', { name: student.name })}
         </p>
       </div>
-      <ProgressDashboard student={student} goals={goals} />
+      <Suspense fallback={<div className="h-[360px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label="Loading progress" />}> 
+        <ProgressDashboard student={student} goals={goals} />
+      </Suspense>
     </div>
   );
 });

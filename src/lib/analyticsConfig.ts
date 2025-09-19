@@ -1,4 +1,5 @@
 import { logger } from '@/lib/logger';
+import { AI_ANALYSIS_ENABLED } from '@/lib/env';
 
 // Centralized storage keys and prefixes
 export const STORAGE_KEYS = {
@@ -16,6 +17,7 @@ export interface AnalyticsConfiguration {
   features?: {
     enableStructuredInsights?: boolean;
     enableSummaryFacade?: boolean;
+    aiAnalysisEnabled?: boolean;
   };
 
   // Feature Engineering Settings
@@ -149,6 +151,7 @@ export const DEFAULT_ANALYTICS_CONFIG: AnalyticsConfiguration = {
   features: {
     enableStructuredInsights: false,
     enableSummaryFacade: true,
+    aiAnalysisEnabled: AI_ANALYSIS_ENABLED,
   },
   
   featureEngineering: {
@@ -336,7 +339,21 @@ export class AnalyticsConfigManager {
   }
 
   getConfig(): AnalyticsConfiguration {
-    return { ...this.config };
+    // Always reflect latest Vite env for AI flag to avoid stale defaults
+    try {
+      const env: Record<string, unknown> = (import.meta as any)?.env ?? {};
+      const toBool = (v: unknown) => {
+        const s = (v ?? '').toString().toLowerCase();
+        return s === '1' || s === 'true' || s === 'yes';
+      };
+      const envAi = toBool(env.VITE_AI_ANALYSIS_ENABLED);
+      const next: AnalyticsConfiguration = { ...this.config } as AnalyticsConfiguration;
+      next.features = { ...(next.features || {}), aiAnalysisEnabled: envAi } as AnalyticsConfiguration['features'];
+      return next;
+    } catch {
+      // On any error, return a shallow copy
+      return { ...this.config };
+    }
   }
 
   updateConfig(updates: Partial<AnalyticsConfiguration>): void {
@@ -398,7 +415,8 @@ export class AnalyticsConfigManager {
       if (stored) {
         const parsed = JSON.parse(stored);
         if (this.validateConfig(parsed)) {
-          return parsed;
+          // Merge stored over defaults so new defaults (incl. env-driven flags) apply
+          return this.deepMerge(DEFAULT_ANALYTICS_CONFIG, parsed);
         }
       }
     } catch (error) {

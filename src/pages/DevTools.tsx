@@ -10,6 +10,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 
 const StorageManager = lazy(() => import('@/components/StorageManager').then(m => ({ default: m.StorageManager })));
 const ModelDiagnosticsPanel = lazy(() => import('@/components/dev/ModelDiagnosticsPanel').then(m => ({ default: m.ModelDiagnosticsPanel })));
+const EnvDebug = lazy(() => import('@/components/dev/EnvDebug').then(m => ({ default: m.EnvDebug })));
 
 /**
  * Developer Tools page - centralizes non user-facing utilities
@@ -113,6 +114,11 @@ const DevTools = (): JSX.Element => {
             </Dialog>
           </CardContent>
         </Card>
+
+        {/* Env / AI Debug */}
+        <Suspense fallback={<div className="p-4 text-sm text-muted-foreground">Loading env…</div>}>
+          <EnvDebug />
+        </Suspense>
       </div>
     </div>
   );

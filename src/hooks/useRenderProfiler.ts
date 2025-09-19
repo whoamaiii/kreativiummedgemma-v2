@@ -116,19 +116,13 @@ export function useRenderProfiler(
           const metrics = Array.from(renderMetrics.values())
             .sort((a, b) => b.averageRenderTime - a.averageRenderTime);
           
-          console.group('🚀 Render Performance Report');
-          console.table(metrics);
+          try { logger.info('[RenderProfiler] Report', { metrics }); } catch {}
           
           const hotspots = metrics.filter(m => m.averageRenderTime > 10);
           if (hotspots.length > 0) {
-            console.group('🔥 Render Hotspots (>10ms average)');
-            hotspots.forEach(metric => {
-              console.log(`${metric.componentName}: ${metric.averageRenderTime.toFixed(2)}ms avg (${metric.renderCount} renders)`);
-            });
-            console.groupEnd();
+            try { logger.warn('[RenderProfiler] Hotspots', { hotspots }); } catch {}
           }
           
-          console.groupEnd();
         }
       };
     }

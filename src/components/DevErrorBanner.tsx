@@ -91,12 +91,12 @@ export const DevErrorBanner = () => {
   if (isHidden || !lastError) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[1000]">
-      <div className="mx-auto max-w-6xl m-2 rounded-md border border-destructive/40 bg-destructive/10 backdrop-blur px-3 py-2 text-sm">
+    <div className="fixed bottom-2 left-1/2 -translate-x-1/2 z-[1000]">
+      <div className="mx-auto max-w-6xl rounded-md border border-destructive/40 bg-destructive/10 backdrop-blur px-3 py-2 text-sm shadow-lg">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="font-medium text-destructive">{t('devErrorBanner.title', { count: errorCount })}</div>
-            <div className="mt-1 truncate text-foreground/90" title={lastError.message}>{lastError.message}</div>
+            <div className="mt-1 max-w-[70vw] truncate text-foreground/90" title={lastError.message}>{lastError.message}</div>
             {!isCollapsed && lastError.details && (
               <pre className="mt-2 max-h-40 overflow-auto whitespace-pre-wrap rounded bg-background/60 p-2 text-xs text-muted-foreground">{lastError.details}</pre>
             )}

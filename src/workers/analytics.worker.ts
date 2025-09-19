@@ -78,6 +78,35 @@ const workerCache = {
     return count;
   },
 
+  clearAll(): number {
+    const count = this.storage.size;
+    this.storage.clear();
+    insertionOrder.length = 0;
+    return count;
+  },
+
+  clearByStudentId(studentId: string): number {
+    return this.invalidateByTag(`student-${studentId}`);
+  },
+
+  clearByPattern(pattern: RegExp): number {
+    let count = 0;
+    for (const key of Array.from(this.storage.keys())) {
+      if (pattern.test(key)) {
+        this.storage.delete(key);
+        count++;
+      }
+    }
+    const remaining = insertionOrder.filter(k => this.storage.has(k));
+    insertionOrder.length = 0;
+    insertionOrder.push(...remaining);
+    return count;
+  },
+
+  getStats(): { size: number } {
+    return { size: this.storage.size };
+  },
+
   // Utilities required by CachedPatternAnalysisEngine
   getDataFingerprint(data: unknown): string {
     const stringify = (obj: unknown): string => {
@@ -171,9 +200,31 @@ export type { AnalyticsData, AnalyticsResults } from '@/types/analytics';
  */
 export async function handleMessage(e: MessageEvent<any>) {
   // Support two message shapes:
-  // A) Typed task envelope built via buildInsightsTask
-  // B) Legacy AnalyticsData directly
+  // A) Cache control commands (CACHE/*)
+  // B) Typed task envelope built via buildInsightsTask
+  // C) Legacy AnalyticsData directly
   const msg = e.data as any;
+
+  // Intercept cache control messages first
+  if (msg && typeof msg.type === 'string' && msg.type.startsWith('CACHE/')) {
+    try {
+      if (msg.type === 'CACHE/CLEAR_ALL') {
+        const patternsCleared = (() => { try { return cachedAnalysis.invalidateAllCache(); } catch { return 0; } })();
+        const cacheCleared = workerCache.clearAll();
+        enqueueMessage({ type: 'CACHE/CLEAR_DONE', payload: { scope: 'all', patternsCleared, cacheCleared, stats: workerCache.getStats() } } as unknown as AnalyticsWorkerMessage);
+      } else if (msg.type === 'CACHE/CLEAR_STUDENT' && typeof msg.studentId === 'string') {
+        const patternsCleared = (() => { try { return cachedAnalysis.invalidateStudentCache(msg.studentId); } catch { return 0; } })();
+        const cacheCleared = workerCache.clearByStudentId(msg.studentId);
+        enqueueMessage({ type: 'CACHE/CLEAR_DONE', payload: { scope: 'student', studentId: msg.studentId, patternsCleared, cacheCleared, stats: workerCache.getStats() } } as unknown as AnalyticsWorkerMessage);
+      } else if (msg.type === 'CACHE/CLEAR_PATTERNS') {
+        const patternsCleared = (() => { try { return cachedAnalysis.invalidateAllCache(); } catch { return 0; } })();
+        enqueueMessage({ type: 'CACHE/CLEAR_DONE', payload: { scope: 'patterns', patternsCleared, stats: workerCache.getStats() } } as unknown as AnalyticsWorkerMessage);
+      }
+    } catch (err) {
+      try { logger.error('[analytics.worker] Cache clear command failed', err as Error); } catch {}
+    }
+    return;
+  }
   let filteredData: AnalyticsData;
   if (msg && msg.type === 'Insights/Compute' && msg.payload) {
     const { inputs, config } = msg.payload;
@@ -206,7 +257,7 @@ export async function handleMessage(e: MessageEvent<any>) {
       workerCache.set(logKey, true, ['logging']);
     }
   } catch (e) {
-    /* noop */
+    try { logger.warn('[analytics.worker] Diagnostic logging failed', e as Error); } catch {}
   }
 
   // Update configuration if provided
@@ -377,8 +428,8 @@ if (useSummaryFacade) {
       });
       workerCache.set(minuteKey, true, ['logging']);
     }
-  } catch {
-    /* noop */
+  } catch (e) {
+    try { logger.warn('[analytics.worker] Summary facade debug logging failed', e as Error); } catch {}
   }
 } else {
   insights = generateInsightsFromWorkerInputs(
@@ -400,6 +451,7 @@ if (useSummaryFacade) {
       predictiveInsights,
       anomalies,
       insights,
+      suggestedInterventions: [], // Default to empty array
       cacheKey: filteredData.cacheKey, // Include cache key if provided
       updatedCharts: ['insightList']
     };
@@ -411,7 +463,7 @@ if (useSummaryFacade) {
     try {
     logger.error('[analytics.worker] error', error);
     } catch (e) {
-      /* noop */
+      /* ignore logging failure */
     }
     logger.error('Error in analytics worker:', error);
     // Post an error message back to the main thread for graceful error handling.
@@ -444,7 +496,7 @@ if (typeof self !== 'undefined' && 'onmessage' in self) {
         (postMessage as any)({ type: 'error', error: e.message, cacheKey: undefined, payload: {
           patterns: [], correlations: [], predictiveInsights: [], anomalies: [], insights: ['Worker runtime error encountered.'], updatedCharts: ['insightList']
         }});
-      } catch { /* noop */ }
+      } catch (err) { try { logger.warn('[analytics.worker] Failed to post error message', err as Error); } catch {} }
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     self.addEventListener('unhandledrejection', (e: any) => {
@@ -454,15 +506,15 @@ if (typeof self !== 'undefined' && 'onmessage' in self) {
         (postMessage as any)({ type: 'error', error: String(msg), cacheKey: undefined, payload: {
           patterns: [], correlations: [], predictiveInsights: [], anomalies: [], insights: ['Worker unhandled rejection.'], updatedCharts: ['insightList']
         }});
-      } catch { /* noop */ }
+      } catch (err) { try { logger.warn('[analytics.worker] Failed to post rejection message', err as Error); } catch {} }
     });
-  } catch { /* noop */ }
+  } catch (e) { try { logger.warn('[analytics.worker] Failed to setup error handlers', e as Error); } catch {} }
 
   // Signal readiness so main thread can flush any queued tasks
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (postMessage as any)({ type: 'progress', progress: { stage: 'ready', percent: 1 } });
-  } catch { /* noop */ }
+  } catch (e) { try { logger.warn('[analytics.worker] Failed to post ready signal', e as Error); } catch {} }
 
   self.onmessage = handleMessage;
 }

@@ -13,7 +13,7 @@ import { POC_MODE, IS_PROD } from "@/lib/env";
 import { PremiumStudentCard } from "@/components/ui/PremiumStudentCard";
 import { MockDataLoader } from "@/components/MockDataLoader";
 import { dataStorage } from "@/lib/dataStorage";
-import { FlaskConical, HelpCircle, Download, Plus, Users, CalendarDays, BarChart3, TrendingUp, TrendingDown, Hand } from "lucide-react";
+import { FlaskConical, HelpCircle, Download, Plus, Users, CalendarDays, BarChart3, TrendingUp, TrendingDown, Hand, Sparkles } from "lucide-react";
 import { HelpAndSupport } from "@/components/HelpAndSupport";
 import { GlobalMenu } from "@/components/GlobalMenu";
 import { subWeeks, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
@@ -222,6 +222,17 @@ window.addEventListener('storage', handleStorageChange);
               >
                 <h2 className="text-3xl font-bold tracking-tight text-foreground">{String(tDashboard('overview.title'))}</h2>
                 <div className="flex items-center space-x-4">
+                  <Button
+                    variant="glass"
+                    size="lg"
+                    onClick={() => navigate('/kreativium-ai')}
+                    className="flex items-center justify-center group"
+                    aria-label="Kreativium AI"
+                    data-testid="dashboard-kreativium-ai-button"
+                  >
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    kreativium‑AI
+                  </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => navigate('/reports')}

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { useEffect, useRef, useCallback } from 'react';
 import type { ReportsWorkerRequest, ReportsWorkerResponse } from '@/workers/reports.worker';
 import ReportsWorker from '@/workers/reports.worker?worker';
@@ -57,7 +58,7 @@ export function useReportsWorker() {
     w.onerror = () => {
       // Reject all pending requests on fatal worker error
       pendingMap.forEach((entry, id) => {
-        try { entry.reject(new Error('Reports worker error')); } catch { /* noop */ }
+        try { entry.reject(new Error('Reports worker error')); } catch (e) { try { logger.warn('[useReportsWorker] Failed to reject promise on worker error', e as Error); } catch {} }
         pendingMap.delete(id);
       });
     };
@@ -66,7 +67,7 @@ export function useReportsWorker() {
     return () => {
       // Reject any still-pending promises to avoid hanging callers
       pendingMap.forEach((entry, id) => {
-        try { entry.reject(new Error('Reports worker terminated')); } catch { /* noop */ }
+        try { entry.reject(new Error('Reports worker terminated')); } catch (e) { try { logger.warn('[useReportsWorker] Failed to reject promise on worker termination', e as Error); } catch {} }
         pendingMap.delete(id);
       });
       w.terminate();

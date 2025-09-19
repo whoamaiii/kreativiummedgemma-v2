@@ -2,7 +2,7 @@ import { Student, TrackingEntry, EmotionEntry, SensoryEntry, EnvironmentalEntry,
 import { dataStorage } from './dataStorage';
 import { logger } from './logger';
 import { generateId } from './uuid';
-import { validateEmotionEntry, validateSensoryEntry, validateTrackingEntry } from './dataValidation';
+import { validateEmotionEntry, validateSensoryEntry, validateTrackingEntry, validateStudent } from './dataValidation';
 
 // Helper function to get a random date within the last N days
 const getRandomDate = (daysAgo: number, variance: number = 0): Date => {
@@ -17,6 +17,166 @@ const getRandomDate = (daysAgo: number, variance: number = 0): Date => {
   
   return baseDate;
 };
+
+// -----------------------------------------------------------------------------
+// Emma-specific social-context helpers
+// -----------------------------------------------------------------------------
+
+/** Apply a realistic social scenario to an entry for Emma to help AI answer
+ * social-trigger questions (e.g., friminutt, gruppearbeid, kantine, overgang,
+ * presentasjon). Uses Norwegian keywords the heuristics look for.
+ */
+function applyEmmaSocialContext(entry: TrackingEntry): void {
+  // Ensure at least one emotion exists so we can tag social triggers
+  if (!entry.emotions || entry.emotions.length === 0) {
+    entry.emotions = [generateEmotionEntry(entry.studentId, entry.timestamp, 'anxious')];
+  }
+  const emo = entry.emotions[0];
+
+  // Prefer anxious/frustrated with higher intensity so it surfaces in patterns
+  if (Math.random() < 0.8) emo.emotion = 'anxious';
+  if (!emo.intensity || emo.intensity < 4) emo.intensity = 4;
+  emo.triggers = Array.isArray(emo.triggers) ? emo.triggers : [];
+
+  // Choose a social scenario
+  const r = Math.random();
+  if (r < 0.30) {
+    // Gruppearbeid i klasserommet
+    entry.environmentalData = entry.environmentalData || { id: undefined, timestamp: entry.timestamp } as any;
+    if (entry.environmentalData) {
+      entry.environmentalData.location = 'classroom';
+      entry.environmentalData.socialContext = 'Gruppearbeid';
+      entry.environmentalData.classroom = {
+        ...(entry.environmentalData.classroom || {}),
+        activity: 'group-work',
+        timeOfDay: (entry.environmentalData.classroom && entry.environmentalData.classroom.timeOfDay) || 'morning',
+      };
+    }
+    emo.triggers.push('sosial interaksjon', 'gruppearbeid');
+    emo.notes = emo.notes || 'Uro under gruppeoppgave';
+    entry.generalNotes = 'Sosial situasjon: gruppeoppgave i klasserommet (samarbeid/gruppe).';
+  } else if (r < 0.55) {
+    // Friminutt ute
+    entry.environmentalData = entry.environmentalData || { id: undefined, timestamp: entry.timestamp } as any;
+    if (entry.environmentalData) {
+      entry.environmentalData.location = 'playground';
+      entry.environmentalData.socialContext = 'Friminutt';
+      entry.environmentalData.classroom = {
+        ...(entry.environmentalData.classroom || {}),
+        activity: 'free-time',
+        timeOfDay: (entry.environmentalData.classroom && entry.environmentalData.classroom.timeOfDay) || 'afternoon',
+      };
+    }
+    emo.triggers.push('sosial interaksjon', 'friminutt');
+    emo.notes = emo.notes || 'Konflikt i friminutt';
+    entry.generalNotes = 'Friminutt med mange elever; mulig konflikt/press i sosial situasjon.';
+  } else if (r < 0.75) {
+    // Lunsj i kantinen
+    entry.environmentalData = entry.environmentalData || { id: undefined, timestamp: entry.timestamp } as any;
+    if (entry.environmentalData) {
+      entry.environmentalData.location = 'cafeteria';
+      entry.environmentalData.socialContext = 'Lunsj/kantine';
+      entry.environmentalData.roomConditions = {
+        ...(entry.environmentalData.roomConditions || {}),
+        noiseLevel: Math.max(3, (entry.environmentalData.roomConditions?.noiseLevel || 3)),
+        lighting: entry.environmentalData.roomConditions?.lighting || 'bright',
+      };
+    }
+    emo.triggers.push('sosial interaksjon', 'lunsj', 'kantine');
+    emo.notes = emo.notes || 'Overveldet i kantinen (støy, kø, mange elever)';
+    entry.generalNotes = 'Lunsj i kantinen; tett sosialt miljø og høy lyd.';
+  } else if (r < 0.90) {
+    // Presentasjon foran klassen
+    entry.environmentalData = entry.environmentalData || { id: undefined, timestamp: entry.timestamp } as any;
+    if (entry.environmentalData) {
+      entry.environmentalData.location = 'classroom';
+      entry.environmentalData.socialContext = 'Presentasjon';
+      entry.environmentalData.classroom = {
+        ...(entry.environmentalData.classroom || {}),
+        activity: 'instruction',
+        timeOfDay: (entry.environmentalData.classroom && entry.environmentalData.classroom.timeOfDay) || 'morning',
+      };
+    }
+    emo.triggers.push('sosial interaksjon', 'presentasjon');
+    emo.notes = emo.notes || 'Nervøs/engstelig ved presentasjon';
+    entry.generalNotes = 'Presentasjon foran klassen; sosial eksponering og forventninger.';
+  } else {
+    // Overgang mellom aktiviteter/timer (hallway/transition)
+    entry.environmentalData = entry.environmentalData || { id: undefined, timestamp: entry.timestamp } as any;
+    if (entry.environmentalData) {
+      entry.environmentalData.location = 'hallway';
+      entry.environmentalData.socialContext = 'Overgang';
+      entry.environmentalData.classroom = {
+        ...(entry.environmentalData.classroom || {}),
+        activity: 'transition',
+        timeOfDay: (entry.environmentalData.classroom && entry.environmentalData.classroom.timeOfDay) || 'afternoon',
+      };
+    }
+    emo.triggers.push('sosial interaksjon', 'overgang');
+    emo.notes = emo.notes || 'Påvirket ved overgang til/etter friminutt';
+    entry.generalNotes = 'Overgang fra friminutt til time; stress i korridor/oppstilling.';
+  }
+}
+
+/** Ensure Emma has at least a baseline number of explicit social examples. */
+function ensureEmmaSocialBaseline(entries: TrackingEntry[], student: Student, min = 6): void {
+  const socialRe = /(sosial|sosiale|venn|venner|kompis|klasse|klasserom|gruppe|grupp|friminutt|pause|lunsj|frokost|middag|kantine|overgang|presentasjon)/i;
+  const count = entries.filter((e) => {
+    const txt = `${e.generalNotes || e.notes || ''} ${(e.environmentalData?.classroom?.activity || '')} ${(e.environmentalData?.location || '')} ${(e.environmentalData?.socialContext || '')}`;
+    const emoTxt = (e.emotions || []).map(em => `${em.notes || ''} ${(em.triggers || []).join(' ')}`).join(' ');
+    return socialRe.test(txt) || socialRe.test(emoTxt);
+  }).length;
+  const needed = Math.max(0, min - count);
+  if (needed === 0) return;
+
+  const scenarios: Array<'gruppe' | 'friminutt' | 'kantine' | 'presentasjon' | 'overgang'> = ['gruppe', 'friminutt', 'kantine', 'presentasjon', 'overgang'];
+  for (let i = 0; i < needed; i++) {
+    const ts = new Date(Date.now() - (i + 1) * 3 * 36e5); // every ~3 hours back
+    const e: TrackingEntry = {
+      id: generateId(`tracking_${student.id}`),
+      studentId: student.id,
+      timestamp: ts,
+      emotions: [generateEmotionEntry(student.id, ts, 'anxious')],
+      sensoryInputs: [],
+      environmentalData: {},
+      generalNotes: '',
+    } as TrackingEntry;
+    // Always high enough intensity and social trigger
+    e.emotions[0].intensity = Math.max(4, e.emotions[0].intensity || 4);
+    e.emotions[0].triggers = Array.from(new Set([...(e.emotions[0].triggers || []), 'sosial interaksjon']));
+
+    // Cycle through scenarios to diversify examples
+    const t = scenarios[i % scenarios.length];
+    switch (t) {
+      case 'gruppe':
+        e.environmentalData = { ...(e.environmentalData || {}), location: 'classroom', socialContext: 'Gruppearbeid', classroom: { activity: 'group-work', timeOfDay: 'morning' } } as any;
+        e.generalNotes = 'Sosial situasjon: gruppeoppgave i klasserommet (gruppe/samarbeid).';
+        e.emotions[0].triggers?.push('gruppearbeid');
+        break;
+      case 'friminutt':
+        e.environmentalData = { ...(e.environmentalData || {}), location: 'playground', socialContext: 'Friminutt', classroom: { activity: 'free-time', timeOfDay: 'afternoon' } } as any;
+        e.generalNotes = 'Friminutt med venner; noe konflikt og uro.';
+        e.emotions[0].triggers?.push('friminutt');
+        break;
+      case 'kantine':
+        e.environmentalData = { ...(e.environmentalData || {}), location: 'cafeteria', socialContext: 'Lunsj/kantine', roomConditions: { noiseLevel: 4, lighting: 'bright' } } as any;
+        e.generalNotes = 'Lunsj i kantinen; høy lyd og tett sosialt miljø.';
+        e.emotions[0].triggers?.push('kantine', 'lunsj');
+        break;
+      case 'presentasjon':
+        e.environmentalData = { ...(e.environmentalData || {}), location: 'classroom', socialContext: 'Presentasjon', classroom: { activity: 'instruction', timeOfDay: 'morning' } } as any;
+        e.generalNotes = 'Presentasjon foran klassen; sosial eksponering.';
+        e.emotions[0].triggers?.push('presentasjon');
+        break;
+      case 'overgang':
+        e.environmentalData = { ...(e.environmentalData || {}), location: 'hallway', socialContext: 'Overgang', classroom: { activity: 'transition', timeOfDay: 'afternoon' } } as any;
+        e.generalNotes = 'Overgang fra friminutt til time; stress i korridor.';
+        e.emotions[0].triggers?.push('overgang');
+        break;
+    }
+    entries.push(e);
+  }
+}
 
 
 // Generate realistic emotion entry
@@ -175,6 +335,11 @@ export const generateTrackingEntry = (student: Student, daysAgo: number, scenari
         // For very recent entries, sometimes add multiple emotions
         if (daysAgo < 5 && Math.random() > 0.6) {
           entry.emotions.push(generateEmotionEntry(student.id, timestamp, 'frustrated'));
+        }
+
+        // Add realistic social context frequently so "sosiale triggere" can be answered
+        if (Math.random() < 0.6) {
+          applyEmmaSocialContext(entry);
         }
       }
       break;
@@ -376,6 +541,15 @@ const generateTrackingDataForStudent = (student: Student, scenario: 'emma' | 'la
     }
   }
   
+  // Guarantee a baseline of social examples for Emma
+  if (scenario === 'emma') {
+    try {
+      ensureEmmaSocialBaseline(entries, student, 6);
+    } catch {
+      // fail-soft; baseline is optional
+    }
+  }
+
   return entries.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 };
 
@@ -441,11 +615,21 @@ export function loadMockDataToStorage(): void {
     
     // Save students
     students.forEach(student => {
+      const studentValidation = validateStudent(student as any);
+      if (!studentValidation.isValid) {
+        logger.warn('Skipping invalid student in mock load', { student });
+        return;
+      }
       dataStorage.saveStudent(student);
     });
     
     // Save tracking entries
     trackingEntries.forEach(entry => {
+      const trackingValidation = validateTrackingEntry(entry as any);
+      if (!trackingValidation.isValid) {
+        logger.error('Generated invalid tracking entry during bulk mock load', { entry, errors: trackingValidation.errors });
+        return; // Skip invalid entries
+      }
       dataStorage.saveTrackingEntry(entry);
     });
   } catch (error) {

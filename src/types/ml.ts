@@ -100,4 +100,29 @@ export interface CrossValidationConfig {
    * @example ['accuracy', 'precision', 'recall', 'f1']
    */
   validationMetrics: string[];
+
+  /**
+   * Optional training arguments to be passed to model.fit during each fold.
+   * If omitted, defaults will be used (epochs=5, batchSize=32, shuffle=true, verbose=0).
+   */
+  fitArgs?: Partial<Pick<tf.ModelFitArgs, 'epochs' | 'batchSize' | 'shuffle' | 'verbose'>>;
+
+  /**
+   * Optional early stopping configuration for cross-validation training.
+   */
+  earlyStopping?: EarlyStoppingConfig;
+}
+
+/**
+ * Configuration for early stopping during model training.
+ */
+export interface EarlyStoppingConfig {
+  /** Whether to enable early stopping. Default: false */
+  enabled?: boolean;
+  /** Number of epochs to wait for improvement before stopping. Default: 3 */
+  patience?: number;
+  /** Minimum change to qualify as improvement. Default: 0 */
+  minDelta?: number;
+  /** Metric to monitor. If validation data is provided, prefer val_* metrics. */
+  monitor?: 'loss' | 'val_loss' | 'accuracy' | 'val_accuracy' | 'mae' | 'val_mae' | 'mse' | 'val_mse';
 }

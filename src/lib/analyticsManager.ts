@@ -7,10 +7,19 @@ import { dataStorage, IDataStorage } from "@/lib/dataStorage";
 import { ANALYTICS_CONFIG, DEFAULT_ANALYTICS_CONFIG, analyticsConfig, STORAGE_KEYS } from "@/lib/analyticsConfig";
 import { logger } from "@/lib/logger";
 import type { AnalyticsResults } from "@/types/analytics";
+// AI analysis integration
+import { HeuristicAnalysisEngine, LLMAnalysisEngine } from "@/lib/analysis";
+import type { AnalysisEngine, AnalyticsResultsAI, AnalysisOptions, AiMetadata } from "@/lib/analysis";
+
+// Compatibility type alias to maintain narrow typing while supporting AI metadata
+type AnalyticsResultsCompat = AnalyticsResults & { ai?: AiMetadata };
+import { loadAiConfig } from "@/lib/aiConfig";
 import { getProfileMap, initializeStudentProfile, saveProfiles } from "@/lib/analyticsProfiles";
+import { analyticsCoordinator } from "@/lib/analyticsCoordinator";
 import type { StudentAnalyticsProfile } from "@/lib/analyticsProfiles";
 // New orchestrator-style helpers and types
 import { buildInsightsCacheKey as _buildInsightsCacheKey, buildInsightsTask as _buildInsightsTask } from "@/lib/insights/task";
+export { createInsightsTask as buildTask, createInsightsCacheKey as buildCacheKey } from '@/lib/analyticsTasks';
 import type { InsightsOptions, AnalyticsResult } from "@/types/insights";
 
 // #region Type Definitions
@@ -57,7 +66,7 @@ export const ensureUniversalAnalyticsInitialization = async (): Promise<void> =>
       initializeStudentProfile(student.id);
 
       // Optional: evaluate minimum data for future warming decisions
-      const tracking = dataStorage.getTrackingEntriesForStudent(student.id);
+      const tracking = dataStorage.getEntriesForStudent(student.id);
       const emotions = tracking.flatMap(t => t.emotions ?? []);
       const sensoryInputs = tracking.flatMap(t => t.sensoryInputs ?? []);
 
@@ -85,7 +94,7 @@ export const ensureUniversalAnalyticsInitialization = async (): Promise<void> =>
 /**
  * Represents the complete set of results from an analytics run.
  */
-type AnalyticsCache = Map<string, { results: AnalyticsResults; timestamp: Date }>;
+type AnalyticsCache = Map<string, { results: AnalyticsResultsCompat; timestamp: Date }>;
 type AnalyticsProfileMap = Map<string, StudentAnalyticsProfile>;
 // #endregion
 
@@ -254,7 +263,7 @@ private analyticsProfiles: AnalyticsProfileMap;
       saveProfiles();
     } catch (error) {
       logger.error('[analyticsManager] initializeStudentAnalytics failed', { error, studentId });
-      // fail-soft
+      // fail-soft: continue without profile initialization to prevent app crash
     }
   }
 
@@ -265,6 +274,7 @@ private analyticsProfiles: AnalyticsProfileMap;
    * @async
    * @method getStudentAnalytics
    * @param {Student} student - The student object to analyze
+   * @param {{ useAI?: boolean }} [options] - Optional runtime toggle for AI analysis
    * @returns {Promise<AnalyticsResults>} Complete analytics results including patterns, correlations, and insights
    * 
    * @description Main entry point for retrieving student analytics with intelligent caching.
@@ -292,11 +302,44 @@ private analyticsProfiles: AnalyticsProfileMap;
    * const results = await analyticsManager.getStudentAnalytics(student);
    * logger.info(`Confidence: ${results.confidence * 100}%`);
    */
-  public async getStudentAnalytics(student: Student): Promise<AnalyticsResults> {
+  public async getStudentAnalytics(student: Student, options?: { useAI?: boolean }): Promise<AnalyticsResults> {
     this.initializeStudentAnalytics(student.id);
 
-// Deprecated internal TTL caching removed; always compute fresh and let callers cache by key
-    const results = await this.generateAnalytics(student);
+    // Check TTL cache for existing results
+    const cached = this.analyticsCache.get(student.id);
+    if (cached) {
+      const now = new Date();
+      const cacheAge = now.getTime() - cached.timestamp.getTime();
+      const liveCfg = (() => { try { return analyticsConfig.getConfig(); } catch { return null; } })();
+      const ttl = liveCfg?.cache?.ttl ?? ANALYTICS_CONFIG.cache.ttl;
+      const preferAI = options?.useAI === true;
+      const preferHeuristic = options?.useAI === false;
+
+      // Determine whether the cached result was produced by an AI provider (non-heuristic)
+      const provider = (cached.results as any)?.ai?.provider;
+      const isCachedAI = typeof provider === 'string' && provider.toLowerCase() !== 'heuristic';
+
+      if (cacheAge < ttl) {
+        // When runtime explicitly requests heuristic (useAI=false) and cache holds AI, bypass cache
+        if (preferHeuristic) {
+          if (!isCachedAI) {
+            return cached.results;
+          }
+          // else: cached is AI; fall through to regenerate heuristically
+        } else if (preferAI) {
+          // When AI is preferred, only return if cached is AI
+          if (isCachedAI) {
+            return cached.results;
+          }
+          // else: fall through to regenerate with AI
+        } else {
+          // No explicit preference provided; accept any fresh cached result
+          return cached.results;
+        }
+      }
+    }
+
+    const results = await this.generateAnalytics(student, options?.useAI);
     this.analyticsCache.set(student.id, { results, timestamp: new Date() });
 
     const profile = this.analyticsProfiles.get(student.id);
@@ -314,20 +357,21 @@ private analyticsProfiles: AnalyticsProfileMap;
   }
 
   /**
-   * Generates fresh analytics for a student using unified insights computation.
+   * Generates fresh analytics for a student using the selected analysis engine.
    * 
    * @private
    * @async
    * @method generateAnalytics
    * @param {Student} student - The student to analyze
-   * @returns {Promise<AnalyticsResults>} Complete analytics results
+   * @param {boolean} [useAI] - Optional runtime AI toggle
+   * @returns {Promise<AnalyticsResultsCompat>} Complete analytics results
    * 
-   * @description Delegates analytics generation to the unified insights module,
-   * keeping analyticsManager pure and framework-agnostic.
+   * @description Delegates analytics generation to a pluggable analysis engine
+   * (heuristic or AI) with graceful fallback and summary facade integration.
    * 
    * @throws {Error} Analytics generation failed for student
    */
-  private async generateAnalytics(student: Student): Promise<AnalyticsResults> {
+  private async generateAnalytics(student: Student, useAI?: boolean): Promise<AnalyticsResultsCompat> {
     // Early guard for invalid input
     if (!student || !student.id) {
       logger.error('[analyticsManager] generateAnalytics: invalid student', { student });
@@ -339,34 +383,34 @@ private analyticsProfiles: AnalyticsProfileMap;
         anomalies: [],
         insights: [],
         error: 'INVALID_STUDENT',
-      } as AnalyticsResults;
+      } as AnalyticsResultsCompat;
     }
 
     try {
-      const trackingEntries = this.storage.getTrackingEntriesForStudent(student.id) || [];
+      const trackingEntries = this.storage.getEntriesForStudent(student.id) || [];
       const goals = this.storage.getGoalsForStudent(student.id) || [];
-      
       const emotions: EmotionEntry[] = trackingEntries.flatMap(entry => entry.emotions || []);
       const sensoryInputs: SensoryEntry[] = trackingEntries.flatMap(entry => entry.sensoryInputs || []);
-      
-      // Prepare configuration for unified computation
-      const liveConfig = (() => {
-        try { return analyticsConfig.getConfig(); } catch { return null; }
-      })();
-      
-      // Delegate computation to unified module
-      const results = await computeInsights(
-        {
-          entries: trackingEntries,
-          emotions,
-          sensoryInputs,
-          goals
-        },
-        liveConfig ? { config: liveConfig } : undefined
-      );
+
+      // Build engine via factory with priority: runtime > config > env
+      const engine = this.createAnalysisEngine(useAI);
+
+      // Always include lightweight AI metadata for lineage/traceability
+      const opts: AnalysisOptions = { includeAiMetadata: true };
+      let results = await engine.analyzeStudent(student.id, undefined, opts);
+
+      // Edge case: if useAI was requested but heuristic was used, add caveat
+      if (useAI === true && engine instanceof HeuristicAnalysisEngine && opts.includeAiMetadata) {
+        if (!results.ai) results.ai = {};
+        if (!results.ai.caveats) results.ai.caveats = [];
+        results.ai.caveats.push('AI disabled or unavailable; heuristic used');
+      }
 
       // Optionally replace insights via summary facade when enabled
       try {
+        const liveConfig = (() => {
+          try { return analyticsConfig.getConfig(); } catch { return null; }
+        })();
         const useSummaryFacade = (liveConfig?.features?.enableSummaryFacade ?? ANALYTICS_CONFIG.features?.enableSummaryFacade) === true;
         if (useSummaryFacade) {
           const summary = await generateAnalyticsSummary({
@@ -374,15 +418,15 @@ private analyticsProfiles: AnalyticsProfileMap;
             emotions,
             sensoryInputs,
             results: {
-              patterns: (results as AnalyticsResults).patterns ?? [],
-              correlations: (results as AnalyticsResults).correlations ?? [],
-              predictiveInsights: (results as AnalyticsResults).predictiveInsights ?? [],
+              patterns: (results as AnalyticsResultsCompat).patterns ?? [],
+              correlations: (results as AnalyticsResultsCompat).correlations ?? [],
+              predictiveInsights: (results as AnalyticsResultsCompat).predictiveInsights ?? [],
             },
           });
           // Replace insights; attach optional metadata for downstream health score
-          (results as AnalyticsResults).insights = summary.insights;
-          (results as unknown as AnalyticsResults & { hasMinimumData?: boolean; confidence?: number }).hasMinimumData = summary.hasMinimumData;
-          (results as unknown as AnalyticsResults & { hasMinimumData?: boolean; confidence?: number }).confidence = summary.confidence;
+          (results as AnalyticsResultsCompat).insights = summary.insights;
+          (results as unknown as AnalyticsResultsCompat & { hasMinimumData?: boolean; confidence?: number }).hasMinimumData = summary.hasMinimumData;
+          (results as unknown as AnalyticsResultsCompat & { hasMinimumData?: boolean; confidence?: number }).confidence = summary.confidence;
           // Low-noise telemetry: log at most once per minute when facade used
           try {
             const nowMinute = new Date().getMinutes();
@@ -395,12 +439,13 @@ private analyticsProfiles: AnalyticsProfileMap;
               });
               __lastFacadeLogMinute = nowMinute;
             }
-          } catch {
-            /* noop */
+          } catch (e) {
+            try { logger.warn('[analyticsManager] Summary facade debug logging failed', e as Error); } catch {}
           }
         }
-      } catch {
-        // fail-soft: keep original insights
+      } catch (e) {
+        logger.warn('[analyticsManager] Summary facade failed, keeping original insights:', e);
+        // fail-soft: keep original insights when summary facade fails
       }
       
       // Trigger alerts if we have tracking data - this is the only side effect
@@ -408,29 +453,35 @@ private analyticsProfiles: AnalyticsProfileMap;
         await alertSystem.generateAlertsForStudent(student, emotions, sensoryInputs, trackingEntries);
       }
       
-      return results as AnalyticsResults;
+      return results as AnalyticsResultsCompat;
     } catch (error) {
       logger.error(`[analyticsManager] generateAnalytics failed for student ${student.id}`, { error: error instanceof Error ? { message: error.message, stack: error.stack, name: error.name } : error });
-      // Return minimal safe result to prevent UI crashes
-      return {
-        patterns: [],
-        correlations: [],
-        environmentalCorrelations: [],
-        predictiveInsights: [],
-        anomalies: [],
-        insights: [],
-        error: 'ANALYTICS_GENERATION_FAILED',
-      } as AnalyticsResults;
+      // Attempt heuristic fallback on failure
+      try {
+        const fallback = await new HeuristicAnalysisEngine().analyzeStudent(student.id, undefined, { includeAiMetadata: true });
+        return fallback as AnalyticsResultsCompat;
+      } catch {
+        // Return minimal safe result to prevent UI crashes
+        return {
+          patterns: [],
+          correlations: [],
+          environmentalCorrelations: [],
+          predictiveInsights: [],
+          anomalies: [],
+          insights: [],
+          error: 'ANALYTICS_GENERATION_FAILED',
+        } as AnalyticsResultsCompat;
+      }
     }
   }
 
   /**
    * Calculates an "analytics health score" based on the completeness and confidence of the results.
    * @private
-   * @param {AnalyticsResults} results - The results from an analytics run.
+   * @param {AnalyticsResultsCompat} results - The results from an analytics run.
    * @returns {number} A score from 0 to 100.
    */
-  private calculateHealthScore(results: AnalyticsResults): number {
+  private calculateHealthScore(results: AnalyticsResultsCompat): number {
     const liveCfg = (() => { try { return analyticsConfig.getConfig(); } catch { return null; } })();
     const { WEIGHTS } = (liveCfg?.healthScore ?? ANALYTICS_CONFIG.healthScore);
     let score = 0;
@@ -441,12 +492,37 @@ private analyticsProfiles: AnalyticsProfileMap;
     if (results.anomalies.length > 0) score += WEIGHTS.ANOMALIES;
 
     // Use optional metadata if provided; otherwise infer minimum data presence and default confidence
-    const extended = results as AnalyticsResults & { hasMinimumData?: boolean; confidence?: number };
+    const extended = results as AnalyticsResultsCompat & { hasMinimumData?: boolean; confidence?: number };
     const hasMinimumData = extended.hasMinimumData ?? (results.patterns.length > 0 || results.correlations.length > 0);
     if (hasMinimumData) score += WEIGHTS.MINIMUM_DATA;
-    const confidence = typeof extended.confidence === 'number' ? extended.confidence : 1;
+    // Prefer AI confidence when available
+    const aiConfidence = typeof results.ai?.confidence?.overall === 'number' ? results.ai?.confidence?.overall : undefined;
+    const confidence = typeof aiConfidence === 'number'
+      ? aiConfidence
+      : (typeof extended.confidence === 'number' ? extended.confidence : 1);
 
-    return Math.round(score * confidence);
+    // Base score scaled by confidence
+    let finalScore = Math.round(score * confidence);
+
+    // AI metadata bonuses: small additive boosts for high-quality AI runs
+    if (results.ai) {
+      const caveats = results.ai.caveats || [];
+      const usedFallback = caveats.some(c => /fallback/i.test(c));
+      const heuristicOnly = (results.ai.provider || '').toLowerCase() === 'heuristic';
+      // Bonus for successful AI (non-heuristic, no fallback)
+      if (!heuristicOnly && !usedFallback) {
+        finalScore += 5;
+      } else if (!heuristicOnly && usedFallback) {
+        finalScore += 2; // partial credit for attempted AI with safe fallback
+      }
+      // Data lineage quality: modest boost based on presence/coverage
+      const lineageCount = results.ai.dataLineage?.length ?? 0;
+      if (lineageCount >= 3) finalScore += 3;
+      else if (lineageCount === 2) finalScore += 2;
+      else if (lineageCount === 1) finalScore += 1;
+    }
+
+    return Math.max(0, Math.min(100, finalScore));
   }
 
   /**
@@ -464,7 +540,7 @@ private analyticsProfiles: AnalyticsProfileMap;
       await this.getStudentAnalytics(student);
     } catch (error) {
       logger.error('[analyticsManager] triggerAnalyticsForStudent failed', { error, studentId: student?.id });
-      // fail-soft
+      // fail-soft: continue without triggering analytics to prevent cascade failures
     }
   }
 
@@ -525,12 +601,233 @@ private analyticsProfiles: AnalyticsProfileMap;
   }
 
   /**
+   * Notify workers and hooks to clear caches via global events
+   */
+  private notifyWorkerCacheClear(studentId?: string): void {
+    try {
+      analyticsCoordinator.broadcastCacheClear(studentId);
+    } catch (e) {
+      logger.warn('[analyticsManager] notifyWorkerCacheClear failed', e as Error);
+    }
+  }
+
+  /**
+   * Clear known analytics localStorage caches (profiles and others via helpers)
+   */
+  private clearLocalStorageCaches(): { keysCleared: string[] } {
+    const keysCleared: string[] = [];
+    
+    if (typeof localStorage === 'undefined') {
+      return { keysCleared };
+    }
+
+    try {
+      // Gather relevant storage identifiers
+      const relevantPrefixes = [
+        STORAGE_KEYS.cachePrefix,
+        STORAGE_KEYS.performancePrefix
+      ];
+      const exactKeys = [
+        STORAGE_KEYS.analyticsConfig,
+        STORAGE_KEYS.analyticsProfiles,
+        'kreativium_ai_metrics_v1' // AI metrics key from @/lib/ai/metrics
+      ];
+
+      // Iterate over localStorage keys and collect matching ones
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key) continue;
+
+        // Check if key contains any of the prefixes
+        const hasRelevantPrefix = relevantPrefixes.some(prefix => key.includes(prefix));
+        // Check if key exactly matches any of the exact keys
+        const isExactMatch = exactKeys.includes(key);
+
+        if (hasRelevantPrefix || isExactMatch) {
+          keysToRemove.push(key);
+        }
+      }
+
+      // Remove collected keys
+      keysToRemove.forEach(key => {
+        try {
+          localStorage.removeItem(key);
+          keysCleared.push(key);
+        } catch (e) {
+          logger.warn(`[analyticsManager] Failed to remove localStorage key: ${key}`, e as Error);
+        }
+      });
+    } catch (e) {
+      logger.warn('[analyticsManager] clearLocalStorageCaches encountered issues', e as Error);
+    }
+    
+    return { keysCleared };
+  }
+
+  /**
+   * Clear all analytics-related caches across systems and return a summary
+   */
+  public async clearAllAnalyticsCaches(broadcast = true): Promise<{ ok: boolean; summary: Record<string, unknown> }> {
+    const summary: Record<string, unknown> = {};
+    try {
+      // Manager TTL cache
+      this.clearCache();
+      summary.managerCacheCleared = true;
+
+      // Profiles
+      try {
+        const { clearAllProfiles, getProfileCacheStats } = await import('@/lib/analyticsProfiles');
+        const before = getProfileCacheStats().count;
+        const cleared = clearAllProfiles();
+        summary.profilesBefore = before;
+        summary.profilesCleared = cleared;
+      } catch (e) {
+        logger.warn('[analyticsManager] Profile clearing failed', e as Error);
+      }
+
+      // AI metrics (localStorage)
+      try {
+        const { aiMetrics } = await import('@/lib/ai/metrics');
+        aiMetrics.reset();
+        summary.aiMetricsReset = true;
+      } catch (e) {
+        logger.warn('[analyticsManager] aiMetrics reset failed', e as Error);
+      }
+
+      // Precomputation caches broadcast (listeners clear if applicable) - only if broadcast is true
+      if (broadcast) {
+        this.notifyWorkerCacheClear();
+      }
+
+      // LocalStorage keys - now actually removes keys and returns accurate summary
+      const localStorageResult = this.clearLocalStorageCaches();
+      summary.localStorage = localStorageResult;
+
+      logger.info('[analyticsManager] Cleared all analytics caches', summary);
+      return { ok: true, summary };
+    } catch (e) {
+      logger.error('[analyticsManager] clearAllAnalyticsCaches failed', e as Error);
+      return { ok: false, summary };
+    }
+  }
+
+  /**
+   * Clear caches for a specific student across systems
+   */
+  public async clearStudentCaches(studentId: string): Promise<{ ok: boolean; studentId: string }> {
+    try {
+      if (!studentId) return { ok: false, studentId };
+      // Manager-level
+      this.clearCache(studentId);
+
+      // Profiles
+      try {
+        const { clearStudentProfile } = await import('@/lib/analyticsProfiles');
+        clearStudentProfile(studentId);
+      } catch (e) {
+        logger.warn('[analyticsManager] clearStudentProfile failed', e as Error);
+      }
+
+      // Worker/hook broadcast
+      this.notifyWorkerCacheClear(studentId);
+
+      logger.info('[analyticsManager] Cleared student caches', { studentId });
+      return { ok: true, studentId };
+    } catch (e) {
+      logger.error('[analyticsManager] clearStudentCaches failed', e as Error);
+      return { ok: false, studentId };
+    }
+  }
+
+  /**
    * Saves the current map of analytics profiles to localStorage.
    * @private
    */
   private saveAnalyticsProfiles(): void {
     // Deprecated in favor of analyticsProfiles.saveProfiles()
     try { saveProfiles(); } catch (error) { logger.error('Error saving analytics profiles:', error); }
+  }
+
+  /**
+   * Engine factory: selects analysis engine based on priority
+   * runtime useAI > analytics config > environment default/availability.
+   */
+  private createAnalysisEngine(useAI?: boolean): AnalysisEngine {
+    // Explicit runtime override: when useAI is explicitly false, always use heuristic.
+    // This takes precedence over config flags and environment/API availability.
+    if (useAI === false) {
+      try {
+        logger.debug('[analyticsManager] Engine selection override: runtime useAI=false -> HeuristicAnalysisEngine', {
+          requestedAI: useAI,
+        });
+      } catch {
+        /* ignore logging errors */
+      }
+      return new HeuristicAnalysisEngine();
+    }
+    const aiEnv = loadAiConfig();
+    const liveCfg = (() => { try { return analyticsConfig.getConfig(); } catch { return null; } })();
+    const cfgFlag = liveCfg?.features?.aiAnalysisEnabled;
+
+    // Read live Vite env to avoid stale module-level defaults
+    const env: Record<string, unknown> = (import.meta as any)?.env ?? {};
+    const toBool = (v: unknown) => {
+      const s = (v ?? '').toString().toLowerCase();
+      return s === '1' || s === 'true' || s === 'yes';
+    };
+    const liveEnabled = toBool(env.VITE_AI_ANALYSIS_ENABLED);
+    const liveModel = typeof env.VITE_AI_MODEL_NAME === 'string' && (env.VITE_AI_MODEL_NAME as string).trim().length > 0
+      ? (env.VITE_AI_MODEL_NAME as string)
+      : aiEnv.modelName;
+    const liveKey = typeof env.VITE_OPENROUTER_API_KEY === 'string' && (env.VITE_OPENROUTER_API_KEY as string).trim().length > 0
+      ? (env.VITE_OPENROUTER_API_KEY as string)
+      : (aiEnv.apiKey || '');
+
+    const resolved = typeof useAI === 'boolean' ? useAI : (typeof cfgFlag === 'boolean' ? cfgFlag : liveEnabled);
+
+    // Validate model against allowed models (case-insensitive)
+    let resolvedModel = liveModel;
+    try {
+      const allowedLc = new Set((aiEnv.allowedModels || []).map(m => m.toLowerCase()));
+      const modelLc = (resolvedModel || '').toLowerCase();
+      if (!allowedLc.has(modelLc)) {
+        const fallback = aiEnv.allowedModels[0] || 'gpt-5';
+        logger.warn('[analyticsManager] Disallowed model in env; falling back', {
+          requested: resolvedModel,
+          allowed: aiEnv.allowedModels,
+          fallback,
+        });
+        resolvedModel = fallback;
+      }
+    } catch (e) {
+      logger.warn('[analyticsManager] Model validation failed, using as-is:', e);
+      // fail-soft: use original model name when validation fails
+    }
+
+    // Availability check using live env first. Note: explicit useAI=false is handled above and will never reach here.
+    const shouldUseAi = resolved && !!liveKey && !!resolvedModel;
+
+    // Low-noise debug log for engine selection and model resolution
+    try {
+      const nowMinute = new Date().getMinutes();
+      if (__lastFacadeLogMinute !== nowMinute) {
+        logger.debug('[analyticsManager] Engine selection', {
+          requestedAI: useAI,
+          resolvedAI: resolved,
+          model: resolvedModel,
+          configModel: aiEnv.modelName,
+          apiKeyPresent: !!liveKey,
+          allowedModels: aiEnv.allowedModels,
+          runtimeOverride: typeof useAI === 'boolean',
+          overrideDisabled: useAI === false,
+        });
+        __lastFacadeLogMinute = nowMinute;
+      }
+      } catch (e) { try { logger.warn('[analyticsManager] Engine selection debug logging failed', e as Error); } catch {} }
+
+    if (shouldUseAi) return new LLMAnalysisEngine();
+    return new HeuristicAnalysisEngine();
   }
 }
 

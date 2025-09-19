@@ -19,6 +19,9 @@ import { toast } from '@/hooks/use-toast';
 import { diagnostics } from '@/lib/diagnostics';
 import { analyticsWorkerFallback } from '@/lib/analyticsWorkerFallback';
 import { POC_MODE, DISABLE_ANALYTICS_WORKER } from '@/lib/env';
+import type { Student } from '@/types/student';
+import type { AnalyticsResultsAI } from '@/lib/analysis';
+import { analyticsManager } from '@/lib/analyticsManager';
 
 // -----------------------------------------------------------------------------
 // Module-level singleton to prevent duplicate workers across multiple consumers
@@ -178,10 +181,10 @@ interface CachedAnalyticsWorkerOptions {
 }
 
 interface UseAnalyticsWorkerReturn {
-  results: AnalyticsResults | null;
+  results: AnalyticsResultsAI | null;
   isAnalyzing: boolean;
   error: string | null;
-  runAnalysis: (data: AnalyticsData) => Promise<void>;
+  runAnalysis: (data: AnalyticsData, options?: { useAI?: boolean; student?: Student }) => Promise<void>;
   precomputeCommonAnalytics: (dataProvider: () => AnalyticsData[]) => void;
   invalidateCacheForStudent: (studentId: string) => void;
   clearCache: () => void;
@@ -219,7 +222,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
 
   const workerRef = useRef<Worker | null>(null);
   const watchdogRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [results, setResults] = useState<AnalyticsResults | null>(null);
+  const [results, setResults] = useState<AnalyticsResultsAI | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const idleCallbackRef = useRef<number | null>(null);
@@ -325,7 +328,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
                 // For now, do not merge partials into results to avoid flicker; could add later
                 break;
               case 'complete':
-                setResults(data.payload as unknown as AnalyticsResults);
+                setResults(data.payload as unknown as AnalyticsResultsAI);
                 setIsAnalyzing(false);
                 setError(null);
                 break;
@@ -335,7 +338,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
                 // Provide minimal safe results to prevent UI crashes per rules
                 setResults((prev) => prev ?? ({
                   patterns: [], correlations: [], environmentalCorrelations: [], predictiveInsights: [], anomalies: [], insights: ['Analytics temporarily unavailable.']
-                } as AnalyticsResults));
+                } as AnalyticsResultsAI));
                 break;
               case 'progress':
                 // No-op: used for readiness/heartbeat
@@ -408,10 +411,11 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
 
   /**
    * Sends data to the worker to start a new analysis, checking cache first.
-   * @param {AnalyticsData} data - The data to be analyzed.
+   * Supports AI analysis via analyticsManager when requested.
    */
-  const runAnalysis = useCallback(async (data: AnalyticsData) => {
-    const cacheKey = createCacheKey(data);
+  const runAnalysis = useCallback(async (data: AnalyticsData, options?: { useAI?: boolean; student?: Student }) => {
+    const aiRequested = options?.useAI === true;
+    const cacheKey = `${createCacheKey(data)}|ai=${aiRequested ? '1' : '0'}`;
     
     // Check cache first
     const cachedResult = cache.get(cacheKey);
@@ -425,8 +429,51 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
           /* noop */
         }
       }
-      setResults(cachedResult);
+      setResults(cachedResult as AnalyticsResultsAI);
       setError(null);
+      return;
+    }
+
+    // AI path: bypass worker and use analyticsManager with runtime toggle
+    if (aiRequested) {
+      setIsAnalyzing(true);
+      setError(null);
+      try {
+        let studentObj: Student | undefined = options?.student;
+        if (!studentObj) {
+          const first = data.entries?.[0];
+          if (first?.studentId) {
+            studentObj = { id: first.studentId, name: 'Student', createdAt: new Date() } as Student;
+          }
+        }
+        if (!studentObj) throw new Error('Missing student context for AI analysis');
+
+        const res = await analyticsManager.getStudentAnalytics(studentObj, { useAI: true });
+        setResults(res as AnalyticsResultsAI);
+        const tags = Array.from(new Set([...(extractTagsFn(data) || []), `student-${studentObj.id}`, 'ai'])) as string[];
+        cache.set(cacheKey, res as AnalyticsResultsAI, tags);
+      } catch (err) {
+        logger.error('[useAnalyticsWorker] AI analysis path failed', err);
+        setError('AI analysis failed. Falling back to standard analytics.');
+        try {
+          const res = await analyticsWorkerFallback.processAnalytics(data, { useAI: false, student: options?.student });
+          setResults(res as AnalyticsResultsAI);
+          const tags = extractTagsFn(data);
+          cache.set(cacheKey, res as AnalyticsResultsAI, tags);
+        } catch (fallbackError) {
+          logger.error('[useAnalyticsWorker] Fallback after AI failure also failed', fallbackError);
+          setResults({
+            patterns: [],
+            correlations: [],
+            environmentalCorrelations: [],
+            predictiveInsights: [],
+            anomalies: [],
+            insights: ['Analytics temporarily unavailable.']
+          } as AnalyticsResultsAI);
+        }
+      } finally {
+        setIsAnalyzing(false);
+      }
       return;
     }
 
@@ -441,11 +488,11 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
       setError(null);
       
       try {
-        const results = await analyticsWorkerFallback.processAnalytics(data);
-        setResults(results);
+        const results = await analyticsWorkerFallback.processAnalytics(data, { useAI: options?.useAI, student: options?.student });
+        setResults(results as AnalyticsResultsAI);
         // Cache the results
         const tags = extractTagsFn(data);
-        cache.set(cacheKey, results, tags);
+        cache.set(cacheKey, results as AnalyticsResultsAI, tags);
       } catch (error) {
         logger.error('[useAnalyticsWorker] Fallback failed', error);
         setError('Analytics processing failed. Please try again.');
@@ -457,7 +504,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
           predictiveInsights: [],
           anomalies: [],
           insights: ['Analytics temporarily unavailable.']
-        });
+        } as AnalyticsResultsAI);
       } finally {
         setIsAnalyzing(false);
       }
@@ -496,10 +543,10 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
       
       // Attempt fallback processing
       try {
-        const fallbackResults = await analyticsWorkerFallback.processAnalytics(data);
-        setResults(fallbackResults);
+        const fallbackResults = await analyticsWorkerFallback.processAnalytics(data, { useAI: options?.useAI, student: options?.student });
+        setResults(fallbackResults as AnalyticsResultsAI);
         const tags = extractTagsFn(data);
-        cache.set(cacheKey, fallbackResults, tags);
+        cache.set(cacheKey, fallbackResults as AnalyticsResultsAI, tags);
         setError('Worker timeout - results computed using fallback mode.');
       } catch (fallbackError) {
         logger.error('[useAnalyticsWorker] Fallback failed after watchdog timeout', fallbackError);
@@ -512,7 +559,7 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
           predictiveInsights: [],
           anomalies: [],
           insights: ['Analytics temporarily unavailable.']
-        });
+        } as AnalyticsResultsAI);
       } finally {
         setIsAnalyzing(false);
       }
@@ -585,10 +632,10 @@ export const useAnalyticsWorker = (options: CachedAnalyticsWorkerOptions = {}): 
       
       // Fallback to synchronous processing
       try {
-        const fallbackResults = await analyticsWorkerFallback.processAnalytics(data);
-        setResults(fallbackResults);
+        const fallbackResults = await analyticsWorkerFallback.processAnalytics(data, { useAI: options?.useAI, student: options?.student });
+        setResults(fallbackResults as AnalyticsResultsAI);
         const tags = extractTagsFn(data);
-        cache.set(cacheKey, fallbackResults, tags);
+        cache.set(cacheKey, fallbackResults as AnalyticsResultsAI, tags);
         setError(null);
       } catch (fallbackError) {
         logger.error('[useAnalyticsWorker] Fallback processing failed after worker post error', fallbackError);

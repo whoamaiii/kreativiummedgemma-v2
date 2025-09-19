@@ -1,5 +1,5 @@
 import React from 'react';
-import { EChartContainer } from './EChartContainer';
+const EChartContainer = React.lazy(() => import('./EChartContainer').then(m => ({ default: m.EChartContainer })));
 import { buildEmotionTrendsOption, buildAreaOption, buildScatterOption, buildComposedOption, TrendRow as ChartKitTrendRow } from './ChartKit';
 import { Activity } from 'lucide-react';
 import { logger } from '@/lib/logger';
@@ -71,11 +71,15 @@ export const TrendsChart: React.FC<TrendsChartProps> = ({ chartData, selectedCha
         break;
     }
 
-    return <EChartContainer 
-      option={option} 
-      height={400}
-      exportRegistration={{ id: 'trends-main', type: 'trends', title: 'Emotion & Sensory Trends' }}
-    />;
+    return (
+      <React.Suspense fallback={<div className="h-[400px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label="Loading trends" />}> 
+        <EChartContainer 
+          option={option} 
+          height={400}
+          exportRegistration={{ id: 'trends-main', type: 'trends', title: 'Emotion & Sensory Trends' }}
+        />
+      </React.Suspense>
+    );
 
   } catch (error) {
     logger.error("TrendsChart.renderChart failed", { error });

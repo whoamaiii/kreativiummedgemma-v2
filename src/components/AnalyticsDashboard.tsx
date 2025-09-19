@@ -34,6 +34,9 @@ import { toast } from "sonner";
 import { logger } from "@/lib/logger";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useSyncedTabParam } from '@/hooks/useSyncedTabParam';
+import { Badge } from '@/components/ui/badge';
+import { useAsyncState } from '@/hooks/useAsyncState';
+import { ExportDialog, type ExportOptions } from '@/components/ExportDialog';
 
 // Typed tab keys to avoid stringly-typed errors
 
@@ -55,6 +58,7 @@ interface AnalyticsDashboardProps {
     emotions: EmotionEntry[];
     sensoryInputs: SensoryEntry[];
   };
+  useAI?: boolean;
 }
 
 /**
@@ -72,9 +76,13 @@ interface AnalyticsDashboardProps {
 export const AnalyticsDashboard = memo(({
   student,
   filteredData = { entries: [], emotions: [], sensoryInputs: [] },
+  useAI = false,
 }: AnalyticsDashboardProps) => {
   // All hooks must be called at the top level, not inside try-catch
   const { tStudent, tAnalytics, tCommon } = useTranslation();
+  const exportState = useAsyncState<void>(null, { autoResetMs: 1000, showErrorToast: false });
+  const [exportDialogOpen, setExportDialogOpen] = useState<boolean>(false);
+  const [exportProgress, setExportProgress] = useState<number>(0);
   const [isExporting, setIsExporting] = useState<boolean>(false);
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [isSeeding, setIsSeeding] = useState<boolean>(false);
@@ -148,11 +156,11 @@ export const AnalyticsDashboard = memo(({
     };
     
     if (filteredData && filteredData.entries) {
-      runAnalysis(normalize(filteredData));
+      runAnalysis(normalize(filteredData), { useAI, student });
     }
     // Ensure student analytics exists for all students, including new and mock
     analyticsManager.initializeStudentAnalytics(student.id);
-  }, [student.id, filteredData, runAnalysis]);
+  }, [student.id, filteredData, runAnalysis, useAI, student]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -173,9 +181,11 @@ export const AnalyticsDashboard = memo(({
   // Charts render immediately using filteredData while analysis updates other tabs.
 
   // Export handler with useCallback for performance
-  const handleExport = useCallback(async (format: ExportFormat) => {
-    setIsExporting(true);
+  const doExport = useCallback(async (format: ExportFormat, opts?: Partial<ExportOptions>) => {
     try {
+      setIsExporting(true);
+      setExportProgress(5);
+      await exportState.run(async () => {
       const dateRange = {
         start: filteredData.entries.length > 0
           ? filteredData.entries.reduce((min, entry) => {
@@ -193,6 +203,7 @@ export const AnalyticsDashboard = memo(({
           : new Date()
       };
 
+      setExportProgress(20);
       const exportData = {
         student,
         dateRange,
@@ -218,7 +229,20 @@ export const AnalyticsDashboard = memo(({
                   toast.error(String(tAnalytics('export.noCharts')));
                   return [];
                 }
-                const selected = regs.slice(0, 6); // simple cap for now
+                // Prefer charts matching the current student and overlapping date range
+                const selected = regs
+                  .filter(r => !r.studentId || r.studentId === student.id)
+                  .filter(r => {
+                    if (!r.dateRange) return true;
+                    // simple overlap check
+                    const s = r.dateRange.start.getTime();
+                    const e = r.dateRange.end.getTime();
+                    const ds = (dateRange.start as Date).getTime();
+                    const de = (dateRange.end as Date).getTime();
+                    return !(e < ds || s > de);
+                  })
+                  .slice(0, 6);
+                setExportProgress(40);
                 const items = await Promise.all(selected.map(async r => {
                   const methods = r.getMethods();
                   const dataURL = methods.getImage({ pixelRatio: 2, backgroundColor: '#ffffff' });
@@ -226,6 +250,9 @@ export const AnalyticsDashboard = memo(({
                   return {
                     title: r.title,
                     type: r.type,
+                    // pass through metadata when we later add smarter layout/selection
+                    // filters: r.filters,
+                    // dateRange: r.dateRange,
                     dataURL: dataURL,
                     svgString: svgString,
                   };
@@ -244,27 +271,37 @@ export const AnalyticsDashboard = memo(({
           : undefined
       };
 
-          switch (format) {
-            case 'pdf':
-              await analyticsExport.exportToPDF(exportData);
-              toast.success(String(tAnalytics('export.success.pdf')));
-              break;
-            case 'csv':
-              analyticsExport.exportToCSV(exportData);
-              toast.success(String(tAnalytics('export.success.csv')));
-              break;
-            case 'json':
-              analyticsExport.exportToJSON(exportData);
-              toast.success(String(tAnalytics('export.success.json')));
-              break;
-          }
+           setExportProgress(65);
+           await analyticsExport.exportTo(format, exportData, { pdf: { chartQuality: opts?.chartQuality as any } });
+           setExportProgress(100);
+           switch (format) {
+             case 'pdf':
+               toast.success(String(tAnalytics('export.success.pdf')));
+               break;
+             case 'csv':
+               toast.success(String(tAnalytics('export.success.csv')));
+               break;
+             case 'json':
+               toast.success(String(tAnalytics('export.success.json')));
+               break;
+           }
+      });
         } catch (error) {
           logger.error('Export failed:', error);
           toast.error(String(tAnalytics('export.failure')));
-        } finally {
-          setIsExporting(false);
         }
-      }, [filteredData, student, patterns, correlations, insights, results, tAnalytics]);
+      finally {
+        setIsExporting(false);
+      }
+      }, [filteredData, student, patterns, correlations, insights, results, tAnalytics, exportState]);
+
+  const handleExport = useCallback((format: ExportFormat) => {
+    if (format === 'pdf') {
+      setExportDialogOpen(true);
+      return;
+    }
+    void doExport(format);
+  }, [doExport]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getPatternIcon = (type: string) => {
@@ -325,6 +362,10 @@ export const AnalyticsDashboard = memo(({
             {String(tAnalytics('dashboard.title', { name: student.name }))}
           </CardTitle>
           <div className="flex items-center gap-2">
+            {/* AI/Heuristic indicator */}
+            <Badge variant={useAI ? 'default' : 'secondary'} data-testid="ai-mode-badge" aria-label={useAI ? String(tAnalytics('ai.mode.ai', { defaultValue: 'AI' })) : String(tAnalytics('ai.mode.heuristic', { defaultValue: 'Heuristic' }))}>
+              {useAI ? String(tAnalytics('ai.mode.ai', { defaultValue: 'AI' })) : String(tAnalytics('ai.mode.heuristic', { defaultValue: 'Heuristic' }))}
+            </Badge>
             {isDevSeedEnabled && (
               <Button
                 variant="outline"
@@ -349,29 +390,29 @@ export const AnalyticsDashboard = memo(({
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" disabled={isExporting} aria-label={String(tCommon('export'))} title={String(tCommon('export'))}>
+                <Button variant="outline" size="sm" disabled={exportState.isLoading} aria-label={String(tCommon('export'))} title={String(tCommon('export'))}>
                   <Download className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">{isExporting ? String(tCommon('exporting')) : String(tCommon('export'))}</span>
+                  <span className="hidden sm:inline">{exportState.isLoading ? String(tCommon('exporting')) : String(tCommon('export'))}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
                   onClick={() => handleExport('pdf')}
-                  disabled={isExporting}
+                  disabled={exportState.isLoading}
                 >
                   <FileText className="h-4 w-4 mr-2" />
                   {String(tCommon('exportAsPdf'))}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => handleExport('csv')}
-                  disabled={isExporting}
+                  disabled={exportState.isLoading}
                 >
                   <FileSpreadsheet className="h-4 w-4 mr-2" />
                   {String(tCommon('exportAsCsv'))}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => handleExport('json')}
-                  disabled={isExporting}
+                  disabled={exportState.isLoading}
                 >
                   <FileJson className="h-4 w-4 mr-2" />
                   {String(tCommon('exportAsJson'))}
@@ -433,6 +474,52 @@ export const AnalyticsDashboard = memo(({
         </Card>
       </div>
 
+      {/* AI Metadata Summary */}
+      {results?.ai && (
+        <Card>
+          <CardContent className="pt-4" data-testid="ai-metadata">
+            <div className="flex flex-wrap gap-4 text-sm">
+              {results.ai.provider && (
+                <div>
+                  <span className="text-muted-foreground">{String(tAnalytics('ai.meta.provider', { defaultValue: 'Provider' }))}: </span>
+                  <span data-testid="ai-provider">{String(results.ai.provider)}</span>
+                </div>
+              )}
+              {results.ai.model && (
+                <div>
+                  <span className="text-muted-foreground">{String(tAnalytics('ai.meta.model', { defaultValue: 'Model' }))}: </span>
+                  <span data-testid="ai-model">{String(results.ai.model)}</span>
+                </div>
+              )}
+              {(results.ai.confidence?.overall != null) && (
+                <div>
+                  <span className="text-muted-foreground">{String(tAnalytics('ai.meta.confidence', { defaultValue: 'Confidence' }))}: </span>
+                  <span data-testid="ai-confidence">{Math.round((results.ai.confidence.overall || 0) * 100)}%</span>
+                </div>
+              )}
+              {typeof results.ai.latencyMs === 'number' && (
+                <div>
+                  <span className="text-muted-foreground">{String(tAnalytics('ai.meta.latency', { defaultValue: 'Latency' }))}: </span>
+                  <span data-testid="ai-latency">{String(results.ai.latencyMs)} ms</span>
+                </div>
+              )}
+              {Array.isArray(results.ai.dataLineage) && results.ai.dataLineage.length > 0 && (
+                <div>
+                  <span className="text-muted-foreground">{String(tAnalytics('ai.meta.lineage', { defaultValue: 'Data Lineage' }))}: </span>
+                  <span data-testid="ai-lineage-count">{results.ai.dataLineage.length}</span>
+                </div>
+              )}
+              {Array.isArray(results.ai.caveats) && results.ai.caveats.length > 0 && (
+                <div>
+                  <span className="text-muted-foreground">{String(tAnalytics('ai.meta.caveats', { defaultValue: 'Caveats' }))}: </span>
+                  <span data-testid="ai-caveats-count">{results.ai.caveats.length}</span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Main tabbed interface for displaying detailed analysis results. */}
       <Tabs value={activeTab} onValueChange={setActiveTab as (v: string) => void} className="w-full">
         <TabsList className="grid w-full grid-cols-4 relative z-10" aria-label={String(tAnalytics('tabs.label'))}>
@@ -461,7 +548,7 @@ export const AnalyticsDashboard = memo(({
         <TabsContent value="patterns" className="space-y-6" aria-busy={isAnalyzing}>
           <ErrorBoundary showToast={false}>
             <Suspense fallback={<div className="h-[280px] rounded-xl border bg-card motion-safe:animate-pulse" aria-label={String(tAnalytics('states.analyzing'))} />}> 
-              <LazyPatternsPanel filteredData={filteredData} />
+              <LazyPatternsPanel filteredData={filteredData} useAI={useAI} student={student} />
             </Suspense>
           </ErrorBoundary>
         </TabsContent>
@@ -490,12 +577,22 @@ export const AnalyticsDashboard = memo(({
             // Invalidate cache for this student when config changes
             invalidateCacheForStudent(student.id);
             // Re-run analysis with new configuration
-            runAnalysis(filteredData);
+            runAnalysis(filteredData, { useAI, student });
           }}
           onClose={() => setShowSettings(false)}
         />
       )}
       </section>
+      <ExportDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        defaultFormat="pdf"
+        onConfirm={(opts) => { setExportDialogOpen(true); void doExport(opts.format, opts); }}
+        inProgress={isExporting}
+        progressPercent={exportProgress}
+        onCancel={() => { setIsExporting(false); setExportDialogOpen(false); }}
+        closeOnConfirm={false}
+      />
     </ErrorBoundary>
   );
 }, (prevProps, nextProps) => {
@@ -506,6 +603,7 @@ export const AnalyticsDashboard = memo(({
     prevProps.filteredData.entries.length === nextProps.filteredData.entries.length &&
     prevProps.filteredData.emotions.length === nextProps.filteredData.emotions.length &&
     prevProps.filteredData.sensoryInputs.length === nextProps.filteredData.sensoryInputs.length &&
+    prevProps.useAI === nextProps.useAI &&
     // Check timestamp of first entry to detect data changes
     (prevProps.filteredData.entries.length === 0 || 
      nextProps.filteredData.entries.length === 0 ||

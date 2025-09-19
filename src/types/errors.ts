@@ -16,6 +16,15 @@ export enum ErrorType {
   ANALYTICS_WORKER_FAILURE = 'ANALYTICS_WORKER_FAILURE',
   ANALYTICS_PROCESSING_ERROR = 'ANALYTICS_PROCESSING_ERROR',
   ANALYTICS_INSUFFICIENT_DATA = 'ANALYTICS_INSUFFICIENT_DATA',
+
+  // AI errors
+  AI_API_FAILURE = 'AI_API_FAILURE',
+  AI_INVALID_RESPONSE = 'AI_INVALID_RESPONSE',
+  AI_QUOTA_EXCEEDED = 'AI_QUOTA_EXCEEDED',
+  AI_MODEL_UNAVAILABLE = 'AI_MODEL_UNAVAILABLE',
+  AI_CONFIGURATION_ERROR = 'AI_CONFIGURATION_ERROR',
+  AI_REFUSAL = 'AI_REFUSAL',
+  AI_EMPTY_RESPONSE = 'AI_EMPTY_RESPONSE',
   
   // Network errors
   NETWORK_ERROR = 'NETWORK_ERROR',
@@ -86,6 +95,20 @@ export class SensoryCompassError extends Error implements AppError {
         return 'An error occurred while analyzing data. Please try again.';
       case ErrorType.ANALYTICS_INSUFFICIENT_DATA:
         return 'Not enough data available for analysis. Please collect more tracking data.';
+      case ErrorType.AI_API_FAILURE:
+        return 'AI request failed. Please try again in a moment.';
+      case ErrorType.AI_INVALID_RESPONSE:
+        return 'Received an unexpected response from the AI service.';
+      case ErrorType.AI_QUOTA_EXCEEDED:
+        return 'AI usage quota exceeded. Please wait and try again later.';
+      case ErrorType.AI_MODEL_UNAVAILABLE:
+        return 'The selected AI model is unavailable. Please try a different one.';
+      case ErrorType.AI_CONFIGURATION_ERROR:
+        return 'AI configuration error. Please check your settings or contact support.';
+      case ErrorType.AI_REFUSAL:
+        return 'The AI declined to respond to this request.';
+      case ErrorType.AI_EMPTY_RESPONSE:
+        return 'The AI returned an empty response. Please try again.';
       case ErrorType.NETWORK_ERROR:
         return 'Network connection error. Please check your internet connection.';
       case ErrorType.TIMEOUT_ERROR:
@@ -105,12 +128,20 @@ export class SensoryCompassError extends Error implements AppError {
     switch (type) {
       case ErrorType.DATA_CORRUPTED:
       case ErrorType.UNAUTHORIZED:
+      case ErrorType.AI_CONFIGURATION_ERROR:
         return false;
       case ErrorType.NETWORK_ERROR:
       case ErrorType.TIMEOUT_ERROR:
       case ErrorType.ANALYTICS_WORKER_FAILURE:
       case ErrorType.STORAGE_QUOTA_EXCEEDED:
+      case ErrorType.AI_API_FAILURE:
+      case ErrorType.AI_INVALID_RESPONSE:
+      case ErrorType.AI_QUOTA_EXCEEDED:
+      case ErrorType.AI_MODEL_UNAVAILABLE:
+      case ErrorType.AI_EMPTY_RESPONSE:
         return true;
+      case ErrorType.AI_REFUSAL:
+        return false;
       default:
         return true;
     }

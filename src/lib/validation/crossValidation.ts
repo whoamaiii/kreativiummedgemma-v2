@@ -15,7 +15,7 @@
  */
 
 import * as tf from '@tensorflow/tfjs';
-import { TrainingData, ValidationResults, ValidationMetrics, TrainingFold, CrossValidationConfig } from '../../types/ml';
+import { TrainingData, ValidationResults, ValidationMetrics, TrainingFold, CrossValidationConfig, EarlyStoppingConfig } from '../../types/ml';
 
 /**
  * Strategy for time-series cross-validation.
@@ -45,6 +45,10 @@ export interface TimeSeriesFoldConfig {
 export interface TimeSeriesValidationConfig extends TimeSeriesFoldConfig {
   /** Task type determines which metrics to compute. */
   taskType: 'classification' | 'regression';
+  /** Optional training arguments for each fold. */
+  fitArgs?: Partial<Pick<tf.ModelFitArgs, 'epochs' | 'batchSize' | 'shuffle' | 'verbose'>>;
+  /** Optional early stopping configuration. */
+  earlyStopping?: EarlyStoppingConfig;
 }
 
 /** Regression metrics for time-series evaluation. */
@@ -97,13 +101,16 @@ export class CrossValidator {
 
       const model = createModel(); // Create a fresh model for each fold
 
-      await model.fit(trainFeatures, trainLabels, {
-        // Training parameters should be sourced from runtime ML model config (Task 8),
-        // e.g., getRuntimeAnalyticsConfig().ml.models[*].training.{epochs,batchSize}.
-        epochs: 5, // configurable via runtime config
-        batchSize: 32, // configurable via runtime config
-        verbose: 0,
-      });
+      const fitArgs: tf.ModelFitArgs = {
+        epochs: config.fitArgs?.epochs ?? 5,
+        batchSize: config.fitArgs?.batchSize ?? 32,
+        shuffle: config.fitArgs?.shuffle ?? true,
+        verbose: config.fitArgs?.verbose ?? 0,
+        validationData: [valFeatures, valLabels],
+        callbacks: this.buildEarlyStoppingCallbacks(config.earlyStopping, /*task*/ 'classification'),
+      };
+
+      await model.fit(trainFeatures, trainLabels, fitArgs);
 
       const predictionsTensor = model.predict(valFeatures) as tf.Tensor;
       const predictions = Array.from((await predictionsTensor.argMax(1).data()) as unknown as Iterable<number>);
@@ -152,6 +159,26 @@ export class CrossValidator {
     }
 
     return { foldMetrics, averageMetrics, stdDeviationMetrics, overallConfusionMatrix, overallPRF1 };
+  }
+
+  /** Create EarlyStopping callbacks if configured. */
+  private buildEarlyStoppingCallbacks(
+    cfg: EarlyStoppingConfig | undefined,
+    task: 'classification' | 'regression'
+  ): tf.CustomCallbackArgs['callbacks'] {
+    if (!cfg || cfg.enabled === false) return undefined;
+    const monitor = cfg.monitor
+      ?? (task === 'classification' ? 'val_accuracy' : 'val_loss');
+    const mode: 'min' | 'max' = monitor.includes('loss') || monitor.includes('mse') || monitor.includes('mae') ? 'min' : 'max';
+    return [
+      tf.callbacks.earlyStopping({
+        monitor,
+        patience: cfg.patience ?? 3,
+        minDelta: cfg.minDelta ?? 0,
+        mode,
+        restoreBestWeights: true,
+      })
+    ];
   }
 
   /**
@@ -305,11 +332,15 @@ export class CrossValidator {
       const valLabels = tf.gather(data.labels, validationIndices);
 
       const model = createModel();
-      await model.fit(trainFeatures, trainLabels, {
-        epochs: 5,
-        batchSize: 32,
-        verbose: 0,
-      });
+      const fitArgs: tf.ModelFitArgs = {
+        epochs: config.fitArgs?.epochs ?? 5,
+        batchSize: config.fitArgs?.batchSize ?? 32,
+        shuffle: config.fitArgs?.shuffle ?? false, // do not shuffle time-series by default
+        verbose: config.fitArgs?.verbose ?? 0,
+        validationData: [valFeatures, valLabels],
+        callbacks: this.buildEarlyStoppingCallbacks(config.earlyStopping, config.taskType),
+      };
+      await model.fit(trainFeatures, trainLabels, fitArgs);
 
       const yPredTensor = model.predict(valFeatures) as tf.Tensor;
 

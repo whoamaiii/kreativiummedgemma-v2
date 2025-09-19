@@ -7,18 +7,21 @@ import { AnalyticsData, AnalyticsResults } from '@/workers/analytics.worker';
 import { patternAnalysis } from '@/lib/patternAnalysis';
 import { enhancedPatternAnalysis } from '@/lib/enhancedPatternAnalysis';
 import { logger } from '@/lib/logger';
+import type { Student } from '@/types/student';
+import { analyticsManager } from '@/lib/analyticsManager';
 
 export class AnalyticsWorkerFallback {
   private isProcessing = false;
   private queue: Array<{
     data: AnalyticsData;
+    options?: { useAI?: boolean; student?: Student };
     resolve: (value: AnalyticsResults) => void;
     reject: (error: Error) => void;
   }> = [];
 
-  async processAnalytics(data: AnalyticsData): Promise<AnalyticsResults> {
+  async processAnalytics(data: AnalyticsData, options?: { useAI?: boolean; student?: Student }): Promise<AnalyticsResults> {
     return new Promise((resolve, reject) => {
-      this.queue.push({ data, resolve, reject });
+      this.queue.push({ data, options, resolve, reject });
       this.processQueue();
     });
   }
@@ -27,11 +30,32 @@ export class AnalyticsWorkerFallback {
     if (this.isProcessing || this.queue.length === 0) return;
 
     this.isProcessing = true;
-    const { data, resolve, reject } = this.queue.shift()!;
+    const { data, options, resolve, reject } = this.queue.shift()!;
 
     try {
       // Process in chunks to avoid blocking UI
       await new Promise(resolve => setTimeout(resolve, 0));
+
+      // If explicit AI preference provided, route through analyticsManager to respect runtime override
+      if (options && typeof options.useAI === 'boolean') {
+        try {
+          const student: Student | undefined = options.student ?? this.deriveStudentFromData(data);
+          if (!student) {
+            throw new Error('Missing student context for manager-based analytics');
+          }
+          try {
+            logger.debug('[analyticsWorkerFallback] Routing to analyticsManager with runtime useAI', { useAI: options.useAI, studentId: student.id });
+          } catch {
+            /* ignore logging errors */
+          }
+          const managerResults = await analyticsManager.getStudentAnalytics(student, { useAI: options.useAI });
+          resolve(managerResults as AnalyticsResults);
+          return;
+        } catch (e) {
+          logger.error('Fallback: Manager-based analytics failed; continuing with local processing', e);
+          // fall through to local processing as a safe fallback
+        }
+      }
       
       const results: AnalyticsResults = {
         patterns: [],
@@ -39,7 +63,8 @@ export class AnalyticsWorkerFallback {
         environmentalCorrelations: [], // Initialize with empty array
         predictiveInsights: [],
         anomalies: [],
-        insights: []
+        insights: [],
+        suggestedInterventions: [] // Default to empty array
       };
 
       // Basic pattern analysis (simplified version)
@@ -124,6 +149,25 @@ export class AnalyticsWorkerFallback {
       this.isProcessing = false;
       // Process next item in queue
       setTimeout(() => this.processQueue(), 100);
+    }
+  }
+
+  private deriveStudentFromData(data: AnalyticsData): Student | undefined {
+    try {
+      const id =
+        data.entries?.[0]?.studentId ||
+        data.emotions?.[0]?.studentId ||
+        data.sensoryInputs?.[0]?.studentId ||
+        undefined;
+      if (!id) return undefined;
+      // Minimal student object; name and createdAt are placeholders when not available
+      return {
+        id,
+        name: 'Student',
+        createdAt: new Date(),
+      } as Student;
+    } catch {
+      return undefined;
     }
   }
 }

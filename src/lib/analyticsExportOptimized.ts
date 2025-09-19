@@ -1,11 +1,11 @@
 import { format } from 'date-fns';
 import { Student, TrackingEntry, EmotionEntry, SensoryEntry } from '@/types/student';
+import type { ExportFormat } from '@/types/analytics';
 import { PatternResult, CorrelationResult } from '@/lib/patternAnalysis';
 import { PredictiveInsight, AnomalyDetection } from '@/lib/enhancedPatternAnalysis';
 import { logger } from '@/lib/logger';
 import { downloadBlob } from '@/lib/utils';
 
-export type ExportFormat = 'pdf' | 'csv' | 'json';
 
 export interface AnalyticsExportData {
   student: Student;

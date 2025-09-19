@@ -10,3 +10,8 @@ node_modules/
 # Local OS & coverage
 .DS_Store
 coverage/
+
+# Editor & local AI configs
+.cursor/
+.vscode/
+*.log

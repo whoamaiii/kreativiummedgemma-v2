@@ -133,6 +133,31 @@ Before committing:
 - Test with keyboard navigation
 - Include ARIA labels for icon-only buttons
 
+## Overlay layering policy (z-index)
+
+To prevent tooltips/popovers/hover cards from being clipped by tabs or headers, use shared overlay tokens rather than magic numbers. These classes are defined in `src/index.css` under `@layer utilities`:
+
+```
+// Tokens
+.z-overlay          // 70: standard overlays (tooltip, popover, hover-card)
+.z-overlay-elevated // 80: larger overlays that must float above other overlays (e.g., long explanations)
+```
+
+Current layering scale for reference:
+
+- Tabs and sticky headers: z-10
+- Sidebar: z-[60]
+- Standard overlays (Tooltip/Popover/HoverCard default): z-[70] / `.z-overlay`
+- Elevated overlays (pattern explanations): z-[80] / `.z-overlay-elevated`
+- Toasts: z-[100]
+- Developer emergency banner: z-[1000]
+
+Guidelines:
+
+- Prefer the primitive defaults (no extra class) unless the overlay must sit above other overlays.
+- Do not introduce new raw z-index numbers in feature code. Use the tokens above.
+- If you add an `overflow: hidden` container near overlay triggers, verify that overlays still render correctly; consider portaling content to body if needed.
+
 ## ARIA Best Practices
 
 ### When to Use ARIA

@@ -2,6 +2,10 @@
 // No default exports per project rules
 
 export type TabKey = 'charts' | 'patterns' | 'correlations' | 'alerts';
+/**
+ * Export formats for analytics report generation
+ */
+export type ExportFormat = 'pdf' | 'csv' | 'json';
 
 /**
  * Type definitions for analytics and pattern analysis
@@ -13,6 +17,92 @@ import type { AnalyticsInputs, AnalyticsRuntimeConfig } from '@/types/insights';
 import type { AnalyticsConfiguration as SourceAnalyticsConfiguration } from '@/lib/analyticsConfig';
 import type { PRESET_CONFIGS as SOURCE_PRESETS } from '@/lib/analyticsConfig';
 import { DEFAULT_ANALYTICS_CONFIG } from '@/lib/analyticsConfig';
+
+// -----------------------------------------------------------------------------
+// Rich source details for AI explanations and citations
+// -----------------------------------------------------------------------------
+
+export interface SourceEmotionItem {
+  id: string;
+  emotion: string;
+  intensity?: number;
+  notes?: string;
+}
+
+export interface SourceSensoryItem {
+  id: string;
+  type?: string;
+  response?: string;
+  intensity?: number;
+  notes?: string;
+}
+
+export interface SourceEnvironmentDetails {
+  lighting?: string;
+  noiseLevel?: number;
+  temperature?: number;
+  humidity?: number;
+  weather?: string;
+  timeOfDay?: string;
+  studentCount?: number;
+  notes?: string;
+}
+
+export interface SourceItem {
+  id: string;
+  timestamp: string;
+  activity?: string;
+  place?: string;
+  socialContext?: string;
+  note?: string;
+  emotions: SourceEmotionItem[];
+  sensory: SourceSensoryItem[];
+  environment?: SourceEnvironmentDetails;
+}
+
+// -----------------------------------------------------------------------------
+// Intervention Results (AI-suggested interventions with evidence metadata)
+// -----------------------------------------------------------------------------
+
+/** Severity level used for intervention expected impact. */
+export type InterventionSeverity = 'low' | 'medium' | 'high';
+
+/** Time horizon for interventions. */
+export type InterventionTimeHorizon = 'short' | 'medium' | 'long';
+
+/** Confidence metadata for interventions (subset of AI confidence). */
+export interface InterventionConfidence {
+  overall?: number;
+  calibration?: string;
+}
+
+/** MTSS/RTI tier classification for interventions. */
+export type InterventionTier = 'Tier1' | 'Tier2' | 'Tier3';
+
+/** Scope of intervention application. */
+export type InterventionScope = 'classroom' | 'school';
+
+/**
+ * UI-consumable format for AI-generated interventions with preserved evidence metadata.
+ * Bridges AI schema interventions to the analytics/UI domain while maintaining traceability.
+ */
+export interface InterventionResult {
+  // Core fields for UI display
+  title: string;
+  description: string;
+  actions: string[];
+  expectedImpact?: InterventionSeverity;
+  timeHorizon?: InterventionTimeHorizon;
+  metrics: string[];
+  confidence?: InterventionConfidence;
+
+  // Evidence and provenance fields
+  sources: string[];
+  udlCheckpoints?: string[];
+  hlps?: string[];
+  tier?: InterventionTier;
+  scope?: InterventionScope;
+}
 
 /**
  * Analytics data input structure
@@ -49,8 +139,16 @@ export interface AnalyticsResults {
   predictiveInsights: PredictiveInsight[];
   anomalies: AnomalyDetection[];
   insights: string[];
+  /**
+   * AI-generated interventions mapped into a UI-friendly format with evidence metadata.
+   * Always defaults to [] when no interventions are available.
+   * Non-optional to ensure consistent shape across all analytics results.
+   */
+  suggestedInterventions: InterventionResult[];
   cacheKey?: string;
   error?: string;
+  /** Overall confidence score (0-1) for the analysis results quality */
+  confidence?: number;
   /** Optional metadata for downstream consumers describing which charts should update */
   updatedCharts?: AnalyticsChartKey[];
 }

@@ -1,6 +1,8 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
 import { TrackingEntry } from '@/types/student';
 import { ModelType, mlModels } from '@/lib/mlModels';
+import { getRuntimeAnalyticsConfig } from '@/config/analytics.config';
+import type { EarlyStoppingConfig } from '@/types/ml';
 import MLTrainingWorker from '@/workers/mlTraining.worker?worker';
 import type { TrainingRequest, TrainingProgress, TrainingResult } from '@/workers/mlTraining.worker';
 import { logger } from '@/lib/logger';
@@ -20,7 +22,7 @@ interface UseMLTrainingWorkerReturn {
   trainModel: (
     modelType: ModelType,
     trackingEntries: TrackingEntry[],
-    options?: { epochs?: number; batchSize?: number }
+    options?: { epochs?: number; batchSize?: number; validationSplit?: number; earlyStopping?: EarlyStoppingConfig }
   ) => Promise<void>;
   trainingStatus: TrainingStatus;
   cancelTraining: () => void;
@@ -100,10 +102,17 @@ export const useMLTrainingWorker = (): UseMLTrainingWorkerReturn => {
   const trainModel = useCallback(async (
     modelType: ModelType,
     trackingEntries: TrackingEntry[],
-    options?: { epochs?: number; batchSize?: number }
+    options?: { epochs?: number; batchSize?: number; validationSplit?: number; earlyStopping?: EarlyStoppingConfig }
   ): Promise<void> => {
     // Create or reuse worker
     const worker = workerRef.current || createWorker();
+
+    // Resolve defaults from runtime config
+    const runtime = getRuntimeAnalyticsConfig();
+    const defaultTraining = runtime.ml.models.find(m => m.provider === 'tfjs' && m.training)?.training;
+    const defaultEpochs = options?.epochs ?? defaultTraining?.epochs ?? 50;
+    const defaultBatch = options?.batchSize ?? defaultTraining?.batchSize ?? 32;
+    const defaultValSplit = options?.validationSplit ?? defaultTraining?.validationSplit ?? 0.2;
 
     // Set training status
     setTrainingStatus({
@@ -111,7 +120,7 @@ export const useMLTrainingWorker = (): UseMLTrainingWorkerReturn => {
       modelType,
       progress: 0,
       epoch: 0,
-      totalEpochs: options?.epochs || 50
+      totalEpochs: defaultEpochs
     });
 
     // Prepare training request
@@ -136,8 +145,10 @@ export const useMLTrainingWorker = (): UseMLTrainingWorkerReturn => {
         trackingEntries
       },
       config: {
-        epochs: options?.epochs ?? 50,
-        batchSize: options?.batchSize ?? 32
+        epochs: defaultEpochs,
+        batchSize: defaultBatch,
+        validationSplit: defaultValSplit,
+        earlyStopping: options?.earlyStopping
       }
     };
 

@@ -17,6 +17,7 @@ import { useTracking } from '@/contexts/TrackingContext';
 import { sessionManager } from '@/lib/sessionManager';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { logger } from '@/lib/logger';
 
 interface SessionRecoveryProps {
   studentId?: string;
@@ -49,7 +50,7 @@ export const SessionRecovery: React.FC<SessionRecoveryProps> = ({
         prev.filter(s => s.sessionId !== sessionId)
       );
     } catch (error) {
-      console.error('Failed to recover session:', error);
+      logger.error('Failed to recover session', error as Error);
     } finally {
       setIsRecovering(false);
       setSelectedSession(null);

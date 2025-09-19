@@ -15,6 +15,7 @@ interface LazyAnalyticsDashboardProps {
     emotions: EmotionEntry[];
     sensoryInputs: SensoryEntry[];
   };
+  useAI?: boolean;
 }
 
 const AnalyticsDashboardFallback: React.FC = () => {

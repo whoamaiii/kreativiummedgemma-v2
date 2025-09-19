@@ -1,206 +1,296 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { handleError } from '@/lib/errorHandler';
 import { SensoryCompassError, ErrorType } from '@/types/errors';
 
-export interface AsyncState<T> {
-  data: T | null;
-  loading: boolean;
+export type AsyncStatus = 'idle' | 'loading' | 'success' | 'error';
+
+interface InternalAsyncState<TValue> {
+  status: AsyncStatus;
+  data: TValue | null;
   error: Error | null;
-  isSuccess: boolean;
-  isError: boolean;
-  isIdle: boolean;
 }
 
-export interface UseAsyncStateOptions {
-  onSuccess?: <T>(data: T) => void;
+export interface UseAsyncStateOptions<TValue> {
+  autoResetMs?: number;
+  onSuccess?: (value: TValue) => void;
   onError?: (error: Error) => void;
   retryCount?: number;
   retryDelay?: number;
   showErrorToast?: boolean;
 }
 
-export function useAsyncState<T = unknown>(
-  initialData: T | null = null,
-  options: UseAsyncStateOptions = {}
-): {
-  state: AsyncState<T>;
-  execute: (asyncFunction: () => Promise<T>) => Promise<T | null>;
+export interface UseAsyncStateResult<TValue> {
+  status: AsyncStatus;
+  data: TValue | null;
+  error: Error | null;
+  isIdle: boolean;
+  isLoading: boolean;
+  isSuccess: boolean;
+  isError: boolean;
+  state: {
+    status: AsyncStatus;
+    data: TValue | null;
+    error: Error | null;
+    isIdle: boolean;
+    isLoading: boolean;
+    isSuccess: boolean;
+    isError: boolean;
+  };
+  execute: <TReturn = TValue>(fn: () => Promise<TReturn>) => Promise<TReturn>;
+  run: <TReturn = TValue>(fn: () => Promise<TReturn>) => Promise<TReturn>;
   reset: () => void;
-  setData: (data: T | null) => void;
+  setData: (value: TValue | null) => void;
   setError: (error: Error | null) => void;
-} {
-  const [state, setState] = useState<AsyncState<T>>({
-    data: initialData,
-    loading: false,
-    error: null,
-    isSuccess: false,
-    isError: false,
-    isIdle: true,
-  });
+}
 
+export function useAsyncState<TValue = unknown>(
+  initialData: TValue | null = null,
+  options: UseAsyncStateOptions<TValue> = {}
+): UseAsyncStateResult<TValue> {
+  const {
+    autoResetMs,
+    onSuccess,
+    onError,
+    retryCount = 0,
+    retryDelay = 1000,
+    showErrorToast = true,
+  } = options;
+
+  const initialDataRef = useRef<TValue | null>(initialData);
+  const [internalState, setInternalState] = useState<InternalAsyncState<TValue>>(() => ({
+    status: 'idle',
+    data: initialDataRef.current,
+    error: null,
+  }));
   const isMountedRef = useRef(true);
-  const { onSuccess, onError, retryCount = 0, retryDelay = 1000, showErrorToast = true } = options;
+  const autoResetRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    initialDataRef.current = initialData;
+  }, [initialData]);
 
   useEffect(() => {
     return () => {
       isMountedRef.current = false;
+      if (autoResetRef.current) {
+        clearTimeout(autoResetRef.current);
+      }
     };
   }, []);
 
-  const execute = useCallback(
-    async (asyncFunction: () => Promise<T>): Promise<T | null> => {
-      if (!isMountedRef.current) return null;
+  const clearAutoReset = useCallback(() => {
+    if (autoResetRef.current) {
+      clearTimeout(autoResetRef.current);
+      autoResetRef.current = null;
+    }
+  }, []);
 
-      setState({
-        data: state.data,
-        loading: true,
+  const reset = useCallback(() => {
+    if (!isMountedRef.current) return;
+    clearAutoReset();
+    setInternalState({
+      status: 'idle',
+      data: initialDataRef.current,
+      error: null,
+    });
+  }, [clearAutoReset]);
+
+  const scheduleAutoReset = useCallback(() => {
+    if (!autoResetMs || autoResetMs <= 0) return;
+    clearAutoReset();
+    autoResetRef.current = setTimeout(() => {
+      if (!isMountedRef.current) return;
+      reset();
+    }, autoResetMs);
+  }, [autoResetMs, clearAutoReset, reset]);
+
+  const setData = useCallback(
+    (value: TValue | null) => {
+      if (!isMountedRef.current) return;
+      clearAutoReset();
+      setInternalState({
+        status: value === null ? 'idle' : 'success',
+        data: value,
         error: null,
-        isSuccess: false,
-        isError: false,
-        isIdle: false,
       });
+    },
+    [clearAutoReset]
+  );
 
-      let attempts = 0;
+  const setError = useCallback(
+    (error: Error | null) => {
+      if (!isMountedRef.current) return;
+      clearAutoReset();
+      setInternalState(prev => ({
+        status: error ? 'error' : 'idle',
+        data: prev.data,
+        error,
+      }));
+      if (!error) {
+        scheduleAutoReset();
+      }
+    },
+    [clearAutoReset, scheduleAutoReset]
+  );
+
+  const execute = useCallback(
+    async <TReturn = TValue>(asyncFunction: () => Promise<TReturn>): Promise<TReturn> => {
+      if (!isMountedRef.current) {
+        throw new Error('Component unmounted');
+      }
+
+      clearAutoReset();
+      setInternalState(prev => ({
+        status: 'loading',
+        data: prev.data,
+        error: null,
+      }));
+
+      let attempt = 0;
       let lastError: Error | null = null;
 
-      while (attempts <= retryCount) {
+      while (attempt <= retryCount) {
         try {
           const result = await asyncFunction();
-          
-          if (!isMountedRef.current) return null;
 
-          setState({
-            data: result,
-            loading: false,
-            error: null,
-            isSuccess: true,
-            isError: false,
-            isIdle: false,
-          });
-
-          onSuccess?.(result);
-          return result;
-        } catch (error) {
-          lastError = error instanceof Error ? error : new Error(String(error));
-          attempts++;
-
-          if (attempts <= retryCount) {
-            // Wait before retrying
-            await new Promise(resolve => setTimeout(resolve, retryDelay * attempts));
+          if (!isMountedRef.current) {
+            return result;
           }
+
+          setInternalState(prev => ({
+            status: 'success',
+            data: result === undefined ? prev.data : (result as unknown as TValue | null),
+            error: null,
+          }));
+
+          if (result !== undefined) {
+            try {
+              onSuccess?.(result as unknown as TValue);
+            } catch {
+              // ignore callback errors
+            }
+          }
+
+          scheduleAutoReset();
+          return result;
+        } catch (rawError) {
+          const error = rawError instanceof Error ? rawError : new Error(String(rawError));
+          lastError = error;
+          attempt += 1;
+
+          if (attempt <= retryCount) {
+            if (retryDelay > 0) {
+              await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
+            }
+            continue;
+          }
+
+          if (!isMountedRef.current) {
+            throw error;
+          }
+
+          setInternalState(prev => ({
+            status: 'error',
+            data: prev.data,
+            error,
+          }));
+
+          try {
+            onError?.(error);
+          } catch {
+            // ignore callback errors
+          }
+
+          if (showErrorToast) {
+            const normalized =
+              error instanceof SensoryCompassError
+                ? error
+                : new SensoryCompassError(ErrorType.UNKNOWN_ERROR, error.message, { cause: error });
+            void handleError(normalized, { showToast: true, throwError: false });
+          }
+
+          scheduleAutoReset();
+          throw error;
         }
       }
 
-      // All attempts failed
-      if (!isMountedRef.current) return null;
-
-      const finalError = lastError || new SensoryCompassError(
-        ErrorType.UNKNOWN_ERROR,
-        'Async operation failed'
-      );
-
-      setState({
-        data: null,
-        loading: false,
-        error: finalError,
-        isSuccess: false,
-        isError: true,
-        isIdle: false,
-      });
-
-      onError?.(finalError);
-
-      if (showErrorToast) {
-        await handleError(finalError, { showToast: true, throwError: false });
-      }
-
-      return null;
+      throw lastError ?? new Error('Async execution failed');
     },
-    [state.data, onSuccess, onError, retryCount, retryDelay, showErrorToast]
+    [clearAutoReset, onError, onSuccess, retryCount, retryDelay, scheduleAutoReset, showErrorToast]
   );
 
-  const reset = useCallback(() => {
-    setState({
-      data: initialData,
-      loading: false,
-      error: null,
-      isSuccess: false,
-      isError: false,
-      isIdle: true,
-    });
-  }, [initialData]);
-
-  const setData = useCallback((data: T | null) => {
-    setState(prev => ({
-      ...prev,
-      data,
-      isSuccess: data !== null,
-      isError: false,
-      error: null,
-    }));
-  }, []);
-
-  const setError = useCallback((error: Error | null) => {
-    setState(prev => ({
-      ...prev,
-      error,
-      isError: error !== null,
-      isSuccess: false,
-      loading: false,
-    }));
-  }, []);
+  const derivedState = {
+    status: internalState.status,
+    data: internalState.data,
+    error: internalState.error,
+    isIdle: internalState.status === 'idle',
+    isLoading: internalState.status === 'loading',
+    isSuccess: internalState.status === 'success',
+    isError: internalState.status === 'error',
+  } as const;
 
   return {
-    state,
+    ...derivedState,
+    state: derivedState,
     execute,
+    run: execute,
     reset,
     setData,
     setError,
   };
 }
 
-// Convenience hook for mutations (POST, PUT, DELETE)
 export function useAsyncMutation<TData = unknown, TVariables = unknown>(
   mutationFn: (variables: TVariables) => Promise<TData>,
-  options: UseAsyncStateOptions = {}
+  options: UseAsyncStateOptions<TData> = {}
 ) {
-  const { state, execute, reset, setData, setError } = useAsyncState<TData>(null, options);
+  const { run, setData, reset, setError, state, ...summary } = useAsyncState<TData>(null, options);
 
   const mutate = useCallback(
     async (variables: TVariables) => {
-      return execute(() => mutationFn(variables));
+      const result = await run(() => mutationFn(variables));
+      if (result !== undefined) {
+        setData(result);
+      }
+      return result;
     },
-    [execute, mutationFn]
+    [mutationFn, run, setData]
   );
 
   return {
-    ...state,
+    ...summary,
+    state,
     mutate,
     reset,
     setData,
     setError,
+    run,
+    execute: run,
   };
 }
 
-// Convenience hook for queries (GET)
 export function useAsyncQuery<T = unknown>(
   queryFn: () => Promise<T>,
-  options: UseAsyncStateOptions & { enabled?: boolean; refetchInterval?: number } = {}
+  options: UseAsyncStateOptions<T> & { enabled?: boolean; refetchInterval?: number } = {}
 ) {
   const { enabled = true, refetchInterval, ...asyncOptions } = options;
-  const { state, execute, reset, setData, setError } = useAsyncState<T>(null, asyncOptions);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const { run, setData, reset, setError, state, ...summary } = useAsyncState<T>(null, asyncOptions);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (enabled) {
-      execute(queryFn);
+      run(queryFn).catch(() => {
+        // ignore initial query errors; error state is handled by the hook
+      });
     }
-  }, [enabled, execute, queryFn]);
+  }, [enabled, run, queryFn]);
 
   useEffect(() => {
-    if (refetchInterval && enabled && state.isSuccess) {
+    if (refetchInterval && enabled && summary.isSuccess) {
       intervalRef.current = setInterval(() => {
-        execute(queryFn);
+        run(queryFn).catch(() => {
+          // ignore interval errors; consumers can inspect state.error
+        });
       }, refetchInterval);
     }
 
@@ -209,17 +299,18 @@ export function useAsyncQuery<T = unknown>(
         clearInterval(intervalRef.current);
       }
     };
-  }, [refetchInterval, enabled, state.isSuccess, execute, queryFn]);
+  }, [refetchInterval, enabled, summary.isSuccess, run, queryFn]);
 
-  const refetch = useCallback(() => {
-    return execute(queryFn);
-  }, [execute, queryFn]);
+  const refetch = useCallback(() => run(queryFn), [run, queryFn]);
 
   return {
-    ...state,
+    ...summary,
+    state,
     refetch,
     reset,
     setData,
     setError,
+    run,
+    execute: run,
   };
 }

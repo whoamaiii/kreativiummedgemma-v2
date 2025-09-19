@@ -9,7 +9,7 @@ import { TrackingEntry, EmotionEntry, SensoryEntry } from '@/types/student';
 import { ModelType, ModelMetadata } from '@/lib/mlModels';
 import { convertTrackingEntriesToSessions, prepareEmotionData, prepareSensoryData } from '@/lib/preprocessing/facade';
 import { CrossValidator, CrossValidationConfig, ValidationResults } from '../lib/validation/crossValidation';
-import { TrainingData } from '../types/ml';
+import { TrainingData, EarlyStoppingConfig } from '../types/ml';
 
 // Set TensorFlow.js backend for web workers
 tf.setBackend('cpu');
@@ -24,6 +24,8 @@ interface TrainingRequest {
   config: {
     epochs?: number;
     batchSize?: number;
+    validationSplit?: number;
+    earlyStopping?: EarlyStoppingConfig;
   };
 }
 
@@ -138,7 +140,9 @@ const createSensoryModel = (): tf.Sequential => {
 const trainEmotionModel = async (
   trackingEntries: TrackingEntry[],
   epochs: number = 50,
-  batchSize: number = 32
+  batchSize: number = 32,
+  validationSplit: number = 0.2,
+  earlyStopping?: EarlyStoppingConfig
 ): Promise<{ model: tf.Sequential; history: tf.History; metadata: ModelMetadata }> => {
   const sessions = convertTrackingEntriesToSessions(trackingEntries);
   const model = createEmotionModel();
@@ -151,7 +155,9 @@ const trainEmotionModel = async (
       folds: 5,
       stratified: true,
       randomState: 42,
-      validationMetrics: ['accuracy']
+      validationMetrics: ['accuracy'],
+      fitArgs: { epochs, batchSize, shuffle: true, verbose: 0 },
+      earlyStopping,
   };
 
   const validationResults = await validator.validateModel(createEmotionModel, trainingData, config);
@@ -161,7 +167,17 @@ const trainEmotionModel = async (
   const history = await finalModel.fit(inputs, outputs, {
       epochs,
       batchSize,
-      callbacks: createTrainingCallbacks('emotion-prediction', epochs),
+      validationSplit,
+      callbacks: [
+        createTrainingCallbacks('emotion-prediction', epochs),
+        ...(earlyStopping?.enabled ? [tf.callbacks.earlyStopping({
+          monitor: earlyStopping.monitor ?? 'val_loss',
+          patience: earlyStopping.patience ?? 3,
+          minDelta: earlyStopping.minDelta ?? 0,
+          mode: (earlyStopping.monitor ?? 'val_loss').includes('loss') || (earlyStopping.monitor ?? 'val_loss').includes('mse') || (earlyStopping.monitor ?? 'val_loss').includes('mae') ? 'min' : 'max',
+          restoreBestWeights: true,
+        })] : []),
+      ],
       shuffle: true
   });
 
@@ -192,7 +208,9 @@ const trainEmotionModel = async (
 const trainSensoryModel = async (
   trackingEntries: TrackingEntry[],
   epochs: number = 50,
-  batchSize: number = 32
+  batchSize: number = 32,
+  validationSplit: number = 0.2,
+  earlyStopping?: EarlyStoppingConfig
 ): Promise<{ model: tf.Sequential; history: tf.History; metadata: ModelMetadata }> => {
   const sessions = convertTrackingEntriesToSessions(trackingEntries);
   const model = createSensoryModel();
@@ -205,7 +223,9 @@ const trainSensoryModel = async (
       folds: 5,
       stratified: true,
       randomState: 42,
-      validationMetrics: ['accuracy']
+      validationMetrics: ['accuracy'],
+      fitArgs: { epochs, batchSize, shuffle: true, verbose: 0 },
+      earlyStopping,
   };
 
   const validationResults = await validator.validateModel(createSensoryModel, trainingData, config);
@@ -215,7 +235,17 @@ const trainSensoryModel = async (
   const history = await finalModel.fit(inputs, outputs, {
       epochs,
       batchSize,
-      callbacks: createTrainingCallbacks('sensory-response', epochs),
+      validationSplit,
+      callbacks: [
+        createTrainingCallbacks('sensory-response', epochs),
+        ...(earlyStopping?.enabled ? [tf.callbacks.earlyStopping({
+          monitor: earlyStopping.monitor ?? 'val_accuracy',
+          patience: earlyStopping.patience ?? 3,
+          minDelta: earlyStopping.minDelta ?? 0,
+          mode: (earlyStopping.monitor ?? 'val_accuracy').includes('loss') || (earlyStopping.monitor ?? 'val_accuracy').includes('mse') || (earlyStopping.monitor ?? 'val_accuracy').includes('mae') ? 'min' : 'max',
+          restoreBestWeights: true,
+        })] : []),
+      ],
       shuffle: true
   });
 
@@ -298,7 +328,9 @@ self.onmessage = async (e: MessageEvent<TrainingRequest>) => {
         const emotionResult = await trainEmotionModel(
           data.trackingEntries,
           config.epochs,
-          config.batchSize
+          config.batchSize,
+          config.validationSplit,
+          config.earlyStopping
         );
         
         const emotionResponse: TrainingResult = {
@@ -320,7 +352,9 @@ self.onmessage = async (e: MessageEvent<TrainingRequest>) => {
         const sensoryResult = await trainSensoryModel(
           data.trackingEntries,
           config.epochs,
-          config.batchSize
+          config.batchSize,
+          config.validationSplit,
+          config.earlyStopping
         );
         
         const sensoryResponse: TrainingResult = {

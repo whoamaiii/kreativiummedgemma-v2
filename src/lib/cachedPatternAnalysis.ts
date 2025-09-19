@@ -435,6 +435,38 @@ export class CachedPatternAnalysisEngine {
   invalidateConfigurationCache(): number {
     return this.invalidateAllCache();
   }
+
+  /**
+   * Clear caches by a logical type name. Returns number invalidated.
+   */
+  clearCacheByType(cacheType: string): number {
+    const map: Record<string, string[]> = {
+      'emotion': ['emotion-patterns'],
+      'sensory': ['sensory-patterns'],
+      'correlation': ['env-correlations', 'correlation-matrix'],
+      'predictive': ['predictive-insights'],
+      'anomaly': ['anomaly-detection'],
+      'trend': ['trend-analysis'],
+      'confidence': ['confidence-explanation']
+    };
+    const tags = map[cacheType] || [];
+    let invalidated = 0;
+    for (const t of tags) invalidated += this.cache.invalidateByTag(t);
+    return invalidated;
+  }
+
+  /** Clear only emotion pattern caches. */
+  clearEmotionPatternCache(): number { return this.cache.invalidateByTag('emotion-patterns'); }
+  /** Clear only sensory pattern caches. */
+  clearSensoryPatternCache(): number { return this.cache.invalidateByTag('sensory-patterns'); }
+  /** Clear only correlation-related caches. */
+  clearCorrelationCache(): number { return this.cache.invalidateByTag('env-correlations') + this.cache.invalidateByTag('correlation-matrix'); }
+  /** Clear predictive insights caches. */
+  clearPredictiveInsightsCache(): number { return this.cache.invalidateByTag('predictive-insights'); }
+  /** Clear anomaly detection caches. */
+  clearAnomalyDetectionCache(): number { return this.cache.invalidateByTag('anomaly-detection'); }
+  /** Clear trend analysis caches. */
+  clearTrendAnalysisCache(): number { return this.cache.invalidateByTag('trend-analysis'); }
 }
 
 /**

@@ -1,3 +1,4 @@
+import { LOG_LEVEL_NAME, DEBUG_MODE } from '@/lib/env';
 export enum LogLevel {
   DEBUG = 0,
   INFO = 1,
@@ -35,9 +36,19 @@ class Logger {
       }
     })();
     const isProd = !!(env && env.PROD);
+    const mappedLevel: LogLevel | null = (() => {
+      switch (LOG_LEVEL_NAME) {
+        case 'debug': return LogLevel.DEBUG;
+        case 'info': return LogLevel.INFO;
+        case 'warn': return LogLevel.WARN;
+        case 'error': return LogLevel.ERROR;
+        case 'none': return LogLevel.NONE;
+        default: return null;
+      }
+    })();
     this.config = {
-      level: isProd ? LogLevel.ERROR : LogLevel.DEBUG,
-      enableConsole: !isProd,
+      level: mappedLevel !== null ? mappedLevel : (isProd ? LogLevel.ERROR : (DEBUG_MODE ? LogLevel.DEBUG : LogLevel.INFO)),
+      enableConsole: mappedLevel !== LogLevel.NONE,
       enableRemote: false
     };
   }

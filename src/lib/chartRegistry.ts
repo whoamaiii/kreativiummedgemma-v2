@@ -7,6 +7,10 @@ export interface ChartRegistration {
   type: ChartType;
   title: string;
   studentId?: string;
+  /** Optional filters applied within the chart's data context */
+  filters?: Record<string, unknown>;
+  /** Optional date range represented in the chart */
+  dateRange?: { start: Date; end: Date };
   getMethods: () => ChartExportMethods;
 }
 
@@ -31,6 +35,13 @@ class ChartRegistry {
 
   byStudent(studentId: string) {
     return this.all().filter(c => c.studentId === studentId);
+  }
+
+  /** Update metadata for a registered chart (filters/dateRange) */
+  updateMetadata(id: string, meta: Pick<ChartRegistration, 'filters' | 'dateRange' | 'title' | 'type'>) {
+    const existing = this.charts.get(id);
+    if (!existing) return;
+    this.charts.set(id, { ...existing, ...meta });
   }
 }
 

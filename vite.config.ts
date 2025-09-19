@@ -1,15 +1,22 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 // import { componentTagger } from "lovable-tagger";
-import browserEcho from "@browser-echo/vite";
 import { visualizer } from "rollup-plugin-visualizer";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  return ({
   server: {
     host: "127.0.0.1",
     port: 5173,
+    strictPort: true,
+    hmr: {
+      host: "127.0.0.1",
+      clientPort: 5173,
+      protocol: 'ws',
+    },
   },
   preview: {
     host: "127.0.0.1",
@@ -17,12 +24,6 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    // Enable browser-echo only when not production and not explicitly disabled via env
-    (mode !== 'production' && process.env.BROWSER_ECHO !== '0') &&
-    browserEcho({
-      stackMode: 'condensed',
-      colors: true,
-    }),
     // (mode === 'development' && process.env.COMPONENT_TAGGER !== '0') &&
     // componentTagger(),
     // Add bundle analyzer for build analysis
@@ -86,4 +87,5 @@ export default defineConfig(({ mode }) => ({
     // This reduces initial download while preserving message contract
     // Note: we keep main aliasing in resolve; here we can still tweak rollup if needed
   }
-}));
+  });
+});
