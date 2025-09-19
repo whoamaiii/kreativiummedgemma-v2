@@ -435,6 +435,13 @@ export default function KreativiumAI(): JSX.Element {
     );
   });
 
+  const studentSelectLabelId = React.useId();
+  const studentSelectTriggerId = React.useId();
+  const presetSelectLabelId = React.useId();
+  const presetSelectTriggerId = React.useId();
+  const compareToggleId = React.useId();
+  const iepToggleId = React.useId();
+
   return (
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
       {/* Aria-live region for screen reader announcements */}
@@ -468,9 +475,21 @@ export default function KreativiumAI(): JSX.Element {
         <Card className="bg-gradient-card border-0 shadow-soft">
           <CardContent className="p-6 grid gap-4 md:grid-cols-4">
             <div className="md:col-span-2">
-              <label className="block text-sm text-muted-foreground mb-1">Elev</label>
+              <label
+                id={studentSelectLabelId}
+                className="block text-sm text-muted-foreground mb-1"
+                htmlFor={studentSelectTriggerId}
+              >
+                Elev
+              </label>
               <Select value={studentId} onValueChange={setStudentId}>
-                <SelectTrigger className="w-full"><SelectValue placeholder="Velg elev" /></SelectTrigger>
+                <SelectTrigger
+                  id={studentSelectTriggerId}
+                  className="w-full"
+                  aria-labelledby={studentSelectLabelId}
+                >
+                  <SelectValue placeholder="Velg elev" />
+                </SelectTrigger>
                 <SelectContent>
                   {students.map(s => (
                     <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
@@ -479,9 +498,21 @@ export default function KreativiumAI(): JSX.Element {
               </Select>
             </div>
             <div>
-              <label className="block text-sm text-muted-foreground mb-1">Tidsrom</label>
+              <label
+                id={presetSelectLabelId}
+                className="block text-sm text-muted-foreground mb-1"
+                htmlFor={presetSelectTriggerId}
+              >
+                Tidsrom
+              </label>
               <Select value={preset} onValueChange={(v) => setPreset(v as Preset)}>
-                <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+                <SelectTrigger
+                  id={presetSelectTriggerId}
+                  className="w-full"
+                  aria-labelledby={presetSelectLabelId}
+                >
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="7d">Siste 7 dager</SelectItem>
                   <SelectItem value="30d">Siste 30 dager</SelectItem>
@@ -492,8 +523,11 @@ export default function KreativiumAI(): JSX.Element {
             </div>
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-2">
-                <label className="text-sm text-muted-foreground">{tAnalytics('interface.comparePeriods')}</label>
+                <label className="text-sm text-muted-foreground" htmlFor={compareToggleId}>
+                  {tAnalytics('interface.comparePeriods')}
+                </label>
                 <Toggle
+                  id={compareToggleId}
                   aria-label={tAnalytics('interface.comparePeriods')}
                   pressed={compareEnabled}
                   onPressedChange={(v) => { setCompareEnabled(Boolean(v)); if (!v) setBaselineResults(null); }}
@@ -519,11 +553,14 @@ export default function KreativiumAI(): JSX.Element {
                 </div>
               </div>
               <div className="flex items-center gap-2 mt-3">
-                <label className="text-sm text-muted-foreground">IEP-trygg modus</label>
+                <label className="text-sm text-muted-foreground" htmlFor={iepToggleId}>
+                  IEP-trygg modus
+                </label>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Toggle
+                        id={iepToggleId}
                         aria-label="IEP-trygg modus"
                         pressed={iepSafeMode}
                         onPressedChange={(v) => {
