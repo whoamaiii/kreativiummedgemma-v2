@@ -8,12 +8,12 @@ import { Sparkles, Play, RefreshCw, Database, Clock, Info, AlertTriangle, Loader
 import { dataStorage } from '@/lib/dataStorage';
 import type { Student } from '@/types/student';
 import { LLMAnalysisEngine } from '@/lib/analysis/llmAnalysisEngine';
-import type { AnalyticsResultsAI } from '@/lib/analysis/analysisEngine';
+import type { AnalyticsResultsAI, TimeRange } from '@/lib/analysis/analysisEngine';
 import { loadAiConfig } from '@/lib/aiConfig';
 import { openRouterClient } from '@/lib/ai/openrouterClient';
 import { logger } from '@/lib/logger';
 import { Toggle } from '@/components/ui/toggle';
-import { computeComparisonRange, formatComparisonPeriodLabel } from '@/lib/analysis/dateHelpers';
+import { computeComparisonRange, formatComparisonPeriodLabel, type ComparisonMode } from '@/lib/analysis/dateHelpers';
 import { ComparisonSummary } from '@/components/ComparisonSummary';
 import { useTranslation } from '@/hooks/useTranslation';
 import { formatAiReportText, downloadPdfFromText } from '@/lib/ai/exportAiReport';
@@ -21,29 +21,100 @@ import { aiMetrics } from '@/lib/ai/metrics';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { announceToScreenReader } from '@/utils/accessibility';
 import { resolveSources } from '@/lib/evidence';
+import type { EvidenceSource } from '@/lib/evidence';
 
 type Preset = 'all' | '7d' | '30d' | '90d';
 
-function computeRange(preset: Preset) {
+type DataQualityBuckets = Record<'morning' | 'afternoon' | 'evening', number>;
+
+interface DataQualitySummary {
+  total: number;
+  last: Date | null;
+  daysSince: number | null;
+  completeness: number;
+  balance: number;
+  buckets: DataQualityBuckets;
+  avgIntensity: number | null;
+}
+
+interface ConcreteTimeRange extends TimeRange {
+  start: Date;
+  end: Date;
+}
+
+type NavigatorWithShare = Navigator & { share?: (data: ShareData) => Promise<void> };
+
+const COMPARISON_MODES: readonly ComparisonMode[] = ['previous', 'lastMonth', 'lastYear'];
+
+function isComparisonMode(value: string): value is ComparisonMode {
+  return (COMPARISON_MODES as readonly string[]).includes(value);
+}
+
+function computeRange(preset: Preset): ConcreteTimeRange | undefined {
   if (preset === 'all') return undefined;
   const now = new Date();
+  const end = new Date(now);
   const start = new Date(now);
   const days = preset === '7d' ? 7 : preset === '30d' ? 30 : 90;
   start.setDate(now.getDate() - days);
-  return { start, end: now, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone } as const;
+  return {
+    start,
+    end,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  };
 }
 
-function computeDataQualityMetrics(studentId: string, timeframe?: ReturnType<typeof computeRange>) {
+function toConcreteTimeRange(range: TimeRange): ConcreteTimeRange {
+  const start = range.start instanceof Date ? range.start : new Date(range.start);
+  const end = range.end instanceof Date ? range.end : new Date(range.end);
+  return {
+    start,
+    end,
+    timezone: range.timezone,
+  };
+}
+
+function formatRangeCacheKey(range: ConcreteTimeRange | undefined): string {
+  if (!range) return 'all';
+  return `${range.start.toISOString()}_${range.end.toISOString()}`;
+}
+
+function formatDateForDisplay(date: Date): string {
+  return date.toLocaleDateString();
+}
+
+function getToolbarStorageKey(students: Student[], currentStudentId: string, range: ConcreteTimeRange | undefined): string {
+  const studentName = students.find((st) => st.id === currentStudentId)?.name || 'elev';
+  const normalizedStudent = studentName.toLowerCase();
+  const rangeLabel = range
+    ? `${formatDateForDisplay(range.start)}_${formatDateForDisplay(range.end)}`.toLowerCase()
+    : 'alle';
+  return `ai_toolbar_last_${normalizedStudent}_${rangeLabel}`;
+}
+
+function getStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+}
+
+function getOptionalStringField(source: unknown, key: string): string | undefined {
+  if (!source || typeof source !== 'object') return undefined;
+  const candidate = (source as Record<string, unknown>)[key];
+  return typeof candidate === 'string' ? candidate : undefined;
+}
+
+function computeDataQualityMetrics(studentId: string, timeframe?: ConcreteTimeRange): DataQualitySummary | null {
   try {
     if (!studentId) return null;
     const entriesAll = dataStorage.getEntriesForStudent(studentId) || [];
-    const { start, end } = timeframe || {};
-    const inRange = (start || end)
-      ? entriesAll.filter(e => {
-          const t = e.timestamp.getTime();
-          const s = start ? (start as Date).getTime() : -Infinity;
-          const en = end ? (end as Date).getTime() : Infinity;
-          return t >= s && t <= en;
+    const start = timeframe?.start;
+    const end = timeframe?.end;
+    const inRange = start || end
+      ? entriesAll.filter((entry) => {
+          const timestamp = entry.timestamp.getTime();
+          const startMs = start ? start.getTime() : -Infinity;
+          const endMs = end ? end.getTime() : Infinity;
+          return timestamp >= startMs && timestamp <= endMs;
         })
       : entriesAll;
     const total = inRange.length;
@@ -51,7 +122,7 @@ function computeDataQualityMetrics(studentId: string, timeframe?: ReturnType<typ
     const daysSince = last ? Math.max(0, Math.round((Date.now() - last.getTime()) / (1000 * 60 * 60 * 24))) : null;
     const completeCount = inRange.filter(e => (e.emotions?.length || 0) > 0 && (e.sensoryInputs?.length || 0) > 0).length;
     const completeness = total > 0 ? Math.round((completeCount / total) * 100) : 0;
-    const buckets = { morning: 0, afternoon: 0, evening: 0 } as Record<'morning'|'afternoon'|'evening', number>;
+    const buckets: DataQualityBuckets = { morning: 0, afternoon: 0, evening: 0 };
     let totalIntensity = 0;
     let intensityCount = 0;
     for (const e of inRange) {
@@ -99,7 +170,7 @@ export default function KreativiumAI(): JSX.Element {
   const [compareMode, setCompareMode] = useState<'previous' | 'lastMonth' | 'lastYear'>('previous');
   const [toolbarLast, setToolbarLast] = useState<{ type: 'copy' | 'pdf' | 'share' | null; at: number | null }>({ type: null, at: null });
   const [iepSafeMode, setIepSafeMode] = useState<boolean>(true);  // Default ON for safety
-  const [resolvedSources, setResolvedSources] = useState<Map<string, any>>(new Map());
+  const [resolvedSources, setResolvedSources] = useState<Map<string, EvidenceSource>>(new Map());
 
   // Clear cache when IEP mode changes
   useEffect(() => {
@@ -120,9 +191,9 @@ export default function KreativiumAI(): JSX.Element {
       if (/^10\./.test(h)) return true;
       if (/^192\.168\./.test(h)) return true;
       if (/^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(h)) return true;
-      return Boolean((ai as any).localOnly);
+      return Boolean(ai.localOnly);
     } catch {
-      return Boolean((ai as any).localOnly) || quick;
+      return Boolean(ai.localOnly) || quick;
     }
   })();
 
@@ -138,58 +209,54 @@ export default function KreativiumAI(): JSX.Element {
       logger.error('[KreativiumAI] load students failed', e as Error);
       setStudents([]);
     }
-  }, []);
+  }, [studentId]);
 
-  const timeframe = useMemo(() => computeRange(preset), [preset]);
+  const timeframe = useMemo<ConcreteTimeRange | undefined>(() => computeRange(preset), [preset]);
 
   const cacheKey = useMemo(() => {
-    const t = timeframe ? `${(timeframe.start as Date)?.toISOString?.() || String(timeframe.start)}_${(timeframe.end as Date)?.toISOString?.() || String(timeframe.end)}` : 'all';
+    const rangeKey = formatRangeCacheKey(timeframe);
     const cmp = compareEnabled && timeframe ? `|cmp:${compareMode}` : '';
-    return `${studentId || 'none'}|${preset}|${t}${cmp}|iep:${iepSafeMode ? 'on' : 'off'}`;
+    return `${studentId || 'none'}|${preset}|${rangeKey}${cmp}|iep:${iepSafeMode ? 'on' : 'off'}`;
   }, [studentId, preset, timeframe, compareEnabled, compareMode, iepSafeMode]);
 
   // Persist toolbar last action per student+range in session
   useEffect(() => {
     try {
-      const key = (() => {
-        const s = (students.find(st => st.id === studentId)?.name || 'elev').toLowerCase();
-        const r = timeframe ? `${(timeframe.start as Date).toLocaleDateString()}_${(timeframe.end as Date).toLocaleDateString()}`.toLowerCase() : 'alle';
-        return `ai_toolbar_last_${s}_${r}`;
-      })();
+      const key = getToolbarStorageKey(students, studentId, timeframe);
       const raw = sessionStorage.getItem(key);
       if (raw) {
         const saved = JSON.parse(raw) as { type: 'copy' | 'pdf' | 'share' | null; at: number | null };
         if (saved && typeof saved.at === 'number') setToolbarLast(saved);
       }
-    } catch {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [studentId, timeframe?.start, timeframe?.end]);
+    } catch {
+      /* ignore toolbar state restoration errors */
+    }
+  }, [students, studentId, timeframe]);
 
   useEffect(() => {
     try {
-      const key = (() => {
-        const s = (students.find(st => st.id === studentId)?.name || 'elev').toLowerCase();
-        const r = timeframe ? `${(timeframe.start as Date).toLocaleDateString()}_${(timeframe.end as Date).toLocaleDateString()}`.toLowerCase() : 'alle';
-        return `ai_toolbar_last_${s}_${r}`;
-      })();
+      const key = getToolbarStorageKey(students, studentId, timeframe);
       sessionStorage.setItem(key, JSON.stringify(toolbarLast));
-    } catch {}
-  }, [toolbarLast, studentId, timeframe?.start, timeframe?.end, students]);
+    } catch {
+      /* ignore toolbar state persistence errors */
+    }
+  }, [toolbarLast, students, studentId, timeframe]);
 
   const dataQuality = useMemo(() => computeDataQualityMetrics(studentId, timeframe), [studentId, timeframe]);
 
   const baselineDataQuality = useMemo(() => {
     if (!compareEnabled || !timeframe) return null;
-    const baselineRange = computeComparisonRange(timeframe as any, compareMode);
-    return computeDataQualityMetrics(studentId, baselineRange as any);
+    const baselineRange = toConcreteTimeRange(computeComparisonRange(timeframe, compareMode));
+    return computeDataQualityMetrics(studentId, baselineRange);
   }, [studentId, compareEnabled, timeframe, compareMode]);
 
   const hasSmallBaseline = useMemo(() => {
     if (!baselineDataQuality) return false;
-    // Threshold: less than 5 data points for small baseline warning
     const minimumDataPoints = 5;
     return baselineDataQuality.total < minimumDataPoints;
   }, [baselineDataQuality]);
+
+  const keyFindings = useMemo(() => getStringArray(results?.keyFindings), [results]);
 
   async function testAI() {
     setIsTesting(true);
@@ -198,7 +265,7 @@ export default function KreativiumAI(): JSX.Element {
       const resp = await openRouterClient.chat([
         { role: 'system', content: 'Svar kun på norsk. Vær kort.' },
         { role: 'user', content: 'Si kun ordet: pong' },
-      ], { modelName: ai.modelName, baseUrl: ai.baseUrl, timeoutMs: 10_000, maxTokens: 8, temperature: 0, localOnly: (ai as any).localOnly });
+      ], { modelName: ai.modelName, baseUrl: ai.baseUrl, timeoutMs: 10_000, maxTokens: 8, temperature: 0, localOnly: ai.localOnly ?? false });
       setResults(null);
       // Model name is displayed via displayModelName; keep minimal state
       if (!resp?.content?.toLowerCase().includes('pong')) {
@@ -226,7 +293,6 @@ export default function KreativiumAI(): JSX.Element {
       setResults(uiHit.current);
       setBaselineResults(uiHit.baseline);
       setFromUiCache(true);
-      // try { if ((uiHit.current as any)?.ai?.model) setLastModelUsed((uiHit.current as any).ai.model as string); } catch {}
       return;
     }
     
@@ -235,7 +301,7 @@ export default function KreativiumAI(): JSX.Element {
     try {
       const engine = new LLMAnalysisEngine();
       // Current analysis
-      const currentPromise = engine.analyzeStudent(studentId, timeframe as any, { 
+      const currentPromise = engine.analyzeStudent(studentId, timeframe, {
         includeAiMetadata: true,
         aiProfile: iepSafeMode ? 'iep' : 'default'
       });
@@ -243,16 +309,18 @@ export default function KreativiumAI(): JSX.Element {
       // Baseline if enabled and timeframe provided
       let baselinePromise: Promise<AnalyticsResultsAI | null> | null = null;
       if (compareEnabled && timeframe) {
-        const baselineRange = computeComparisonRange(timeframe as any, compareMode);
+        const baselineRange = toConcreteTimeRange(computeComparisonRange(timeframe, compareMode));
         baselinePromise = engine
-          .analyzeStudent(studentId, baselineRange as any, { 
+          .analyzeStudent(studentId, baselineRange, {
             includeAiMetadata: true,
             aiProfile: iepSafeMode ? 'iep' : 'default'
           })
-          .then((b) => {
-            // Treat empty baseline as null for UI clarity
-            const totalLen = (b?.patterns?.length || 0) + (b?.correlations?.length || 0) + ((b as any)?.insights?.length || 0);
-            return totalLen === 0 ? null : b;
+          .then((baseline) => {
+            const totalLen =
+              (baseline?.patterns?.length || 0) +
+              (baseline?.correlations?.length || 0) +
+              (Array.isArray(baseline?.insights) ? baseline.insights.length : 0);
+            return totalLen === 0 ? null : baseline;
           })
           .catch(() => null);
       }
@@ -262,7 +330,6 @@ export default function KreativiumAI(): JSX.Element {
       setBaselineResults(base);
       resultsCacheRef.current.set(cacheKey, { current: res, baseline: base });
       setFromUiCache(false);
-      // if ((res as any)?.ai?.model) setLastModelUsed((res as any).ai.model as string);
     } catch (e) {
       setError((e as Error)?.message || 'Analyse feilet.');
     } finally {
@@ -281,7 +348,7 @@ export default function KreativiumAI(): JSX.Element {
     setError('');
     try {
       const engine = new LLMAnalysisEngine();
-      const currentPromise = engine.analyzeStudent(studentId, timeframe as any, { 
+      const currentPromise = engine.analyzeStudent(studentId, timeframe, {
         includeAiMetadata: true, 
         bypassCache: true,
         aiProfile: iepSafeMode ? 'iep' : 'default'
@@ -289,16 +356,19 @@ export default function KreativiumAI(): JSX.Element {
 
       let baselinePromise: Promise<AnalyticsResultsAI | null> | null = null;
       if (compareEnabled && timeframe) {
-        const baselineRange = computeComparisonRange(timeframe as any, compareMode);
+        const baselineRange = toConcreteTimeRange(computeComparisonRange(timeframe, compareMode));
         baselinePromise = engine
-          .analyzeStudent(studentId, baselineRange as any, { 
+          .analyzeStudent(studentId, baselineRange, {
             includeAiMetadata: true, 
             bypassCache: true,
             aiProfile: iepSafeMode ? 'iep' : 'default'
           })
-          .then((b) => {
-            const totalLen = (b?.patterns?.length || 0) + (b?.correlations?.length || 0) + ((b as any)?.insights?.length || 0);
-            return totalLen === 0 ? null : b;
+          .then((baseline) => {
+            const totalLen =
+              (baseline?.patterns?.length || 0) +
+              (baseline?.correlations?.length || 0) +
+              (Array.isArray(baseline?.insights) ? baseline.insights.length : 0);
+            return totalLen === 0 ? null : baseline;
           })
           .catch(() => null);
       }
@@ -308,7 +378,6 @@ export default function KreativiumAI(): JSX.Element {
       setBaselineResults(base);
       resultsCacheRef.current.set(cacheKey, { current: res, baseline: base });
       setFromUiCache(false);
-      // if ((res as any)?.ai?.model) setLastModelUsed((res as any).ai.model as string);
     } catch (e) {
       setError((e as Error)?.message || 'Analyse feilet.');
     } finally {
@@ -352,37 +421,52 @@ export default function KreativiumAI(): JSX.Element {
       if (!results) return;
       const text = await formatAiReportText(results, { includeMetadata: true });
       await navigator.clipboard.writeText(text);
-      try { announceToScreenReader(String(tAnalytics('interface.copyReportAnnounce'))); } catch {}
+      try { announceToScreenReader(String(tAnalytics('interface.copyReportAnnounce'))); } catch {
+        /* screen reader announcement failed */
+      }
       setToolbarLast({ type: 'copy', at: Date.now() });
-    } catch {}
+    } catch {
+      /* ignore clipboard errors */
+    }
   }
 
   async function handleDownloadPDF() {
     try {
       if (!results) return;
       const text = await formatAiReportText(results, { includeMetadata: true });
-      const student = students.find(s => s.id === studentId)?.name || 'elev';
-      const sanitize = (s: string) => s.replace(/[^\p{L}0-9\s_-]+/gu, '').trim().replace(/\s+/g, '_');
+      const student = students.find((s) => s.id === studentId)?.name || 'elev';
+      const sanitize = (value: string) => value.replace(/[^\p{L}0-9\s_-]+/gu, '').trim().replace(/\s+/g, '_');
       const studentSafe = sanitize(student);
-      const rangeSafe = timeframe ? `${(timeframe.start as Date).toLocaleDateString()}_${(timeframe.end as Date).toLocaleDateString()}`.replace(/\s+/g,'') : 'alle';
+      const rangeSafe = timeframe
+        ? `${formatDateForDisplay(timeframe.start)}_${formatDateForDisplay(timeframe.end)}`.replace(/\s+/g, '')
+        : 'alle';
       await downloadPdfFromText(text, `kreativium_${studentSafe}_${rangeSafe}.pdf`);
-      try { announceToScreenReader(String(tAnalytics('interface.downloadPdfAnnounce'))); } catch {}
+      try { announceToScreenReader(String(tAnalytics('interface.downloadPdfAnnounce'))); } catch {
+        /* screen reader announcement failed */
+      }
       setToolbarLast({ type: 'pdf', at: Date.now() });
-    } catch {}
+    } catch {
+      /* ignore pdf download errors */
+    }
   }
 
   async function handleShare() {
     try {
       if (!results) return;
       const text = await formatAiReportText(results);
-      if ((navigator as any).share) {
-        await (navigator as any).share({ title: 'Kreativium‑AI rapport', text });
+      const nav = navigator as NavigatorWithShare;
+      if (typeof nav.share === 'function') {
+        await nav.share({ title: 'Kreativium‑AI rapport', text });
       } else {
         await navigator.clipboard.writeText(text);
       }
-      try { announceToScreenReader(String(tAnalytics('interface.shareAnnounce'))); } catch {}
+      try { announceToScreenReader(String(tAnalytics('interface.shareAnnounce'))); } catch {
+        /* screen reader announcement failed */
+      }
       setToolbarLast({ type: 'share', at: Date.now() });
-    } catch {}
+    } catch {
+      /* ignore share errors */
+    }
   }
 
   // Safe truncation for multi-byte characters
@@ -391,12 +475,17 @@ export default function KreativiumAI(): JSX.Element {
     
     try {
       // Use Intl.Segmenter if available for proper grapheme cluster handling
-      if (typeof Intl !== 'undefined' && 'Segmenter' in Intl) {
-        const segmenter = new (Intl as any).Segmenter('nb', { granularity: 'grapheme' });
+      const segmenterCtor = typeof Intl !== 'undefined' && 'Segmenter' in Intl
+        ? (Intl as { Segmenter: typeof Intl.Segmenter }).Segmenter
+        : undefined;
+      if (segmenterCtor) {
+        const segmenter = new segmenterCtor('nb', { granularity: 'grapheme' });
         const segments = Array.from(segmenter.segment(str));
-        return segments.slice(0, max).map((s: any) => s.segment).join('');
+        return segments.slice(0, max).map((segment) => segment.segment).join('');
       }
-    } catch {}
+    } catch {
+      /* fall back to basic truncation */
+    }
     
     // Fallback to Array.from for better multi-byte support than slice
     return Array.from(str).slice(0, max).join('');
@@ -467,8 +556,8 @@ export default function KreativiumAI(): JSX.Element {
               </div>
             </div>
             <div className="flex items-center gap-2">
-            <Badge variant="outline">{(isLocal || (ai as any).localOnly) ? 'Local model' : 'Remote'}</Badge>
-            <Badge variant="outline">{displayModelName}</Badge>
+              <Badge variant="outline">{(isLocal || ai.localOnly) ? 'Local model' : 'Remote'}</Badge>
+              <Badge variant="outline">{displayModelName}</Badge>
             </div>
           </div>
 
@@ -540,7 +629,9 @@ export default function KreativiumAI(): JSX.Element {
                 <div className="ml-auto min-w-[12rem]">
                   <Select
                     value={compareMode}
-                    onValueChange={(v) => setCompareMode(v as any)}
+                    onValueChange={(value) => {
+                      if (isComparisonMode(value)) setCompareMode(value);
+                    }}
                     disabled={!compareEnabled || !studentId || !timeframe}
                   >
                     <SelectTrigger className="w-full"><SelectValue placeholder={tAnalytics('interface.comparisonMode')} /></SelectTrigger>
@@ -631,7 +722,7 @@ export default function KreativiumAI(): JSX.Element {
                       {(['morning','afternoon','evening'] as const).map((k, i) => (
                         <div key={k} className="flex items-center gap-1">
                           <span className="text-[11px] text-muted-foreground">{k === 'morning' ? 'morgen' : k === 'afternoon' ? 'etterm.' : 'kveld'}</span>
-                          <span className="text-[11px]">{(dataQuality.buckets as any)[k]}</span>
+                          <span className="text-[11px]">{dataQuality.buckets[k]}</span>
                           {i < 2 && <span className="text-muted-foreground/40">•</span>}
                         </div>
                       ))}
@@ -707,8 +798,13 @@ export default function KreativiumAI(): JSX.Element {
                 current={results}
                 baseline={baselineResults}
                 mode={compareMode}
-                currentLabel={`${(timeframe.start as Date).toLocaleDateString()} – ${(timeframe.end as Date).toLocaleDateString()}`}
-                baselineLabel={baselineResults ? formatComparisonPeriodLabel(computeComparisonRange(timeframe as any, compareMode), compareMode) : tAnalytics('interface.noDataInComparisonPeriod')}
+                currentLabel={`${formatDateForDisplay(timeframe.start)} – ${formatDateForDisplay(timeframe.end)}`}
+                baselineLabel={baselineResults
+                  ? formatComparisonPeriodLabel(
+                      toConcreteTimeRange(computeComparisonRange(timeframe, compareMode)),
+                      compareMode
+                    )
+                  : tAnalytics('interface.noDataInComparisonPeriod')}
                 studentName={students.find(s => s.id === studentId)?.name || ''}
                 currentBalance={dataQuality?.balance}
                 baselineBalance={baselineDataQuality?.balance}
@@ -722,9 +818,9 @@ export default function KreativiumAI(): JSX.Element {
                 <CardTitle className="flex items-center gap-2"><Database className="h-4 w-4" />Nøkkelfunn</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {(results as any)?.keyFindings?.length ? (
+                {keyFindings.length > 0 ? (
                   <ul className="list-disc pl-5 text-sm text-foreground/90">
-                    {(results as any).keyFindings.map((x: string, i: number) => <li key={i}>{x}</li>)}
+                    {keyFindings.map((finding, index) => <li key={index}>{finding}</li>)}
                   </ul>
                 ) : <p className="text-sm text-muted-foreground">Ingen nøkkelfunn rapportert.</p>}
               </CardContent>
@@ -735,17 +831,18 @@ export default function KreativiumAI(): JSX.Element {
                 <CardTitle className="flex items-center gap-2"><Clock className="h-4 w-4" />Mønstre</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {results.patterns?.length ? results.patterns.map((p, idx) => (
-                  <div key={idx} className="rounded-md border p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium">{p.pattern || 'Mønster'}</div>
-                      {typeof (p as any).impact === 'string' && (
-                        <Badge variant="outline">{String((p as any).impact)}</Badge>
-                      )}
+                {results.patterns?.length ? results.patterns.map((patternResult, index) => {
+                  const impactLabel = getOptionalStringField(patternResult, 'impact');
+                  return (
+                    <div key={index} className="rounded-md border p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="font-medium">{patternResult.pattern || 'Mønster'}</div>
+                        {impactLabel && <Badge variant="outline">{impactLabel}</Badge>}
+                      </div>
+                      {patternResult.description && <p className="text-sm text-muted-foreground mt-1">{patternResult.description}</p>}
                     </div>
-                    {p.description && <p className="text-sm text-muted-foreground mt-1">{p.description}</p>}
-                  </div>
-                )) : <p className="text-sm text-muted-foreground">Ingen mønstre identifisert.</p>}
+                  );
+                }) : <p className="text-sm text-muted-foreground">Ingen mønstre identifisert.</p>}
               </CardContent>
             </Card>
 
@@ -755,32 +852,32 @@ export default function KreativiumAI(): JSX.Element {
               </CardHeader>
               <TooltipProvider>
               <CardContent className="space-y-3">
-                {(results as any)?.suggestedInterventions?.length ? (
+                {results.suggestedInterventions.length ? (
                   <ul className="space-y-3">
-                    {(results as any).suggestedInterventions.map((s: any, i: number) => (
-                      <li key={i} className="rounded-md border p-3">
-                        <div className="font-medium">{s.title}</div>
-                        {s.description && <p className="text-sm text-muted-foreground mt-1">{s.description}</p>}
-                        {Array.isArray(s.actions) && s.actions.length > 0 && (
+                    {results.suggestedInterventions.map((intervention, index) => (
+                      <li key={index} className="rounded-md border p-3">
+                        <div className="font-medium">{intervention.title}</div>
+                        {intervention.description && <p className="text-sm text-muted-foreground mt-1">{intervention.description}</p>}
+                        {intervention.actions.length > 0 && (
                           <ul className="list-disc pl-5 mt-2 text-sm">
-                            {s.actions.map((a: string, j: number) => <li key={j}>{a}</li>)}
+                            {intervention.actions.map((action, actionIndex) => <li key={actionIndex}>{action}</li>)}
                           </ul>
                         )}
-                        {s.sources?.length > 0 && (
+                        {intervention.sources.length > 0 && (
                           <div className="mt-3">
                             <span className="text-xs text-muted-foreground mr-2">Källor:</span>
                             <div className="flex flex-wrap gap-1 mt-1">
-                              {s.sources.map((sourceId: string, idx: number) => (
-                                <SourceChip key={idx} sourceId={sourceId} />
+                              {intervention.sources.map((sourceId) => (
+                                <SourceChip key={sourceId} sourceId={sourceId} />
                               ))}
                             </div>
                           </div>
                         )}
-                        {(s.expectedImpact || s.timeHorizon || s.tier) && (
+                        {(intervention.expectedImpact || intervention.timeHorizon || intervention.tier) && (
                           <div className="mt-2 flex flex-wrap gap-2">
-                            {s.expectedImpact && <Badge variant="outline">{s.expectedImpact}</Badge>}
-                            {s.timeHorizon && <Badge variant="outline">{s.timeHorizon}</Badge>}
-                            {s.tier && <Badge variant="outline">{s.tier}</Badge>}
+                            {intervention.expectedImpact && <Badge variant="outline">{intervention.expectedImpact}</Badge>}
+                            {intervention.timeHorizon && <Badge variant="outline">{intervention.timeHorizon}</Badge>}
+                            {intervention.tier && <Badge variant="outline">{intervention.tier}</Badge>}
                           </div>
                         )}
                       </li>
@@ -796,7 +893,7 @@ export default function KreativiumAI(): JSX.Element {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Info className="h-4 w-4" />AI‑metadata • <span className="font-normal text-muted-foreground">{displayModelName}</span>
-                    {(((results.ai.usage as any)?.cacheReadTokens ?? 0) > 0 || (Array.isArray(results.ai.caveats) && results.ai.caveats.some(c => /cache/i.test(String(c))))) && (
+                    {((results.ai.usage?.cacheReadTokens ?? 0) > 0 || (Array.isArray(results.ai.caveats) && results.ai.caveats.some(c => /cache/i.test(String(c))))) && (
                       <Badge variant="outline">{tAnalytics('interface.fromCache')}</Badge>
                     )}
                   </CardTitle>
@@ -807,8 +904,8 @@ export default function KreativiumAI(): JSX.Element {
                   {results.ai.usage && (
                     <div>Tokens: prompt {results.ai.usage.promptTokens ?? 0} • completion {results.ai.usage.completionTokens ?? 0} • total {results.ai.usage.totalTokens ?? 0}</div>
                   )}
-                  {results.ai.usage && (((results.ai.usage as any).cacheReadTokens ?? 0) > 0 || ((results.ai.usage as any).cacheWriteTokens ?? 0) > 0) && (
-                    <div>Cache: read {(results.ai.usage as any).cacheReadTokens ?? 0} • write {(results.ai.usage as any).cacheWriteTokens ?? 0}</div>
+                  {results.ai.usage && ((results.ai.usage.cacheReadTokens ?? 0) > 0 || (results.ai.usage.cacheWriteTokens ?? 0) > 0) && (
+                    <div>Cache: read {results.ai.usage.cacheReadTokens ?? 0} • write {results.ai.usage.cacheWriteTokens ?? 0}</div>
                   )}
                   {(() => { try { const s = aiMetrics.summary(); const pct = Math.round((s.jsonValidity || 0) * 100); return <div>JSON‑gyldighet (global): {pct}%</div>; } catch { return null; } })()}
                   {Array.isArray(results.ai.caveats) && results.ai.caveats.length > 0 && (

@@ -95,7 +95,7 @@ export function validateOrRepairAiReport(input: unknown): { ok: true; report: Ai
 
   const caveats: string[] = ['AI output failed schema validation; applied repair pass'];
   try {
-    const repaired: any = coerceToAiReportShape(input);
+    const repaired = coerceToAiReportShape(input);
     const parsed2 = ZAiReport.parse(repaired);
     return { ok: true, report: parsed2, repaired: true, caveats };
   } catch (err) {
@@ -106,6 +106,33 @@ export function validateOrRepairAiReport(input: unknown): { ok: true; report: Ai
 
 function arr<T>(v: unknown): T[] {
   return Array.isArray(v) ? (v as T[]).filter(Boolean) : [];
+}
+
+type UnknownRecord = Record<string, unknown>;
+
+const SEVERITY_VALUES = ['low', 'medium', 'high'] as const;
+const TIME_HORIZON_VALUES = ['short', 'medium', 'long'] as const;
+const SOURCE_TYPE_VALUES = ['emotion', 'behavior', 'sensor', 'environment', 'goal', 'tracking', 'system', 'external', 'other'] as const;
+
+function asObject(value: unknown): UnknownRecord | undefined {
+  return value && typeof value === 'object' ? (value as UnknownRecord) : undefined;
+}
+
+function asRecordArray(value: unknown): UnknownRecord[] {
+  return arr<UnknownRecord>(value);
+}
+
+function getStringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0) : [];
+}
+
+function asEnumValue<T extends string>(value: unknown, allowed: readonly T[]): T | undefined {
+  const candidate = typeof value === 'string' ? value : undefined;
+  return candidate && (allowed as readonly string[]).includes(candidate) ? (candidate as T) : undefined;
+}
+
+function asEnumArray<T extends string>(value: unknown, allowed: readonly T[]): T[] {
+  return getStringArray(value).filter((item): item is T => (allowed as readonly string[]).includes(item));
 }
 
 function num(v: unknown, def = 0): number {
@@ -119,110 +146,144 @@ function num(v: unknown, def = 0): number {
 function str(v: unknown, def = ''): string { return typeof v === 'string' ? v : def; }
 
 function coerceToAiReportShape(input: unknown): AiReport {
-  const o = (typeof input === 'object' && input) ? (input as Record<string, unknown>) : {};
-  const asStrArr = (v: unknown) => arr<string>(v).map(x => String(x)).filter(s => s.trim().length > 0);
-  const evidence = (v: unknown) => arr<any>(v).map(e => ({
-    description: str(e?.description, 'Observed evidence'),
-    weight: num(e?.weight, 0.5),
-    sources: asStrArr(e?.sources) as any,
-    refs: asStrArr(e?.refs),
-  }));
-  const patterns = arr<any>(o.patterns).map(p => ({
-    name: str(p?.name, 'Pattern'),
-    description: str(p?.description),
-    strength: typeof p?.strength === 'number' ? Math.max(0, Math.min(1, p.strength)) : undefined,
-    impact: ['low','medium','high'].includes(str(p?.impact)) ? str(p?.impact) as any : undefined,
-    evidence: evidence(p?.evidence),
-  }));
-  const correlations = arr<any>(o.correlations).map(c => ({
-    variables: Array.isArray(c?.variables) && c.variables.length >= 2 ? [String(c.variables[0]), String(c.variables[1])] as [string,string] : ['factorA','factorB'] as [string,string],
-    coefficient: typeof c?.coefficient === 'number' ? Math.max(-1, Math.min(1, c.coefficient)) : 0,
-    direction: ['positive','negative'].includes(str(c?.direction)) ? str(c?.direction) as any : undefined,
-    pValue: typeof c?.pValue === 'number' ? Math.max(0, Math.min(1, c.pValue)) : undefined,
-    confounders: asStrArr(c?.confounders),
-    evidence: evidence(c?.evidence),
-  }));
-  const anomalies = arr<any>(o.anomalies).map(a => ({
-    description: str(a?.description, 'Anomaly'),
-    severity: ['low','medium','high'].includes(str(a?.severity)) ? str(a?.severity) as any : 'medium',
-    at: str(a?.at),
-    range: (a?.range && typeof a.range === 'object') ? {
-      start: str((a.range as any)?.start),
-      end: str((a.range as any)?.end),
-      timezone: str((a.range as any)?.timezone) || undefined,
-    } : undefined,
-    evidence: evidence(a?.evidence),
-  }));
-  const predictive = arr<any>(o.predictiveInsights).map(p => ({
-    outcome: str(p?.outcome, 'Outcome'),
-    probability: num(p?.probability, 0.5),
-    horizon: ['short','medium','long'].includes(str(p?.horizon)) ? str(p?.horizon) as any : undefined,
-    drivers: asStrArr(p?.drivers),
-    confidence: (p?.confidence && typeof p.confidence === 'object') ? {
-      overall: num((p.confidence as any)?.overall, 0.5),
-      calibration: str((p.confidence as any)?.calibration) || undefined,
-      caveats: asStrArr((p.confidence as any)?.caveats),
-    } : undefined,
-  }));
-  const sugg = arr<any>(o.suggestedInterventions).map(i => ({
-    title: str(i?.title, 'Intervention'),
-    description: str(i?.description, 'Suggested action'),
-    actions: asStrArr(i?.actions),
-    expectedImpact: ['low','medium','high'].includes(str(i?.expectedImpact)) ? str(i?.expectedImpact) as any : undefined,
-    timeHorizon: ['short','medium','long'].includes(str(i?.timeHorizon)) ? str(i?.timeHorizon) as any : undefined,
-    metrics: asStrArr(i?.metrics),
-    confidence: (i?.confidence && typeof i.confidence === 'object') ? {
-      overall: num((i.confidence as any)?.overall, 0.6),
-      calibration: str((i.confidence as any)?.calibration) || undefined,
-      caveats: asStrArr((i.confidence as any)?.caveats),
-    } : undefined,
-    // Preserve evidence metadata fields
-    sources: asStrArr(i?.sources),
-    udlCheckpoints: asStrArr(i?.udlCheckpoints),
-    hlps: asStrArr(i?.hlps),
-    tier: ['Tier1','Tier2','Tier3'].includes(str(i?.tier)) ? str(i?.tier) as any : undefined,
-    scope: ['classroom','school'].includes(str(i?.scope)) ? str(i?.scope) as any : undefined,
+  const source = asObject(input) ?? {};
+
+  const evidence = (value: unknown): AiReport['patterns'][number]['evidence'] =>
+    asRecordArray(value).map((item) => ({
+      description: str(item.description, 'Observed evidence'),
+      weight: num(item.weight, 0.5),
+      sources: asEnumArray(item.sources, SOURCE_TYPE_VALUES),
+      refs: getStringArray(item.refs),
+    }));
+
+  const patterns = asRecordArray(source.patterns).map((item) => ({
+    name: str(item.name, 'Pattern'),
+    description: str(item.description) || undefined,
+    strength: typeof item.strength === 'number' ? Math.max(0, Math.min(1, item.strength)) : undefined,
+    impact: asEnumValue(item.impact, SEVERITY_VALUES),
+    evidence: evidence(item.evidence),
   }));
 
-  const lineage = arr<any>(o.dataLineage).map(li => ({
-    source: str(li?.source, 'local-storage'),
-    type: ['emotion','behavior','sensor','environment','goal','tracking','system','external','other'].includes(str(li?.type)) ? str(li?.type) as any : undefined,
-    timeRange: (li?.timeRange && typeof li.timeRange === 'object') ? {
-      start: str((li.timeRange as any)?.start),
-      end: str((li.timeRange as any)?.end),
-      timezone: str((li.timeRange as any)?.timezone) || undefined,
-    } : undefined,
-    fields: asStrArr(li?.fields),
-    notes: str(li?.notes) || undefined,
+  const correlations = asRecordArray(source.correlations).map((item) => {
+    const variables = Array.isArray(item.variables) && item.variables.length >= 2
+      ? [String(item.variables[0]), String(item.variables[1])] as [string, string]
+      : ['factorA', 'factorB'] as [string, string];
+    return {
+      variables,
+      coefficient: typeof item.coefficient === 'number' ? Math.max(-1, Math.min(1, item.coefficient)) : 0,
+      direction: asEnumValue(item.direction, ['positive', 'negative'] as const),
+      pValue: typeof item.pValue === 'number' ? Math.max(0, Math.min(1, item.pValue)) : undefined,
+      confounders: getStringArray(item.confounders),
+      evidence: evidence(item.evidence),
+    };
+  });
+
+  const anomalies = asRecordArray(source.anomalies).map((item) => {
+    const range = asObject(item.range);
+    return {
+      description: str(item.description, 'Anomaly'),
+      severity: asEnumValue(item.severity, SEVERITY_VALUES) ?? 'medium',
+      at: str(item.at) || undefined,
+      range: range
+        ? {
+            start: str(range.start),
+            end: str(range.end),
+            timezone: str(range.timezone) || undefined,
+          }
+        : undefined,
+      evidence: evidence(item.evidence),
+    };
+  });
+
+  const predictiveInsights = asRecordArray(source.predictiveInsights).map((item) => {
+    const confidenceSource = asObject(item.confidence);
+    return {
+      outcome: str(item.outcome, 'Outcome'),
+      probability: num(item.probability, 0.5),
+      horizon: asEnumValue(item.horizon, TIME_HORIZON_VALUES),
+      drivers: getStringArray(item.drivers),
+      confidence: confidenceSource
+        ? {
+            overall: num(confidenceSource.overall, 0.5),
+            calibration: str(confidenceSource.calibration) || undefined,
+            caveats: getStringArray(confidenceSource.caveats),
+          }
+        : undefined,
+    };
+  });
+
+  const suggestedInterventions = asRecordArray(source.suggestedInterventions).map((item) => {
+    const confidenceSource = asObject(item.confidence);
+    return {
+      title: str(item.title, 'Intervention'),
+      description: str(item.description, 'Suggested action'),
+      actions: getStringArray(item.actions),
+      expectedImpact: asEnumValue(item.expectedImpact, SEVERITY_VALUES),
+      timeHorizon: asEnumValue(item.timeHorizon, TIME_HORIZON_VALUES),
+      metrics: getStringArray(item.metrics),
+      confidence: confidenceSource
+        ? {
+            overall: num(confidenceSource.overall, 0.6),
+            calibration: str(confidenceSource.calibration) || undefined,
+            caveats: getStringArray(confidenceSource.caveats),
+          }
+        : undefined,
+      sources: getStringArray(item.sources),
+      udlCheckpoints: getStringArray(item.udlCheckpoints),
+      hlps: getStringArray(item.hlps),
+      tier: asEnumValue(item.tier, ['Tier1', 'Tier2', 'Tier3'] as const),
+      scope: asEnumValue(item.scope, ['classroom', 'school'] as const),
+    };
+  });
+
+  const dataLineage = asRecordArray(source.dataLineage).map((item) => {
+    const timeRange = asObject(item.timeRange);
+    return {
+      source: str(item.source, 'local-storage'),
+      type: asEnumValue(item.type, SOURCE_TYPE_VALUES),
+      timeRange: timeRange
+        ? {
+            start: str(timeRange.start),
+            end: str(timeRange.end),
+            timezone: str(timeRange.timezone) || undefined,
+          }
+        : undefined,
+      fields: getStringArray(item.fields),
+      notes: str(item.notes) || undefined,
+    };
+  });
+
+  const summary = str(source.summary) || undefined;
+  const keyFindings = getStringArray(source.keyFindings);
+  const confidenceSource = asObject(source.confidence);
+  const confidence = confidenceSource
+    ? {
+        overall: num(confidenceSource.overall, 0.7),
+        calibration: str(confidenceSource.calibration) || undefined,
+        caveats: getStringArray(confidenceSource.caveats),
+      }
+    : undefined;
+
+  const hypothesizedCauses = asRecordArray(source.hypothesizedCauses).map((item) => ({
+    cause: str(item.cause, 'Hypothesis'),
+    likelihood: num(item.likelihood, 0.5),
+    rationale: str(item.rationale) || undefined,
+    supportingEvidence: evidence(item.supportingEvidence),
   }));
 
-  const summary = str(o.summary) || undefined;
-  const keyFindings = asStrArr(o.keyFindings);
-  const confidence = (o?.confidence && typeof o.confidence === 'object') ? {
-    overall: num((o.confidence as any)?.overall, 0.7),
-    calibration: str((o.confidence as any)?.calibration) || undefined,
-    caveats: asStrArr((o.confidence as any)?.caveats),
-  } : undefined;
-
-  const report = {
+  const report: AiReport = {
     summary,
     keyFindings,
     patterns,
     correlations,
-    hypothesizedCauses: arr<any>(o.hypothesizedCauses).map(h => ({
-      cause: str(h?.cause, 'Hypothesis'),
-      likelihood: num(h?.likelihood, 0.5),
-      rationale: str(h?.rationale) || undefined,
-      supportingEvidence: evidence(h?.supportingEvidence),
-    })),
-    suggestedInterventions: sugg,
+    hypothesizedCauses,
+    suggestedInterventions,
     anomalies,
-    predictiveInsights: predictive,
-    dataLineage: lineage,
+    predictiveInsights,
+    dataLineage,
     confidence,
-    insights: asStrArr((o as any)?.insights),
-  } as AiReport;
+    insights: getStringArray(source.insights),
+  };
 
   return report;
 }
-
